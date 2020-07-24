@@ -1,0 +1,2 @@
+collections of singularity recipes that can be used to build software used in
+NGS pipelines.
