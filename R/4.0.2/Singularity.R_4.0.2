@@ -9,7 +9,7 @@ From: ubuntu:16.04
 %post
 
     # Software versions
-    export R_VERSION=4.0.21
+    export R_VERSION=4.0.2
 
     # Get dependencies
     apt-get update
@@ -27,8 +27,9 @@ From: ubuntu:16.04
     export LANG=en_US.UTF-8
 
     # Install R
-    echo "deb http://cran.r-project.org/bin/linux/ubuntu xenial-cran35/" > /etc/apt/sources.list.d/r.list
-    apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E084DAB9
+    echo "deb http://cloud.r-project.org/bin/linux/ubuntu xenial-cran40/" > /etc/apt/sources.list.d/r.list
+    apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9
+
     apt-get update
     apt-key update
     apt-get install -y --no-install-recommends --allow-unauthenticated \
