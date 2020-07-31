@@ -1,0 +1,19 @@
+version: 2
+sphinx:
+    configuration: doc/conf.py
+
+
+formats: all
+
+python:
+    version: 3.6
+    install:
+        - requirements: requirements.txt
+        - requirements: .requirements_dev.txt
+        - method: pip
+          path: .
+
+# it is either conda or python not both....
+# https://docs.readthedocs.io/en/stable/config-file/v2.html
+#conda:
+#    environment: environment_rtd.yml

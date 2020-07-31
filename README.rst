@@ -8,11 +8,11 @@ images locally.
 .. image:: https://badge.fury.io/py/damona.svg
     :target: https://pypi.python.org/pypi/damona
 
-.. image:: https://travis-ci.org/damona/damona.svg?branch=master
-    :target: https://travis-ci.org/damona/damona
+.. image:: https://travis-ci.org/cokelaer/damona.svg?branch=master
+    :target: https://travis-ci.org/cokelaer/damona
 
-.. image:: https://coveralls.io/repos/github/damona/damona/badge.svg?branch=master
-    :target: https://coveralls.io/github/damona/damona?branch=master 
+.. image:: https://coveralls.io/repos/github/cokelaer/damona/badge.svg?branch=master
+    :target: https://coveralls.io/github/cokelaer/damona?branch=master 
 
 .. image:: http://readthedocs.org/projects/damona/badge/?version=master
     :target: http://damona.readthedocs.org/en/latest/?badge=master
