@@ -2,7 +2,8 @@ Damona is a collections of singularity recipes that can be used to build softwar
 NGS pipelines. It provides a simple excutable to download and configure the
 images locally. 
 
-# Motivation
+Motivation
+==========
 
 Why another collections or tools to provide NGS images ? There is bioconda, and
 a bunch of collections of singularity images indeed !
@@ -12,7 +13,8 @@ I see two main reasons to start damono software. First, Bioconda is great but th
 Our goal is not to replace existing initiative but just to complement them when
 required. 
 
-#Installation
+Installation
+============
 
 1. Install singularity: https://syslabs.io/guides/3.0/user-guide/installation.html
 2. Install Damono using **pip**. You will need Python 3.X::
@@ -57,7 +59,8 @@ interfer with your system::
     R
 
 
-# Roadmap:
+Roadmap
+=========
 
 * handle versioning
 * ability to retrieve registry to fill the list of images automatically
