@@ -21,7 +21,8 @@ Installation
 
     pip install damona --upgrade
 
-# Usage:
+Usage
+=====
 
 
 Print the list of images available within Damona collections::
