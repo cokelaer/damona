@@ -18,8 +18,8 @@ Sequana documentation
     <a href="https://coveralls.io/github/cokelaer/damona?branch=master">
     <img src="https://coveralls.io/repos/github/cokelaer/damona/badge.svg?branch=master"></a>
 
-    <a href="http://damona.readthedocs.org/en/master/?badge=master">
-    <img src="http://readthedocs.org/projects/damona/badge/?version=master"></a>
+    <a href="http://damona.readthedocs.org/en/latest/?badge=latest">
+    <img src="http://readthedocs.org/projects/damona/badge/?version=latest"></a>
 
 
     </p>

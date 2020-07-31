@@ -14,8 +14,8 @@ images locally.
 .. image:: https://coveralls.io/repos/github/cokelaer/damona/badge.svg?branch=master
     :target: https://coveralls.io/github/cokelaer/damona?branch=master 
 
-.. image:: http://readthedocs.org/projects/damona/badge/?version=master
-    :target: http://damona.readthedocs.org/en/latest/?badge=master
+.. image:: http://readthedocs.org/projects/damona/badge/?version=latest
+    :target: http://damona.readthedocs.org/en/latest/?badge=latest
     :alt: Documentation Status
 
 
