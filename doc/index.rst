@@ -12,11 +12,11 @@ Sequana documentation
     <a href="https://pypi.python.org/pypi/damona">
     <img src="https://badge.fury.io/py/damona.svg"></a>
 
-    <a href="https://travis-ci.org/damona/damona">
-    <img src="https://travis-ci.org/damona/damona.svg?branch=master"></a>
+    <a href="https://travis-ci.org/cokelaer/damona">
+    <img src="https://travis-ci.org/cokelaer/damona.svg?branch=master"></a>
 
-    <a href="https://coveralls.io/github/damona/damona?branch=master">
-    <img src="https://coveralls.io/repos/github/damona/damona/badge.svg?branch=master"></a>
+    <a href="https://coveralls.io/github/cokelaer/damona?branch=master">
+    <img src="https://coveralls.io/repos/github/cokelaer/damona/badge.svg?branch=master"></a>
 
     <a href="http://damona.readthedocs.org/en/master/?badge=master">
     <img src="http://readthedocs.org/projects/damona/badge/?version=master"></a>
