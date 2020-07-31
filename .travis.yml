@@ -32,16 +32,15 @@ install:
   - echo $TRAVIS_PYTHON_VERSION
   - conda create --yes --name testenv python=$TRAVIS_PYTHON_VERSION
   - source activate testenv
-
-  #- conda install --yes --file requirements.txt
-  # to install specific version of multiqc, we install packages manually
+  - pip install pytest pytest-cov pytest-timeout pytest-xdist pytest-mock pytest-runner
   - conda install --yes singularity
 
   - python setup.py install
 
 # # command to run tests, e.g. python setup.py test
 script: 
-  - pytest -v --cov-config=.coveragerc_travis --durations=10  test/ --cov=damona --cov-report term-missing --timeout 300 
+  #- pytest -v --cov-config=.coveragerc_travis --durations=10  test/ --cov=damona --cov-report term-missing --timeout 300 
+  - pytest -v  --durations=10  test/ --cov=damona --cov-report term-missing --timeout 300 
 
 after_success:
   coveralls
