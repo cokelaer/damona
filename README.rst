@@ -19,6 +19,9 @@ images locally.
     :alt: Documentation Status
 
 
+:Python version: Python 3.6, 3.7.3; most modules are Python2.7 compatible.
+:Source: See  `http://github.com/damona/damona <https://github.com/damona/damona/>`__.
+:Issues: Please fill a report on `github <https://github.com/damona/damona/issues>`__
 
 Motivation
 ==========
@@ -75,7 +78,7 @@ other container. Besides, you can easily play with R without the need to
 interfer with your system::
 
     damona pull r_4.0.2  # Note the small cap
-    R
+    
 
 
 Roadmap

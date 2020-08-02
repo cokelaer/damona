@@ -76,6 +76,8 @@ setup(
     # This is recursive include of data files
     exclude_package_data = {"": ["__pycache__"]},
     package_data = {
+        'recipes' : ['Singularity.*'],
+
         },
 
     zip_safe=False,
