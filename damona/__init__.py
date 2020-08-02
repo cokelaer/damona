@@ -4,7 +4,7 @@ import pathlib
 
 try:
     version = pkg_resources.require("damona")[0].version
-except:
+except:   #pragma: no cover
     version = ">=0.8.3"
 
 

@@ -1,19 +1,18 @@
 # -*- coding: utf-8 -*-
 
 ###########################################################################
-# Bioconvert is a project to facilitate the interconversion               #
-# of life science data from one format to another.                        #
+# Damona is a project to provide reproducible containers                  #
 #                                                                         #
 # Authors: see CONTRIBUTORS.rst                                           #
-# Copyright © 2018  Institut Pasteur, Paris and CNRS.                     #
+# Copyright © 2020  Institut Pasteur, Paris and CNRS.                     #
 # See the COPYRIGHT file for details                                      #
 #                                                                         #
-# bioconvert is free software: you can redistribute it and/or modify      #
+# Damona is free software: you can redistribute it and/or modify          #
 # it under the terms of the GNU General Public License as published by    #
 # the Free Software Foundation, either version 3 of the License, or       #
 # (at your option) any later version.                                     #
 #                                                                         #
-# bioconvert is distributed in the hope that it will be useful,           #
+# Damona  is distributed in the hope that it will be useful,              #
 # but WITHOUT ANY WARRANTY; without even the implied warranty of          #
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           #
 # GNU General Public License for more details.                            #
