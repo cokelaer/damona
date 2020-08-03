@@ -9,7 +9,12 @@ except:   #pragma: no cover
 
 
 import colorlog
+
+handler = colorlog.StreamHandler()
+handler.setFormatter(colorlog.ColoredFormatter(
+	'%(log_color)s%(levelname)s:%(name)s: %(message)s'))
 logger = colorlog.getLogger("damona")
+logger.addHandler(handler)
 
 from easydev import CustomConfig
 configuration = CustomConfig("damona", verbose=True)
@@ -30,3 +35,5 @@ try:
     images_directory.mkdir()
 except:
     pass # exists already
+
+from damona.registry import Registry
