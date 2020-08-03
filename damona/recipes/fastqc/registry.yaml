@@ -1,0 +1,6 @@
+Singularity.fastqc:
+    version: 0.11.9
+    download: library://cokelaer/damona/fastqc:0.11.9 
+    class: "exe"
+    binaries:
+        - fastqc: "fastqc"
