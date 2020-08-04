@@ -71,25 +71,18 @@ You are ready to go. Just type this command to use the newly installed container
 
     fastqc --help
 
-This tool is pretty common in NGS and can be easily installed. This is more a
-toy example than a real example.
+Check that you have not installed another version::
 
+    which fastqc
 
-In Damona, we currently provide only a few containers. For instance, we provide
-an image for R v4.0.2. This is not a NGS tool per se but can be used to build
-other containers. Besides, you can easily play with R without the need to
-interfer with your system::
+This should show you the path *~/.config/damona/bin/fastqc*. Of course, tThis tool is pretty common in NGS and can be easily installed. This is more a toy example than a real example.
 
-    damona pull r_4.0.2  # Note the small cap
+In damona there are three classes of container:
 
+1. executables (like the one above)
+2. environement: for instance, we provide an image for R v4.0.2. This is not a NGS tool per se but can be used to build other containers. 
+3. Set of executables (coming soon)
 
-
-Roadmap
-=========
-
-* handle versioning
-* ability to retrieve registry to fill the list of images automatically
-* ability to download from other collections
 
 
 Changelog
