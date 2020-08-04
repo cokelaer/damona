@@ -1,0 +1,6 @@
+{
+    "type": "executable"
+    "executables": {
+        "bcl2fastq": "bcl2fastq"
+    }
+}

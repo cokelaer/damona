@@ -1,0 +1,6 @@
+Singularity.damona:
+    version: latest
+    class: exe
+    binaries:
+        - damona in singularity: damona
+

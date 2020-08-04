@@ -1,0 +1,6 @@
+Singularity.salmon_1.3.0:
+    version: 1.3.0
+    download: library://cokelaer/damona/salmon:1.3.0
+    class: "exe"
+    binaries:
+        - salmon: "salmon"
