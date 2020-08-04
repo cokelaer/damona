@@ -1,0 +1,5 @@
+Singularity.conda_4.7.12:
+    version: 4.7.12
+    download: library://cokelaer/damona/conda:4.7.12
+    class: env
+

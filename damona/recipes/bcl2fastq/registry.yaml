@@ -1,0 +1,6 @@
+Singularity.bcl2fastq_2.20.0:
+    version: 2.20.0
+    download: library://cokelaer/damona/bcl2fastq:2.20.0
+    class: "exe"
+    binaries:
+        - bcl2fastq: "bcl2fastq"
