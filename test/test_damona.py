@@ -4,19 +4,21 @@ import subprocess
 
 
 
-def test_pull():
+def test_help():
     cmd = "damona --help"
     subprocess.call(cmd.split())
+    cmd = "damona pull --help"
+    subprocess.call(cmd.split())
 
+
+def test_list():
     cmd = "damona list --help"
     subprocess.call(cmd.split())
 
-    cmd = "damona pull --help"
-    subprocess.call(cmd.split())
-    
     cmd = "damona list"
     subprocess.call(cmd.split())
 
+def test_develop():
     try:
         cmd = "damona develop"
         subprocess.call(cmd.split())
@@ -28,11 +30,11 @@ def test_pull():
     cmd = "damona develop --path {}".format(__path__[0] + "/fastq"  )
     subprocess.call(cmd.split())
 
-
+def test_pull_dryrun():
     cmd = "damona pull fastqc:0.11.9 --dryrun"  
     subprocess.call(cmd.split())
     
-
+def test_pull_wrong():
     # non existing image
     cmd = "damona pull tartuffe"  
     try:
