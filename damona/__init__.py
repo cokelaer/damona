@@ -28,12 +28,12 @@ images_directory = path / 'images'
 
 try:
     bin_directory.mkdir()
-except:
+except: # pragma: no cover
     pass # exists already
 
 try:
     images_directory.mkdir()
-except:
+except: #pragma: no cover
     pass # exists already
 
 from damona.registry import Registry

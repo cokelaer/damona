@@ -1,6 +1,11 @@
 from damona import script
+from damona import pull
 import subprocess
 
+
+def test_python_pull():
+    p = pull.Pull(dryrun=True)
+    p.pull("fastqc:0.11.9")
 
 
 

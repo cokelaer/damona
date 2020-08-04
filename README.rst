@@ -29,15 +29,16 @@ Motivation
 Why another collections or tools to provide NGS images ? There is bioconda, and
 a bunch of collections of singularity images indeed !
 
-I see two main reasons to start damono software. First, Bioconda is great but there are two small limitations: some tools are not there for copyright reasons, or some tools may clash. Remember that bioconda allows you to build an environment with all tools living altogether. Some may be in conflicts. Second, singularity images posted here are there are a great source of inspirations. Yet, I wanted a very simple tool for my users and hide the nitty-gritty details of singularity. In practice, on a cluster, you can get the missing tools in a few seconds. Your system administrator can install singularity and damona and then you can download ready-to-use executable.
+I see two main reasons to start damono software. First, Bioconda is great but there are two small limitations: some tools are not there or installing two tools may be impossible due to conflits; those conflicts may be long to untangle. Remember that bioconda allows you to build an environment with all tools living altogether. Some may be in conflicts. Second, singularity images posted here are there are a great source of inspirations. Yet, I wanted a very simple tool for my users and hide the nitty-gritty details of singularity. In practice, on a cluster, you can get the missing tools in a few seconds. Your system administrator can install singularity and damona and then you can download ready-to-use executables.
 
 Our goal is not to replace existing initiative but just to complement them when
-required. 
+required. In particular, we designed **damona** so as to provide the executables
+required by sequana.readthedocs.io pipelines. 
 
 Installation
 ============
 
-1. Install singularity: https://syslabs.io/guides/3.0/user-guide/installation.html
+1. Install singularity: https://sylabs.io/guides/3.0/user-guide/installation.html
 2. Install Damono using **pip**. You will need Python 3.X::
 
     pip install damona --upgrade
@@ -52,7 +53,7 @@ Print the list of images available within Damona collections::
 
 Download the one you want to use::
 
-    damona pull fastqc
+    damona pull fastqc:0.11.9
 
 This will download the container in your ./config/damona directory and create an
 executable for you in ~/.config/damona/bin. 
@@ -69,12 +70,12 @@ You are ready to go. Just type this command to use the newly installed container
     fastqc --help
 
 This tool is pretty common in NGS and can be easily installed. This is more a
-toy example than a real example. 
+toy example than a real example.
 
 
-In Damona, we currently provide just a few container. For instance, we provide
+In Damona, we currently provide only a few containers. For instance, we provide
 an image for R v4.0.2. This is not a NGS tool per se but can be used to build
-other container. Besides, you can easily play with R without the need to
+other containers. Besides, you can easily play with R without the need to
 interfer with your system::
 
     damona pull r_4.0.2  # Note the small cap
