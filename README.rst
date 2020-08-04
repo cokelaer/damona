@@ -19,7 +19,7 @@ images locally.
     :alt: Documentation Status
 
 
-:Python version: Python 3.6, 3.7.3; most modules are Python2.7 compatible.
+:Python version: Python 3.6, 3.7.3
 :Source: See  `http://github.com/damona/damona <https://github.com/damona/damona/>`__.
 :Issues: Please fill a report on `github <https://github.com/damona/damona/issues>`__
 
@@ -78,7 +78,7 @@ other container. Besides, you can easily play with R without the need to
 interfer with your system::
 
     damona pull r_4.0.2  # Note the small cap
-    
+
 
 
 Roadmap
@@ -88,6 +88,17 @@ Roadmap
 * ability to retrieve registry to fill the list of images automatically
 * ability to download from other collections
 
+
+Changelog
+=========
+
+========= ====================================================================
+Version   Description
+========= ====================================================================
+0.2.0     first working version of damona to pull image locally with binaries
+0.1.1     small update to fix RTD, travis, coveralls
+0.1       first release to test feasibility of the project
+========= ====================================================================
 
 
 

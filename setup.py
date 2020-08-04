@@ -7,8 +7,8 @@ from setuptools import setup, find_packages
 import glob
 
 _MAJOR               = 0
-_MINOR               = 1
-_MICRO               = 1
+_MINOR               = 2
+_MICRO               = 0
 version              = '%d.%d.%d' % (_MAJOR, _MINOR, _MICRO)
 release              = '%d.%d' % (_MAJOR, _MINOR)
 
@@ -76,14 +76,14 @@ setup(
     # This is recursive include of data files
     exclude_package_data = {"": ["__pycache__"]},
     package_data = {
-        'recipes' : ['Singularity.*'],
+        'damona.recipes' : ['*/Singularity.*', '*/registry/*py'],
 
         },
 
     zip_safe=False,
     entry_points = {
         'console_scripts':[
-           'damona=damona.damona:main', 
+           'damona=damona.script:main', 
         ]
     },
 
