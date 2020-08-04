@@ -39,9 +39,11 @@ Installation
 ============
 
 1. Install singularity: https://sylabs.io/guides/3.0/user-guide/installation.html
-2. Install Damono using **pip**. You will need Python 3.X::
+2. Install **Damona** using **pip**. You will need Python 3.X::
 
     pip install damona --upgrade
+
+The dependencies of **Damona** are pure python so it should be straightfoward.
 
 Usage
 =====

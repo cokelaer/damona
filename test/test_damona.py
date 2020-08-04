@@ -7,6 +7,15 @@ def test_python_pull():
     p = pull.Pull(dryrun=True)
     p.pull("fastqc:0.11.9")
 
+def test_python_registry():
+    from damona import registry
+    r = registry.Registry()
+    r.get_list()
+
+    from damona.recipes import __path__
+    path = __path__[0] + "/fastqc"
+    r.create_registry(path)
+
 
 
 def test_help():
