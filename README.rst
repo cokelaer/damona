@@ -29,7 +29,7 @@ Motivation
 Why another collections or tools to provide NGS images ? There is bioconda, and
 a bunch of collections of singularity images indeed !
 
-I see two main reasons to start damono software. First, Bioconda is great but there are two small limitations: some tools are not there or installing two tools may be impossible due to conflits; those conflicts may be long to untangle. Remember that bioconda allows you to build an environment with all tools living altogether. Some may be in conflicts. Second, singularity images posted here are there are a great source of inspirations. Yet, I wanted a very simple tool for my users and hide the nitty-gritty details of singularity. In practice, on a cluster, you can get the missing tools in a few seconds. Your system administrator can install singularity and damona and then you can download ready-to-use executables.
+I see two main reasons to start **damona** software. First, Bioconda is great but there are two small limitations: some tools are not there or installing two tools may be impossible due to conflits; those conflicts may be long to untangle. Remember that bioconda allows you to build an environment with all tools living altogether. Some may be in conflicts. Second, singularity images posted here are there are a great source of inspirations. Yet, I wanted a very simple tool for my users and hide the nitty-gritty details of singularity. In practice, on a cluster, you can get the missing tools in a few seconds. Your system administrator can install singularity and damona and then you can download ready-to-use executables.
 
 Our goal is not to replace existing initiative but just to complement them when
 required. In particular, we designed **damona** so as to provide the executables
@@ -71,25 +71,18 @@ You are ready to go. Just type this command to use the newly installed container
 
     fastqc --help
 
-This tool is pretty common in NGS and can be easily installed. This is more a
-toy example than a real example.
+Check that you have not installed another version::
 
+    which fastqc
 
-In Damona, we currently provide only a few containers. For instance, we provide
-an image for R v4.0.2. This is not a NGS tool per se but can be used to build
-other containers. Besides, you can easily play with R without the need to
-interfer with your system::
+This should show you the path *~/.config/damona/bin/fastqc*. Of course, tThis tool is pretty common in NGS and can be easily installed. This is more a toy example than a real example.
 
-    damona pull r_4.0.2  # Note the small cap
+In damona there are three classes of container:
 
+1. executables (like the one above)
+2. environement: for instance, we provide an image for R v4.0.2. This is not a NGS tool per se but can be used to build other containers. 
+3. Set of executables (coming soon)
 
-
-Roadmap
-=========
-
-* handle versioning
-* ability to retrieve registry to fill the list of images automatically
-* ability to download from other collections
 
 
 Changelog
