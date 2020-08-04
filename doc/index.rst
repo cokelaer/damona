@@ -15,6 +15,7 @@ User guide and reference
     :maxdepth: 2
 
     userguide
+    dev
     graph
 
 Indices and tables

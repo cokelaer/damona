@@ -33,18 +33,15 @@ import click
 from damona  import version, bin_directory, images_directory
 from spython.main import Client
 
+__all__ = ["main"]
+
 _log = colorlog.getLogger(__name__)
 _log.level = "INFO"
 
-def error(msg):
-    _log.error(msg)
-    sys.exit(1)
 
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 
 
-# TODO: this should be automatic somehow
-registry = ["bcl2fastq", "fastqc", "r_4.0.2", "r_3.6.3"]
 
 @click.group(context_settings=CONTEXT_SETTINGS)
 @click.version_option(version=version)
@@ -54,34 +51,44 @@ def main():
 
 
 @main.command()
-@click.argument('name')
+@click.argument('name', type=click.STRING)
 @click.option('--force', is_flag=True)
-@click.option('--output-directory', default=images_directory)
-#@click.option('--name', default='bcl2fastq', help='word to use for the greeting')
+@click.option('--dryrun', is_flag=True, 
+    help="If set, do not pull the image and do not create the binary alias")
+@click.option('--output-directory', default=images_directory, 
+    help="""Where to save the image (default: {})""".format(images_directory))
 def pull(**kwargs):
     "Download an image given its name and version (optional)"
     name = kwargs['name']
+    from damona.pull import Pull
+    p = Pull(dryrun=kwargs['dryrun'])
+    p.pull(name, pull_folder=kwargs["output_directory"],
+        force=kwargs['force'])
 
-
-    # TODO: must be valid 
-    #_log.info("Downloading image names {}".format(name))
-    try:
-        Client.pull(f"shub://cokelaer/damona:{name}", name=name.split()[0] + ".img",
-            pull_folder=kwargs["output_directory"], force=kwargs['force'])
-
-    except:
-        # If it fails, this may be a normal behaviour
-        pass
 
 @main.command()
-#@click.argument('name', help_option_names="dddd")
-#@click.option('--name', default='bcl2fastq', help='word to use for the greeting')
+@click.option('--pattern', default=None, 
+    help="restrict the output list keeping those with this pattern")
 def list(**kwargs):
-    "List all available images"
-    print(", ".join(registry))
+    """List all available images"""
+    from damona.registry import Registry
+    modules = Registry().get_list(pattern=kwargs['pattern'])
+    print(", ".join(modules))
+
+
+@main.command()
+@click.option('--path', required=True, 
+    help="path to recipes directory where Singularity file(s) can be found")
+def develop(**kwargs):
+    """tools for developers only"""
+    from damona.registry import Registry
+    if kwargs['path']:
+        modules = Registry().create_registry(kwargs['path'])
 
 
 
 
-if __name__ == "__main__":
+
+
+if __name__ == "__main__": #pragma: no cover
     main()
