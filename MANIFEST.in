@@ -4,4 +4,4 @@ include requirements*txt
 include CONTRIBUTING.rst
 include LICENSE
 include README.rst
-inclued .requirements_dev.txt
+include .requirements_dev.txt
