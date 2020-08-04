@@ -76,7 +76,7 @@ setup(
     # This is recursive include of data files
     exclude_package_data = {"": ["__pycache__"]},
     package_data = {
-        'damona.recipes' : ['*/Singularity.*', '*/registry/*py'],
+        'damona.recipes' : ['*/Singularity.*', '*/registry.yaml'],
 
         },
 
