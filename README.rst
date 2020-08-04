@@ -29,7 +29,7 @@ Motivation
 Why another collections or tools to provide NGS images ? There is bioconda, and
 a bunch of collections of singularity images indeed !
 
-I see two main reasons to start damono software. First, Bioconda is great but there are two small limitations: some tools are not there or installing two tools may be impossible due to conflits; those conflicts may be long to untangle. Remember that bioconda allows you to build an environment with all tools living altogether. Some may be in conflicts. Second, singularity images posted here are there are a great source of inspirations. Yet, I wanted a very simple tool for my users and hide the nitty-gritty details of singularity. In practice, on a cluster, you can get the missing tools in a few seconds. Your system administrator can install singularity and damona and then you can download ready-to-use executables.
+I see two main reasons to start **damona** software. First, Bioconda is great but there are two small limitations: some tools are not there or installing two tools may be impossible due to conflits; those conflicts may be long to untangle. Remember that bioconda allows you to build an environment with all tools living altogether. Some may be in conflicts. Second, singularity images posted here are there are a great source of inspirations. Yet, I wanted a very simple tool for my users and hide the nitty-gritty details of singularity. In practice, on a cluster, you can get the missing tools in a few seconds. Your system administrator can install singularity and damona and then you can download ready-to-use executables.
 
 Our goal is not to replace existing initiative but just to complement them when
 required. In particular, we designed **damona** so as to provide the executables
