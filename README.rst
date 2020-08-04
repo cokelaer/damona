@@ -20,8 +20,8 @@ images locally.
 
 
 :Python version: Python 3.6, 3.7.3
-:Source: See  `http://github.com/damona/damona <https://github.com/damona/damona/>`__.
-:Issues: Please fill a report on `github <https://github.com/damona/damona/issues>`__
+:Source: See  `http://github.com/cokelaer/damona <https://github.com/cokelaer/damona/>`__.
+:Issues: Please fill a report on `github <https://github.com/cokelaer/damona/issues>`__
 
 Motivation
 ==========
