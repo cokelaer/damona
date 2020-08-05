@@ -1,0 +1,6 @@
+Singularity.rnadiff_1.7.0:
+    version: 1.7.0
+    download: library://cokelaer/damona/rnadiff:1.7.0
+    class: "exe"
+    binaries:
+        - rnadiff: "rnadiff"
