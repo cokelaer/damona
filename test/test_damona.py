@@ -6,9 +6,16 @@ import subprocess
 def test_damona_app():
     from click.testing import CliRunner
     from damona.script import install
+    from damona.script import list as _list
     runner = CliRunner()
+
+    # isntall
     results = runner.invoke(install, ['fastqc:0.11.9', '--dryrun'])
     assert results.exit_code == 0
+
+    results = runner.invoke(_list)
+    assert results.exit_code == 0
+
 
 def test_python_pull():
     p = pull.Pull(dryrun=True)
