@@ -76,7 +76,7 @@ def install(**kwargs):
 @click.argument('filename', required=True, type=click.STRING)
 @click.option('--output-name', default=None, 
     help="default to the singularity extension and tag")
-def build(**kwargs):
+def build(**kwargs): #pragma: no cover
     """Build a container from a local recipes or damona recipes.
 
     You must have sudo permissions
@@ -113,7 +113,6 @@ def build(**kwargs):
             sys.exit(1)
         logger.info("Building using damona recipes for {}".format(candidate[0]))
         cmd = cmd.format(output_name, candidate[0].replace(':', '_'))
-    print(cmd)
     subprocess.call(cmd.split())
 
 
@@ -133,8 +132,11 @@ def list(**kwargs):
 def develop(**kwargs):
     """Developers kit (eg build registry)"""
     from damona.registry import Registry
-    if kwargs['path']:
+
+    if kwargs['path'] and os.path.exists(kwargs['path']):
         modules = Registry().create_registry(kwargs['path'])
+    else:
+        logger.critical('Please provide a valid path where to find Singulary from damona software')
 
 if __name__ == "__main__": #pragma: no cover
     main()
