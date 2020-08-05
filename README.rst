@@ -30,7 +30,7 @@ Why another collections or tools to provide NGS images ? There is `Bioconda
 <https://bioconda.github.io/>`__, and
 a bunch of collections of singularity images indeed !
 
-Yet, Bioconda may have limitations for end-users. One of them is that two tools may be impossible to cohabit or slow to install due to difficulties in resolving their dependencies. Second, singularity images posted here are there are a great source of inspirations. Yet, I wanted a very simple tool both for developers that wish to offer an easy installation and for users to whom we try to hide all the nitty-gritty details of installing third-party librairies.
+Yet, Bioconda may have limitations for end-users. One of them is that two tools may be impossible to cohabit or slow to install due to difficulties in resolving their dependencies. Second, singularity images posted here and there are a great source of inspirations. Yet, I wanted a very simple tool both for developers that wish to offer an easy installation and for users to whom we try to hide all the nitty-gritty details of installing third-party librairies.
 
 Our goal is not to replace existing initiative but just to complement them when
 required. In particular, we designed **damona** so as to provide the executables
@@ -43,24 +43,31 @@ solution for their users when they need to install third-party libraries
 Installation
 ============
 
-1. Install singularity: https://sylabs.io/guides/3.0/user-guide/installation.html
-2. Install **Damona** using **pip**. You will need Python 3.X::
+The is the egg and chicken paradox. To get reproducible container with
+singularity, at some point you ned to install singularity itself. That the first
+of the two software that you will need to install. Instructions 
+are on `singularity web site <https://sylabs.io/guides/3.6/user-guide/>`_. This
+is not obvious to be honest. You need the GO language to be installed as well. I
+personally installed from source and it worked like a charm.
+
+Second, you need **Damona**. This is a pure Python sotfware with only a few
+dependencies. Install it with the **pip** software provided with your Python
+installation (Python 3.X)::
 
     pip install damona --upgrade
 
-The dependencies of **Damona** are pure python so it should be straightfoward.
+You should be ready to go. 
 
-Usage
-=====
+Quick Start
+============
 
-
-Print the list of images available within Damona collections::
+Print the list of images available within **Damona** collections::
 
     damona list
 
 Download the one you want to use::
 
-    damona pull fastqc:0.11.9
+    damona install fastqc:0.11.9
 
 This will download the container in your ./config/damona directory and create an
 executable for you in ~/.config/damona/bin. 
@@ -69,24 +76,13 @@ You just need to append your PATH. For instance under Linux, type:
 
     export PATH=~/config/damona/bin:$PATH
 
-You you can also add in your .profile or .bashrc file for this command to be
-permanent.
-
-You are ready to go. Just type this command to use the newly installed container::
-
-    fastqc --help
+That's it. You have downloaded a reproducible container of fastqc tool. 
 
 Check that you have not installed another version::
 
     which fastqc
 
-This should show you the path *~/.config/damona/bin/fastqc*. Of course, tThis tool is pretty common in NGS and can be easily installed. This is more a toy example than a real example.
-
-In damona there are three classes of container:
-
-1. executables (like the one above)
-2. environement: for instance, we provide an image for R v4.0.2. This is not a NGS tool per se but can be used to build other containers. 
-3. Set of executables (coming soon)
+More information in the User Guide. 
 
 
 
@@ -96,6 +92,8 @@ Changelog
 ========= ====================================================================
 Version   Description
 ========= ====================================================================
+0.3.1     * add gffread recipe
+0.3.0     * A stable version with documentation and >95% coverage read-yto-use
 0.2.3     * add new recipes (rnadiff) 
 0.2.2     * Download latest if no version provided
           * include *build* command to build image locally

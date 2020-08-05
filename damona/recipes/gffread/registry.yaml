@@ -1,0 +1,6 @@
+Singularity.gffread_0.12.1:
+    version: 0.12.1
+    download: library://cokelaer/damona/gffread_0.12.1
+    class: "exe"
+    binaries:
+        - gffread: gffread
