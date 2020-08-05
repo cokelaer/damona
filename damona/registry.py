@@ -41,7 +41,7 @@ class Registry():
         self.discovery()
 
     def _read_registry(self, registry):
-        if os.path.exists(registry) is False:
+        if os.path.exists(registry) is False: #pragma: no cover
             raise IOError("incorrect input filename {}".format(registry))
 
         # read the yaml
@@ -49,14 +49,14 @@ class Registry():
 
         # some checks
         for k, v in data.items():
-            if "class" not in v: 
+            if "class" not in v: #pragma: no cover
                 logger.warning("missing class in {}".format(registry))
-            if "version" not in v:
+            if "version" not in v: #pragma: no cover
                 logger.warning("missing version in {}".format(registry))
-            if "download" not in v:
+            if "download" not in v: #pragma: no cover
                 logger.warning("missing download in {}".format(registry))
             if data[k]["class"] == "exe":
-                if "binaries" not in v:
+                if "binaries" not in v: #pragma: no cover
                     logger.warning("missing binaries field in {}".format(registry))
         return data
 
@@ -79,11 +79,8 @@ class Registry():
 
         for filename in self._singularity_files:
             p = pathlib.Path(filename)
-            if (p.parent / "registry.yaml").exists() is False:
+            if (p.parent / "registry.yaml").exists() is False: #pragma: no cover
                 logger.warning("Missing registry in {}. You may use 'damona registry {} to start with".format(p.parent, p.parent))
-
-    def get_downloadable_link(self, name):
-        pass
 
     def create_registry(self, path):
         #recipes = glob.glob(pathlib.Path(path).absolute() / "Singularity*")

@@ -3,6 +3,13 @@ from damona import pull
 import subprocess
 
 
+def test_damona_app():
+    from click.testing import CliRunner
+    from damona.script import install
+    runner = CliRunner()
+    results = runner.invoke(install, ['fastqc:0.11.9', '--dryrun'])
+    assert results.exit_code == 0
+
 def test_python_pull():
     p = pull.Pull(dryrun=True)
     p.pull("fastqc:0.11.9")
@@ -35,7 +42,7 @@ def test_list():
     cmd = "damona list --help"
     subprocess.call(cmd.split())
 
-    cmd = "damona list"
+    cmd = "damona list --pattern qc"
     subprocess.call(cmd.split())
 
 def test_develop():
