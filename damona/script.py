@@ -30,13 +30,15 @@ import sys
 import colorlog
 import textwrap
 import click
+import subprocess
 from damona  import version, bin_directory, images_directory
 from spython.main import Client
+import pathlib
 
 __all__ = ["main"]
 
-_log = colorlog.getLogger(__name__)
-_log.level = "INFO"
+from damona import logger
+logger.level = 10
 
 
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
@@ -67,10 +69,52 @@ def pull(**kwargs):
 
 
 @main.command()
+@click.argument('filename', required=True, type=click.STRING)
+@click.option('--output-name', default=None, 
+    help="default to the singularity extension and tag")
+def build(**kwargs):
+    """Build a local image. You must have sudo permissions
+    If FILENAME is not local, try to find it in Damona and build it.
+
+        # a local recipes
+        damona build ./Singularity.recipe
+
+       # a recipe to be found in damona
+        damona build salmon:1.3.0
+
+    """
+    cmd = "sudo singularity build {} {}"
+    output_name = kwargs.get('output_name')
+    if output_name is None:
+        # get filename and save locally
+        output_name = str(pathlib.Path(kwargs['filename']).name)
+        output_name = output_name.replace("Singularity.", "")
+        output_name = output_name.replace(":", "_") + ".img"
+    else:
+        assert output_name.endswith(('.sif', 'img'))
+
+    if os.path.exists(kwargs['filename']):
+        cmd = cmd.format(output_name, kwargs['filename'])
+    else:
+        from damona import registry
+        reg = registry.Registry()
+        user_name = kwargs['filename']
+        candidate = [x for x in reg._singularity_files 
+            if x.endswith(user_name.replace(':', '_', 1))]
+        if len(candidate) == 0:
+            logger.critical(f'unknown image name {user_name}. use the command' +
+                ' "damona list" to get correct names')
+            sys.exit(1)
+        logger.info("Building using damona recipes for {}".format(candidate[0]))
+        cmd = cmd.format(output_name, candidate[0].replace(':', '_'))
+    subprocess.call(cmd.split())
+
+
+@main.command()
 @click.option('--pattern', default=None, 
     help="restrict the output list keeping those with this pattern")
 def list(**kwargs):
-    """List all available images"""
+    """List all available images from Damona"""
     from damona.registry import Registry
     modules = Registry().get_list(pattern=kwargs['pattern'])
     print(", ".join(modules))
@@ -80,15 +124,10 @@ def list(**kwargs):
 @click.option('--path', required=True, 
     help="path to recipes directory where Singularity file(s) can be found")
 def develop(**kwargs):
-    """tools for developers only"""
+    """Developers kit (eg build registry)"""
     from damona.registry import Registry
     if kwargs['path']:
         modules = Registry().create_registry(kwargs['path'])
-
-
-
-
-
 
 if __name__ == "__main__": #pragma: no cover
     main()
