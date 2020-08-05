@@ -1,6 +1,7 @@
-Singularity.damona:
-    version: latest
+Singularity.damona_0.3.0:
+    version: 0.3.0
     class: exe
+    download: library://cokelaer/damona/damona:0.3.0
     binaries:
-        - damona in singularity: damona
+        - damona: damona
 
