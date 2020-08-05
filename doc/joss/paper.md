@@ -1,5 +1,5 @@
 ---
-title: "Damona: a one command installer for sequana pipelines"
+title: "Damona: reproducible NGS environments made easy"
 tags:
   - singularity
   - python
@@ -22,7 +22,9 @@ bibliography: paper.bib
 
 # Overview
 
-Damona is a collections of singularity recipes that can be used to build software used in NGS pipelines. It provides a simple excutable to download the images locally and use executable straightaway. 
+Damona is a collections of singularity recipes that can be used to build software used in NGS pipelines. It provides a simple excutable to download the images locally and use executable straightaway.
+
+
 
 Why another collections or tools to provide NGS images ? There is bioconda, and a bunch of collections of singularity images indeed !
 
