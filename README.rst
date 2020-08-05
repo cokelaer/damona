@@ -91,6 +91,10 @@ Changelog
 ========= ====================================================================
 Version   Description
 ========= ====================================================================
+0.2.3     * add new recipes (rnadiff) 
+0.2.2     * Download latest if no version provided
+          * include *build* command to build image locally
+0.2.1     fixed manifest
 0.2.0     first working version of damona to pull image locally with binaries
 0.1.1     small update to fix RTD, travis, coveralls
 0.1       first release to test feasibility of the project
