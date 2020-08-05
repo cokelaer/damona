@@ -59,8 +59,12 @@ def main():
     help="If set, do not pull the image and do not create the binary alias")
 @click.option('--output-directory', default=images_directory, 
     help="""Where to save the image (default: {})""".format(images_directory))
-def pull(**kwargs):
-    "Download an image given its name and version (optional)"
+def install(**kwargs):
+    """Download and install an  image given its name and version (optional)
+
+    Under Linux the DAMONA PATH is under ~/.config/damona
+
+    """
     name = kwargs['name']
     from damona.pull import Pull
     p = Pull(dryrun=kwargs['dryrun'])
@@ -73,7 +77,9 @@ def pull(**kwargs):
 @click.option('--output-name', default=None, 
     help="default to the singularity extension and tag")
 def build(**kwargs):
-    """Build a local image. You must have sudo permissions
+    """Build a container from a local recipes or damona recipes.
+
+    You must have sudo permissions
     If FILENAME is not local, try to find it in Damona and build it.
 
         # a local recipes
@@ -93,7 +99,7 @@ def build(**kwargs):
     else:
         assert output_name.endswith(('.sif', 'img'))
 
-    if os.path.exists(kwargs['filename']):
+    if os.path.exists(kwargs['filename']) and os.path.isdir(kwargs['filename']) is False:
         cmd = cmd.format(output_name, kwargs['filename'])
     else:
         from damona import registry
@@ -107,6 +113,7 @@ def build(**kwargs):
             sys.exit(1)
         logger.info("Building using damona recipes for {}".format(candidate[0]))
         cmd = cmd.format(output_name, candidate[0].replace(':', '_'))
+    print(cmd)
     subprocess.call(cmd.split())
 
 
