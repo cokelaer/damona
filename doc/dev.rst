@@ -4,8 +4,9 @@ Developer guide
 tree structure
 --------------
 
-Recipes are in ./recipes where each sub directory is related to one container. 
-Inside a sub directory (e.g, R, conda) you may have several recipes. 
+Recipes are in the ./recipes directory with one sub-directory per tool or environment.
+Inside a sub directory (e.g, R, conda) you may have several recipes for
+different version
 
 For example, for **damona** there is a directory called **damona**. Inside that
 directory, if there is only one recipes, name it::
@@ -15,16 +16,6 @@ directory, if there is only one recipes, name it::
 If you wish to have several recipes for different version, name it::
 
    Singularity.damona_x.y.z
-
-You may simplify it as::
-
-   Singularity.damona_x.y
-
-if the micro version is 0 and ::
-
-   Singularity.damona_x
-
-if the minor and micro version are 0 or unknown.
 
 Naming convention
 -----------------
@@ -38,13 +29,20 @@ it should be named as pkgname_x.y.z
 build
 -----
 
-Add a Makefile wihh an entry for each Singularity. This will be useful for local
-build.
+To test the recipes, type::
+
+    damona build pkgname:x.y.z 
 
 Singularity recipes
 --------------------
 
-IF the class of image is executable, please add these lines::
+We have three types of recipes:
+
+1. executable
+2. environment
+3. sets of executables
+
+If the class of image is executable, please add these lines::
 
     %runscript
         exec THE_EXE_NAME "$@"
@@ -53,6 +51,10 @@ so one can run it simply as ::
 
     singularity run image.img 
 
+The class *environement* is suppose to be used to build other container. When
+installing a *executable* container, a binary is created in ~/.config/damona/bin
+but no such files are created for *environement*. The final class (set of
+executables) is not yet implemented. 
 
 registry
 ---------
@@ -69,18 +71,20 @@ The different container types can be:
 
 ::
 
-    {
-        "Singularity_kraken_1.1": {
-            type": "executable"
-            "executables": {
-                "kraken": "kraken"
-            }
-        },
-        "Singularity_kraken_2": {
-            type": "executable"
-            "executables": {
-                "kraken2": "kraken2"
-            }
-        }
-    }
+    Singularity.kraken_1.1:
+        version: 1.1
+        download: library://cokelaer/damona/kraken:1.1
+        class: "exe"
+        binaries:
+            - kraken: "kraken"
+    Singularity.kraken_2.0.9:
+        version: 2.0.9
+        download: library://cokelaer/damona/kraken:2.0.9
+        class: "exe"
+        binaries:
+            - kraken2: "kraken2"
 
+Where are stored the containers ?
+----------------------------------
+
+Currently containers are hosted in this collection: https://cloud.sylabs.io/library/cokelaer/damona

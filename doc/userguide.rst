@@ -91,11 +91,13 @@ found in damona::
 this will find the recipes automatically and save the final container in
 **salmon_1.3.0.img**.
 
-Setup an environment
---------------------
+Setup the environement
+----------------------
 
+Binaries are saved into ~/.config/damona/bin
 
+To make those binaries available, change your path. For example under bash::
 
+    export PATH=~/.config/damona/bin:$PATH
 
-
-
+To make it persisent add the previous line into your .bashrc file.
