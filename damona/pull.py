@@ -15,6 +15,9 @@
 #
 ##############################################################################
 import os
+import sys
+import packaging.version
+
 from spython.main import Client
 from damona import bin_directory, images_directory
 from damona import Registry
@@ -41,11 +44,25 @@ class Pull():
         # use the character :
         #  
         registry_name = name.replace(":", "_")
-        if  registry_name not in self.registry.keys():
+
+        # if a name is not found, may the users just want the latest version.
+
+        if ":" in registry_name and registry_name not in self.registry.keys():
             logger.critical("invalid image name provided: {}. Choose amongst {}".format(name,
 self.registry.keys()))
             sys.exit(1)
+        else:
+            # we look only at the prefix name, not the tag. so we should get the
+            # registry names from self.registry that have the prefix in common, 
+            # then extract the versions, and figure out the most recent.
+            candidates = [x for x in self.registry.keys() if x.split("_")[0] == registry_name]
+            names = [x.split("_")[0] for x in candidates]
+            versions = [x.split("_")[1] for x in candidates]
 
+            version = max([packaging.version.parse(ver) for ver in versions])
+            name = names[0] 
+            registry_name = name + '_' + str(version)
+            logger.info("pulling {}".format(registry_name))
 
         download_name = self.registry[registry_name]['download']
         if output_name is None:
@@ -54,7 +71,7 @@ self.registry.keys()))
         if self.dryrun: 
             pass
         else: # pragma: no cover
-            Client.pull(download_name, name=output_name, 
+            Client.pull(str(download_name), name=output_name, 
                 pull_folder=pull_folder,
                 force=force) 
             logger.info("File {} upload to {}".format(name, images_directory))
