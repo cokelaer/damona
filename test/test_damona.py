@@ -6,6 +6,12 @@ import subprocess
 def test_python_pull():
     p = pull.Pull(dryrun=True)
     p.pull("fastqc:0.11.9")
+    p.pull("fastqc") # latest
+    try:
+        p.pull("fastqc1")
+        assert False
+    except:
+        assert True
 
 def test_python_registry():
     from damona import registry

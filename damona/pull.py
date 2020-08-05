@@ -24,8 +24,10 @@ from damona import Registry
 from damona import logger
 
 logger.level = 10
+
+
 class Pull():
-    """Manage the download of images
+    """Manager to download container images
 
 
     """
@@ -42,20 +44,29 @@ class Pull():
         # Our registry uses underscore. The output filename should use _ as well
         # However, for users and image stored on sylabs or singularity hub, we
         # use the character :
-        #  
-        registry_name = name.replace(":", "_")
+        #
 
-        # if a name is not found, may the users just want the latest version.
-
-        if ":" in registry_name and registry_name not in self.registry.keys():
-            logger.critical("invalid image name provided: {}. Choose amongst {}".format(name,
-self.registry.keys()))
-            sys.exit(1)
+        if ":" in name:
+            logger.info(f"Looking for {name}...")
+            # e.G. fastqc:0.11.9
+            registry_name = name.replace(":", "_")
+            if registry_name not in self.registry.keys():
+                logger.critical("invalid image name provided: {}. Choose amongst {}".format(
+                    name, self.registry.keys()))
+                sys.exit(1)
+            else:
+                logger.info(f"... found. Please wait while downloading (if not already done)")
         else:
+            # e.g. fastqc
+            logger.info(f"No tag found after {name}. We will download the latest version")
+            registry_name = name
             # we look only at the prefix name, not the tag. so we should get the
             # registry names from self.registry that have the prefix in common, 
             # then extract the versions, and figure out the most recent.
             candidates = [x for x in self.registry.keys() if x.split("_")[0] == registry_name]
+            if len(candidates) == 0:
+                logger.critical(f"No image found for {name}. MAke sure it is correct using 'damona list' command")
+                sys.exit(1)
             names = [x.split("_")[0] for x in candidates]
             versions = [x.split("_")[1] for x in candidates]
 
@@ -74,7 +85,7 @@ self.registry.keys()))
             Client.pull(str(download_name), name=output_name, 
                 pull_folder=pull_folder,
                 force=force) 
-            logger.info("File {} upload to {}".format(name, images_directory))
+            logger.info("File {} uploaded to {}".format(name, images_directory))
 
         # Now, create an alias
         path = images_directory
@@ -91,7 +102,7 @@ self.registry.keys()))
                 with open(bin_name, "w") as fout:
                     fout.write(cmd)
                 os.chmod(bin_name, 0o755)
-                logger.info("Binary {} in {}".format(bin_name, bin_directory))
+                logger.info("Creating binary {}".format(bin_name))
         elif _class == "env": #pragma: no cover
             pass
         elif _class == "set": # pragma: no cover
