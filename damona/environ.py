@@ -37,7 +37,7 @@ class Environ():
     N = property(_get_N)
 
     def _get_envs(self):
-        envs = os.listdir(env_directory)
+        envs = os.listdir(str(env_directory))
         return envs
     environments = property(_get_envs)
 
@@ -55,7 +55,7 @@ class Environ():
                     shutil.rmtree(env_path)
 
     def activate(self, env_name):
-        assert env_name in self.environments, "invalid name. use 'damona env'"
+        assert env_name in self.environments, "invalid name. use 'damona env' to get the list"
         env_path = env_directory / env_name
         # this cannot be done permanently from python
         print("This feature is not fully implemented yet. Please set the environmental "

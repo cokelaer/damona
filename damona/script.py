@@ -119,10 +119,18 @@ def build(**kwargs): #pragma: no cover
 @main.command()
 @click.option('--pattern', default=None, 
     help="restrict the output list keeping those with this pattern")
-@click.option('--from-url', help="""download image from a remote URL. The URL must
-contain a registry.txt as explained on damona.readthedocs.io""") 
+@click.option('--from-url', help="""download registry from remote URL. The URL must
+contain a registry.txt as explained on damona.readthedocs.io. If you just type
+'damona', the URL will be biomics.pasteur.fr/drylab/damona/registry.txt""") 
 def list(**kwargs):
-    """List all available images from Damona"""
+    """List all available images from Damona
+
+    damona list
+    damona list --from-url https://biomics.pasteur.fr/drylab/damona/registry.txt
+    #This is the same command as above (alias)
+    damona list --from-url damona
+
+    """
     from damona.registry import Registry
     modules = Registry(from_url=kwargs["from_url"]).get_list(pattern=kwargs['pattern'])
     print(", ".join(modules))
@@ -138,18 +146,17 @@ def env(**kwargs):
     if kwargs['create'] is None and kwargs['delete'] is None:
         print(f"There is currently only one base environment and {envs.N} user environment.")
         if envs.N !=0:
-            print("Here are the current environment: ")
+            print("Here are the current environment(s): ")
             for this in envs.environments:
                 print(" -  {}".format(this))
         current_env = envs.get_current_env()
-        logger.info("""Your current env is {}. You can overwrite this behaviour by
-setting DAMONA_ENV variable. For example under bash: 
+        logger.info("""Your current env is {}.
+
+You can overwrite this behaviour by setting DAMONA_ENV variable.
+For example under bash:
 
     export DAMONA_ENV="~/.config/damona/envs/your_best_env"
 
-    You can also set the environment in your current shell using:
-
-    damona activate your_best_env
 
         """.format(current_env))
     elif kwargs['create'] and kwargs['delete']: # mutually exclusive
@@ -162,7 +169,17 @@ setting DAMONA_ENV variable. For example under bash:
 @main.command()
 @click.argument('name', required=True, type=click.STRING)
 def activate(**kwargs):
-    """activate a damona environment"""
+    """activate a damona environment
+    
+    List the environments
+
+        damona env
+
+    and activate a valid one:
+
+        damona activate example
+
+    """
     from damona import Environ
     env = Environ()
     env.activate(kwargs['name'])

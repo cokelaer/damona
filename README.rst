@@ -1,9 +1,15 @@
 DAMONA
 ######
 
-Damona is a collections of singularity recipes that can be used to build software used in
-NGS pipelines. Damona allows a quick and easy installation of the related
-containers. If you prefer, you can build the container images locally as well.
+Damona is a singularity environment manager.
+
+Damona started as a small collections of singularity recipes to help installing third-party tools for 
+`Sequana pipelines <a href="https://sequana.readthedocs.io>`_ and is now used to 
+download singularity images but more importantly set different environments (e.g. one per pipeline).
+
+In a nutshell, it puts together the logic of Conda environments with the
+reproducibility of singularity containers. We believe it could be useful for
+other projects and therefore decided to release it.
 
 .. image:: https://badge.fury.io/py/damona.svg
     :target: https://pypi.python.org/pypi/damona
@@ -26,15 +32,51 @@ containers. If you prefer, you can build the container images locally as well.
 Motivation
 ==========
 
-Why another collections or tools to provide NGS images ? There is `Bioconda
-<https://bioconda.github.io/>`__, and
-a bunch of collections of singularity images indeed !
+As stated on their website, `Conda <https:/docs.conda.io/en/latest>`_ is 
+an open source **package** management system 
+and **environment** management system.
+Conda provides pre-compiled releases of software; they can be installed in
+different local environment that do not interfer with your system. This has
+great advantages for developers. Different community have emerge using this
+framework. One of them is `Bioconda <https://bioconda.github.io>`_, which is dedicated to bioinformatics.
+Although great, it is sometimes tricky to re-install an environment simply
+because NGS pipelines relies on many different software and different versions
+may be in conflicts. Another great tool is
+`Singularity <https://sylabs.io/docs>`_. Singularity containers can be used 
+to package entire scientific workflows, 
+software and libraries, and even data. It is a simpe file that can be shared
+between environments and guarantee exectution and reproducibility. 
 
-Yet, Bioconda may have limitations for end-users. One of them is that two tools may be impossible to cohabit or slow to install due to difficulties in resolving their dependencies. Second, singularity images posted here and there are a great source of inspirations. Yet, I wanted a very simple tool both for developers that wish to offer an easy installation and for users to whom we try to hide all the nitty-gritty details of installing third-party librairies.
+Originally, Conda provided pre-compiled version of a package. Nowadays, it also provides
+a docker and a singularity image of the tool. Singularity can package an 
+entire conda environment. 
+As you can see everything is there to build reproducible tools and
+environment. 
 
-Our goal is not to replace existing initiative but just to complement them when
-required. In particular, we designed **damona** so as to provide the executables
-required by `Sequana <sequana.readthedocs.io>`_ pipelines.
+Now, what about a software in development that depends on third-party packages
+You would create a conda environment and starts installing those packages.
+Quickly, you will install another package that will break your environment due
+to unresolved conlicts; this is not common but it happens. In the worst case
+scenario, the environment is broken. In facilities where users depends on you,
+it can be quite stresful and time-consuming to maintain several such
+environments. This is why we have moved little by little to a very light conda
+environment where known-to-cause-problem packages have been shipped into
+singularity containers. This means we have to create aliases to those
+singularities. The singularities can be simple executable containers or full
+environment containers with many executables inside. In both cases, on need to
+manager those containers for different users, pipelines, versions etc. This
+started to be cumbersome to have containers in different places and update
+script that generate the aliases to those executables. 
+
+
+That's where **damona** started: we wanted to combine the conda-like environment framework to manage our singularitiy containers.  
+
+Our goal is not to replace existing registry of biocontainers such as
+biocontainers but to use existing images, download them and manage them locally.
+Although **Damona** has some recipes and images (on
+sylabs/cokelaer/damona dn https://biomics.pasteur.fr/drylab/damona), those
+containers are for testing and help managing and installing the third-party
+tools required by `Sequana <sequana.readthedocs.io>`_ pipelines.
 
 We will therefore maintain damona in the context of Sequana project. Yet,
 **Damona** may be useful for others developers who wish to have a quick and easy
@@ -44,7 +86,7 @@ Installation
 ============
 
 The is the egg and chicken paradox. To get reproducible container with
-singularity, at some point you ned to install singularity itself. That the first
+singularity, at some point you need to install singularity itself. That the first
 of the two software that you will need to install. Instructions 
 are on `singularity web site <https://sylabs.io/guides/3.6/user-guide/>`_. This
 is not obvious to be honest. You need the GO language to be installed as well. I
@@ -61,9 +103,24 @@ You should be ready to go.
 Quick Start
 ============
 
-Print the list of images available within **Damona** collections::
+1. *list* available containers
+-------------------------------
+By default, we provide some recipes (for testing mostly but also to complement existing
+registries when a tool is missing) and their images. 
 
-    damona list
+To get the list images available within **Damona** collection, just type::
+
+    damona list --from-url https://biomics.pasteur.fr/drylab/damona/registry.txt
+
+or in short (just for that url)::
+
+    damona list --from-url damona
+
+You may retrieve images from a website where a registry exists (see developer
+guide to create a registry)
+
+2. *install* an image
+---------------------
 
 Download the one you want to use::
 
@@ -72,19 +129,78 @@ Download the one you want to use::
 This will download the container in your ./config/damona directory and create an
 executable for you in ~/.config/damona/bin. 
 
-You just need to append your PATH. For instance under Linux, type:
+This is your *base* environment. By default there is only one and all images
+will be stored in this directory. 
+
+The binaries are in the ~./config/damona/bin directory and you may need to append this path to 
+your PATH environmental variable. For instance under Linux, type::
 
     export PATH=~/config/damona/bin:$PATH
 
-That's it. You have downloaded a reproducible container of fastqc tool. 
+That's it. You have downloaded a reproducible container and you can try::
 
-Check that you have not installed another version::
+    fastqc --versio
+
+Check that this is the correct path::
 
     which fastqc
 
-More information in the User Guide. 
+3. combine two different environments
+--------------------------------------
 
+If you type::
 
+    damona env
+
+it will list the environments you currently hosting. Since you are starting,
+most probably you have only the base environment. Let us create a new one::
+
+    damone env --create test1
+
+and check that you now have 1 environment::
+
+    damona env
+
+We want to create an alias to the previously downloaded image of fastqc tool but
+in the *test1* environment. First we activate it by setting an environmental
+variable::
+
+    export DAMONA_ENV=~/.config/damona/envs/test1
+    export DAMONA_PATH=~/.config/damona/envs/test1/bin
+
+.. note:: the command::
+
+        damona env activate
+
+    does not currently change the environmental variables (cannot be done 
+    permanently in Python) but we gives hints on how to do it.
+
+then, we install the container::
+
+    damona install fastqc:0.11.9
+
+This will not download the image again. Instead it will create an alias in
+~/.config/damona/envs/test1/bin directory
+
+Change your PATH accordingly using the DAMONA_PATH variable
+
+If you are interested to know more, please see the User Guide and Developer
+guide here below.
+
+Roadmap
+=======
+
+**Damona** is pretty new but here is short roadmap
+
+* check the md5 of the downloaded file so as to avoid overwritten existing name
+* do we store all images in the damona/images or do we store them in individual
+  environement (with possbile duplicates).
+* remove the build and develop command most probably. The develop that builds a
+  registry could be reaplce by a simple python code that builds the registry on
+  the fly. the registry.yaml may not be required after all. Could be a simple
+  registry.txt file name and version are included in the name. 
+* ability to download any image from internet if user provide the name and
+  version to cope with different naming conventions; 
 
 Changelog
 =========
@@ -93,7 +209,9 @@ Changelog
 Version   Description
 ========= ====================================================================
 0.4.0     * implemented the 'env' and 'activate' command
-0.3.1     * add gffread recipe
+          * ability to setup an external registry on any https and retrieve
+            registry from there to download external images
+0.3.X     * add gffread, rnadiff recipes
 0.3.0     * A stable version with documentation and >95% coverage read-yto-use
 0.2.3     * add new recipes (rnadiff) 
 0.2.2     * Download latest if no version provided

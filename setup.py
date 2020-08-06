@@ -21,7 +21,7 @@ metainfo = {
     'download_url': "https://github.com/sequana/sequana/archive/{0}.tar.gz".format(version),
     'url' : "http://github.com/sequana/sequana",
     'description': "A set of NGS singularity recipes, built for you and easily downlable" ,
-    'platforms' : ['Linux', 'Unix', 'MacOsX', 'Windows'],
+    'platforms' : ['Linux', 'Unix'],
     'keywords' : ['NGS', 'singularity'],
     'classifiers' : [
           'Development Status :: 5 - Production/Stable',

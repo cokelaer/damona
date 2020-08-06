@@ -155,4 +155,6 @@ class Registry():
             names = []
             for k,v in self.registry.items():
                 names.append(k.replace("_", ":" ))
+            if pattern:
+                names = [x for x in names if pattern in x]
             return names
