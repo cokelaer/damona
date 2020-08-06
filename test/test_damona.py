@@ -67,6 +67,8 @@ def test_python_registry():
     path = __path__[0] + "/fastqc"
     r.create_registry(path)
 
+    r = registry.Registry("damona")
+    r.get_list()
 
 
 def test_help():
