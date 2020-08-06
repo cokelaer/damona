@@ -19,7 +19,7 @@ containers. If you prefer, you can build the container images locally as well.
     :alt: Documentation Status
 
 
-:Python version: Python 3.6, 3.7.3
+:Python version: Python 3.6, 3.7.3, 3.7, 3.8
 :Source: See  `http://github.com/cokelaer/damona <https://github.com/cokelaer/damona/>`__.
 :Issues: Please fill a report on `github <https://github.com/cokelaer/damona/issues>`__
 

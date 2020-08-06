@@ -21,9 +21,15 @@ def test_damona_app():
     assert results.exit_code == 0
     
     import damona
+    results = runner.invoke(env, [])
+    # wrong
+    results = runner.invoke(env, ["--create", ".dummy_test", "--delete", ".dummy_test"])
+    # good
     results = runner.invoke(env, ["--create", ".dummy_test"])
     assert results.exit_code == 0
     results = runner.invoke(env, ["--create", ".dummy_test"])
+    assert results.exit_code == 0
+    results = runner.invoke(activate, [".dummy_test"])
     assert results.exit_code == 0
 
     import mock

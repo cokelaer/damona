@@ -1,5 +1,5 @@
 ---
-title: "Damona: singularity recipes and images for end-users"
+title: "Damona: a singularity environment manager for developers and end-users"
 tags:
   - singularity
   - python
