@@ -25,12 +25,13 @@ bibliography: paper.bib
 Next Sequencing Generation (NGS) [@Goodwin2016] implies complex analysis using pipelines that
 depends on a plethora of software. A few years ago, setting up a local system to
 reproduce an analysis was a challenge even for computer scientists. Indeed, one
-needed to be proficient in several languages to compile C/C++ code,
-set up the correct JAVA or R environment, etc. Hours were spent in retrieving
-the correct source code, days in compilation time, weeks in reproducing analysis. Indeed, one
- recurrent issue in research being the ability to reproduce an existing results, which was 
-difficult with colleagues 
-working in different environments or different operating system. Nowadays, many solutions are 
+needed to be proficient in several languages. For instance you would nee to
+compile C/C++ code or set up the correct JAVA or R environments just to cite a few examples.
+Hours were spent in retrieving the correct source code, days in compilation time, weeks in
+reproducing analysis. Reproducing the analysis on another operating system would
+have been even more challenging.
+
+Nowadays, many solutions are 
 available to install reproducible NGS pipelines.
 First, the **conda** software manager allows to create environment where compiled version of a 
 software can be installed. More specifically, the **Bioconda** [Gruning2018] community has
