@@ -1,11 +1,11 @@
 from damona import script
 from damona import pull
 import subprocess
-
+import builtins
 
 def test_damona_app():
     from click.testing import CliRunner
-    from damona.script import install, build, develop
+    from damona.script import install, build, develop, env, activate
     from damona.script import list as _list
     runner = CliRunner()
 
@@ -19,6 +19,28 @@ def test_damona_app():
     import damona
     results = runner.invoke(develop, ["--path", damona.__path__[0] + "/recipes/fastqc"])
     assert results.exit_code == 0
+    
+    import damona
+    results = runner.invoke(env, ["--create", ".dummy_test"])
+    assert results.exit_code == 0
+    results = runner.invoke(env, ["--create", ".dummy_test"])
+    assert results.exit_code == 0
+
+    import mock
+    with mock.patch.object(builtins, 'input', lambda _: 'y'):
+        results = runner.invoke(env, ["--delete", ".dummy_test"])
+        assert results.exit_code == 0
+
+def test_environ():
+    from damona.environ import Environ
+    env = Environ()
+    env.N
+    env.environments
+    env.create(".dummy_test")
+    import mock
+    with mock.patch.object(builtins, 'input', lambda _: 'y'):
+        env.delete(".dummy_test")
+
 
 def test_python_pull():
     p = pull.Pull(dryrun=True)

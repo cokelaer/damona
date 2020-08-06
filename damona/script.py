@@ -23,16 +23,14 @@
 ###########################################################################
 """.. rubric:: Standalone application dedicated to conversion"""
 import os
-import argparse
 import glob
 import json
 import sys
 import colorlog
 import textwrap
-import click
 import subprocess
-from damona  import version, bin_directory, images_directory
-from spython.main import Client
+import click
+from damona  import version,  images_directory
 import pathlib
 
 __all__ = ["main"]
@@ -125,6 +123,45 @@ def list(**kwargs):
     modules = Registry().get_list(pattern=kwargs['pattern'])
     print(", ".join(modules))
 
+
+@main.command()
+@click.option('--create', type=click.STRING) 
+@click.option('--delete', type=click.STRING) 
+def env(**kwargs):
+    """List the Damona environments"""
+    from damona import Environ
+    envs = Environ()
+    if kwargs['create'] is None and kwargs['delete'] is None:
+        print(f"There is currently only one base environment and {envs.N} user environment.")
+        if envs.N !=0:
+            print("Here are the current environment: ")
+            for this in envs.environments:
+                print(" -  {}".format(this))
+        current_env = envs.get_current_env()
+        logger.info("""Your current env is {}. You can overwrite this behaviour by
+setting DAMONA_ENV variable. For example under bash: 
+
+    export DAMONA_ENV="~/.config/damona/envs/your_best_env"
+
+    You can also set the environment in your current shell using:
+
+    damona activate your_best_env
+
+        """.format(current_env))
+    elif kwargs['create'] and kwargs['delete']: # mutually exclusive
+        logger.error("you cannot use --delete and --create together")
+    elif kwargs['delete']:
+        envs.delete(kwargs['delete'])
+    elif kwargs['create']:
+        envs.create(kwargs["create"])
+
+@main.command()
+@click.argument('name', required=True, type=click.STRING)
+def activate(**kwargs):
+    """activate a damona environment"""
+    from damona import Environ
+    env = Environ()
+    env.activate(kwargs['name'])
 
 @main.command()
 @click.option('--path', required=True, 

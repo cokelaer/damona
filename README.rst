@@ -92,6 +92,7 @@ Changelog
 ========= ====================================================================
 Version   Description
 ========= ====================================================================
+0.4.0     * implemented the 'env' and 'activate' command
 0.3.1     * add gffread recipe
 0.3.0     * A stable version with documentation and >95% coverage read-yto-use
 0.2.3     * add new recipes (rnadiff) 

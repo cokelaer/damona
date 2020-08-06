@@ -19,7 +19,7 @@ import sys
 import packaging.version
 
 from spython.main import Client
-from damona import bin_directory, images_directory
+from damona import images_directory
 from damona import Registry
 from damona import logger
 
@@ -95,7 +95,10 @@ class Pull():
             # one binary name. we use the first one
             cmd = """singularity run {}/{} ${{1+"$@"}} """
             cmd = cmd.format(images_directory, output_name)
-            bin_name = bin_directory /  registry_name.split("_")[0]
+            from damona import Environ
+            env = Environ()
+            bin_directory = env.get_current_env() + "/bin"
+            bin_name = bin_directory +"/"+  registry_name.split("_")[0]
             if self.dryrun: #pragma: no cover
                 pass
             else: #pragma: no cover

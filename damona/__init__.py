@@ -21,19 +21,27 @@ configuration = CustomConfig("damona", verbose=True)
 damona_config_path = configuration.user_config_dir
 
 
+_damona_path = pathlib.Path(damona_config_path)
 
-path = pathlib.Path(damona_config_path)
-bin_directory = path / 'bin'
-images_directory = path / 'images'
 
+# First the env directory then, the sub-directories. 
 try:
-    bin_directory.mkdir()
+    env_directory = _damona_path / 'envs'
+    env_directory.mkdir()
 except: # pragma: no cover
     pass # exists already
 
 try:
+    _bin_directory = _damona_path / 'bin'
+    _bin_directory.mkdir()
+except: # pragma: no cover
+    pass # exists already
+
+try:
+    images_directory = _damona_path / 'images'
     images_directory.mkdir()
 except: #pragma: no cover
     pass # exists already
 
 from damona.registry import Registry
+from damona.environ import Environ
