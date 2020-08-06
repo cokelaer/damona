@@ -55,6 +55,8 @@ def main():
 @click.option('--force', is_flag=True)
 @click.option('--dryrun', is_flag=True, 
     help="If set, do not pull the image and do not create the binary alias")
+@click.option('--from-url', help="""download image from a remote URL. The URL must
+contain a registry.txt as explained on damona.readthedocs.io""") 
 @click.option('--output-directory', default=images_directory, 
     help="""Where to save the image (default: {})""".format(images_directory))
 def install(**kwargs):
@@ -65,7 +67,7 @@ def install(**kwargs):
     """
     name = kwargs['name']
     from damona.pull import Pull
-    p = Pull(dryrun=kwargs['dryrun'])
+    p = Pull(dryrun=kwargs['dryrun'], from_url=kwargs['from_url'])
     p.pull(name, pull_folder=kwargs["output_directory"],
         force=kwargs['force'])
 
@@ -117,10 +119,12 @@ def build(**kwargs): #pragma: no cover
 @main.command()
 @click.option('--pattern', default=None, 
     help="restrict the output list keeping those with this pattern")
+@click.option('--from-url', help="""download image from a remote URL. The URL must
+contain a registry.txt as explained on damona.readthedocs.io""") 
 def list(**kwargs):
     """List all available images from Damona"""
     from damona.registry import Registry
-    modules = Registry().get_list(pattern=kwargs['pattern'])
+    modules = Registry(from_url=kwargs["from_url"]).get_list(pattern=kwargs['pattern'])
     print(", ".join(modules))
 
 

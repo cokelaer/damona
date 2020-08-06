@@ -36,7 +36,10 @@ class Registry():
 
     """
 
-    def __init__(self):
+    def __init__(self, from_url=None):
+        if from_url == "damona":
+            from_url = "https://biomics.pasteur.fr/drylab/damona/registry.txt"
+        self.from_url = from_url
         self.registry = {}
         self.discovery()
 
@@ -60,8 +63,42 @@ class Registry():
                     logger.warning("missing binaries field in {}".format(registry))
         return data
 
-
     def discovery(self):
+
+        if self.from_url:
+            self._url_discovery()
+        else:
+            self._local_discovery()
+
+    def _url_discovery(self):
+        self.registry = {}
+        import  urllib.request
+
+        response = urllib.request.urlopen(self.from_url)
+        html = response.read()
+        html = html.decode('utf-8')
+        _class = None
+        for registry in html.split("\n"):
+            if registry.startswith("["):
+                _class = registry.replace('[', '').replace(']','')
+                continue
+            if registry.strip() == "":
+                continue
+            else:
+                data = {}
+                name,version = registry.split("_")
+                version = version.rsplit(".", 1)[0]
+                # todo for now only exe fills the binaries assuming name of
+                # package is the name of the binary
+                self.registry[name+"_"+version] = {
+                    "name": name+"_"+version,   
+                    "download": self.from_url.replace("registry.txt", registry),
+                    "version": version,
+                    "class": _class, 
+                    'binaries': [{name:name}]}
+
+    def _local_discovery(self):
+
         from damona.recipes import __path__
         self._registry_files = glob.glob(__path__[0] + '/*/registry.yaml')
         self._singularity_files = glob.glob(__path__[0] + '/*/Singularity.*')
@@ -98,15 +135,21 @@ class Registry():
     """.format(recipe.rsplit("/",1)[1], version))
 
     def get_list(self, pattern=None):
+        if self.from_url is None:
+            from damona.recipes import __path__
+            recipes = glob.glob(__path__[0] + '/*/Singularity.*')
+            recipes = [os.path.basename(x) for x in recipes]
+            recipes = [x.replace("Singularity.", "").lower() for x in recipes]
+            recipes = [x.replace("_", ":").lower() for x in recipes]
+            recipes = sorted(recipes)
 
-        from damona.recipes import __path__
-        recipes = glob.glob(__path__[0] + '/*/Singularity.*')
-        recipes = [os.path.basename(x) for x in recipes]
-        recipes = [x.replace("Singularity.", "").lower() for x in recipes]
-        recipes = [x.replace("_", ":").lower() for x in recipes]
-        recipes = sorted(recipes)
+            if pattern:
+                recipes = [x for x in recipes if pattern in x]
 
-        if pattern:
-            recipes = [x for x in recipes if pattern in x]
-
-        return recipes
+            return recipes
+        else:
+            self._url_discovery()
+            names = []
+            for k,v in self.registry.items():
+                names.append(k + ":" + v['version'])
+            return names

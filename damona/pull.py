@@ -31,11 +31,13 @@ class Pull():
 
 
     """
-    def __init__(self, dryrun=False):
-        self.registry = Registry().registry
+    def __init__(self, dryrun=False, from_url=None):
+        self.registry = Registry(from_url=from_url).registry
+        self.from_url = from_url
         self.dryrun = dryrun
 
-    def pull(self, name, output_name=None, pull_folder=images_directory, force=False):
+    def pull(self, name, output_name=None, pull_folder=images_directory,
+        force=False):
 
         # the name must be valid. we use _ to separate name and version for the
         # singularity filemane but the image have a tag (version) and name
@@ -45,7 +47,6 @@ class Pull():
         # However, for users and image stored on sylabs or singularity hub, we
         # use the character :
         #
-
         if ":" in name:
             logger.info(f"Looking for {name}...")
             # e.G. fastqc:0.11.9
@@ -75,16 +76,31 @@ class Pull():
             registry_name = name + '_' + str(version)
             logger.info("pulling {}".format(registry_name))
 
+
         download_name = self.registry[registry_name]['download']
+
         if output_name is None:
             output_name = registry_name + ".img"
 
         if self.dryrun: 
             pass
         else: # pragma: no cover
-            Client.pull(str(download_name), name=output_name, 
-                pull_folder=pull_folder,
-                force=force) 
+            # By default it downlaods from syslab if it can be found, but one
+            # can provide an url
+            if self.from_url:
+                # The client does not support external https link other than
+                # dockker, library, shub. 
+                cmd = f"singularity pull  --dir {pull_folder} "
+                if force:
+                    cmd += " --force "
+                cmd += f"{download_name}"
+                import subprocess
+
+                subprocess.call(cmd.split())
+            else:
+                Client.pull(str(download_name), name=output_name, 
+                    pull_folder=pull_folder,
+                    force=force) 
             logger.info("File {} uploaded to {}".format(name, images_directory))
 
         # Now, create an alias
