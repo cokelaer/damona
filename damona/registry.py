@@ -39,6 +39,9 @@ class Registry():
     def __init__(self, from_url=None):
         if from_url == "damona":
             from_url = "https://biomics.pasteur.fr/drylab/damona/registry.txt"
+        elif from_url:
+            assert from_url.startswith('http')
+            assert from_url.endswith('registry.txt')
         self.from_url = from_url
         self.registry = {}
         self.discovery()
@@ -151,5 +154,5 @@ class Registry():
             self._url_discovery()
             names = []
             for k,v in self.registry.items():
-                names.append(k + ":" + v['version'])
+                names.append(k.replace("_", ":" ))
             return names
