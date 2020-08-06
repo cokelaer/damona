@@ -33,7 +33,7 @@ have been even more challenging.
 
 Nowadays, many solutions are 
 available to install reproducible NGS pipelines.
-First, the **conda** software manager allows to create environment where compiled version of a 
+First, the **conda** [@conda] software manager allows to create environment where compiled version of a 
 software can be installed. More specifically, the **Bioconda** [Gruning2018] community has
  offered thousands of pre-compiled bioinformatics software on their channel using the conda 
 package manager. Second, reproducible containers can encapsulate
