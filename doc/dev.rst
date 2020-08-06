@@ -6,9 +6,9 @@ tree structure
 
 Recipes are in the ./recipes directory with one sub-directory per tool or environment.
 Inside a sub directory (e.g, R, conda) you may have several recipes for
-different version
+different versions
 
-For example, for **damona** there is a directory called **damona**. Inside that
+For example, for **Damona** there is a directory called **Damona**. Inside that
 directory, if there is only one recipes, name it::
 
    Singularity.damona
@@ -87,4 +87,60 @@ The different container types can be:
 Where are stored the containers ?
 ----------------------------------
 
-Currently containers are hosted in this collection: https://cloud.sylabs.io/library/cokelaer/damona
+Originally, we stored the container in this collections  https://cloud.sylabs.io/library/cokelaer/damona but we extended **Damona** so that it can fetch containers from other places. The principle is quite simple; you put containers on a web site, place registry.txt file that lists the images as follows::
+
+    [exe]
+    name1_x.y.z.img
+    name2_x.y.z.img
+    [env]
+    name3_x.y.z.img
+    [set]
+    name4_x.y.z.img
+
+The image found from the [exe] section will have an alias created. The name of
+the alias with be the prefix (before the first _ character).
+
+We have such as example on https://biomics.pasteur.fr/drylab/damona
+
+
+
+The *develop* command
+---------------------
+
+This is for developers. When a new recipe is added, we must provide a registry.
+The skeleton of that registry can be printed as follows::
+
+    damona develop ./recipes/name_of_directory
+
+This command searches for Singularity files and prints what the registry should
+look like. See the developer guide for more details
+
+Build an image locally
+----------------------
+
+Sometimes, the version you are looking for is not available. It is quite easy to
+rebuild the recipes yourself and store it locally.::
+
+    damona build Singularity.recipes
+
+Again, this is just a wrapper around singularity build command. The advantage
+here is that we can use this command to buld a damona recipes::
+
+    damona build fastqc:0.11.9
+
+You can then save the image elsewhere if you want::
+
+    damona build fastqc:0.11.9  --output-name ~/temp.img
+
+This is nothing more than an alias to singularity itself::
+
+     singularity build recipes Singularity.recipes
+
+More interesting is the ability to build a local version of a recipes to be
+found in damona::
+
+    damona build salmon:1.3.0
+
+this will find the recipes automatically and save the final container in
+**salmon_1.3.0.img**.
+

@@ -1,12 +1,16 @@
 User Guide
 ##########
 
-Print the list of available containers
----------------------------------------
+Print the list of  containers (from damona or from a remote registry)
+---------------------------------------------------------------------
 
-**damona** contains just a few containers. As explained in the motivation, other
-community provide thousands of container but here we provide container used in
-Sequana projects. 
+**Damona** contains just a few containers. As explained in the motivation, other
+projects provide thousands of containers but here we provide containers for
+testing and proof of concept. 
+
+By default, **Damona** will look for containers on 
+https://cloud.sylabs.io/library/cokelaer collection, which is limited to 10Gb
+and therefore will not provide many containers.
 
 To get a list of the available containers, just type::
 
@@ -20,10 +24,22 @@ You can filter by selecting a specific pattern::
 
     damona list --pattern qc
 
+This is not a lot indeed. So, we provide a system where you can look for
+containers elsewhere on internet. For now, there is only one registry available
+on https://biomics.pasteur.fr/drylab/damona (again for demonstration). There, we posted
+some containers and a registry.txt file; if you type::
+
+    damona list --from-url https://biomics.pasteur.fr/drylab/damona/registry.txt
+
+you will get a list of the images that are available. Anybody can provide a
+container on any website with a registry.txt and you will be able to access to
+the images. 
+
+
 Download and install an image
 -----------------------------
 
-You can download a conainer image as follows::
+Given the container name an dversion, you can now download a container image as follows::
 
     damona install fastqc:0.11.9
 
@@ -51,53 +67,50 @@ your environment to look for executables in ~/.config/damona/bin/ For example::
 
 and you are ready do go.
 
-The *develop* command
----------------------
+If you are using a registry.txt from a remote URL, it works in the same way::
 
-This is for developers. When a new recipe is added, we must provide a registry.
-The skelton of that registry can be printed as follows::
 
-    damona develop ./recipes/name_of_directory
+    damona install fastqc:0.11.9 --from-url https://biomics.pasteur.fr/drylab/damona/registry.txt
 
-This command searches for Singularity files and prints what the registry should
-look like. See the developer guide for more details
+For this particular website, we have an alias::
+ 
+    damona install fastqc:0.11.9 --from-url damona
 
-Build an image locally
+Different Environments
 ----------------------
 
-Sometimes, the version you are looking for is not available. It is quite easy to
-rebuild the recipes yourself and store it locally.::
+So far, we have downloaded and created aliases in the main **damona**, which is
+by default in *~/.config/damona*. There, you have two sub-directories: 
 
-    damona build Singularity.recipes
+* bin
+* images
 
-Again, this is just a wrapper around singularity build command. The advantage
-here is that we can use this command to buld a damona recipes::
+In the *images* we store the singularity containers. In *bin* we create aliases
+so as to make the container executables.
 
-    damona build fastqc:0.11.9
+Now what about having different environements ? It would be nice to handle
+several pipelines in their own environments.
 
-You can then save the image elsewhere if you want::
+We could quickly test two different version a tools on their impact on an
+analysis.::
 
-    damona build fastqc:0.11.9  --output-name ~/temp.img
+    damona env --create test1
+    damona env --create test2
 
-This is nothing more than an alias to singularity itself::
+Now, you need to activate the first one::
 
-     singularity build recipes Singularity.recipes
+    damona activate test1
 
-More interesting is the ability to build a local version of a recipes to be
-found in damona::
+Here, unfortunately, this feature is not yet implemented so you need to do it
+yourself. Under bash unix type you can type e.g.,::
 
-    damona build salmon:1.3.0
+    export DAMONA_ENV="~/.config/damona/envs/test1"
 
-this will find the recipes automatically and save the final container in
-**salmon_1.3.0.img**.
+Now you can install a tool with a given version in this environement::
 
-Setup the environement
-----------------------
+    export DAMONA_ENV="~/.config/damona/envs/test1"
+    damone install fastqc:0.11.9 
 
-Binaries are saved into ~/.config/damona/bin
+    export DAMONA_ENV="~/.config/damona/envs/test2"
+    damona install fastqc:0.11.8 --from-url damona
 
-To make those binaries available, change your path. For example under bash::
-
-    export PATH=~/.config/damona/bin:$PATH
-
-To make it persisent add the previous line into your .bashrc file.

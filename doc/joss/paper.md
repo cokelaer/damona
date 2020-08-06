@@ -1,5 +1,5 @@
 ---
-title: "Damona: a singularity environment manager for developers and end-users"
+title: "Damona: a singularity environment manager for reproducible analysis"
 tags:
   - singularity
   - python
@@ -27,9 +27,17 @@ depends on a plethora of software. A few years ago, setting up a local system to
 reproduce an analysis was a challenge even for computer scientists. Indeed, one
 needed to be proficient in several languages to compile C/C++ code,
 set up the correct JAVA or R environment, etc. Hours were spent in retrieving
-the correct source code, days in compilation time, weeks in reproducing analysis. Indeed, one recurrent issue in research being the ability to reproduce an existing results, which was most probably performed in a different environment. Nowadays, many solutions are available to install reproducible NGS pipelines.
-First, the **conda** software manager allows to create environment where compiled version of a software can be installed. More specifically, the **Bioconda** [Gruning2018] community has offered thousands of pre-compiled bioinformatics software on their channel using the conda package manager. Second, reproducible containers can encapsulate
-those software within a container based on Docker or Singularity technologies [@Kurtzer2017]. Bioconda even provide docker and singularity containers of each compiled tool.
+the correct source code, days in compilation time, weeks in reproducing analysis. Indeed, one
+ recurrent issue in research being the ability to reproduce an existing results, which was 
+difficult with colleagues 
+working in different environments or different operating system. Nowadays, many solutions are 
+available to install reproducible NGS pipelines.
+First, the **conda** software manager allows to create environment where compiled version of a 
+software can be installed. More specifically, the **Bioconda** [Gruning2018] community has
+ offered thousands of pre-compiled bioinformatics software on their channel using the conda 
+package manager. Second, reproducible containers can encapsulate
+those software within a container based on Docker or Singularity technologies [@Kurtzer2017]. 
+Bioconda even provide docker and singularity containers of each compiled tool.
 
 Bioinformaticians have now all the tools to build reproducible pipelines. There
 is still a problem: maintenace. How to provide pipelines that are reproducible
