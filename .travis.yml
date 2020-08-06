@@ -36,7 +36,7 @@ install:
   - source activate testenv
   - pip install pytest pytest-cov pytest-timeout pytest-xdist pytest-mock pytest-runner
   - conda install --yes singularity
-  - pip install coverage coveralls
+  - pip install coverage coveralls mock pytest-mock
   - python setup.py install
 
 # # command to run tests, e.g. python setup.py test
