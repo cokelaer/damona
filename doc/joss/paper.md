@@ -20,7 +20,7 @@ date: 2 August 2020
 bibliography: paper.bib
 ---
 
-# Overview
+# Summary
 
 Next Sequencing Generation (NGS) [@Goodwin2016] implies complex analysis using pipelines that
 depends on a plethora of software. A few years ago, setting up a local system to
@@ -34,7 +34,7 @@ have been even more challenging.
 Nowadays, many solutions are 
 available to install reproducible NGS pipelines.
 First, the **conda** [@conda] software manager allows to create environment where compiled version of a 
-software can be installed. More specifically, the **Bioconda** [Gruning2018] community has
+software can be installed. More specifically, the **Bioconda** [@Gruning2018] community has
  offered thousands of pre-compiled bioinformatics software on their channel using the conda 
 package manager. Second, reproducible containers can encapsulate
 those software within a container based on Docker or Singularity technologies [@Kurtzer2017]. 
@@ -133,10 +133,16 @@ In damona there are three classes of container:
 * environement: for instance, we provide an image for R v4.0.2. This is not a NGS tool per se but can be used to build other containers.
 * Set of executables 
 
+# Test cases
+## Testing same pipeline with two different version of a third-party tool
+## Building several environments in a few seconds
+## Updating an entire environment replacing only one file
+
+
 
 # Acknowledgments
 
-We acknowledge contributions from ....
+This work has been supported by the France Génomique Consortium (ANR 10-INBS-09-08).
 
 
 # References
