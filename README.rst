@@ -208,6 +208,8 @@ Changelog
 ========= ====================================================================
 Version   Description
 ========= ====================================================================
+0.4.1     * implemented aliases for the --from-url option stored in a 
+            damona.cfg file 
 0.4.0     * implemented the 'env' and 'activate' command
           * ability to setup an external registry on any https and retrieve
             registry from there to download external images

@@ -187,7 +187,7 @@ def activate(**kwargs):
 @main.command()
 @click.option('--path', required=True, 
     help="path to recipes directory where Singularity file(s) can be found")
-def develop(**kwargs):
+def registry(**kwargs):
     """Developers kit (eg build registry)"""
     from damona.registry import Registry
 

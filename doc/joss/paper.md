@@ -20,97 +20,56 @@ date: 2 August 2020
 bibliography: paper.bib
 ---
 
-# Summary
+# Motivation
 
-Next Sequencing Generation (NGS) [@Goodwin2016] implies complex analysis using pipelines that
-depends on a plethora of software. A few years ago, setting up a local system to
-reproduce an analysis was a challenge even for computer scientists. Indeed, one
-needed to be proficient in several languages. For instance you would nee to
-compile C/C++ code or set up the correct JAVA or R environments just to cite a few examples.
-Hours were spent in retrieving the correct source code, days in compilation time, weeks in
-reproducing analysis. Reproducing the analysis on another operating system would
-have been even more challenging.
+Next Sequencing Generation (NGS) [@Goodwin2016] implies complex analysis using pipelines that depends on a plethora of software. A few years ago, setting up a local system to reproduce an analysis was a challenge even for computer scientists. Indeed, one needed to be proficient in several languages. For instance you would nee to compile C/C++ code or set up the correct JAVA or R environments just to cite a few examples. Hours were spent in retrieving the correct source code, days in compilation time, weeks in reproducing analysis. Reproducing the analysis on another operating system would have been even more challenging.
 
-Nowadays, many solutions are 
-available to install reproducible NGS pipelines.
-First, the **conda** [@conda] software manager allows to create environment where compiled version of a 
-software can be installed. More specifically, the **Bioconda** [@Gruning2018] community has
- offered thousands of pre-compiled bioinformatics software on their channel using the conda 
-package manager. Second, reproducible containers can encapsulate
-those software within a container based on Docker or Singularity technologies [@Kurtzer2017]. 
-Bioconda even provide docker and singularity containers of each compiled tool.
+Solutions are now available to help researchers installing reproducible NGS pipelines, and in particular their third-party dependencies. One of them is **conda** [@conda], an open source *package* management system and an *environment* management system. Conda provides pre-compiled releases of a software; they can be installed in different local environments that do not interfer with your system. Thereupon, different communities have emerged using this framework. One of them is **Bioconda** [@Gruning2018], which is dedicated to bioinformatics. A complementary tool is **Singularity** [@Kurtzer2017]; it is a container platform. It allows you to create containers that package your favorite environment and software (even data) in a way that is portable and reproducible. You can build a container locally, copy it elsewhere and run it straightaway (e.g., on a High Performance Computing (HPC) systems). It is a simple flat file that can be shared between environments and guaranteee execution and reproducibility. Note that nothing prevent you from including a conda environment inside a singularity container to speed up the creation of the container (less compilation time).
 
-Bioinformaticians have now all the tools to build reproducible pipelines. There
-is still a problem: maintenace. How to provide pipelines that are reproducible
-while allowing those tools to evolve. How to help your end-users (e.g.
-bio-analysts) to easily install your pipelines. 
+Bioinformaticians have now all the tools to build reproducible pipelines. In practice, conda environment can also be used to provide a development framework. You can quickly install software in an environment and develop your software in it. Then, you can share your environment for colleagues. It is a quite effective solution to reproduce analysis while moving forward with development. Yet, with the increasing number of tools used in NGS pipelines, pratical issues may arise. A non exhaustive list of examples: impossibility to reproduce an environment, conflicts when installing a software, long time to resolve dependencies. You could have an environment per pipeline but then you need to install common packages several times in different environment.  What if you realise that a tool has a wrong version and you do not want, or cannot update your conda environment. A simple solution consists in providing a singularity container for that specific package and put it in your environment. We could generalise this idea. However, where is the limit? We could pursue the idea and move all the packages from a conda environment within singularity container or the conda environment itself. Then we have a 100% reproducible environment. However, you cannot change it easily. This is not an environment you can deploy iteratively.
 
-For the first question, we use
-conda environments. Once created, we install the
-third-party librairies and our main software. Yet, after 5 or 10 pipelines are
-installed you face a general issue of conflict between dependencies. You could
-create one environment per pipeline but this is a burden for maintainer. Setting
-new environement on different account has shown some limtations as well in
-lacking the ability to reinstall the exact same set of software version. 
-Once hundreds of packages are installed, conflict may happen or dependencies not
-resolved. Conda is great, Bioconda as well but sometimes it is not the best
-solution. Another independent issue is that two versions of the same software 
-cannot be installed at the same time (e.g. the newest overwrite a file 
-required by the oldest). This is details of course but we have reached 
-a level where reproducibility is in the details. An alternative is to provide a
-singularity per file. Now we are very modular but too modular. A solution for reproducibility
-consists in creating a single container with all your tools inside. This is nice
-but with such solution you lack the flexibility of iterating on your development
-quickly. Another solution is to have both. One conda environment where the minimal set of
-tools is installed, and more complex software that are know to cause problem can
-be put in container and transformed into executable. 
+This is why we have moved litle by little to a very light conda environment where known-to-cause-problem packages have been shipped into singularity containers. Since we still have the conda environment, we keep its flexibility and ability to update our Python software easily as well. This gives us the flexibility of a conda environment(s) while having the complex packages available as singularity containers. Yet, with increasing number of singularity containers, we need to have aliases and make them available for each environment. 
+That's where **Damona** started: a manager for singularity containers. Once a conda environment is used, you can have a **Damona** environment in parallel that will host singularity containers. An environment can be set up for a given analysis. It is then easy to export the containers and share them on another environment. Each developer will adjust the tradeoff between packages installed with conda and containers installed with **Damona** based on its needs.
+
+Our goal is not to replace existing initiative but just to complement them when required. In particular, we designed **Damona** so as to provide the containers required by [Sequana pipelines](https://sequana.readthedocs.io pipelines) [@Cokelaer2017]. We therefore provide some singularities but more as example and proof-of-concept rather than an exhaustive set of singularity containers. **Bioconda** and biocontainer.pro provides such features with thousand of containers already available.
+
+In the following we quickly describe the principle of **Damona** followed by some test cases. 
 
 
-This is the choice we have made: a conda environment where our main python
-software lives and a set of singularity, each of them having its own life. This
-way, the image are alawys available and therefore reproducible and the pipelines
-and main software can still move and evolve with time. For reproducility, we
-then just need the version of the main software and the singularity images. 
-
-End-users have an easier life as well. No need to install hundreds of software
-from conda, just the essential ones or the missing ones.
-
-This can be done from the developer and user sides with actual tools. Yet, 
-
-I see two main reasons to start damona software. First, Bioconda is great but there are two small limitations: some tools are not there or installing two tools may be impossible due to conflits; those conflicts may be long to untangle. Remember that bioconda allows you to build an environment with all tools living altogether. Some may be in conflicts. Second, singularity images posted here are there are a great source of inspirations. Yet, I wanted a very simple tool for my users and hide the nitty-gritty details of singularity. In practice, on a cluster, you can get the missing tools in a few seconds. Your system administrator can install singularity and damona and then you can download ready-to-use executables.
-
-Our goal is not to replace existing initiative but just to complement them when required. In particular, we designed damona so as to provide the executables required by sequana.readthedocs.io pipelines
-
-
-# Installation, usage, reproducibilty
+# Damona to manage singularity containers
 
 This is the egg and chicken paradox. To allow reproducibility you need a tool to
-start with. With Damona, we've made the choice of using Singularity. So, one
-first need to install the software following instructinos from their
-[user guide](https://sylabs.io/guides/3.0/user-guide/installation.html).
+start with. With **Damona**, we have made the choice of using Singularity. Conda is not required to install Damona but strongly recommended. So, one
+first need to install Singularity. Instructions from their
+[user guide](https://sylabs.io/guides/3.0/user-guide/installation.html) should be sufficient. HPC admistrator can provide the tool for you. 
 
-Then, install **Damona** itself. It is written in Python and avaiable on
-[Pypi](https://) website. This should install the software:
+Then, install **Damona** itself. It is written in Python and available on
+[Pypi](https://) website. The following command should install the latest version of the software:
 
 ```bash
-    pip install damona --upgrade
+    pip3 install damona --upgrade
 ```
 
 The philosophy of Damona is to make life easier both for developers and
 end-users. Let us say that a pipeline requires the **salmon** tool (RNA-seq
-analys), then one should just type:
+analysis), then one should just type:
 
 ```
     damona install salmon
 ```
 
-This commands downloads the container, copy it in a DAMONA/images directory and set
-up an alias (executable) for you in DAMONA/bin directory. DAMONA being set to
-/home/user/config/damona under Linux environment.
+This command first downloads a container with *salmon* installed in it. Then, it is copied into 
+a dedicated path that will contain all your images. Under Linux, this will be in /home/user/.config/damona/images. Finally, it created an alias to the executable contained in the recipe. 
 
-Damona project was motivated by the growing number of NGS pipelines available in
-Sequana [Cokelaer2017] and the third-party dependencies.
-ncies
+
+This assume the singularity has an executable. We cannot know the name. That's
+wy you may have a simple registry with a one-to-one mapping. We could also guess
+the name from the name of the container but is not 100% guaranteed. One can
+always edit the alias later on. 
+
+Several questions need to be asked at that stage. What is the version of the container ? 
+Where is it stored ? What is the alias, What are the list of available
+containers. 
 
 Print the list of images available within Damona collections:
 ```
@@ -127,7 +86,7 @@ You just need to append your PATH. For instance under Linux, type:
     export PATH=~/config/damona/bin:$PATH
  
 
-In damona there are three classes of container:
+In **Damona** there are three classes of container:
 
 * executables (like the one above)
 * environement: for instance, we provide an image for R v4.0.2. This is not a NGS tool per se but can be used to build other containers.

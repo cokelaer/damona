@@ -104,16 +104,16 @@ We have such as example on https://biomics.pasteur.fr/drylab/damona
 
 
 
-The *develop* command
----------------------
+The *registry* command
+------------------------
 
 This is for developers. When a new recipe is added, we must provide a registry.
 The skeleton of that registry can be printed as follows::
 
-    damona develop ./recipes/name_of_directory
+    damona registry ./recipes/name_of_directory
 
 This command searches for Singularity files and prints what the registry should
-look like. See the developer guide for more details
+look like. See the registr guide for more details
 
 Build an image locally
 ----------------------

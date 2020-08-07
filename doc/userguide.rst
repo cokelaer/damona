@@ -76,6 +76,8 @@ For this particular website, we have an alias::
  
     damona install fastqc:0.11.9 --from-url damona
 
+You can add aliases in *~/.config/damona/damona.cfg* file.
+
 Different Environments
 ----------------------
 

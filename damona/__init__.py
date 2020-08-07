@@ -16,14 +16,20 @@ handler.setFormatter(colorlog.ColoredFormatter(
 logger = colorlog.getLogger("damona")
 logger.addHandler(handler)
 
+# This code will create the config directory if it does not exists
 from easydev import CustomConfig
 configuration = CustomConfig("damona", verbose=True)
 damona_config_path = configuration.user_config_dir
 
 
+# let us add a damona.cfg in it
+from damona.config import Config
+Config()
+
+
+
+# Let us create some extra directories
 _damona_path = pathlib.Path(damona_config_path)
-
-
 # First the env directory then, the sub-directories. 
 try:
     env_directory = _damona_path / 'envs'

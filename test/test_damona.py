@@ -5,7 +5,7 @@ import builtins
 
 def test_damona_app():
     from click.testing import CliRunner
-    from damona.script import install, build, develop, env, activate
+    from damona.script import install, build, registry, env, activate
     from damona.script import list as _list
     runner = CliRunner()
 
@@ -17,7 +17,7 @@ def test_damona_app():
     assert results.exit_code == 0
 
     import damona
-    results = runner.invoke(develop, ["--path", damona.__path__[0] + "/recipes/fastqc"])
+    results = runner.invoke(registry, ["--path", damona.__path__[0] + "/recipes/fastqc"])
     assert results.exit_code == 0
     
     import damona
@@ -85,16 +85,16 @@ def test_list():
     cmd = "damona list --pattern qc"
     subprocess.call(cmd.split())
 
-def test_develop():
+def test_registry():
     try:
-        cmd = "damona develop"
+        cmd = "damona registry"
         subprocess.call(cmd.split())
         assert False
     except:
         assert True
 
     from damona.recipes import __path__
-    cmd = "damona develop --path {}".format(__path__[0] + "/fastq"  )
+    cmd = "damona registry --path {}".format(__path__[0] + "/fastq"  )
     subprocess.call(cmd.split())
 
 def test_pull_dryrun():
