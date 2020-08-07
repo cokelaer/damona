@@ -1,0 +1,6 @@
+Singularity.sequana_tools_0.9.0:
+    version: 0.9.0
+    download: library://cokelaer/damona/sequana_tools:0.9.0
+    class: "set"
+    binaries: "STAR cufflinks cutadapt atropos bwa fastqc bowtie bowtie2 featureCounts dsrc samtools bamtools deeptools freebayes fastq_screen picard subread snpEff bowtie-build bedtools sambamba pbunzip2 pbzip2 bowtie2-build gffread kraken2 krona ktImportText minimap2 kraken2-build interleave-reads.py normalize-by-median.py filter-abund.py extract-paired-reads.py split-paired-reads.py ccs  MarkDuplicates spades.py"
+

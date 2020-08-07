@@ -22,6 +22,7 @@ from spython.main import Client
 from damona import images_directory
 from damona import Registry
 from damona import logger
+from damona import Environ
 
 logger.level = 10
 
@@ -58,24 +59,28 @@ class Pull():
             else:
                 logger.info(f"... found. Please wait while downloading (if not already done)")
         else:
-            # e.g. fastqc
             logger.info(f"No tag found after {name}. We will download the latest version")
             registry_name = name
             # we look only at the prefix name, not the tag. so we should get the
             # registry names from self.registry that have the prefix in common, 
             # then extract the versions, and figure out the most recent.
-            candidates = [x for x in self.registry.keys() if x.split("_")[0] == registry_name]
+            candidates = []
+
+            candidates = [x for x in self.registry.keys() if x.startswith(registry_name)]
             if len(candidates) == 0:
-                logger.critical(f"No image found for {name}. MAke sure it is correct using 'damona list' command")
+                logger.critical(f"No image found for {name}. Make sure it is correct using 'damona list' command")
                 sys.exit(1)
-            names = [x.split("_")[0] for x in candidates]
-            versions = [x.split("_")[1] for x in candidates]
+
+            # sequant_tools_0.9.0 should return sequana_tools for the name qnd
+            # 0.9.0 for the version hence the rsplit
+            names = [x.rsplit("_",1)[0] for x in candidates]
+            versions = [x.rsplit("_",1)[1] for x in candidates]
+
 
             version = max([packaging.version.parse(ver) for ver in versions])
             name = names[0] 
             registry_name = name + '_' + str(version)
             logger.info("pulling {}".format(registry_name))
-
 
         download_name = self.registry[registry_name]['download']
 
@@ -111,7 +116,6 @@ class Pull():
             # one binary name. we use the first one
             cmd = """singularity run {}/{} ${{1+"$@"}} """
             cmd = cmd.format(images_directory, output_name)
-            from damona import Environ
             env = Environ()
             bin_directory = env.get_current_env() + "/bin"
             bin_name = bin_directory +"/"+  registry_name.split("_")[0]
@@ -125,7 +129,21 @@ class Pull():
         elif _class == "env": #pragma: no cover
             pass
         elif _class == "set": # pragma: no cover
-            raise ImplementedError
+            binaries = self.registry[registry_name]['binaries']
+            if isinstance(binaries, str):
+                for binary in binaries.split():
+                    cmd = """singularity run {}/{} ${{1+"$@"}} """
+                    cmd = cmd.format(images_directory, output_name)
+                    env = Environ()
+                    bin_directory = env.get_current_env() + "/bin"
+                    bin_name = bin_directory +"/"+  binary
+                    if self.dryrun: #pragma: no cover
+                        pass
+                    else: #pragma: no cover
+                        with open(bin_name, "w") as fout:
+                            fout.write(cmd)
+                        os.chmod(bin_name, 0o755)
+                    logger.info("Creating binary {}".format(bin_name))
         else: # pragma: no cover
             raise ValueError
 

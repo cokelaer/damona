@@ -15,9 +15,6 @@
 #  documentation: http://damona.readthedocs.io
 #
 ##############################################################################
-
-
-
 import os
 from damona import damona_config_path
 
@@ -44,4 +41,7 @@ class Config():
         from configparser import ConfigParser
         config = ConfigParser()
         config.read_file(open(self.config_file))
-        self.config = config 
+        self.config = config
+
+
+ 

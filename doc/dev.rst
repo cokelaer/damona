@@ -54,20 +54,20 @@ so one can run it simply as ::
 The class *environement* is suppose to be used to build other container. When
 installing a *executable* container, a binary is created in ~/.config/damona/bin
 but no such files are created for *environement*. The final class (set of
-executables) is not yet implemented. 
+executables) will install all the binaries that are provide in the registry. 
 
 registry
 ---------
 
-For each singularity, a registry is required. It containts a json with the type
+For each singularity, a registry is required. It contains a yaml file the type
 of each singularity: does it provide a single tool or an environment or a set of
 executables.
 
 The different container types can be:
 
-* executable: a container aiming at providing a single executable
-* class_type: A container to be used to build an 'executable' or 'environment'
-* environment: A a container with a set of executables
+* executable (exe): a container aiming at providing a single executable
+* environement (env): A container to be used to build an 'executable' or 'environment'
+* set of executables (set): A a container with a set of executables
 
 ::
 
@@ -83,6 +83,15 @@ The different container types can be:
         class: "exe"
         binaries:
             - kraken2: "kraken2"
+
+For *set*, you would have the list of executables in the field 'binaries'::
+
+    Singularity.env_1.0.0:
+        version: 1.0.0
+        download: library://cokelaer/damona/env:1.0.0
+        class: "env"
+        binaries: this that other
+
 
 Where are stored the containers ?
 ----------------------------------

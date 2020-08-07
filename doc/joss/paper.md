@@ -1,7 +1,7 @@
 ---
-title: "Damona: a singularity environment manager for reproducible analysis"
+title: "Damona: a Singularity environment manager for reproducible analysis"
 tags:
-  - singularity
+  - Singularity
   - python
   - reproducibility
 authors:
@@ -22,75 +22,124 @@ bibliography: paper.bib
 
 # Motivation
 
-Next Sequencing Generation (NGS) [@Goodwin2016] implies complex analysis using pipelines that depends on a plethora of software. A few years ago, setting up a local system to reproduce an analysis was a challenge even for computer scientists. Indeed, one needed to be proficient in several languages. For instance you would nee to compile C/C++ code or set up the correct JAVA or R environments just to cite a few examples. Hours were spent in retrieving the correct source code, days in compilation time, weeks in reproducing analysis. Reproducing the analysis on another operating system would have been even more challenging.
+Next Sequencing Generation (NGS) [@Goodwin2016] implies complex analysis using pipelines that depend on a plethora of software. A few years ago, setting up a local system to reproduce an analysis was a challenge even for computer scientists. Indeed, one needed to be proficient in several languages. For instance, you would need to compile C/C++ code or set up the correct JAVA or R environments just to cite a few examples. Hours were spent in retrieving the correct source code, days in compilation time, weeks in reproducing analysis. Reproducing the analysis on another operating system would have been even more challenging.
 
-Solutions are now available to help researchers installing reproducible NGS pipelines, and in particular their third-party dependencies. One of them is **conda** [@conda], an open source *package* management system and an *environment* management system. Conda provides pre-compiled releases of a software; they can be installed in different local environments that do not interfer with your system. Thereupon, different communities have emerged using this framework. One of them is **Bioconda** [@Gruning2018], which is dedicated to bioinformatics. A complementary tool is **Singularity** [@Kurtzer2017]; it is a container platform. It allows you to create containers that package your favorite environment and software (even data) in a way that is portable and reproducible. You can build a container locally, copy it elsewhere and run it straightaway (e.g., on a High Performance Computing (HPC) systems). It is a simple flat file that can be shared between environments and guaranteee execution and reproducibility. Note that nothing prevent you from including a conda environment inside a singularity container to speed up the creation of the container (less compilation time).
+Solutions are now available to help researchers installing reproducible NGS pipelines, and in particular their third-party dependencies. One of them is **Conda** [@conda], an open-source *package* management system, and an *environment* management system. Conda provides pre-compiled releases of software; they can be installed in different local environments that do not interfere with your system. Thereupon, different communities have emerged using this framework. One of them is **Bioconda** [@Gruning2018], which is dedicated to bioinformatics. A complementary tool is **Singularity** [@Kurtzer2017]. It allows you to create containers that package your favorite environment and software (even data) in a way that is portable and reproducible. You can build a container locally, copy it elsewhere and run it straight away (e.g., on a High-Performance Computing (HPC) systems). It is a simple flat file that can be shared between environments and guarantee execution and reproducibility. Note that nothing prevents you from including a Conda environment inside a Singularity container to speed up, and simplify the creation of the container.
 
-Bioinformaticians have now all the tools to build reproducible pipelines. In practice, conda environment can also be used to provide a development framework. You can quickly install software in an environment and develop your software in it. Then, you can share your environment for colleagues. It is a quite effective solution to reproduce analysis while moving forward with development. Yet, with the increasing number of tools used in NGS pipelines, pratical issues may arise. A non exhaustive list of examples: impossibility to reproduce an environment, conflicts when installing a software, long time to resolve dependencies. You could have an environment per pipeline but then you need to install common packages several times in different environment.  What if you realise that a tool has a wrong version and you do not want, or cannot update your conda environment. A simple solution consists in providing a singularity container for that specific package and put it in your environment. We could generalise this idea. However, where is the limit? We could pursue the idea and move all the packages from a conda environment within singularity container or the conda environment itself. Then we have a 100% reproducible environment. However, you cannot change it easily. This is not an environment you can deploy iteratively.
+With *Conda* and *Singularity*, Bioinformaticians have now all the tools to build reproducible pipelines. In practice, Conda environment can also be used to provide a development framework. You can quickly install software in an environment and develop your software in it. Then, you can share your environment with your colleagues. It is a quite effective solution to reproduce analysis while moving forward with development. Yet, with an increasing number of tools used in NGS pipelines, practical issues may arise: impossibility to reproduce an environment, conflicts when installing software, a long time to resolve dependencies. You could have an environment per pipeline but then you need to install common packages several times in different environments.  What if you realise that a tool has a wrong version and you do not want, or cannot update your Conda environment. A simple solution consists in providing a Singularity container for that specific package and put it in your environment. We could generalise this idea, and move all the packages from a Conda environment within the Singularity container or the Conda environment itself. Then we have a 100% reproducible environment. However, you cannot change it easily. This is not an environment you can deploy iteratively.
 
-This is why we have moved litle by little to a very light conda environment where known-to-cause-problem packages have been shipped into singularity containers. Since we still have the conda environment, we keep its flexibility and ability to update our Python software easily as well. This gives us the flexibility of a conda environment(s) while having the complex packages available as singularity containers. Yet, with increasing number of singularity containers, we need to have aliases and make them available for each environment. 
-That's where **Damona** started: a manager for singularity containers. Once a conda environment is used, you can have a **Damona** environment in parallel that will host singularity containers. An environment can be set up for a given analysis. It is then easy to export the containers and share them on another environment. Each developer will adjust the tradeoff between packages installed with conda and containers installed with **Damona** based on its needs.
+This is why we have moved little by little to a very light Conda environment where known-to-cause-problem packages have been shipped into Singularity containers. Since we still have the Conda environment, we keep its flexibility and ability to update our Python software easily as well. This gives us the flexibility of a Conda environment(s) while having the complex packages available as Singularity containers. Yet, with an increasing number of Singularity containers, we need to have aliases and make them available for each environment.
+That's where **Damona** started: a manager for Singularity containers. Once a Conda environment is used, you can have a **Damona** environment in parallel that will host Singularity containers. An environment can be set up for a given analysis. It is then easy to export the containers and share them in another environment. Each developer will adjust the tradeoff between packages installed with Conda and containers installed with **Damona** based on its needs.
 
-Our goal is not to replace existing initiative but just to complement them when required. In particular, we designed **Damona** so as to provide the containers required by [Sequana pipelines](https://sequana.readthedocs.io pipelines) [@Cokelaer2017]. We therefore provide some singularities but more as example and proof-of-concept rather than an exhaustive set of singularity containers. **Bioconda** and biocontainer.pro provides such features with thousand of containers already available.
+Our goal is not to replace Conda or Singularity but to use them effectively and complement them when required. In particular, we designed **Damona** so as to provide the containers required by [Sequana pipelines](https://sequana.readthedocs.io) [@Cokelaer2017]. Therefore, we provide some singularities but more as examples and proof-of-concept rather than an exhaustive set of Singularity containers. 
 
-In the following we quickly describe the principle of **Damona** followed by some test cases. 
+In the following, we quickly describe the principle of **Damona** followed by some test cases.
 
 
-# Damona to manage singularity containers
+# Damona to manage Singularity containers and environments
 
 This is the egg and chicken paradox. To allow reproducibility you need a tool to
-start with. With **Damona**, we have made the choice of using Singularity. Conda is not required to install Damona but strongly recommended. So, one
-first need to install Singularity. Instructions from their
-[user guide](https://sylabs.io/guides/3.0/user-guide/installation.html) should be sufficient. HPC admistrator can provide the tool for you. 
+start with and it is singularity. To use **Damona**,  one
+first need to install Singularity itself. Instructions from their
+[user guide](https://sylabs.io/guides/3.0/user-guide/installation.html) should be sufficient. On HPC systems, your admistrator should have installed it already.
 
-Then, install **Damona** itself. It is written in Python and available on
-[Pypi](https://) website. The following command should install the latest version of the software:
+Then, install **Damona** itself. It is written in Python, and it is available on
+The Python [Pypi](https://) website. The following command should install the latest version of the software:
 
 ```bash
-    pip3 install damona --upgrade
+    pip install damona --upgrade
 ```
 
-The philosophy of Damona is to make life easier both for developers and
-end-users. Let us say that a pipeline requires the **salmon** tool (RNA-seq
-analysis), then one should just type:
+You can now test the installation by typing
 
 ```
-    damona install salmon
+    damona --help
 ```
 
-This command first downloads a container with *salmon* installed in it. Then, it is copied into 
-a dedicated path that will contain all your images. Under Linux, this will be in /home/user/.config/damona/images. Finally, it created an alias to the executable contained in the recipe. 
+By default, **Damona** provides a few Singulariy recipes, which are
+ stored on external servers, in particular on [cloud.sylabs.io](https://cloud.sylabs.io/library/cokelaer/damona) and 
+[SALSA group](https://biomics.pasteur.fr/drylab/) as explained later. You can see
+the default list of downloadable containers using the *list* command:
 
-
-This assume the singularity has an executable. We cannot know the name. That's
-wy you may have a simple registry with a one-to-one mapping. We could also guess
-the name from the name of the container but is not 100% guaranteed. One can
-always edit the alias later on. 
-
-Several questions need to be asked at that stage. What is the version of the container ? 
-Where is it stored ? What is the alias, What are the list of available
-containers. 
-
-Print the list of images available within Damona collections:
 ```
     damona list
 ```
-Download the one you want to use:
+
+You should see at least two instances of the tool called *fastqc* [@Andrews2010](fastqc:0.11.9 and
+fastqc:0.11.8). Given the name and version you can now download and install one
+of those version (e.g., the oldest):
+
+```
+    damona install fastqc:0.11.8
+```
+
+This command downloads the requested container from our default repository. Then, it copies the container in the **Damona** path (/home/user/.config/damona/images). Finally, it creates an executable in /home/user/.config/damona/bin). All you need to do is to append the *bin* directory to your environment (PATH). You should now be able to launch *fastqc* command. If you prefer to use the latest version, you could just type:
+```
+    damona install fastqc
+```
+or even more explicitly:
 ```
     damona install fastqc:0.11.9
 ```
-This will download the container in your ./config/damona directory and create an executable for you in ~/.config/damona/bin.
 
-You just need to append your PATH. For instance under Linux, type:
+The alias is update to the latest version you installed (not necessary the
+latest version of all downloaded containers).
 
-    export PATH=~/config/damona/bin:$PATH
- 
+The default Singularity containers have their recipes within **Damona** together with a
+registry file. This file tells us explicitly the name of the container, where it
+can be found, its version and the type of containers. We consider 3 types of
+containers:
 
-In **Damona** there are three classes of container:
+* *executable*: like in the previous example, this is a container that ships only
+  one main executable. The container is intended to be used as an executable and the name of
+the container should be the name of the executable.
+* *environment*: this type of container is meant to be used by other recipes to
+  build executable. This is to make the build of recipes quicker by being more
+modular. We have R and Conda environments examples within **Damona**.
+* *set of executables*: one executable per application may not be optimal;
+  instead you   may wish to provide several executables within a single container; for instance
+all java-related tools in a container, all perl-related tools in another, etc.
 
-* executables (like the one above)
-* environement: for instance, we provide an image for R v4.0.2. This is not a NGS tool per se but can be used to build other containers.
-* Set of executables 
+When installing an *executable* container, as shown in the example hereabove, 
+a binary/alias is created and store it in
+the *bin* directory. When installing an *environment* container, no 
+binary/alias are created. When installing a *set* container, you may have more
+than one binary to expose. The maintainer of the container recipe should fill a
+registry file (YAML format) with the list of binaries that are available. 
+For instance, when you install the following *set* container:
+```bash
+    damona install sequana_tools:0.9.0
+```
+then about 30 binaries are created. An informative message should tell you about
+their names.
+
+
+So far we have install all images in the ~~/config/damona/image direcory  and all binaries
+in ~/.config/damona/bin. The main feature of **Damona** is to manage
+environements for Singularity containers. So, let us create an environment:
+
+```
+    damona env --create test1
+```
+
+You would need to set it as your working environement. To do so, create the
+environmental variable:
+
+```bash
+    export DAMONA_ENV=~/.config/damona/envs/test1
+```
+
+All new installation will still copy the images in the default environment but
+new binaries will be stored in ~/.config/damona/envs/test1/bin
+
+You can have as many environments as you want. That way you may have different
+environments to use the same named binary but with different version.
+
+Other features and roadmap. check md5sum of the images. activate/deactivate an
+environment on the fly. build and registry command are to ease the life of
+Damona developers. The first one is just an alias to Singularity while the
+second builds registry given a Singularity recipes.
+
 
 # Test cases
 ## Testing same pipeline with two different version of a third-party tool
@@ -107,4 +156,4 @@ This work has been supported by the France Génomique Consortium (ANR 10-INBS-09
 # References
 
 
-https://github.com/bdusell/singularity-tutorial
+https://github.com/bdusell/Singularity-tutorial

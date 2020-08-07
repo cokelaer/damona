@@ -93,16 +93,31 @@ class Registry():
                 continue
             else:
                 data = {}
-                name,version = registry.split("_")
+                try:
+                    package, tools = registry.split(maxsplit=1)
+                except:
+                    tools = []
+                    package = registry
+
+                if package.count('_') == 0:
+                    logger.warning("invalid name {}".format(package))
+                elif package.count("_") == 1:
+                    name, version = package.split("_")
+                else:
+                    name, version = package.rsplit("_", 1)
                 version = version.rsplit(".", 1)[0]
                 # todo for now only exe fills the binaries assuming name of
                 # package is the name of the binary
+                if _class in ["exe", 'env']:
+                    binaries= [{name:name}]
+                else:
+                    binaries = tools
                 self.registry[name+"_"+version] = {
                     "name": name+"_"+version,   
-                    "download": self.from_url.replace("registry.txt", registry),
+                    "download": self.from_url.replace("registry.txt", package),
                     "version": version,
                     "class": _class, 
-                    'binaries': [{name:name}]}
+                    'binaries': binaries}
 
     def _local_discovery(self):
 
@@ -142,13 +157,24 @@ class Registry():
     """.format(recipe.rsplit("/",1)[1], version))
 
     def get_list(self, pattern=None):
+        # a name may have an underscore in it ... e.g. sequana_tools
+        # in which case the singularty name if sequana_tools_0.9.0
         if self.from_url is None:
             from damona.recipes import __path__
             recipes = glob.glob(__path__[0] + '/*/Singularity.*')
             recipes = [os.path.basename(x) for x in recipes]
             recipes = [x.replace("Singularity.", "").lower() for x in recipes]
-            recipes = [x.replace("_", ":").lower() for x in recipes]
-            recipes = sorted(recipes)
+
+            # FIXME why lover here 
+            new_recipes = []
+            for recipe in recipes:
+                if "_" not in recipe:
+                    raise IOError('recipe must have an underscore t separate name and version')
+                else:
+                    #replace only last occurence
+                    recipe = recipe[::-1].replace("_", ":", 1)[::-1]
+                new_recipes.append(recipe.lower())
+            recipes = sorted(new_recipes)
 
             if pattern:
                 recipes = [x for x in recipes if pattern in x]
@@ -158,7 +184,7 @@ class Registry():
             self._url_discovery()
             names = []
             for k,v in self.registry.items():
-                names.append(k.replace("_", ":" ))
+                names.append(k[::-1].replace("_", ":",1)[::-1])
             if pattern:
                 names = [x for x in names if pattern in x]
             return names
