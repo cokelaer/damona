@@ -248,5 +248,3 @@ This work has been supported by the France Génomique Consortium (ANR 10-INBS-09
 
 # References
 
-
-https://github.com/bdusell/Singularity-tutorial
