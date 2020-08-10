@@ -23,6 +23,9 @@ other projects and therefore decided to release it.
 .. image:: http://readthedocs.org/projects/damona/badge/?version=latest
     :target: http://damona.readthedocs.org/en/latest/?badge=latest
     :alt: Documentation Status
+    
+.. image:: https://zenodo.org/badge/282275608.svg
+   :target: https://zenodo.org/badge/latestdoi/282275608
 
 
 :Python version: Python 3.6, 3.7.3, 3.7, 3.8
