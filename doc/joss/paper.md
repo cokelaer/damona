@@ -35,7 +35,11 @@ This is why we have moved little by little to a very light Conda environment whe
 
 **Damona** is a light manager for Singularity containers. It should be straightforward to use for end-users with little knowledge in computer science of software deployment. For developers, it is still compatible with your Conda environment: you may have as many **Damona** environments in parallel that will host Singularity containers. An environment can be set up for a given analysis. It is then easy to export the containers and share them in another environment. Each developer will adjust the trade-off between packages installed with Conda and containers installed with **Damona** based on its needs.
 
-The goal of **Damona** is not to replace Conda or Singularity but to use them effectively and complement them when required. In particular, we designed **Damona** so as to provide the containers required by [Sequana pipelines](https://sequana.readthedocs.io) [@Cokelaer2017]. Therefore, we provide some singularities but more as examples and proof-of-concept rather than an exhaustive set of Singularity containers. 
+The goal of **Damona** is not to replace Conda or Singularity but to use them effectively and complement them when required. In particular, we designed **Damona** so as to provide the containers required by [Sequana pipelines](https://sequana.readthedocs.io) [@Cokelaer2017]. Therefore, we provide some singularities but more as examples and proof-of-concept rather than an exhaustive set of Singularity containers.
+
+The main purpose of **Damona** is for developers to provide an easy solution for
+their end-users to install third-party tools more easily thanks to Singularity
+containers. 
 
 In the following, we quickly describe the principle of **Damona** followed by some test cases.
 
