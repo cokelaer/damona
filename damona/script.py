@@ -76,6 +76,8 @@ def install(**kwargs):
 @click.argument('filename', required=True, type=click.STRING)
 @click.option('--output-name', default=None, 
     help="default to the singularity extension and tag")
+@click.option('--force', is_flag=True,
+    help="add --force option")
 def build(**kwargs): #pragma: no cover
     """Build a container from a local recipes or damona recipes.
 
@@ -90,6 +92,8 @@ def build(**kwargs): #pragma: no cover
 
     """
     cmd = "sudo singularity build {} {}"
+    if kwargs['force']: 
+        cmd += " --force "
     output_name = kwargs.get('output_name')
     if output_name is None:
         # get filename and save locally
