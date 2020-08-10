@@ -201,6 +201,8 @@ Roadmap
   registry.txt file name and version are included in the name. 
 * ability to download any image from internet if user provide the name and
   version to cope with different naming conventions; 
+* remove registry from recipes if possible and put metadata inside the
+singularity. If not found, a registry is required
 
 Changelog
 =========
@@ -208,6 +210,7 @@ Changelog
 ========= ====================================================================
 Version   Description
 ========= ====================================================================
+0.4.2     * Fix typo in the creation of aliases for 'set' containers
 0.4.1     * implemented aliases for the --from-url option stored in a 
             damona.cfg file 
 0.4.0     * implemented the 'env' and 'activate' command

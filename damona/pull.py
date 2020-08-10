@@ -132,8 +132,8 @@ class Pull():
             binaries = self.registry[registry_name]['binaries']
             if isinstance(binaries, str):
                 for binary in binaries.split():
-                    cmd = """singularity run {}/{} ${{1+"$@"}} """
-                    cmd = cmd.format(images_directory, output_name)
+                    cmd = """singularity run {}/{} {} ${{1+"$@"}} """
+                    cmd = cmd.format(images_directory, output_name, binary)
                     env = Environ()
                     bin_directory = env.get_current_env() + "/bin"
                     bin_name = bin_directory +"/"+  binary
