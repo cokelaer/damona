@@ -20,7 +20,7 @@ date: 2 August 2020
 bibliography: paper.bib
 ---
 
-# Motivation
+# Summary
 
 Next Sequencing Generation (NGS) [@Goodwin2016] implies complex analysis using pipelines that depend on a plethora of software. A few years ago, setting up a local system to reproduce an analysis was a challenge even for computer scientists. Indeed, one needed to be proficient in several languages. For instance, you would need to compile C/C++ code or set up the correct JAVA or R environments just to cite a few examples. Hours were spent in retrieving the correct source code, days in compilation time, weeks in reproducing analysis. Reproducing the analysis on another operating system would have been even more challenging.
 
@@ -28,12 +28,17 @@ Solutions are now available to help researchers installing reproducible NGS pipe
 
 With *Conda* and *Singularity*, Bioinformaticians have now all the tools to build reproducible pipelines. In practice, Conda environment can also be used to provide a development framework. You can quickly install software in an environment and develop your software in it. Then, you can share your environment with your colleagues. It is a quite effective solution to reproduce analysis while moving forward with development. Yet, with an increasing number of tools used in NGS pipelines, practical issues may arise: impossibility to reproduce an environment, conflicts when installing software, a long time to resolve dependencies. You could have an environment per pipeline but then you need to install common packages several times in different environments.  What if you realise that a tool has a wrong version and you do not want, or cannot update your Conda environment. A simple solution consists in providing a Singularity container for that specific package and put it in your environment. We could generalise this idea, and move all the packages from a Conda environment within the Singularity container or the Conda environment itself. Then we have a 100% reproducible environment. However, you cannot change it easily. This is not an environment you can deploy iteratively.
 
-This is why we have moved little by little to a very light Conda environment where known-to-cause-problem packages have been shipped into Singularity containers. Since we still have the Conda environment, we keep its flexibility and ability to update our Python software easily as well. This gives us the flexibility of a Conda environment(s) while having the complex packages available as Singularity containers. Yet, with an increasing number of Singularity containers, we need to have aliases and make them available for each environment.
-That's where **Damona** started: a manager for Singularity containers. Once a Conda environment is used, you can have a **Damona** environment in parallel that will host Singularity containers. An environment can be set up for a given analysis. It is then easy to export the containers and share them in another environment. Each developer will adjust the trade-off between packages installed with Conda and containers installed with **Damona** based on its needs.
+This is why we have moved little by little to a very light Conda environment where known-to-cause-problem packages have been shipped into Singularity containers. Since we still have the Conda environment, we keep its flexibility and ability to update our Python software easily as well. This gives us the flexibility of a Conda environment(s) while having the complex packages available as Singularity containers. Yet, with an increasing number of Singularity containers, we need to have aliases and make them available for each environment. A manager for Singularity containers would be of help for end-users.
 
-Our goal is not to replace Conda or Singularity but to use them effectively and complement them when required. In particular, we designed **Damona** so as to provide the containers required by [Sequana pipelines](https://sequana.readthedocs.io) [@Cokelaer2017]. Therefore, we provide some singularities but more as examples and proof-of-concept rather than an exhaustive set of Singularity containers. 
+
+# Statement of Need
+
+**Damona** is a light manager for Singularity containers. It should be straightforward to use for end-users with little knowledge in computer science of software deployment. For developers, it is still compatible with your Conda environment: you may have as many **Damona** environments in parallel that will host Singularity containers. An environment can be set up for a given analysis. It is then easy to export the containers and share them in another environment. Each developer will adjust the trade-off between packages installed with Conda and containers installed with **Damona** based on its needs.
+
+The goal of **Damona** is not to replace Conda or Singularity but to use them effectively and complement them when required. In particular, we designed **Damona** so as to provide the containers required by [Sequana pipelines](https://sequana.readthedocs.io) [@Cokelaer2017]. Therefore, we provide some singularities but more as examples and proof-of-concept rather than an exhaustive set of Singularity containers. 
 
 In the following, we quickly describe the principle of **Damona** followed by some test cases.
+
 
 
 # Damona to manage Singularity containers and environments
