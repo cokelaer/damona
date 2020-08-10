@@ -202,7 +202,7 @@ Roadmap
 * ability to download any image from internet if user provide the name and
   version to cope with different naming conventions; 
 * remove registry from recipes if possible and put metadata inside the
-singularity. If not found, a registry is required
+  singularity. If not found, a registry is required
 
 Changelog
 =========
