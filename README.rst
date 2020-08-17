@@ -28,7 +28,7 @@ other projects and therefore decided to release it.
    :target: https://zenodo.org/badge/latestdoi/282275608
 
 
-:Python version: Python 3.6, 3.7.3, 3.7, 3.8
+:Python version: Python 3.6, 3.7, 3.8
 :Source: See  `http://github.com/cokelaer/damona <https://github.com/cokelaer/damona/>`__.
 :Issues: Please fill a report on `github <https://github.com/cokelaer/damona/issues>`__
 
