@@ -14,6 +14,9 @@ From: cokelaer/damona/conda:4.7.12
     Author thomas cokelaer
     # synchronised version with sequana
     Version v0.9.0
+    DAMONA_TYPE set
+    DAMONA_BIN bwa minimap2 freebayes pigz bowtie bowtie2 samtools bamtools
+mafft spades igvtools bedtools subread STAR
 
 %post
 
@@ -55,7 +58,7 @@ From: cokelaer/damona/conda:4.7.12
     conda install raxml
 
     # NOT INSTALL IN THIS SINGULARITY ON PURPOSE:
-    #  - busco and quast requires lots of R dependencues possibly 
+    #  - busco and quast requires lots of R dependencies possibly 
     #  - RNA-seQC downgrades fastqc and picard due to openjdk compat
     #  - prokka lots of perl dependencies
 

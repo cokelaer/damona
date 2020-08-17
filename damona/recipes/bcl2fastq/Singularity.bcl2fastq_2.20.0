@@ -5,6 +5,8 @@ From: centos:7
     MAINTAINER thomas cokelaer
     Author thomas cokelaer
     Version v2.20
+    DAMONA_TYPE exe
+    DAMONA_BIN bcl2fastq
 
 %files
     bcl2fastq.rpm

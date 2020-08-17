@@ -5,7 +5,7 @@ import builtins
 
 def test_damona_app():
     from click.testing import CliRunner
-    from damona.script import install, build, registry, env, activate
+    from damona.script import install, build, registry, env, activate, deactivate
     from damona.script import list as _list
     runner = CliRunner()
 
@@ -31,6 +31,8 @@ def test_damona_app():
     assert results.exit_code == 0
     results = runner.invoke(activate, [".dummy_test"])
     assert results.exit_code == 0
+    results = runner.invoke(deactivate, [])
+    assert results.exit_code == 0
 
     import mock
     with mock.patch.object(builtins, 'input', lambda _: 'y'):
@@ -46,6 +48,11 @@ def test_environ():
     import mock
     with mock.patch.object(builtins, 'input', lambda _: 'y'):
         env.delete(".dummy_test")
+
+def test_config():
+    from damona.config import Config
+    c = Config()
+    c.read()
 
 
 def test_python_pull():
@@ -100,7 +107,7 @@ def test_registry():
 def test_pull_dryrun():
     cmd = "damona pull fastqc:0.11.9 --dryrun"  
     subprocess.call(cmd.split())
-    
+
 def test_pull_wrong():
     # non existing image
     cmd = "damona pull tartuffe"  

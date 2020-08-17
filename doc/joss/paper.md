@@ -225,19 +225,19 @@ Since the environment is a a set of files, as a developer, you may also simply
 replace the existing file. This means you can update an environment in an
 instant.
 
-# Build a production environement for your users
+# Build a production environment for your users
 
 Here is a final example with Sequana [@Cokelaer2017]. We used to have a unique
 Conda environment where sequana and its dependencies would be installed. Then,
 for each pipeline, we would also install their third-party requirements. The
-Conda environement quickly became unstable. We mean that upgrading the version
+Conda environment quickly became unstable. We mean that upgrading the version
 of a package would start to be difficult: other packages would be downgraded or
 upgraded breaking the reproducibility of other analysis. We therefore moved
 little by little to a paradigm where the conda environment is as simple as
 possible (e.g. installing Python software only) and all other tools would reside
 in a single singularity file. With **Damona** we create one environment per
-pipeline keeping all singularity files independent from th conda environement.
-It is then easy to either create a new conda environement that would use the
+pipeline keeping all singularity files independent from the conda environment.
+It is then easy to either create a new conda environment that would use the
 same **Damona** singularity containers. Updating a buggy singularity image would
 also benefit to all Conda environments. 
 
@@ -245,12 +245,12 @@ also benefit to all Conda environments.
 
 
 **Damona** is quite recent but already used in production. The version at the
-time of writting this document was 0.4.1. New features and
+time of writing this document was 0.4.1. New features and
 roadmap are available on the [github
 repository](https://github.com/cokelaer/damona) as well as on the [on line
 documentation](https://damona.readthedocs.io). 
 
-# Acknowledgments
+# Acknowledgements
 
 This work has been supported by the France Génomique Consortium (ANR 10-INBS-09-08).
 

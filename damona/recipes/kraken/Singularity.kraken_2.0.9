@@ -1,5 +1,5 @@
-Bootstrap: localimage
-From: ../conda/conda_4.7.12.img
+Bootstrap: library
+From: cokelaer/damona/conda:4.7.12
 
 
 # Bioinformatics tools available (main ones):
@@ -12,7 +12,9 @@ From: ../conda/conda_4.7.12.img
 
 %labels
     Author thomas cokelaer
-    Version v1.0
+    Version v2.0.9
+    DAMONA_TYPE exe
+    DAMONA_BIN kraken2
 
 %post 
 

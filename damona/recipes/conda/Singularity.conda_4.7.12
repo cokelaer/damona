@@ -1,7 +1,3 @@
-#BootStrap: debootstrap
-#DistType "debian"
-#MirrorURL: http://us.archive.ubuntu.com/ubuntu/
-#OSVersion: xenial
 BootStrap: docker
 From: ubuntu:16.04
 
@@ -9,6 +5,8 @@ From: ubuntu:16.04
 
     AUTHOR Thomas Cokelaer
     VERSION 1.0
+    DAMONA_TYPE env
+    
 
 %post
 

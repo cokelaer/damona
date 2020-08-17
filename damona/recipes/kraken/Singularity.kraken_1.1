@@ -1,13 +1,14 @@
 Bootstrap: library
-#From: shub://cokelaer/damona:conda_4.7.12
 From: cokelaer/damona/conda:4.7.12
 
 
 %labels
     Author thomas cokelaer
-    Version v1.0
+    Version v1.1
+    DAMONA_TYPE exe
+    DAMONA_BIN kraken
 
-%post 
+%post
 
     # for kraken
     apt-get install --yes bc

@@ -1,11 +1,11 @@
 Bootstrap: shub
 From: cokelaer/damona:r_4.0.2
 
-
-
 %labels
     Author thomas cokelaer
     Version v1.0.0
+    DAMONA_BIN rnadiff
+    DAMONA_ENV exe
 
 %post
     export PATH=$PATH:/usr/bin

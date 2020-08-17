@@ -91,9 +91,10 @@ def build(**kwargs): #pragma: no cover
         damona build salmon:1.3.0
 
     """
-    cmd = "sudo singularity build {} {}"
+    cmd = "sudo singularity build"
     if kwargs['force']: 
         cmd += " --force "
+    cmd += " {} {} "
     output_name = kwargs.get('output_name')
     if output_name is None:
         # get filename and save locally
@@ -148,21 +149,12 @@ def env(**kwargs):
     from damona import Environ
     envs = Environ()
     if kwargs['create'] is None and kwargs['delete'] is None:
-        print(f"There is currently only one base environment and {envs.N} user environment.")
+        print(f"There is currently only one base environment and {envs.N} user environments.")
         if envs.N !=0:
-            print("Here are the current environment(s): ")
             for this in envs.environments:
                 print(" -  {}".format(this))
         current_env = envs.get_current_env()
-        logger.info("""Your current env is {}.
-
-You can overwrite this behaviour by setting DAMONA_ENV variable.
-For example under bash:
-
-    export DAMONA_ENV="~/.config/damona/envs/your_best_env"
-
-
-        """.format(current_env))
+        logger.info("""Your current env is {}.""".format(current_env))
     elif kwargs['create'] and kwargs['delete']: # mutually exclusive
         logger.error("you cannot use --delete and --create together")
     elif kwargs['delete']:
@@ -174,12 +166,8 @@ For example under bash:
 @click.argument('name', required=True, type=click.STRING)
 def activate(**kwargs):
     """activate a damona environment
-    
-    List the environments
 
-        damona env
-
-    and activate a valid one:
+    activate a valid environement:
 
         damona activate example
 
@@ -187,6 +175,19 @@ def activate(**kwargs):
     from damona import Environ
     env = Environ()
     env.activate(kwargs['name'])
+
+@main.command()
+def deactivate(**kwargs):
+    """activate a damona environment
+
+    deactivate a valid environement:
+
+        damona deactivate
+
+    """
+    from damona import Environ
+    env = Environ()
+    env.deactivate()
 
 @main.command()
 @click.option('--path', required=True, 

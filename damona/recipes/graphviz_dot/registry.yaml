@@ -1,0 +1,7 @@
+Singularity.graphviz_2.43.0:
+    version: 2.43.0
+    class: exe
+    download: library://cokelaer/damona/graphviz:2.43.0
+    binaries: 
+        - graphviz: graphviz
+

@@ -8,7 +8,7 @@ import glob
 
 _MAJOR               = 0
 _MINOR               = 4
-_MICRO               = 2
+_MICRO               = 3
 version              = '%d.%d.%d' % (_MAJOR, _MINOR, _MICRO)
 release              = '%d.%d' % (_MAJOR, _MINOR)
 
@@ -51,6 +51,40 @@ requirements = open("requirements.txt").read().split()
 requirements += ["easydev"]
 
 
+from setuptools import setup
+from setuptools.command.develop import develop
+from setuptools.command.install import install
+
+
+def copyfile():
+    try:
+        from easydev import CustomConfig
+        configuration = CustomConfig("damona", verbose=True)
+        damona_config_path = configuration.user_config_dir
+        #from damona import shell
+        #shell_path = shell.__path__._path[0]
+        with open("damona/shell/damona.sh", "r") as fin:
+            with open(damona_config_path + os.sep + "damona.sh", "w") as fout:
+                fout.write(fin.read())
+    except:
+        # could not copy the file, we will do it when starting damona for the
+        # first time. 
+        pass
+
+
+class PostDevelopCommand(develop):
+    """Post-installation for development mode."""
+    def run(self):
+        develop.run(self)
+        copyfile()
+
+class PostInstallCommand(install):
+    """Post-installation for installation mode."""
+    def run(self):
+        install.run(self)
+        copyfile()
+
+
 setup(
     name             = "damona",
     version          = version,
@@ -78,8 +112,10 @@ setup(
     package_data = {
         'damona': ['*.cfg'],
         'damona.recipes' : ['*/Singularity.*', '*/registry.yaml'],
-
+        '': ["damona/shell/damona.sh"]
         },
+
+    cmdclass={"develop": PostDevelopCommand, "install": PostInstallCommand},
 
     zip_safe=False,
     entry_points = {

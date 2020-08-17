@@ -29,7 +29,7 @@ class Config():
 
     def __init__(self):
         self.config_file = damona_config_path + os.sep + "damona.cfg"
-        if os.path.exists(self.config_file) is False:
+        if os.path.exists(self.config_file) is False: #pragma: no cover
             with open(self.config_file, "w") as fout:
                 fout.write("[urls]\n")
                 for k,v in urls.items():

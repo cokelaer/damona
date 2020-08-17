@@ -213,6 +213,7 @@ Changelog
 ========= ====================================================================
 Version   Description
 ========= ====================================================================
+0.4.3     * Implement damona activate/deactivate
 0.4.2     * Fix typo in the creation of aliases for 'set' containers
 0.4.1     * implemented aliases for the --from-url option stored in a 
             damona.cfg file 
