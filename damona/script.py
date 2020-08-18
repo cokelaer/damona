@@ -149,7 +149,7 @@ def env(**kwargs):
     from damona import Environ
     envs = Environ()
     if kwargs['create'] is None and kwargs['delete'] is None:
-        print(f"There is currently only one base environment and {envs.N} user environments.")
+        print(f"There is currently one base environment and {envs.N} user environments.")
         if envs.N !=0:
             for this in envs.environments:
                 print(" -  {}".format(this))

@@ -15,10 +15,12 @@
 #
 ##############################################################################
 from damona import env_directory
+from damona import damona_config_path
 import os
 import shutil
 from damona import logger
 import sys
+
 
 class Environ():
     def __init__(self):
@@ -27,11 +29,11 @@ class Environ():
     @staticmethod
     def get_current_env():
         if 'DAMONA_ENV' not in os.environ:
-            from damona import damona_config_path
-            return damona_config_path
+            path = damona_config_path
         else:
-            return os.environ['DAMONA_ENV'] 
-    
+            path = os.environ['DAMONA_ENV']
+        return path
+
     def _get_N(self):
         return len(self.environments)
     N = property(_get_N)
@@ -54,30 +56,58 @@ class Environ():
                 if ret == 'y':
                     shutil.rmtree(env_path)
 
-    def activate(self, env_name):
+    def activate(self, env_name=None):
+        #self.deactivate()
         # Do not change the print statement here below. They are used by
         # damona.sh
-        if env_name not in self.environments:
+        if env_name not in self.environments + ['base']:
             logger.error(f"invalid environment:  {env_name}. Please use 'damona env' to get the list")
             sys.exit(1)
-        env_path = env_directory / env_name
-        print('    export DAMONA_ENV={};'.format(env_path))
-        print('export PATH={}/bin:${{PATH}}'.format(env_path))
+        if env_name == "base":
+            env_path = env_directory.parent 
+            print('    export DAMONA_ENV={};'.format(env_path))
+            print('export PATH={}/bin:${{PATH}}'.format(env_path))
+        else:
+            env_path = env_directory / env_name
+            print('    export DAMONA_ENV={};'.format(env_path))
+            print('export PATH={}/bin:${{PATH}}'.format(env_path))
 
     def deactivate(self):
-        # Do not change the print statement here below. They are used by
-        # damona.sh
+        # we deactivate the latest activated environment only.
+        # can be called several times. If called too many times,
+        # we set the main damona environment (base) as default
         PATH = os.environ['PATH']
         paths = PATH.split(":")
-        newPATH = ":".join([x for x in paths if "config/damona/" not in x])
-        from damona import damona_config_path
-        damona_config_path
-        newPATH = damona_config_path+"/bin" + ":" +  newPATH
-        print('    export DAMONA_ENV={};'.format(damona_config_path))
+
+
+        first_found = False   # this one is the one to deactivate (to ignore)
+        found_damona_path = None # this one is the next one
+        newPATH = []
+        for path in paths:
+            if "config/damona" in path:
+                # we skip the first one.
+                if first_found is False:
+                    first_found = True
+                else: # keep track of the DAMONA_ENV.
+                    newPATH.append(path)
+                    if found_damona_path is None:
+                        found_damona_path = path
+            else: # in all other cases, we keep the path.
+                newPATH.append(path)
+
+        #
+        newPATH = ":".join(newPATH)
+        if found_damona_path:
+            print('    export DAMONA_ENV={};'.format(found_damona_path.rsplit('/bin')[0])) 
+        else:
+            newPATH = damona_config_path + ":" + newPATH
+            print('    export DAMONA_ENV={};'.format(damona_config_path))
         print('export PATH={}'.format(newPATH))
 
-
     def create(self, env_name):
+        if env_name == "base":
+            logger.critical("base is a reserved name for environement. Cannot be created")
+            sys.exit(1)
         env_path = env_directory / env_name
         if os.path.exists(env_path):
             logger.warning("{} exists already".format(env_path))

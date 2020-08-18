@@ -106,12 +106,19 @@ class Pull():
                 Client.pull(str(download_name), name=output_name, 
                     pull_folder=pull_folder,
                     force=force) 
-            logger.info("File {} uploaded to {}".format(name, images_directory))
-
-        # Now, create an alias
-        path = images_directory
+            logger.info("File {} uploaded to {}".format(name, pull_folder))
 
         _class = self.registry[registry_name]['class']
+
+        # we get rid of /home/user
+        # FIXME works for linux only
+        if "HOME" in os.environ:
+            images_directory = str(pull_folder)
+            images_directory = images_directory.replace(os.environ['HOME'], "~")
+        else:
+            images_directory = pull_folder
+
+
         if _class == "exe":
             # one binary name. we use the first one
             cmd = """singularity run {}/{} ${{1+"$@"}} """
