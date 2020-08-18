@@ -1,10 +1,24 @@
 
 
+__damona_find_damona() {
+    if [ -f $DAMONA_EXE ]; then
+        mycmd="$(which damona)"
+        status=$?
+
+        if [ $status != 0 ]; then
+            echo "damona executable could not be found in your PATH"
+        else
+            export DAMONA_EXE="$mycmd"
+        fi
+    fi
+}
+# we should set the DAMONA_EXE variable if not set already
+__damona_find_damona
 
 
 __damona_hashr() {
     if [ -n "${ZSH_VERSION:+x}" ]; then
-        \rehash:w
+        \rehash
 
     elif [ -n "${POSH_VERSION:+x}" ]; then
         :  # pass
@@ -32,7 +46,7 @@ __damona_activate() {
 
 __damona_deactivate() {
     \local ask_damona
-    ask_damona="$( "$DAMONA_EXE" deactivate "$@")" || \return $?
+    ask_damona="$( "$DAMONA_EXE" deactivate )" || \return $?
     \eval "$ask_damona"
     __damona_hashr
 }
@@ -63,6 +77,7 @@ _damona_completionetup;
 
 
 damona() {
+
     if [ -z "$DAMONA_EXE" ]; then
         echo "You must define the DAMONA_EXE variable to point towards the damona executable"
         echo "Set it in your .bashrc or in this shell"
@@ -90,3 +105,9 @@ damona() {
         esac
     fi
 }
+
+# we activate the base environment
+export DAMONA_ENV="${HOME}/.config/damona"
+export PATH=${DAMONA_ENV}/bin:$PATH
+
+
