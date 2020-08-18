@@ -60,12 +60,11 @@ With Damona, we provide a simple framework that ease the life of the developer
 and user. We have indeed a simple registry system stored with each recipe. When
 required, we create a binary in ~/.config/damona/bin/fastqc named after the recipe name.
 
-All you need to do is call the executable from this directory. Even better, set
-your environment to look for executables in ~/.config/damona/bin/ For example::
+All you need to do is call the executable from this directory. If you sourced
+the file **damona.sh** in ~/.config/damona/ then, your PATH is already set and
+you can just type::
 
-    export PATH=~/.config/damona/bin/:$PATH
-
-and you are ready do go.
+    fastqc
 
 If you are using a registry.txt from a remote URL, it works in the same way::
 
@@ -103,16 +102,31 @@ Now, you need to activate the first one::
 
     damona activate test1
 
-Here, unfortunately, this feature is not yet implemented so you need to do it
-yourself. Under bash unix type you can type e.g.,::
-
-    export DAMONA_ENV="~/.config/damona/envs/test1"
-
 Now you can install a tool with a given version in this environement::
 
-    export DAMONA_ENV="~/.config/damona/envs/test1"
-    damone install fastqc:0.11.9 
+    damona install fastqc:0.11.9 
 
-    export DAMONA_ENV="~/.config/damona/envs/test2"
+And to install it in the *test2* environment::
+
+    damona deactivate
+    damona activate test2
     damona install fastqc:0.11.8 --from-url damona
+
+
+Note that if you call::
+
+    damona deactivate
+
+many times, it will still keep the *base* environment.
+
+You can activate several environement. The binary will be searced into the
+latest activated environement, then the previous one and so on until the base
+environement. 
+
+
+
+
+
+
+
 

@@ -69,7 +69,7 @@ environment where known-to-cause-problem packages have been shipped into
 singularity containers. This means we have to create aliases to those
 singularities. The singularities can be simple executable containers or full
 environment containers with many executables inside. In both cases, on need to
-manager those containers for different users, pipelines, versions etc. This
+manage those containers for different users, pipelines, versions etc. This
 started to be cumbersome to have containers in different places and update
 script that generate the aliases to those executables. 
 
@@ -149,7 +149,7 @@ your PATH environmental variable. For instance under Linux, type::
 
 That's it. You have downloaded a reproducible container and you can try::
 
-    fastqc --versio
+    fastqc --version
 
 Check that this is the correct path::
 
@@ -172,18 +172,10 @@ and check that you now have 1 environment::
     damona env
 
 We want to create an alias to the previously downloaded image of fastqc tool but
-in the *test1* environment. First we activate it by setting an environmental
-variable::
+in the *test1* environment. First we activate::
 
-    export DAMONA_ENV=~/.config/damona/envs/test1
-    export DAMONA_PATH=~/.config/damona/envs/test1/bin
 
-.. note:: the command::
-
-        damona env activate
-
-    does not currently change the environmental variables (cannot be done 
-    permanently in Python) but we gives hints on how to do it.
+    damona activate test1
 
 then, we install the container::
 
@@ -191,8 +183,6 @@ then, we install the container::
 
 This will not download the image again. Instead it will create an alias in
 ~/.config/damona/envs/test1/bin directory
-
-Change your PATH accordingly using the DAMONA_PATH variable
 
 If you are interested to know more, please see the User Guide and Developer
 guide here below.
