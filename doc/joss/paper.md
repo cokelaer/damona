@@ -57,6 +57,7 @@ The Python [Pypi](https://) website. The following command should install the la
 
 ```bash
     pip install damona --upgrade
+    source ~/.config/damona/damona.sh
 ```
 
 You can now test the installation by typing
@@ -66,7 +67,7 @@ You can now test the installation by typing
 ```
 
 By default, **Damona** provides a few Singularity recipes, which are
- stored on external servers, in particular on [cloud.sylabs.io](https://cloud.sylabs.io/library/cokelaer/damona) and 
+ stored on external servers, in particular on [cloud.sylabs.io](https://cloud.sylabs.io/library/cokelaer/damona) and the 
 [SALSA group](https://biomics.pasteur.fr/drylab/) as explained later. You can see
 the default list of downloadable containers using the *list* command:
 
@@ -131,22 +132,20 @@ different environments for Singularity containers. So, let us create an environm
     damona env --create test1
 ```
 
-You would need to set it as your working environment. To do so, create the
-environmental variable:
+You may now activate it as follows
 
 ```bash
-    export DAMONA_ENV=~/.config/damona/envs/test1
+    damona activate test1
 ```
-
-All new installation will still copy the images in the default environment (to
+All new containers will still bed copied in the default environment (to
 avoid duplication) but new binaries will be stored in ``~/.config/damona/envs/test1/bin``
 
 You can have as many environments as you want. You can create and delete them as
 well. 
 
 As stated above, by default, when using the *list* command you will see only a
-few containers, which are provided with **Damona** for demonstration. 
-Nevertheless, we provide a mechanism for each individual or research group 
+few containers, which are provided with **Damona** for demonstration.
+Nevertheless, we provide a mechanism for each individual or research group
 to post their singularity containers on  their website together with a very
 simple registry file. The file should look like:
 ```text
@@ -190,25 +189,26 @@ You can now set different singularity environments for different NGS pipelines.
 
 # Test cases
 ## Testing same pipeline with two different version of a third-party tool
-In order to test a pipeline with two different version of a software, you may
+In order to test a pipeline with two different versions of a software, you may
 create a conda environment where your pipeline is installed. Then, you would
-install the software you want to test for different versions in 2 different
+install the software you want to test for different versions but using 2 different
 Damona environments. Consequently, you will not interfere with your conda
-environment. 
+environment.
 ```
     damona env --create version1
     damona env --create version2
 
     # activate the first environment to install version 0.11.8
-    export DAMONA_ENV="version1"
+    damona activate version1
     damona install fastqc:0.11.8
 
     # activate the second environment to install version 0.11.9
-    export DAMONA_ENV="version1"
+    damona activate version2
     damona install fastqc:0.11.9
 ```
-Before running the pipeline, change your system so if users either version 1  or
-2.
+Before running the pipeline, you simply activate the damona environement you
+wish to test. 
+
 
 ## Sharing your environment made easy
 
@@ -245,7 +245,7 @@ also benefit to all Conda environments.
 
 
 **Damona** is quite recent but already used in production. The version at the
-time of writing this document was 0.4.1. New features and
+time of writing this document was 0.4.3. New features and
 roadmap are available on the [github
 repository](https://github.com/cokelaer/damona) as well as on the [on line
 documentation](https://damona.readthedocs.io). 
