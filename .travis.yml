@@ -36,6 +36,8 @@ install:
   - pip install pytest pytest-cov pytest-timeout pytest-xdist pytest-mock pytest-runner
   - conda install --yes singularity
   - pip install coverage coveralls mock pytest-mock
+  # aug 2020 python setup does not seem to install dependencues
+  - pip install -r requirements.txt
   - python setup.py install
 
 # # command to run tests, e.g. python setup.py test

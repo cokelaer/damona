@@ -43,12 +43,7 @@ packages = find_packages()
 packages = [this for this in packages if this.startswith('test.') is False]
 packages = [this for this in packages if this not in ['test']]
 
-# load a common list of requirements
-# - mock is for the test only
-# - qtconsole is required by Sequanix
 requirements = open("requirements.txt").read().split()
-# not in conda but on pypi
-requirements += ["easydev"]
 
 
 from setuptools import setup
@@ -58,11 +53,12 @@ from setuptools.command.install import install
 
 def copyfile():
     try:
+        # This is to make sure users get the newest version installed
+        # If it fails, this will be copied again when calling damona for the
+        # first time.
         from easydev import CustomConfig
         configuration = CustomConfig("damona", verbose=True)
         damona_config_path = configuration.user_config_dir
-        #from damona import shell
-        #shell_path = shell.__path__._path[0]
         with open("damona/shell/damona.sh", "r") as fin:
             with open(damona_config_path + os.sep + "damona.sh", "w") as fout:
                 fout.write(fin.read())
