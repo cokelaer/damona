@@ -2,6 +2,20 @@
 Damona contributing guidelines
 ================================
 
+Main development
+================
+
+If you are interesting in helping on the core development, just create an issue to enter in contact, or create pull requests.
+
+Recipes
+========
+
+If you have a Singularity recipes and wish to add it, simply create a directory named after the tool (small caps) in ./damona/recipes and add the Singularity recipe. It should be named::
+
+    Singularity.name_x.y.z
+    
+x,y,z being the version and **name** the name of the tool (small caps as much as possible; )    
+
 Issues
 ==========
 
