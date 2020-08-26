@@ -26,10 +26,10 @@ You can filter by selecting a specific pattern::
 
 This is not a lot indeed. So, we provide a system where you can look for
 containers elsewhere on internet. For now, there is only one registry available
-on https://biomics.pasteur.fr/drylab/damona (again for demonstration). There, we posted
+on https://biomics.pasteur.fr/salsa/damona (again for demonstration). There, we posted
 some containers and a registry.txt file; if you type::
 
-    damona list --from-url https://biomics.pasteur.fr/drylab/damona/registry.txt
+    damona list --from-url https://biomics.pasteur.fr/salsa/damona/registry.txt
 
 you will get a list of the images that are available. Anybody can provide a
 container on any website with a registry.txt and you will be able to access to
