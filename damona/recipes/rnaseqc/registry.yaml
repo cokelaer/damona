@@ -1,0 +1,7 @@
+Singularity.rnaseqc_2.35.0:
+    version: 2.35.0
+    class: exe
+    download: damona::rnaseqc_2.35.0.img
+    binaries:
+        - rnaseqc: rnaseqc
+
