@@ -20,7 +20,7 @@ from damona import damona_config_path
 
 # list of URLs zhere to find registry and their aliases
 urls = {
-    'damona':"https://biomics.pasteur.fr/drylab/damona/registry.txt"
+    'damona':"https://biomics.pasteur.fr/salsa/damona/registry.txt"
 }
 
 
