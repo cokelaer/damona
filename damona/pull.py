@@ -83,6 +83,7 @@ class Pull():
             logger.info("pulling {}".format(registry_name))
 
         download_name = self.registry[registry_name]['download']
+        logger.info("Download {}".format(download_name))
 
         if output_name is None:
             output_name = registry_name + ".img"
