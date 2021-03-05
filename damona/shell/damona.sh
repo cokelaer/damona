@@ -2,11 +2,16 @@
 
 __damona_find_damona() {
     if [ -f $DAMONA_EXE ]; then
-        mycmd="$(which damona)"
+        mycmd="$(which damona 1>/dev/null 2>/dev/null)"
         status=$?
 
         if [ $status != 0 ]; then
-            echo "damona executable could not be found in your PATH"
+            pattern="show_init_warning_message=False"
+            cmd="$(grep -q "$pattern" ~/.config/damona/damona.cfg)"
+            info=$?
+            if [ $info != 0 ]; then
+                echo "damona was not found in your path but a config file was found. It you want to ignore this message, edit the config file in .config/damona/damona.cfg and set show_init_warning_message=False"
+            fi
         else
             export DAMONA_EXE="$mycmd"
         fi
@@ -27,12 +32,15 @@ __damona_hashr() {
     fi
 }
 
-
 __damona_activate() {
 
     \local cmd="$1"
     shift
     \local ask_damona
+
+    echo "$cmd"
+    echo "$@"
+
     ask_damona="$("$DAMONA_EXE"  "$cmd" "$@")" || \return $?
     rc=$?
 
@@ -43,36 +51,21 @@ __damona_activate() {
     __damona_hashr
 }
 
-
 __damona_deactivate() {
+    \local cmd="$1"
+    shift
     \local ask_damona
-    ask_damona="$( "$DAMONA_EXE" deactivate )" || \return $?
+    ask_damona="$( "$DAMONA_EXE" "$cmd" "$@")" || \return $?
+    rc=$?
+
     \eval "$ask_damona"
+    if [ $rc != 0 ]; then
+        \export PATH
+    fi
+
     __damona_hashr
 }
 
-_damona_completion() {
-    local IFS=$'
-'
-    COMPREPLY=( $( env COMP_WORDS="${COMP_WORDS[*]}" \
-                   COMP_CWORD=$COMP_CWORD \
-                   _DAMONA_COMPLETE=complete $1 ) )
-    return 0
-}
-
-_damona_completionetup() {
-    local COMPLETION_OPTIONS=""
-    local BASH_VERSION_ARR=(${BASH_VERSION//./ })
-    # Only BASH version 4.4 and later have the nosort option.
-    if [ ${BASH_VERSION_ARR[0]} -gt 4 ] || ([ ${BASH_VERSION_ARR[0]} -eq 4 ] && [ ${BASH_VERSION_ARR[1]} -ge 4 ]);
-    then
-        COMPLETION_OPTIONS="-o nosort"
-    fi
-
-    complete $COMPLETION_OPTIONS -F _damona_completion damona
-}
-
-_damona_completionetup;
 
 
 
@@ -80,9 +73,9 @@ damona() {
 
     if [ -z "$DAMONA_EXE" ]; then
         echo "You must define the DAMONA_EXE variable to point towards the damona executable"
-        echo "Set it in your .bashrc or in this shell"
+        echo "Set it in your .bashrc or temporary in this shell."
         echo "export DAMONA_EXE=\"path_to_damona\""
-        return
+        #return
     fi
 
     if [ "$#" -lt 1 ]; then
@@ -90,7 +83,30 @@ damona() {
     else
         \local cmd="$1"
         shift
+
+        # for the activate/deactivate special cases, user may provide 
+        # --level DEBUG  before the command.
         case "$cmd" in
+            --level)
+                \local level="$1"
+                shift
+                \local maincmd="$1"
+                shift 
+
+                case "$maincmd" in
+                    activate)
+                        __damona_activate --level "$level" "$maincmd" "$@"
+                        ;;
+                    deactivate)
+                        __damona_deactivate --level "$level" "$maincmd" "$@"
+                        ;;
+                    *)
+                        "$DAMONA_EXE" --level "$level" "$maincmd" "$@"
+                        \local t1=$?
+                        return $t1
+                        ;;
+                 esac
+            ;;
             activate)
                 __damona_activate "$cmd" "$@"
                 ;;
@@ -107,7 +123,12 @@ damona() {
 }
 
 # we activate the base environment
-export DAMONA_ENV="${HOME}/.config/damona"
-export PATH=${DAMONA_ENV}/bin:$PATH
+# This DAMONA_PATH is used to stored images and environements (including
+# binaries). If it is already set by a user, no need to define it, otherwise the
+# default is in the home of the user.
+if [ -f $DAMONA_PATH ]; then
+    export DAMONA_PATH="${HOME}/.config/damona"
+fi
+#export PATH=${DAMONA_PATH}/bin:$PATH
 
 
