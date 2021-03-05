@@ -1,6 +1,9 @@
-Singularity.fastqc_0.11.9:
-    version: 0.11.9
-    download: library://cokelaer/damona/fastqc:0.11.9 
-    class: "exe"
-    binaries:
-        - fastqc: "fastqc"
+fastqc:
+  binaries: fastqc
+  releases:
+    0.11.9:
+      download: library://cokelaer/damona/fastqc:0.11.9
+      md5sum: 8a8d751504937491a846571816dbc372
+    0.11.8:
+      download: https://biomics.pasteur.fr/salsa/damona/fastqc_0.11.8.img
+      md5sum: c445a666f513614331d13faedcb1a767
