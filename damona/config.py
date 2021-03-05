@@ -2,7 +2,7 @@
 #
 #  This file is part of Damona software
 #
-#  Copyright (c) 2020 - Damona Development Team
+#  Copyright (c) 2020-2021 - Damona Development Team
 #
 #  File author(s):
 #      Thomas Cokelaer <thomas.cokelaer@pasteur.fr>
@@ -16,26 +16,53 @@
 #
 ##############################################################################
 import os
-from damona import damona_config_path
+import pathlib
 
-# list of URLs zhere to find registry and their aliases
+import colorlog
+logger = colorlog.getLogger(__name__)
+
+
+
+# list of URLs where to find registry and their aliases
 urls = {
-    'damona':"https://biomics.pasteur.fr/salsa/damona/registry.txt"
+    'damona': "https://biomics.pasteur.fr/salsa/damona/registry.txt"
 }
 
 
-
 class Config():
+    """A place holder to store our configutation file
 
+    ::
+
+        [urls]
+        damona=https://....
+        url1=https://....
+
+    """
     def __init__(self):
-        self.config_file = damona_config_path + os.sep + "damona.cfg"
-        if os.path.exists(self.config_file) is False: #pragma: no cover
+        from easydev import CustomConfig
+        configuration = CustomConfig("damona", verbose=True)
+
+        #  let us add a damona.cfg in it. This will store URLs to look for singularities
+        # This is done only once to not overwrite user options
+        self.user_config_dir = pathlib.Path(configuration.user_config_dir)
+
+        self.config_file = self.user_config_dir / "damona.cfg"
+        if self.config_file.exists() is False: #pragma: no cover
             with open(self.config_file, "w") as fout:
+                fout.write("[general]\n")
+                fout.write("show_init_warning_message=False\n\n")
                 fout.write("[urls]\n")
                 for k,v in urls.items():
                     fout.write("{}={}".format(k,v))
-        # finally we read it
+        else:
+            logger.debug("damona.cfg file exists already. Reading it")
+
+        # read the config
         self.read()
+
+        # create the shell script once for all
+        self.add_shell()
 
     def read(self):
         from configparser import ConfigParser
@@ -43,5 +70,15 @@ class Config():
         config.read_file(open(self.config_file))
         self.config = config
 
-
- 
+    def add_shell(self):
+        #  let us add a damona.cfg in it. This will store URLs to look for singularities
+        # This is done only once to not overwrite user options
+        if os.path.exists(self.user_config_dir / "damona.sh") is False:
+            logger.info("adding a damona.sh in your DAMONA_PATH")
+            _damona_config_path = self.user_config_dir
+            logger.warning(f"Creating damona.sh file in {_damona_config_path}. ")
+            import damona.shell
+            shell_path = damona.shell.__path__._path[0]
+            with open(shell_path + os.sep + "damona.sh", "r") as fin:
+                with open(_damona_config_path / "damona.sh", "w") as fout:
+                    fout.write(fin.read())
