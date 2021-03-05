@@ -34,9 +34,6 @@ logger = colorlog.getLogger(__name__)
 __all__ = ['Environ', 'Environment']
 
 
-
-
-
 class Environment():
     """Class to handle a specific environment
 

@@ -70,7 +70,7 @@ class Config():
         config.read_file(open(self.config_file))
         self.config = config
 
-    def add_shell(self):
+    def add_shell(self): #pragma: no cover  ; this is executed only if config does not exists
         #  let us add a damona.cfg in it. This will store URLs to look for singularities
         # This is done only once to not overwrite user options
         if os.path.exists(self.user_config_dir / "damona.sh") is False:
