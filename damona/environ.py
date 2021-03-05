@@ -44,10 +44,11 @@ class Environment():
 
     """
     def __init__(self, name=""):
-        self.name = name
-        if name == "":
+        if name == "" or name == "base":
+            self.name = ""
             self.path = manager.damona_path
         else:
+            self.name = name
             self.path = manager.damona_path / f"envs/{name}/"
 
         if self.path.exists() is False:
@@ -79,6 +80,7 @@ class Environment():
         binaries = self.get_installed_binaries()
         images = []
         for binary in binaries:
+            print(binary)
             br = BinaryReader(binary)
             if br.image not in images:
                 images.append(br.image)
@@ -150,7 +152,7 @@ class Environ():
         if 'DAMONA_ENV' not in os.environ:
             path = manager.damona_path
         else:
-            path = os.environ['DAMONA_ENV']
+            path = pathlib.Path(os.environ['DAMONA_ENV'])
         return path
 
     def _get_N(self):
@@ -165,7 +167,7 @@ class Environ():
 
     def _get_env_names(self):
         envs = os.listdir(manager.environments_path)
-        envs = [Environment(x).name for x in envs]
+        envs = ['base'] + [Environment(x).name for x in envs ]
         return envs
     environment_names = property(_get_env_names)
 

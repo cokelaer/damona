@@ -361,7 +361,7 @@ class BinaryInstaller():
 
         """
         env = Environ()
-        bin_directory = env.get_current_env()  / "bin"
+        bin_directory = env.get_current_env() / "bin"
 
         for binary in self.binaries:
             bin_path = pathlib.Path(bin_directory) / binary

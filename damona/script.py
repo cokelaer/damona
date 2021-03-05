@@ -387,12 +387,18 @@ def registry(**kwargs):
 @main.command()
 @click.argument('name', required=True, type=click.STRING)
 @click.option("--from-image", required=True)
+@click.option("--env", required=True)
 def add_binary(**kwargs):
-    """Create a binary linked to an existing image
+    """Create a binary linked to an existing image in a specfici environment
 
-        conda add-binary fastqc --from-image test_0.4.0.img
+        conda add-binary fastqc --from-image test_0.4.0.img --env ENVNAME
     """
     logger.debug(kwargs)
+    #TODO check that env exists
+    env = kwargs['env']
+    if env not in manager.environement_names:
+        logger.error(f"Environment {env} not found. Check valid names using 'damona env'")
+        sys.exit()
     raise NotImplementedError
 
 

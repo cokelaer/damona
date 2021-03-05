@@ -86,6 +86,11 @@ class Damona():
                 orphans.append(x)
         return orphans
 
+    def get_environments(self):
+        from damona.environ import Environ
+        env = Environ()
+        return env.environment_names
+
     def get_all_binaries(self):
         """Return list of all binaries in all environments"""
         from damona.environ import Environ
@@ -151,7 +156,7 @@ class ImageReader():
     shortname = property(_get_short_name)
 
     def is_valid_name(self):
-        pattern = ".+_(v|)\d+\.\d+\.\d+(.+|)\.(img|sif)"
+        pattern = r".+_(v|)\d+\.\d+\.\d+(.+|)\.(img|sif)"
         p = re.compile(pattern)
         if p.match(self.shortname):
             return True
@@ -159,7 +164,7 @@ class ImageReader():
             return False
 
     def _get_executable_name(self):
-        pattern = "_(v|)\d+\.\d+\.\d+(.+|)\.(img|sif)"
+        pattern = r"_(v|)\d+\.\d+\.\d+(.+|)\.(img|sif)"
         p = re.compile(pattern)
         ss = p.search(self.shortname)
         guess = self.shortname[0:ss.span()[0]]
@@ -167,7 +172,7 @@ class ImageReader():
     guessed_executable = property(_get_executable_name)
 
     def _get_version(self):
-        pattern = "_(v|)\d+\.\d+\.\d+(.+|)\.(img|sif)"
+        pattern = r"_(v|)\d+\.\d+\.\d+(.+|)\.(img|sif)"
         p = re.compile(pattern)
         ss = p.search(self.shortname)
         version = ss.group().replace(".sif", "").replace(".img", "")
@@ -227,15 +232,16 @@ class BinaryReader:
                 self.data = None
             else:
                 self.data = data[0][:]
-                image_path = data[0].split("run")[1].split()[0]
-                self.image = image_path
+                image_path = data[0].split("exec")[1].split()[0]
+
+                if "DAMONA_PATH" in os.environ:
+                    DAMONA_PATH = os.environ['DAMONA_PATH']
+                    self.image = image_path.replace("${DAMONA_PATH'}", DAMONA_PATH)
+                else:
+                    self.image = image_path
 
     def is_image_available(self):
-        DAMONA_PATH = os.environ['DAMONA_PATH']
-        print(self.image.replace("${DAMONA_PATH'}", DAMONA_PATH))
-
-        if os.path.exists(self.image) or \
-            os.path.exists(self.image.replace("${DAMONA_PATH'}", DAMONA_PATH)):
+        if os.path.exists(self.image):
             return True
         else:
             return False
