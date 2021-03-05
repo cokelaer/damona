@@ -154,22 +154,22 @@ numpydoc_show_class_members = False
 
 
 # solution from nilearn
-def touch_example_backreferences(app, what, name, obj, options, lines):
-    # generate empty examples files, so that we don't get
-    # inclusion errors if there are no examples for a class / module
-    examples_path = os.path.join(app.srcdir, "modules", "generated",
-                                 "%s.examples" % name)
-    if not os.path.exists(examples_path):
-        # touch file
-        open(examples_path, 'w').close()
+#def touch_example_backreferences(app, what, name, obj, options, lines):
+#    # generate empty examples files, so that we don't get
+#    # inclusion errors if there are no examples for a class / module
+#    examples_path = os.path.join(app.srcdir, "modules", "generated",
+#                                 "%s.examples" % name)
+#    if not os.path.exists(examples_path):
+#        # touch file
+#        open(examples_path, 'w').close()
 
 
 
 # Add the 'copybutton' javascript, to hide/show the prompt in code
 # examples
-def setup(app):
-    app.add_js_file('copybutton.js')
-    app.connect('autodoc-process-docstring', touch_example_backreferences)
+#def setup(app):
+#    app.add_js_file('copybutton.js')
+#    app.connect('autodoc-process-docstring', touch_example_backreferences)
 
 
 
