@@ -1,6 +1,4 @@
-Singularity.damona_0.4.2:
-    version: 0.4.2
-    class: exe
-    download: library://cokelaer/damona/damona:0.4.2
-    binaries:
-        - damona: damona
+damona:
+  releases:
+    0.4.2:
+      download: library://cokelaer/damona/damona:0.4.2

@@ -1,12 +1,10 @@
-Singularity.kraken_1.1:
-    version: 1.1
-    download: library://cokelaer/damona/kraken:1.1
-    class: "exe"
-    binaries:
-        - kraken: "kraken"
-Singularity.kraken_2.0.9:
-    version: 2.0.9
-    download: library://cokelaer/damona/kraken:2.0.9
-    class: "exe"
-    binaries:
-        - kraken2: "kraken2"
+kraken:
+  releases:
+    1.1:
+      download: library://cokelaer/damona/kraken:1.1
+      binaries: kraken
+      md5sum: 4d14031cf4ff4684c43f73fbd09cd442
+    2.0.9:
+      download: library://cokelaer/damona/kraken:2.0.9
+      binaries: kraken2,kraken2-build
+      md5sum: 
