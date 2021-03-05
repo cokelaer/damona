@@ -100,6 +100,7 @@ class Software():
         return data
 
     def _interpret_registry(self, data):
+        regname = self.registry_name
 
         name = list(data.keys())[0]
         data = data[name]
