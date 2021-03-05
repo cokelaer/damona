@@ -3,13 +3,14 @@ DAMONA
 
 Damona is a singularity environment manager.
 
-Damona started as a small collections of singularity recipes to help installing third-party tools for 
-`Sequana pipelines <a href="https://sequana.readthedocs.io>`_ and is now used to 
-download singularity images but more importantly set different environments (e.g. one per pipeline).
+Damona started as a small collections of singularity recipes to help installing third-party tools for
+`Sequana NGS pipelines <https://sequana.readthedocs.io>`_.
 
-In a nutshell, it puts together the logic of Conda environments with the
-reproducibility of singularity containers. We believe it could be useful for
-other projects and therefore decided to release it.
+Damona is now used to create environments where singularity images and their associated binaries can be installed altogether.
+
+In a nutshell, Damona combines the logic of Conda environments with the
+reproducibility of singularity containers. We believe that it could be useful for
+other projects and therefore decided to release it as an independent tool.
 
 .. image:: https://badge.fury.io/py/damona.svg
     :target: https://pypi.python.org/pypi/damona
@@ -18,12 +19,12 @@ other projects and therefore decided to release it.
     :target: https://travis-ci.org/cokelaer/damona
 
 .. image:: https://coveralls.io/repos/github/cokelaer/damona/badge.svg?branch=master
-    :target: https://coveralls.io/github/cokelaer/damona?branch=master 
+    :target: https://coveralls.io/github/cokelaer/damona?branch=master
 
 .. image:: http://readthedocs.org/projects/damona/badge/?version=latest
     :target: http://damona.readthedocs.org/en/latest/?badge=latest
     :alt: Documentation Status
-    
+
 .. image:: https://zenodo.org/badge/282275608.svg
    :target: https://zenodo.org/badge/latestdoi/282275608
 
@@ -37,8 +38,8 @@ other projects and therefore decided to release it.
 Motivation
 ==========
 
-As stated on their website, `Conda <https:/docs.conda.io/en/latest>`_ is 
-an open source **package** management system 
+As stated on their website, `Conda <https:/docs.conda.io/en/latest>`_ is
+an open source **package** management system
 and **environment** management system.
 Conda provides pre-compiled releases of software; they can be installed in
 different local environment that do not interfer with your system. This has
@@ -47,16 +48,16 @@ framework. One of them is `Bioconda <https://bioconda.github.io>`_, which is ded
 Although great, it is sometimes tricky to re-install an environment simply
 because NGS pipelines relies on many different software and different versions
 may be in conflicts. Another great tool is
-`Singularity <https://sylabs.io/docs>`_. Singularity containers can be used 
-to package entire scientific workflows, 
-software and libraries, and even data. It is a simpe file that can be shared
-between environments and guarantee exectution and reproducibility. 
+`Singularity <https://sylabs.io/docs>`_. Singularity containers can be used
+to package entire scientific workflows,
+software and libraries, and even data. It is a simple file that can be shared
+between environments and guarantee exectution and reproducibility.
 
 Originally, Conda provided pre-compiled version of a package. Nowadays, it also provides
-a docker and a singularity image of the tool. Singularity can package an 
-entire conda environment. 
+a docker and a singularity image of the tool. Singularity can package an
+entire conda environment.
 As you can see everything is there to build reproducible tools and
-environment. 
+environment.
 
 Now, what about a software in development that depends on third-party packages
 You would create a conda environment and starts installing those packages.
@@ -68,13 +69,13 @@ environments. This is why we have moved little by little to a very light conda
 environment where known-to-cause-problem packages have been shipped into
 singularity containers. This means we have to create aliases to those
 singularities. The singularities can be simple executable containers or full
-environment containers with many executables inside. In both cases, on need to
+environment containers with many executables inside. In both cases, one need to
 manage those containers for different users, pipelines, versions etc. This
 started to be cumbersome to have containers in different places and update
-script that generate the aliases to those executables. 
+script that generate the aliases to those executables.
 
 
-That's where **damona** started: we wanted to combine the conda-like environment framework to manage our singularitiy containers.  
+That's where **damona** started: we wanted to combine the conda-like environment framework to manage our singularitiy containers.
 
 Our goal is not to replace existing registry of biocontainers such as
 biocontainers but to use existing images, download them and manage them locally.
@@ -85,14 +86,17 @@ tools required by `Sequana <sequana.readthedocs.io>`_ pipelines.
 
 We will therefore maintain damona in the context of Sequana project. Yet,
 **Damona** may be useful for others developers who wish to have a quick and easy
-solution for their users when they need to install third-party libraries
+solution for their users when they need to install third-party libraries.
+
+Before showing real-case examples, let us install the software itself. 
+
 
 Installation
 ============
 
 The is the egg and chicken paradox. To get reproducible container with
 singularity, at some point you need to install singularity itself. That the first
-of the two software that you will need to install. Instructions 
+of the two software that you will need to install. Instructions
 are on `singularity web site <https://sylabs.io/guides/3.6/user-guide/>`_. This
 is not obvious to be honest. You need the GO language to be installed as well. I
 personally installed from source and it worked like a charm.
@@ -103,12 +107,18 @@ installation (Python 3.X)::
 
     pip install damona --upgrade
 
-You then need to source a file stored in ~/.config/damona directory::
+Type **damona** to create the Damona tree structure. Images and binaries 
+will be saved in your home directory within the
+~/.config/damona directory. There two special files should be available:
+damona.sh and damona.cfg. Check that those files are present.
 
+Finally, you need to tell your system where to find damona. For bashrc users,
+please add those two lines to you bashrc file::
 
+    export DAMONA_EXE="PATH_TO_DAMONA_BINARY"
     source ~/.config/damona/damona.sh
 
-You should be ready to go. 
+open a new shell and type **damona** and you should be ready to go.
 
 Quick Start
 ============
@@ -116,7 +126,7 @@ Quick Start
 1. *list* available containers
 -------------------------------
 By default, we provide some recipes (for testing mostly but also to complement existing
-registries when a tool is missing) and their images. 
+registries when a tool is missing) and their images.
 
 To get the list images available within **Damona** collection, just type::
 
@@ -129,20 +139,20 @@ or in short (just for that url)::
 You may retrieve images from a website where a registry exists (see developer
 guide to create a registry)
 
-2. *install* an image
----------------------
+2. *install* a Damona image
+----------------------------
 
 Download the one you want to use::
 
-    damona install fastqc:0.11.9
+    damona pull fastqc:0.11.9
 
-This will download the container in your ./config/damona directory and create an
-executable for you in ~/.config/damona/bin. 
+This will download the container in your ./config/damona/images directory and create an
+executable for you in ~/.config/damona/bin.
 
-This is your *base* environment. By default there is only one and all images
-will be stored in this directory. 
+This is your *base* environment. By default there is only one and all images and
+binaries will be stored in this directory.
 
-The binaries are in the ~./config/damona/bin directory and you may need to append this path to 
+The binaries are in the ~./config/damona/bin directory and you may need to append this path to
 your PATH environmental variable. For instance under Linux, type::
 
     export PATH=~/config/damona/bin:$PATH
@@ -192,15 +202,17 @@ Roadmap
 
 **Damona** is pretty new but here is short roadmap
 
+* DAMONA_PATH is unset is in home otherwise could be anywhere. can be set in the
+  .config file
 * check the md5 of the downloaded file so as to avoid overwritten existing name
 * do we store all images in the damona/images or do we store them in individual
   environement (with possbile duplicates).
 * remove the build and develop command most probably. The develop that builds a
   registry could be reaplce by a simple python code that builds the registry on
   the fly. the registry.yaml may not be required after all. Could be a simple
-  registry.txt file name and version are included in the name. 
+  registry.txt file name and version are included in the name.
 * ability to download any image from internet if user provide the name and
-  version to cope with different naming conventions; 
+  version to cope with different naming conventions;
 * remove registry from recipes if possible and put metadata inside the
   singularity. If not found, a registry is required
 
@@ -210,16 +222,21 @@ Changelog
 ========= ====================================================================
 Version   Description
 ========= ====================================================================
+0.5.0     * Major refactoring. Simplification of the registries. Main script
+            should now be fully functional with activation/deactivation. 
+            Ability to build images from local recipes or dockerhub entries.
+            Ability to install local container. Ability to have DAMONA_PATH
+            anywhere, not just in local home. 
 0.4.3     * Implement damona activate/deactivate
 0.4.2     * Fix typo in the creation of aliases for 'set' containers
-0.4.1     * implemented aliases for the --from-url option stored in a 
-            damona.cfg file 
+0.4.1     * implemented aliases for the --from-url option stored in a
+            damona.cfg file
 0.4.0     * implemented the 'env' and 'activate' command
           * ability to setup an external registry on any https and retrieve
             registry from there to download external images
 0.3.X     * add gffread, rnadiff recipes
 0.3.0     * A stable version with documentation and >95% coverage read-yto-use
-0.2.3     * add new recipes (rnadiff) 
+0.2.3     * add new recipes (rnadiff)
 0.2.2     * Download latest if no version provided
           * include *build* command to build image locally
 0.2.1     fixed manifest
