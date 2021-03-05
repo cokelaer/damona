@@ -26,12 +26,19 @@ Note that PKGNAME could be in small or big caps but the final image with be all
 lower caps (singularity-hub feature). Consequently, when downloading an image,
 it should be named as pkgname_x.y.z
 
+
+You may have underscore in your package name
 build
 -----
 
 To test the recipes, type::
 
-    damona build pkgname:x.y.z 
+    damona build pkgname:x.y.z
+
+This is just an alias to singularity build command::
+
+    sudo singularity build pkgname.img Singularity.pkgname_x.y.z
+
 
 Singularity recipes
 --------------------

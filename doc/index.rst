@@ -17,6 +17,8 @@ User guide and reference
     userguide
     dev
     graph
+    references
+
 
 Indices and tables
 ==================
