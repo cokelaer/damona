@@ -23,8 +23,6 @@
 ###########################################################################
 """.. rubric:: Standalone application dedicated to conversion"""
 import click
-import click_completion
-click_completion.init()
 import glob
 import sys
 import pathlib
