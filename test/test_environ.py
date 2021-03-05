@@ -15,3 +15,16 @@ def test_environ():
     with mock.patch.object(builtins, 'input', lambda _: 'y'):
         env.delete(".dummy_test")
 
+
+    env.get_current_env()
+    env.environment_names
+    env.activate("base")
+    env.deactivate()
+
+
+def test_environment():
+    
+    from damona.environ import Environment
+    e = Environment("base")
+    e.get_installed_binaries()
+
