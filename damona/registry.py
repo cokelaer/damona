@@ -113,8 +113,9 @@ class Software():
         # releases may be named as x.y or x.y.z. In the former case, the x.y is
         # read as a float, and the latter as a string. We concert everything in
         # strings.
-        for x in data['releases'].keys():
-            if str(x) in data['releases'].keys():
+        keys = list( data['releases'].keys())
+        for x in keys:
+            if str(x) in keys:
                 pass
             else:
                 data['releases'][str(x)] = data['releases'][x].copy()
