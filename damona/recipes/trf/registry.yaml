@@ -1,0 +1,6 @@
+trf:
+  releases:
+    4.10:
+      download: library://cokelaer/damona/trf:4.09
+      md5sum: c03c87155a05e30911647c621d49bacd
+
