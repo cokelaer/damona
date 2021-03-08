@@ -1,0 +1,9 @@
+canu:
+  releases:
+    1.6.0:
+      download: damona::canu_1.6.0.img 
+      md5sum: 9b94a1c08b4ce65d538b78036cf52cd6
+
+    1.8.0:
+      download: damona::canu_1.8.0.img 
+      md5sum: b161b1249641319dd075468fb00aaafa
