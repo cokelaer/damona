@@ -202,19 +202,12 @@ Roadmap
 
 **Damona** is pretty new but here is short roadmap
 
-* DAMONA_PATH is unset is in home otherwise could be anywhere. can be set in the
-  .config file
-* check the md5 of the downloaded file so as to avoid overwritten existing name
 * do we store all images in the damona/images or do we store them in individual
   environement (with possbile duplicates).
-* remove the build and develop command most probably. The develop that builds a
-  registry could be reaplce by a simple python code that builds the registry on
-  the fly. the registry.yaml may not be required after all. Could be a simple
-  registry.txt file name and version are included in the name.
-* ability to download any image from internet if user provide the name and
-  version to cope with different naming conventions;
-* remove registry from recipes if possible and put metadata inside the
-  singularity. If not found, a registry is required
+* we installing a binaries from image A, then from image B. If we delete image.
+The binary is broken where image A could supoprt this binary ! we should have a
+mechanism that handle this feature to recover the binary from other installed
+images. 
 
 Changelog
 =========
@@ -222,11 +215,18 @@ Changelog
 ========= ====================================================================
 Version   Description
 ========= ====================================================================
-0.5.0     * Major refactoring. Simplification of the registries. Main script
-            should now be fully functional with activation/deactivation. 
-            Ability to build images from local recipes or dockerhub entries.
-            Ability to install local container. Ability to have DAMONA_PATH
-            anywhere, not just in local home. 
+0.5.0     * Major refactoring. 
+
+            - Simplification of the registries (dropping notion of exe/set 
+              class
+            - Main script should now be fully functional with functional
+              activation/deactivation. 
+            - New command to build images from local recipes or dockerhub 
+              entries.
+            - Install command can now install local container. 
+            - DAMONA_PATH can be set to install damona images/binaries 
+              anywhere, not just in local home. 
+            - check md5 of images to not download/copy again
 0.4.3     * Implement damona activate/deactivate
 0.4.2     * Fix typo in the creation of aliases for 'set' containers
 0.4.1     * implemented aliases for the --from-url option stored in a
