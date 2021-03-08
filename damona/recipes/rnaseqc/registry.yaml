@@ -2,4 +2,5 @@ rnaseqc:
     releases:
       2.35.0:
         download: damona::rnaseqc_2.35.0.img
+        md5sum: v6097f3d124cbfc0e053afa6c61970468
 
