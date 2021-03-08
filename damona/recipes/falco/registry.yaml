@@ -3,4 +3,4 @@ falco:
     releases:
       0.2.1:
         download: library://cokelaer/damona/falco:0.2.1
-        md5sum: 
+        md5sum:  a8961617f8920fade322cdba618fec80
