@@ -160,3 +160,14 @@ found in damona::
 this will find the recipes automatically and save the final container in
 **salmon_1.3.0.img**.
 
+
+Upload image on sylabs
+----------------------
+
+::
+
+    singularity build salmon.img Singularity.salmon_1.3.0
+    singularity sign salmon.img
+	singularity push salmon.img library://cokelaer/damona/salmon:1.3.0
+
+
