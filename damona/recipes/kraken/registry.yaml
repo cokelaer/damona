@@ -7,4 +7,4 @@ kraken:
     2.0.9:
       download: library://cokelaer/damona/kraken:2.0.9
       binaries: kraken2,kraken2-build
-      md5sum: 
+      md5sum: bc195a921148969c7f9482f9fe25b3cd
