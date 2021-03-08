@@ -26,6 +26,5 @@ def test_environment():
     
     from damona.environ import Environment
     e = Environment("base")
-    e = Environment()
     e.get_installed_binaries()
 

@@ -34,18 +34,70 @@ class Releases(dict):
 
     def __init__(self, data):
         # a collection of releases
-        self.releases = []
+        self._name = list(data.keys())[0]
+        for version, release in data[self._name]['releases'].items():
+            # enforce the keys to be strings
+            # this is for special case of x.y that are read as float instead of
+            # strings for e.g x.y.z
+            self[str(version)] = Release(version, data)
 
-    def add_release(self, release):
-        self.releases.append(release)
 
+class Release():
+    """
 
+    fastqc:
+        binaries: # this is the main_binaries
+        x.y.z:      # a version
+            download:
+            md5sum:
+            binaries:  # this is the extra binaries
+            exclude_binaries: # exclude binaries found in the main_binaries section
 
-class Release(dict):
-    def __init__(self, download, version):
-        self.version = version
-        self.download = download
-        self.binaries = binaries
+    """
+    def __init__(self, version, data):
+        """
+
+        :param version: a valid x.y.z version to be found in data[name]['release']
+            data is a dictionary 
+        params: data
+
+        """
+        self._name = list(data.keys())[0]
+
+        kwargs = data[self._name]['releases'][version]
+        self.download = kwargs['download']
+
+        if 'md5sum' not in kwargs:
+            logger.debug(f"Missing md5sum entry in {self._name}. Please consider adding one ")
+        self.md5sum = kwargs.get("md5sum", None)
+        self._binaries = self.split_binaries(kwargs.get('binaries', []))
+        self._extra_binaries = self.split_binaries(kwargs.get('extra_binaries', []))
+        self._exclude_binaries = self.split_binaries(kwargs.get('exclude_binaries', []))
+
+    def _get_binaries(self):
+        binaries = self._binaries + self._extra_binaries
+        binaries = [x for x in binaries if x not in self._extra_binaries]
+        binaries = list(set(binaries))
+        binaries = sorted(list(set(binaries)))
+        if len(binaries) == 0:
+            return [self._name]
+        else:
+            return binaries
+    binaries = property(_get_binaries)
+
+    def split_binaries(self, binaries):
+        if isinstance(binaries, list):
+            return binaries
+        else:
+            return binaries.replace(",", " ").split()
+
+    def __repr__(self):
+        binaries = ",".join(self.binaries)
+        txt = f"name: {self._name}\n"
+        txt += f" md5: {self.md5sum}\n"
+        txt += f" binaries to be installed : {binaries}\n"
+        txt += f" download from: {self.download}"
+        return txt
 
 
 class RemoteRegistry():
@@ -74,15 +126,20 @@ class Software():
 
     """
     def __init__(self, name):
+        """
+        param name: a valid name to be found in the registry. Can also be a
+            dictionary with expected registry format. 
+
+        """
 
         if isinstance(name, dict):
             keys = list(name.keys())
             self.registry_name = keys[0]
-            self.data = self._interpret_registry(name)
+            self.releases = self._interpret_registry(name)
         else:
             self.registry_name = os.path.abspath(name)
             data = self._read_registry()
-            self.data = self._interpret_registry(data)
+            self.releases = self._interpret_registry(data)
 
     def _read_registry(self):
         # just an alias
@@ -101,70 +158,24 @@ class Software():
 
     def _interpret_registry(self, data):
         regname = self.registry_name
-
-        name = list(data.keys())[0]
-        data = data[name]
-        self._name = name
-        # some checks
-        if "releases" not in data.keys(): #pragma: no cover
-            logger.error(f"missing 'releases' entries in {regname}")
-            sys.exit(1)
-
-        # releases may be named as x.y or x.y.z. In the former case, the x.y is
-        # read as a float, and the latter as a string. We concert everything in
-        # strings.
-        keys = list( data['releases'].keys())
-        for x in keys:
-            if str(x) in keys:
-                pass
-            else:
-                data['releases'][str(x)] = data['releases'][x].copy()
-                del data['releases'][x]
-
-        def split_binaries(binaries):
-            if isinstance(binaries, list):
-                return binaries
-            else:
-                return binaries.replace(",", " ").split()
-
-        for release in data['releases'].keys():
-            binaries = []
-            if "binaries" in data.keys():
-                binaries += split_binaries(data['binaries'])
-            if 'binaries' in data['releases'][release].keys():
-                binaries += split_binaries(data['releases'][release]['binaries'])
-            if len(binaries) == 0:
-                binaries = [self._name]
-            binaries = sorted(list(set(binaries)))
-            data['releases'][release]['binaries'] = binaries
-            if 'md5sum' not in data['releases'][release]:
-                logger.debug(f"Please add a md5sum in the release {release} of {regname}")
-
-        return data
+        releases = Releases(data)
+        self._name = releases._name
+        return releases
 
     def _get_name(self):
         return self._name
     name = property(_get_name)
 
     def _get_binaries(self):
-        dd = self.data['releases']
-        return dict([(rel, dd[rel]['binaries']) for rel in dd.keys()])
+        return dict([(rel, self.releases[rel].binaries) for rel in self.releases.keys()])
     binaries = property(_get_binaries)
 
     def _get_versions(self):
-        return sorted(self.data['releases'].keys())
+        return sorted(self.releases.keys())
     versions = property(_get_versions)
-    releases = property(_get_versions)
 
     def _get_md5(self):
-        md5 = {}
-        for x in self.releases:
-            data = self.data['releases'][x]
-            if 'md5sum' in data:
-                md5[x] = data['md5sum']
-            else:
-                md5[x] = None
-        return md5
+        return dict([(rel, self.releases[rel].md5sum) for rel in self.releases.keys()])
     md5 = property(_get_md5)
 
     def check(self):
@@ -203,7 +214,7 @@ class Registry():
     def find_candidate(self, pattern):
         candidates = [x for x in self.registry.keys() if x.startswith(pattern)]
         if len(candidates) == 0:
-            logger.critical(f"No image found for {pattern}. Make sure it is correct using 'damona list' com    mand")
+            logger.critical(f"No image found for {pattern}. Make sure it is correct. You can use 'damona search' command")
             return None
         if len(candidates) == 1:
             return candidates[0]
@@ -227,8 +238,6 @@ class Registry():
     def _url_discovery(self):
         self.registry = {}
 
-
-
         ext_reg = RemoteRegistry(self.from_url)
 
         for name, content in ext_reg.data.items():
@@ -236,16 +245,16 @@ class Registry():
             recipe.check()
             name = recipe.name ##+ k.replace("Singularity.", "").lower()
             # we may have several releases
-            for version, release in recipe.data['releases'].items():
-                name_version = name + ":" + str(version )
+            for version in recipe.versions:
+                name_version = recipe.name + ":" + version
+                release = recipe.releases[version]
                 if name_version not in self.registry:
-                    if release['download'] is None:
-                        logger.warning(f"recipe {name} has no download entry. please fill asap")
-
-                    elif release['download'].startswith("damona::"):
+                    if release.download is None:
+                        logger.warning(f"recipe {recipe.name} has no download entry. please fill asap")
+                    elif release.download.startswith("damona::"):
                         from_url = self.config['urls']["damona"]
-                        release['download'] = release['download'].replace("damona::", from_url)
-                        release['download'] = release['download'].replace("registry.txt", "")
+                        release.download = release.download.replace("damona::", from_url)
+                        release.download = release.download.replace("registry.txt", "")
                     self.registry[name_version] = release
                 else: #pragma: no cover
                     for kk,vv in self.registry.items():
@@ -253,8 +262,6 @@ class Registry():
                         for kkk,vvv in self.registry[kk].items(): 
                             print(" - {}:  {}".format(kkk, vvv))
                     raise ValueError("found a duplicated name {}".format(name_version))
-
-
 
     def _damona_discovery(self):
 
@@ -267,18 +274,16 @@ class Registry():
             recipe = Software(registry)
             recipe.check()
 
-            name = recipe.name ##+ k.replace("Singularity.", "").lower()
-            # we may have several releases
-            for version, release in recipe.data['releases'].items():
-                name_version = name + ":" + str(version )
+            for version in recipe.versions:
+                name_version = recipe.name + ":" + version
+                release = recipe.releases[version]
                 if name_version not in self.registry:
-                    if release['download'] is None:
-                        logger.warning(f"recipe {name} has no download entry. please fill asap")
-
-                    elif release['download'].startswith("damona::"):
+                    if release.download is None:
+                        logger.warning(f"recipe {recipe.name} has no download entry. please fill asap")
+                    elif release.download.startswith("damona::"):
                         from_url = self.config['urls']["damona"]
-                        release['download'] = release['download'].replace("damona::", from_url)
-                        release['download'] = release['download'].replace("registry.txt", "")
+                        release.download = release.download.replace("damona::", from_url)
+                        release.download = release.download.replace("registry.txt", "")
                     self.registry[name_version] = release
                 else: #pragma: no cover
                     for kk,vv in self.registry.items():
@@ -287,35 +292,16 @@ class Registry():
                             print(" - {}:  {}".format(kkk, vvv))
                     raise ValueError("found a duplicated name {}".format(name_version))
 
+
     def get_list(self, pattern=None):
         # a name may have an underscore in it ... e.g. sequana_tools
         # in which case the singularty name is sequana_tools_0.9.0
-        if self.from_url is None:
-            from damona.recipes import __path__
-            recipes = glob.glob(__path__[0] + '/*/Singularity.*')
-            recipes = [os.path.basename(x) for x in recipes]
-            recipes = [x.replace("Singularity.", "").lower() for x in recipes]
 
-            # FIXME why lover here 
-            new_recipes = []
-            for recipe in recipes:
-                if "_" not in recipe:
-                    raise IOError(f'recipe must have an underscore  separating name and version: error in  "{recipe}"')
-                else:
-                    #replace only last occurence
-                    recipe = recipe[::-1].replace("_", ":", 1)[::-1]
-                new_recipes.append(recipe.lower())
-            recipes = sorted(new_recipes)
-
+        recipes = {}
+        for name, info in self.registry.items():
             if pattern:
-                recipes = [x for x in recipes if pattern in x]
-
-            return recipes
-        else:
-            self._url_discovery()
-            names = []
-            for k,v in self.registry.items():
-                names.append(k[::-1].replace("_", ":",1)[::-1])
-            if pattern:
-                names = [x for x in names if pattern in x]
-            return names
+                if pattern in name: 
+                    recipes[name] = info.download
+            else:
+                recipes[name] = info.download
+        return recipes

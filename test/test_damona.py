@@ -6,15 +6,15 @@ import builtins
 
 def test_damona_app():
     from click.testing import CliRunner
-    from damona.script import install, build, registry, env, activate, deactivate
-    from damona.script import list as _list
+    from damona.script import install, build,  env, activate, deactivate
+    from damona.script import search
     runner = CliRunner()
 
     # isntall
     results = runner.invoke(install, ['fastqc:0.11.9'])
     assert results.exit_code == 0
 
-    results = runner.invoke(_list)
+    results = runner.invoke(search, ['fastqc'])
     assert results.exit_code == 0
 
     
@@ -44,11 +44,10 @@ def test_help():
     subprocess.call(cmd.split())
 
 
-def test_list():
-    cmd = "damona list --help"
+def test_activate_deactivate():
+    cmd = "damona activate base"
     subprocess.call(cmd.split())
-
-    cmd = "damona list --pattern qc"
+    cmd = "damona deactivate"
     subprocess.call(cmd.split())
 
 

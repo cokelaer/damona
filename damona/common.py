@@ -110,12 +110,14 @@ class Damona():
         used_images = []
         for binary in binaries:
             br = BinaryReader(binary)
-            used_images.append(br.image)
+            used_images.append(pathlib.Path(br.image))
+
         used_images = set(used_images)
         Nu = len(used_images)
         No = Ni - Nu
         print(f"{Nu} images is/are used. Meaning {No} are orphans and could be removed")
         orphans = []
+
         for image in images:
             if image not in used_images:
                 logger.info(f"{image} image not used in any environments")
@@ -199,7 +201,13 @@ class ImageReader():
             return True
         else:
             return False
-            #print(linked_binaries)
+
+    def is_installed(self):
+        damona_path = pathlib.Path(os.environ['DAMONA_PATH'])
+        if (damona_path / 'images' / self.filename.name).exists():
+            return True
+        else:
+            return False
 
     def __repr__(self):
         txt = f"name: {self.filename.absolute()}\n"
@@ -218,10 +226,11 @@ class BinaryReader:
         :param name: the input name of the binary file
 
         Can be use to check whether the binary is not orphan and its image is
-        still available. 
-
+        still available.
 
         """
+        if isinstance(filename, str):
+            filename = pathlib.Path(filename)
 
         with filename.open("r") as fin:
 
@@ -232,16 +241,25 @@ class BinaryReader:
                 self.data = None
             else:
                 self.data = data[0][:]
-                image_path = data[0].split("exec")[1].split()[0]
+
+                try:
+                    image_path = data[0].split("exec")[1].split()[0]
+                except:
+                    image_path = data[0].split("run")[1].split()[0]
+                    logger.warning(f"command line in {filename} uses 'run'; should be reinstalled ")
 
                 if "DAMONA_PATH" in os.environ:
                     DAMONA_PATH = os.environ['DAMONA_PATH']
-                    self.image = image_path.replace("${DAMONA_PATH'}", DAMONA_PATH)
+                    self.image = image_path.replace("${DAMONA_PATH}", DAMONA_PATH)
                 else:
                     self.image = image_path
 
     def is_image_available(self):
-        if os.path.exists(self.image):
+        if 'DAMONA_PATH' not in os.environ:
+            logger.error("You must define DAMONA_PATH")
+            sys.exit(1)
+        damona_path = os.environ['DAMONA_PATH']
+        if os.path.exists(self.image.replace("${DAMONA_PATH}", damona_path)):
             return True
         else:
             return False

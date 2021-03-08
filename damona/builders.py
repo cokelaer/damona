@@ -27,7 +27,8 @@ manager = Damona()
 import colorlog
 logger = colorlog.getLogger(__name__)
 
-__all__ = ["Builder", "BuilderFromDamonaRecipe", "BuilderFromDocker"]
+__all__ = ["Builder", "BuilderFromSingularityRecipe", "BuilderFromDocker"]
+
 
 class Builder():
     """Build a container using different techniques
@@ -123,7 +124,12 @@ class BuilderFromSingularityRecipe(Builder):
         logger.info("Building a Singularity image from a Singularity recipe")
 
     def build(self, recipe, destination=None, force=False):
-        assert os.path.basename(recipe).startswith("Singularity.")
+
+        
+        if os.path.basename(recipe).startswith("Singularity.") is False:
+            logger.error("Recipe must start with Singularity.")
+            sys.exit(1)
+
         if destination is None:
             destination = os.path.basename(recipe).replace("Singularity.", "") + ".img"
 
@@ -151,10 +157,3 @@ class BuilderFromSingularityRecipe(Builder):
 
         self.teardown(destination)
 
-class BuilderFromDamonaRecipe(Builder):
-    def __init__(self):
-        super(BuilderFromSingularityRecipe, self).__init__()
-        logger.info("Building a singularity image from a Damona recipe")
-
-    def build(self):
-        self.teardown()

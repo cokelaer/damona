@@ -224,8 +224,6 @@ class RemoteImageInstaller(ImageInstaller):
         # Our registry uses underscore. The output filename should use _ as well
         # However, for users and image stored on sylabs or singularity hub, we
         # use the character :
-        #
-
 
         # let us first retrieve the image and save it in a temporary file. 
         # we keep the original name by only replacing the : with underscore so
@@ -245,7 +243,7 @@ class RemoteImageInstaller(ImageInstaller):
                 logger.critical("Maybe you meant one of: {}".format(guesses))
                 sys.exit(1)
         else:
-            logger.info(f"No version found after {self.image_name} (e.g. fastqc:0.11.8). Installing latest version available")
+            logger.info(f"No version found after {self.image_name} (e.g. fastqc:0.11.8). Installing latest version")
             registry_name = self.image_name
             # we look only at the prefix name, not the tag. so we should get the
             # registry names from self.registry that have the prefix in common, 
@@ -253,15 +251,18 @@ class RemoteImageInstaller(ImageInstaller):
 
         registry_name = self.registry.find_candidate(registry_name)
         if registry_name is None:
-            logger.critical(f"No image found for {self.image_name}. Make sure it is correct using 'damona list' command")
+            logger.critical(f"No image found for {self.image_name}. Make sure it is correct using 'damona search' command")
             sys.exit(1)
 
-        download_name = self.registry.registry[registry_name]['download']
+        download_name = self.registry.registry[registry_name].download
+
 
         # get metadata from the registry recipe
         info = self.registry.registry[registry_name]
-        if 'binaries' in info and info['binaries']:
-            self.binaries = info['binaries']
+        logger.info(f"{info}")
+
+        if info.binaries:
+            self.binaries = info.binaries
         else:
             logger.warning(f"No binaries field found in registry of {registry_name}")
             self.binaries = [self.input_image.guessed_executable]
@@ -271,13 +272,13 @@ class RemoteImageInstaller(ImageInstaller):
             output_name = registry_name.replace(":", "_") + ".img"
         # here we check whether the image or binaries are already present.
         # if md5 is already provided, and image exists, nothing to copy
-        if 'md5sum' in info and info['md5sum']:
+        if info.md5sum:
             if os.path.exists(self.images_directory / output_name):
                 from easydev import md5
                 md5_target = md5(self.images_directory / output_name)
 
-                if md5_target == info['md5sum']:
-                    logger.info("remote image and local image are identical, no need to download/pull again")
+                if md5_target == info.md5sum:
+                    logger.info("Remote image and local image are identical, no need to download/pull again")
                     self.input_image = ImageReader(self.images_directory / output_name)
                     self.image_installed = True
                     return
@@ -288,13 +289,9 @@ f"To be fixed in https://github.com/damona/damona/recipes/{self.image_name}/regi
         # now that we have the registry name, we can download the image
         logger.info("Downloading {}".format(download_name))
 
-
         # By default we downlaods from syslab.
         # if not found, one can provide an URL
-
         pull_folder = self.images_directory / "damona_buffer"
-
-
 
         if self.from_url:
             # The client does not support external https link other than
@@ -319,6 +316,7 @@ f"To be fixed in https://github.com/damona/damona/recipes/{self.image_name}/regi
         logger.info(f"File {self.image_name} uploaded to {pull_folder}")
 
         # Read the image, checking everything is correct
+
         self.input_image = ImageReader(pull_folder / output_name)
         shortname = self.input_image.shortname
         try:
@@ -326,12 +324,12 @@ f"To be fixed in https://github.com/damona/damona/recipes/{self.image_name}/regi
             self.input_image.filename.rename(self.images_directory / shortname)
             self.input_image.filename = pathlib.Path(self.images_directory / shortname)
         except FileNotFoundError:
-            logger.warning("File not found in damona_buffer probably"
-"already isntalled. Please call pull_image again otherwise.")
+            logger.warning("File not installed properly. Stopping")
+            self.image_installed = False
 
         # check the md5 validity
-        if 'md5sum' in info and info['md5sum']:
-            if info['md5sum'] != self.input_image.md5:
+        if info.md5sum:
+            if info.md5sum != self.input_image.md5:
                 logger.warning(
 "MD5 of downloaded image does not match the expected md5 found in the "
 f"registry of {registry_name}. The latter may be incorrect in damona and needs "
@@ -383,7 +381,7 @@ class BinaryInstaller():
                 name = pathlib.Path(bin_path).name
                 path = str(bin_path).rstrip(bin_path.name)
                 if bin_path.exists() and force is True:
-                    logger.info(f"Resinstalling '{binary}' in {path} since --force was used")
+                    logger.info(f"Re-installing '{binary}' in {path} since --force was used")
                 else:
                     logger.info(f"Created binary {name} in {path}")
 
