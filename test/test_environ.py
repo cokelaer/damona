@@ -1,12 +1,21 @@
-from damona import script
+from damona.environ import Environment
+from damona.environ import Environ
 import damona
-import subprocess
 import builtins
 
 
 
+def test_no_var(monkeypatch):
+    monkeypatch.delenv("DAMONA_ENV", raising=False)
+    try:
+        Environ()
+        assert False
+    except:
+        assert True
+
+
+
 def test_environ():
-    from damona.environ import Environ
     env = Environ()
     env.N
     env.environments
@@ -22,9 +31,27 @@ def test_environ():
     env.deactivate()
 
 
+def test_environment_no_var(monkeypatch):
+    monkeypatch.delenv("DAMONA_PATH", raising=False)
+    e = Environment("base")
+    try:
+        e.get_disk_usage()
+        assert False
+    except:
+        assert True
+
 def test_environment():
     
-    from damona.environ import Environment
     e = Environment("base")
     e.get_installed_binaries()
+    
+
+    try:
+        e = Environment("base_does_not_exist")
+        assert False
+    except:
+        assert True
+    from tempfile import TemporaryFile
+    with TemporaryFile() as fout:
+        e.create_bundle(output_name=fout.name)
 
