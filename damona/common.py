@@ -14,6 +14,7 @@
 #  documentation: http://damona.readthedocs.io
 #
 ##############################################################################
+"""Image and Binary handlers. Provide also a Damona manager"""
 import os
 import sys
 import pathlib

@@ -14,6 +14,7 @@
 #  documentation: http://damona.readthedocs.io
 #
 ##############################################################################
+"""Tools to install images/binaries"""
 import os
 import sys
 import pathlib

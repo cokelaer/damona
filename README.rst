@@ -123,28 +123,48 @@ open a new shell and type **damona** and you should be ready to go.
 Quick Start
 ============
 
-1. *list* available containers
+1. *list* available environment
 -------------------------------
+
+By default you have an environment called **base**. You can check the list of
+environment and their contents at any time using::
+
+    damona env
+
+2. list installed images and binaries
+-------------------------------------
+
+You can get the binaries installed in an environment (and the images used by
+them)::
+
+    damona info base
+
+3. See what is available
+------------------------
+
 By default, we provide some recipes (for testing mostly but also to complement existing
-registries when a tool is missing) and their images.
+registries when a tool is missing) and their images. They can be listed as
+follows::
 
-To get the list images available within **Damona** collection, just type::
+    damona available-images
 
-    damona list --from-url https://biomics.pasteur.fr/drylab/damona/registry.txt
+External registry can be setup. For instance, the damona registry is accessible
+as follows::
 
-or in short (just for that url)::
+    damona available-images --url damona
 
-    damona list --from-url damona
+Where *damona* is an alias defined in the .config/damona/damona.cfg that
+actullay look for https://biomics.pasteur.fr/drylab/damona/registry.txt
 
-You may retrieve images from a website where a registry exists (see developer
-guide to create a registry)
+You may retrieve images from a website where a registry exists (see the developer
+guide to create a registry yourself).
 
 2. *install* a Damona image
 ----------------------------
 
 Download the one you want to use::
 
-    damona pull fastqc:0.11.9
+    damona install fastqc:0.11.9
 
 This will download the container in your ./config/damona/images directory and create an
 executable for you in ~/.config/damona/bin.
@@ -168,22 +188,16 @@ Check that this is the correct path::
 3. combine two different environments
 --------------------------------------
 
-If you type::
-
-    damona env
-
-it will list the environments you currently hosting. Since you are starting,
-most probably you have only the base environment. Let us create a new one::
+In damona, you can have sereral environments. Let us create a new one::
 
     damone env --create test1
 
-and check that you now have 1 environment::
+and check that you now one more environment::
 
     damona env
 
 We want to create an alias to the previously downloaded image of fastqc tool but
-in the *test1* environment. First we activate::
-
+in the *test1* environment. First we activate the newly create environment::
 
     damona activate test1
 
@@ -203,11 +217,11 @@ Roadmap
 **Damona** is pretty new but here is short roadmap
 
 * do we store all images in the damona/images or do we store them in individual
-  environement (with possbile duplicates).
-* we installing a binaries from image A, then from image B. If we delete image.
-The binary is broken where image A could supoprt this binary ! we should have a
-mechanism that handle this feature to recover the binary from other installed
-images. 
+  environement (with possible duplicates).
+* when installing a binaries from image A, then from image B. If we now delete image B.
+  The binary is broken where image A could support this binary ! we should have a
+  mechanism that handle this feature to recover the binary from other installed
+  images. Like a history.
 
 Changelog
 =========

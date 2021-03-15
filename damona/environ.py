@@ -14,6 +14,7 @@
 #  documentation: http://damona.readthedocs.io
 #
 ##############################################################################
+"""Environments manager"""
 import os
 import glob
 import shutil

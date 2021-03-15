@@ -14,6 +14,7 @@
 #  documentation: http://damona.readthedocs.io
 #
 ##############################################################################
+"""Registry and Software manager"""
 import pathlib
 import glob
 import sys
@@ -31,7 +32,10 @@ logger = colorlog.getLogger(__name__)
 
 
 class Releases(dict):
+    """A collection of :class:`Release`.
 
+
+    """
     def __init__(self, data):
         # a collection of releases
         self._name = list(data.keys())[0]
@@ -43,15 +47,24 @@ class Releases(dict):
 
 
 class Release():
-    """
+    """A Release class
 
-    fastqc:
-        binaries: # this is the main_binaries
-        x.y.z:      # a version
-            download:
-            md5sum:
-            binaries:  # this is the extra binaries
-            exclude_binaries: # exclude binaries found in the main_binaries section
+    This class populates information found in the release section of a
+    registry.
+
+    A regitry looks like::
+
+        fastqc:
+            binaries: # this is the main_binaries
+            x.y.z:      # a version
+                download:
+                md5sum:
+                binaries:  # this is the extra binaries
+                exclude_binaries: # exclude binaries found in the main_binaries section
+
+    Here we have one release named x.y.z that contains information about the
+    md5sum of the container, its location, and the binaries that should be
+    installed.
 
     """
     def __init__(self, version, data):
@@ -123,22 +136,27 @@ class RemoteRegistry():
 class Software():
     """A class to read a given software registry
 
+    A Software is made of :class:`Releases`. It contains also a name, a list of
+    binaries either globally or per release
 
     """
     def __init__(self, name):
         """
-        param name: a valid name to be found in the registry. Can also be a
-            dictionary with expected registry format. 
+
+        :param name: a valid name to be found in the registry. Can also be a
+            dictionary with expected registry format.
 
         """
 
         if isinstance(name, dict):
             keys = list(name.keys())
             self.registry_name = keys[0]
+            #: a :class:`Releases` attribute
             self.releases = self._interpret_registry(name)
         else:
             self.registry_name = os.path.abspath(name)
             data = self._read_registry()
+            #: a :class:`Releases` attribute
             self.releases = self._interpret_registry(data)
 
     def _read_registry(self):
@@ -190,7 +208,7 @@ class Software():
 class Registry():
     """
 
-    The registry contains a dictionary with all images information.
+    The registry contains a dictionary with all images information.::
 
         r = Registry()
         r.registry
@@ -212,6 +230,7 @@ class Registry():
         self.discovery()
 
     def find_candidate(self, pattern):
+        """Find a recipe within the registry"""
         candidates = [x for x in self.registry.keys() if x.startswith(pattern)]
         if len(candidates) == 0:
             logger.critical(f"No image found for {pattern}. Make sure it is correct. You can use 'damona search' command")
@@ -229,7 +248,7 @@ class Registry():
         return registry_name
 
     def discovery(self):
-
+        """Look for recipes in the registey and populate the attributes"""
         if self.from_url:
             self._url_discovery()
         else:
@@ -294,6 +313,7 @@ class Registry():
 
 
     def get_list(self, pattern=None):
+        """Return list of :class:`Software` found in the registry"""
         # a name may have an underscore in it ... e.g. sequana_tools
         # in which case the singularty name is sequana_tools_0.9.0
 

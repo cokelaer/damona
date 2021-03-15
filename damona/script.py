@@ -60,10 +60,15 @@ def main(level):
 
     You can install a Damona-registered image:
 
-
         damona install fastqc
 
-    Or build and install a local image:
+    or from online registry (given a URL)::
+
+        damona install fastqc:0.11.9 --from-url https://.../registry.txt
+
+    Also not recommended, for testing purpose, you can build and 
+    install a local image:
+
     \b
         damona build Singularity.test_1.0.0
         damona install test_1.0.0.img --binary-name fastqc
@@ -72,13 +77,15 @@ def main(level):
 
         damona build docker://whatever
 
-    Or install from online registry (given a URL). Once done, you can export
-    your environment to another computer::
+    An environment can be exported and installed on another computer as follows
 
         damona export test1 --name myenv
         # on a remote computer
         damona import myenv
 
+    More information on https://damona.readthedocs.io.
+
+    Author: Thomas Cokelaer at pasteur dot fr
     """
     from damona.colors import Colors
     ##### !!!!!!!!!!!! this function cannot print anything because the damona

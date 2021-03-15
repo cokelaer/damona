@@ -15,6 +15,7 @@
 #  documentation: http://damona.readthedocs.io
 #
 ##############################################################################
+"""The Damona configuration"""
 import os
 import pathlib
 
