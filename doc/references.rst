@@ -5,14 +5,16 @@ References
 ##############
 
 
+.. autosummary::
 
-.. automodule:: damona.binary
-    :members:
-    :undoc-members:
+    damona.builders
+    damona.common
+    damona.config
+    damona.environ
+    damona.install
+    damona.registry
+    damona.scripts
 
-.. automodule:: damona.damona
-   :members:
-   :undoc-members:
 
 .. automodule:: damona.registry
     :members:
@@ -30,7 +32,11 @@ References
     :members:
     :undoc-members:
 
-.. automodule:: damona.pull
+.. automodule:: damona.install
+    :members:
+    :undoc-members:
+
+.. automodule:: damona.common
     :members:
     :undoc-members:
 

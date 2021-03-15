@@ -66,70 +66,44 @@ executables) will install all the binaries that are provide in the registry.
 registry
 ---------
 
-For each singularity, a registry is required. It contains a yaml file the type
-of each singularity: does it provide a single tool or an environment or a set of
-executables.
-
-The different container types can be:
-
-* executable (exe): a container aiming at providing a single executable
-* environement (env): A container to be used to build an 'executable' or 'environment'
-* set of executables (set): A a container with a set of executables
+For each singularity, a registry is required. It contains a yaml file that looks
+like
 
 ::
 
-    Singularity.kraken_1.1:
-        version: 1.1
-        download: library://cokelaer/damona/kraken:1.1
-        class: "exe"
-        binaries:
-            - kraken: "kraken"
-    Singularity.kraken_2.0.9:
-        version: 2.0.9
-        download: library://cokelaer/damona/kraken:2.0.9
-        class: "exe"
-        binaries:
-            - kraken2: "kraken2"
+    fastqc:
+        0.11.9:
+            download: URL1
+            md5sum: 
+            binaries: fastqc
+        0.11.8:
+            download: URL
+            md5sum: 
+            binaries: fastqc
+    
+::
 
-For *set*, you would have the list of executables in the field 'binaries'::
+    fastqc:
+        binaries: fastqc
+        0.11.9:
+            download: URL1
+            md5sum:
+        0.11.8:
+            download: URL
+            md5sum:
 
-    Singularity.env_1.0.0:
-        version: 1.0.0
-        download: library://cokelaer/damona/env:1.0.0
-        class: "env"
-        binaries: this that other
+md5sum is optional and used if present to not re-download a file, if it is
+already present, so it is quite useful to provide.
 
 
 Where are stored the containers ?
 ----------------------------------
 
-Originally, we stored the container in this collections  https://cloud.sylabs.io/library/cokelaer/damona but we extended **Damona** so that it can fetch containers from other places. The principle is quite simple; you put containers on a web site, place registry.txt file that lists the images as follows::
+Originally, we stored the container in this collections  https://cloud.sylabs.io/library/cokelaer/damona but we extended **Damona** so that it can fetch containers from other places. The principle is quite simple; you put containers on a web site, place registry.txt file in there, which is just a concatenation of registry for all software that are available.
 
-    [exe]
-    name1_x.y.z.img
-    name2_x.y.z.img
-    [env]
-    name3_x.y.z.img
-    [set]
-    name4_x.y.z.img
-
-The image found from the [exe] section will have an alias created. The name of
-the alias with be the prefix (before the first _ character).
-
-We have such as example on https://biomics.pasteur.fr/drylab/damona
+We have an example on https://biomics.pasteur.fr/salsa/damona
 
 
-
-The *registry* command
-------------------------
-
-This is for developers. When a new recipe is added, we must provide a registry.
-The skeleton of that registry can be printed as follows::
-
-    damona registry ./recipes/name_of_directory
-
-This command searches for Singularity files and prints what the registry should
-look like. See the registr guide for more details
 
 Build an image locally
 ----------------------

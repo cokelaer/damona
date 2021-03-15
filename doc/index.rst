@@ -16,7 +16,6 @@ User guide and reference
 
     userguide
     dev
-    graph
     references
 
 
