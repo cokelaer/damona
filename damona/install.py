@@ -362,10 +362,10 @@ class BinaryInstaller():
         env = Environ()
         bin_directory = env.get_current_env() / "bin"
 
-        for binary in self.binaries:
+        for binary in sorted(self.binaries):
             bin_path = pathlib.Path(bin_directory) / binary
 
-            cmd = """singularity -s exec {} {} ${{1+"$@"}}"""
+            cmd = """singularity -s exec ${{DAMONA_SINGULARITY_OPTIONS}} {} {} ${{1+"$@"}}"""
 
             cmd = cmd.format(f"${{DAMONA_PATH}}/images/{self.image.shortname}", binary)
 
