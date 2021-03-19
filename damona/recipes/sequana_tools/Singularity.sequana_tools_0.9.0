@@ -35,7 +35,6 @@ mafft spades igvtools bedtools subread STAR
     conda install bowtie bowtie2 STAR                      # rnaseq
     conda install subread                                  # rnaseq (featureCounts)
     conda install igvtools                                 # rnaseq
-    conda install fastq-screen                             # rnaseq
     conda install picard                        # rnaseq, variant calling etc 
     conda install bedtools
     conda install cufflinks                     # rnaseq converts gff to gtf
