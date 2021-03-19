@@ -7,6 +7,6 @@ sequana_tools:
             md5sum: 566fe2f8ee08153bede621b0c72b7091
         0.9.0:
           download: damona::sequana_tools_0.9.0.img
-          binaries: STAR cufflinks cutadapt atropos bwa  bowtie2 featureCounts dsrc samtools bamtools deeptools freebayes fastq_screen picard subread snpEff bowtie-build bedtools sambamba pbunzip2 pbzip2 bowtie2-build gffread kraken2 krona ktImportText minimap2 kraken2-build interleave-reads.py normalize-by-median.py filter-abund.py extract-paired-reads.py split-paired-reads.py ccs  MarkDuplicates spades.py
+          binaries: STAR bowtie cufflinks cutadapt atropos bwa  bowtie2 featureCounts dsrc samtools bamtools deeptools freebayes fastq_screen picard subread snpEff bowtie-build bedtools sambamba pbunzip2 pbzip2 bowtie2-build gffread kraken2 krona ktImportText minimap2 kraken2-build interleave-reads.py normalize-by-median.py filter-abund.py extract-paired-reads.py split-paired-reads.py ccs  MarkDuplicates spades.py
           md5sum: 1e2cd02d2488108cfc46032013c65f8a
 
