@@ -66,30 +66,45 @@ class Release():
     md5sum of the container, its location, and the binaries that should be
     installed.
 
+    If binaries of the software is empty, we use the one in the specific release.
+    If no binaries are set, we use the name of the software. Duplicated are
+    ignored of course.
+
+    So future release may change the list of binaries. exclude_binaries is set
+    can be used to remove such binaries
+
+    binaries can be separated by commas or spaces.
+
     """
     def __init__(self, version, data):
         """
 
         :param version: a valid x.y.z version to be found in data[name]['release']
-            data is a dictionary 
+            data is a dictionary
         params: data
 
         """
         self._name = list(data.keys())[0]
 
-        kwargs = data[self._name]['releases'][version]
-        self.download = kwargs['download']
+        try:
+            self._binaries = self.split_binaries(data[self._name].get('binaries', []))
+            kwargs = data[self._name]['releases'][version]
+            self.download = kwargs['download']
+        except Exception as err:  #pragma: no cover
+            logger.error(f"Incorrect formatted registry for {self._name}" + str(err))
+            sys.exit(1)
 
         if 'md5sum' not in kwargs:
             logger.debug(f"Missing md5sum entry in {self._name}. Please consider adding one ")
         self.md5sum = kwargs.get("md5sum", None)
-        self._binaries = self.split_binaries(kwargs.get('binaries', []))
+        self._release_binaries = self.split_binaries(kwargs.get('binaries', []))
         self._extra_binaries = self.split_binaries(kwargs.get('extra_binaries', []))
         self._exclude_binaries = self.split_binaries(kwargs.get('exclude_binaries', []))
+        self._data = data
 
     def _get_binaries(self):
-        binaries = self._binaries + self._extra_binaries
-        binaries = [x for x in binaries if x not in self._extra_binaries]
+        binaries = self._binaries + self._release_binaries + self._extra_binaries
+        binaries = [x for x in binaries if x not in self._exclude_binaries]
         binaries = list(set(binaries))
         binaries = sorted(list(set(binaries)))
         if len(binaries) == 0:
@@ -153,10 +168,15 @@ class Software():
             self.registry_name = keys[0]
             #: a :class:`Releases` attribute
             self.releases = self._interpret_registry(name)
-        else:
+        elif os.path.exists(name):
             self.registry_name = os.path.abspath(name)
             data = self._read_registry()
             #: a :class:`Releases` attribute
+            self.releases = self._interpret_registry(data)
+        else:
+            from damona import __path__
+            self.registry_name = pathlib.Path(__path__[0]) / "recipes"  / name / "registry.yaml"
+            data = self._read_registry()
             self.releases = self._interpret_registry(data)
 
     def _read_registry(self):
@@ -168,7 +188,7 @@ class Software():
 
         # read the yaml
         data = yaml.load(open(regname, "r").read(), Loader=Loader)
-        if len(data.keys()) != 1:
+        if len(data.keys()) != 1: #pragma: no cover
             logger.error(f"{regname} must contain on single entry named after the images. ")
             sys.exit(1)
 
@@ -230,9 +250,12 @@ class Registry():
         self.discovery()
 
     def find_candidate(self, pattern):
-        """Find a recipe within the registry"""
-        candidates = [x for x in self.registry.keys() if x.startswith(pattern)]
-        if len(candidates) == 0:
+        """Find a unique recipe within the registry.
+
+
+        Note for developers: not the same as get_list"""
+        candidates = [x for x in self.registry.keys() if pattern in x]
+        if len(candidates) == 0: #pragma: no cover
             logger.critical(f"No image found for {pattern}. Make sure it is correct. You can use 'damona search' command")
             return None
         if len(candidates) == 1:
@@ -268,9 +291,9 @@ class Registry():
                 name_version = recipe.name + ":" + version
                 release = recipe.releases[version]
                 if name_version not in self.registry:
-                    if release.download is None:
+                    if release.download is None: #pragma: no cover
                         logger.warning(f"recipe {recipe.name} has no download entry. please fill asap")
-                    elif release.download.startswith("damona::"):
+                    elif release.download.startswith("damona::"): 
                         from_url = self.config['urls']["damona"]
                         release.download = release.download.replace("damona::", from_url)
                         release.download = release.download.replace("registry.txt", "")
@@ -297,7 +320,7 @@ class Registry():
                 name_version = recipe.name + ":" + version
                 release = recipe.releases[version]
                 if name_version not in self.registry:
-                    if release.download is None:
+                    if release.download is None: #pragma: no cover
                         logger.warning(f"recipe {recipe.name} has no download entry. please fill asap")
                     elif release.download.startswith("damona::"):
                         from_url = self.config['urls']["damona"]
@@ -311,7 +334,6 @@ class Registry():
                             print(" - {}:  {}".format(kkk, vvv))
                     raise ValueError("found a duplicated name {}".format(name_version))
 
-
     def get_list(self, pattern=None):
         """Return list of :class:`Software` found in the registry"""
         # a name may have an underscore in it ... e.g. sequana_tools
@@ -320,7 +342,7 @@ class Registry():
         recipes = {}
         for name, info in self.registry.items():
             if pattern:
-                if pattern in name: 
+                if pattern.lower() in name.lower(): 
                     recipes[name] = info.download
             else:
                 recipes[name] = info.download

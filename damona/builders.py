@@ -150,7 +150,11 @@ class BuilderFromSingularityRecipe(Builder):
         # build the image
         cmd = f"sudo singularity build --force {destination} {recipe} "
         logger.info(f"Running : {cmd}")
-        subprocess.call(cmd.split())
+        status = subprocess.call(cmd.split())
+        if status !=0:
+            logger.error("An error occured")
+            sys.exit(1)
+
 
         cmd = f"sudo chown {self.username}:{self.username} {destination}"
         subprocess.call(cmd.split())

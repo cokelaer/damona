@@ -236,24 +236,20 @@ class BinaryReader:
         with filename.open("r") as fin:
 
             data = [x for x in fin.readlines() if x.strip().startswith("singularity")]
+            data = data[0]
 
-            if len(data) != 1:
-                logger.critical("Not a compatible damona binary")
-                self.data = None
+            data = data.replace("${DAMONA_SINGULARITY_OPTIONS}", "") 
+            try:
+                image_path = data.split("exec")[1].split()[0]
+            except:
+                image_path = data.split("run")[1].split()[0]
+                logger.warning(f"command line in {filename} uses 'run'; should be reinstalled ")
+
+            if "DAMONA_PATH" in os.environ:
+                DAMONA_PATH = os.environ['DAMONA_PATH']
+                self.image = image_path.replace("${DAMONA_PATH}", DAMONA_PATH)
             else:
-                self.data = data[0][:]
-
-                try:
-                    image_path = data[0].split("exec")[1].split()[0]
-                except:
-                    image_path = data[0].split("run")[1].split()[0]
-                    logger.warning(f"command line in {filename} uses 'run'; should be reinstalled ")
-
-                if "DAMONA_PATH" in os.environ:
-                    DAMONA_PATH = os.environ['DAMONA_PATH']
-                    self.image = image_path.replace("${DAMONA_PATH}", DAMONA_PATH)
-                else:
-                    self.image = image_path
+                self.image = image_path
 
     def is_image_available(self):
         if 'DAMONA_PATH' not in os.environ:

@@ -99,7 +99,7 @@ class Environment():
         N = len(self.get_installed_binaries())
         M = len(self.get_images())
 
-        txt = f"Environment {self.name} contains {N} binaries from {M} images."
+        txt = f"Contains {N} binaries from {M} images."
         disk = self.get_disk_usage()
         import math
         env_size = math.ceil(disk / 1e6)
@@ -249,7 +249,7 @@ class Environ():
         found = False   # this one is the one to deactivate (to ignore)
         newPATH = []
         for path in paths:
-            logger.info(f"# {env_name} {path}")
+            #logger.info(f"# {env_name} {path}")
 
             # if an env_name is provided, it may be removed several times. 
             # if not provided, 
