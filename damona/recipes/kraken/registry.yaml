@@ -2,9 +2,9 @@ kraken:
   releases:
     1.1:
       download: library://cokelaer/damona/kraken:1.1
-      binaries: kraken
+      binaries: kraken kraken-build kraken-filter krake-mpa-report kraken-report kraken-translate
       md5sum: 4d14031cf4ff4684c43f73fbd09cd442
     2.0.9:
       download: library://cokelaer/damona/kraken:2.0.9
-      binaries: kraken2,kraken2-build
+      binaries: kraken2 kraken2-build ktImportText 
       md5sum: bc195a921148969c7f9482f9fe25b3cd
