@@ -1,0 +1,6 @@
+rtools:
+    binaries: R Rscript
+    releases:
+      1.0.0:
+        download: library://cokelaer/damona/rtools:1.0.0
+        md5sum: aca2d4bc42486926dccc4613502913e3
