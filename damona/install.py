@@ -244,6 +244,7 @@ class RemoteImageInstaller(ImageInstaller):
                 logger.critical("Maybe you meant one of: {}".format(guesses))
                 sys.exit(1)
         else:
+            from damona.registry import Software
             r = Software(self.image_name).releases
             latest = r.last_release
             logger.info(f"No version found after {self.image_name} (e.g. fastqc:0.11.8)." + f" Installing latest version {latest}")
