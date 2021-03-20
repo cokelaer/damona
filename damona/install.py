@@ -244,7 +244,9 @@ class RemoteImageInstaller(ImageInstaller):
                 logger.critical("Maybe you meant one of: {}".format(guesses))
                 sys.exit(1)
         else:
-            logger.info(f"No version found after {self.image_name} (e.g. fastqc:0.11.8). Installing latest version")
+            r = Software(self.image_name).releases
+            latest = r.last_release
+            logger.info(f"No version found after {self.image_name} (e.g. fastqc:0.11.8)." + f" Installing latest version {latest}")
             registry_name = self.image_name
             # we look only at the prefix name, not the tag. so we should get the
             # registry names from self.registry that have the prefix in common, 

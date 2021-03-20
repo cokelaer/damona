@@ -45,6 +45,11 @@ class Releases(dict):
             # strings for e.g x.y.z
             self[str(version)] = Release(version, data)
 
+    def _get_last_release(self):
+        from packaging import version
+        return max(list(self.keys()), key=lambda x: version.parse(x))
+    last_release = property(_get_last_release)
+
 
 class Release():
     """A Release class
