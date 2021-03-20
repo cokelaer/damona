@@ -125,6 +125,25 @@ deactivate the last activated environment. In works as a Last In First Out mecha
 
 
 
+Binding directories
+--------------------
+
+All binaries created with Damona use this syntax::
+
+    singularity -s exec ${DAMONA_SINGULARITY_OPTIONS} ${DAMONA_PATH}/images/<IMAGE> <EXE> ${1+"$@"}
+
+where EXE is the name of the executable binary, IMAGE the name of the container.
+Then, you can see two environmental variable. The DAMONiA_PATH variable must be
+defined by you and point to the place where all binaries and images are stored.
+
+This is especially useful would you need to bind a path that is not present in
+standard configuration. For example, on a cluster where your admin system set up
+a local scratch in /local/scratch, you can tell singularity to look there by
+binding this path into your container::
+
+    export DAMONA_SINGULARITY_OPTIONS="-B /local/scratch:/local/scratch"
+
+
 
 
 

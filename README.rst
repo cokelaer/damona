@@ -229,6 +229,10 @@ Changelog
 ========= ====================================================================
 Version   Description
 ========= ====================================================================
+0.5.1     * add DAMONA_SINGULARITY_OPTIONS env variable in the binary
+          * Fix the way binaries are found in the release.
+          * new recipes: rtools
+          * new releases: sequana_tools_0.10.0
 0.5.0     * Major refactoring. 
 
             - Simplification of the registries (dropping notion of exe/set 
