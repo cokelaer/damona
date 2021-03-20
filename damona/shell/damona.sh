@@ -38,8 +38,6 @@ __damona_activate() {
     shift
     \local ask_damona
 
-    echo "$cmd"
-    echo "$@"
 
     ask_damona="$("$DAMONA_EXE"  "$cmd" "$@")" || \return $?
     rc=$?
@@ -48,6 +46,10 @@ __damona_activate() {
     if [ $rc != 0 ]; then
         \export PATH
     fi
+
+    #export DAMONA_OLD_PS1=${DAMONA_OLD_PS1}:${PS1}
+    #export PS1="$@ >"
+
     __damona_hashr
 }
 
@@ -63,6 +65,7 @@ __damona_deactivate() {
         \export PATH
     fi
 
+    #export PS1="$DAMONA_OLD_PS1 @P"
     __damona_hashr
 }
 
