@@ -1,7 +1,8 @@
 
 
 __damona_find_damona() {
-    if [ -f $DAMONA_EXE ]; then
+    # if not defined (null string), let us try to find it
+    if [ -z $DAMONA_EXE ]; then
         mycmd="$(which damona 1>/dev/null 2>/dev/null)"
         status=$?
 
@@ -129,7 +130,7 @@ damona() {
 # This DAMONA_PATH is used to stored images and environements (including
 # binaries). If it is already set by a user, no need to define it, otherwise the
 # default is in the home of the user.
-if [ -f $DAMONA_PATH ]; then
+if [ -z $DAMONA_PATH ]; then
     export DAMONA_PATH="${HOME}/.config/damona"
 fi
 #export PATH=${DAMONA_PATH}/bin:$PATH
