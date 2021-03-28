@@ -58,16 +58,16 @@ def main(level):
         damona env --create env1
         damona activate env1
 
-    You can install a Damona-registered image:
+    Once an environment is activated, you can install a Damona-registered image
+    (otherwise it is installed in the default environement):
 
         damona install fastqc
 
-    or from online registry (given a URL)::
+    or from an online registry (given a URL)::
 
         damona install fastqc:0.11.9 --from-url https://.../registry.txt
 
-    Also not recommended, for testing purpose, you can build and 
-    install a local image:
+    You may build and install a local image (not recommended; for developers):
 
     \b
         damona build Singularity.test_1.0.0
@@ -80,12 +80,13 @@ def main(level):
     An environment can be exported and installed on another computer as follows
 
         damona export test1 --name myenv
-        # on a remote computer
+        # on the remote computer:
         damona import myenv
 
+    \b
     More information on https://damona.readthedocs.io.
-
-    Author: Thomas Cokelaer at pasteur dot fr
+    Please report issues on https://github.com/cokelaer/damona
+    Contact: Thomas Cokelaer at pasteur dot fr
     """
     from damona.colors import Colors
     ##### !!!!!!!!!!!! this function cannot print anything because the damona
