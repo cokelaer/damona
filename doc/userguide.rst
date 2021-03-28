@@ -9,7 +9,7 @@ projects provide thousands of containers but here we provide containers for
 testing and proof of concept. 
 
 By default, **Damona** uses recipes, which can be found in the
-https://github.com/damona/damona/recipes directory. In the regsitry files (see
+https://github.com/damona/damona/recipes directory. In the registry files (see
 later for details), we define the URL where images can be downloaded. Some are
 on https://cloud.sylabs.io/library/cokelaer collection, which is limited to 10Gb
 and therefore will not provide many containers. Others are on external registry
@@ -39,7 +39,7 @@ the images.
 
 The latter command can be simplied into ::
 
-    damona available-images --url damon
+    damona available-images --url damona
 
 This is possible by defining alias in the configuration file (in
 ~/config/damona.cfg as explained in the developer guide)
@@ -67,7 +67,7 @@ you can type::
 
     damona activate base
 
-And the *fastac* command shoudl be available::
+And the *fastqc* command should be available::
 
     fastqc
 
