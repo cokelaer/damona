@@ -1,6 +1,0 @@
-graphviz_dot:
-    binaries: dot
-    releases:
-      2.43.0:
-        download: library://cokelaer/damona/graphviz_dot:2.43.0
-

@@ -31,6 +31,7 @@ From: cokelaer/damona/conda:4.9.2
     conda install subread      # featureCounts executable
     conda install salmon kallisto
     conda install RNA-seQC==2.3.5
+    conda install rseqc
 
     # misc
     conda install igvtools           
