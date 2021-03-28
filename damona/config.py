@@ -17,6 +17,7 @@
 ##############################################################################
 """The Damona configuration"""
 import os
+import sys
 import pathlib
 
 import colorlog
@@ -63,7 +64,11 @@ class Config():
         self.read()
 
         # create the shell script once for all
-        self.add_shell()
+        created = self.add_shell()
+        if created:
+            logger.critical("Please start a new shell to benefit from "
+                "the configuration file and activate/deactivate command")
+            sys.exit(1)
 
     def read(self):
         from configparser import ConfigParser
@@ -83,3 +88,6 @@ class Config():
             with open(shell_path + os.sep + "damona.sh", "r") as fin:
                 with open(_damona_config_path / "damona.sh", "w") as fout:
                     fout.write(fin.read())
+            return True
+        else:
+            return False
