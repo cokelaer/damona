@@ -3,7 +3,7 @@ sequana_tools:
     releases:
         0.10.0:
             download: damona::sequana_tools_0.10.0.img
-            binaries: STAR bwa bowtie2 featureCounts dsrc samtools bamtools freebayes picard subread snpEff bowtie-build bedtools sambamba pbunzip2 pbzip2 bowtie2-build gffread kraken2 krona ktImportText kraken2-build interleave-reads.py normalize-by-median.py filter-abund.py extract-paired-reads.py split-paired-reads.py MarkDuplicates spades.py gffread deeptools mafft minimap2 ccs vcfutils.pl bamCoverage rnaseqc
+            binaries: STAR bwa bowtie2 featureCounts dsrc samtools bamtools freebayes picard subread snpEff bowtie-build bedtools sambamba pbunzip2 pbzip2 bowtie2-build gffread kraken2 krona ktImportText kraken2-build interleave-reads.py normalize-by-median.py filter-abund.py extract-paired-reads.py split-paired-reads.py MarkDuplicates spades.py gffread deeptools mafft minimap2 ccs vcfutils.pl bamCoverage rnaseqc salmon
             md5sum: 566fe2f8ee08153bede621b0c72b7091
         0.9.0:
           download: damona::sequana_tools_0.9.0.img
