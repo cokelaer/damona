@@ -524,7 +524,7 @@ def search(**kwargs):
 @main.command()
 @click.argument('environment', required=True, type=click.STRING)
 def info(**kwargs):
-    """Print information about a given environement
+    """Print information about a given environement.
 
     The default environment is called 'base'.
 

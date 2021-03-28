@@ -43,24 +43,24 @@ an open source **package** management system
 and **environment** management system.
 Conda provides pre-compiled releases of software; they can be installed in
 different local environment that do not interfer with your system. This has
-great advantages for developers. Different community have emerge using this
+great advantages for developers. For example, you can install a pre-compiled
+libraries in a minute instead of trying to compile it yourself including all
+dependencies. Different community have emerge using this
 framework. One of them is `Bioconda <https://bioconda.github.io>`_, which is dedicated to bioinformatics.
-Although great, it is sometimes tricky to re-install an environment simply
-because NGS pipelines relies on many different software and different versions
-may be in conflicts. Another great tool is
+
+Another great tool that emerged in the last years is
 `Singularity <https://sylabs.io/docs>`_. Singularity containers can be used
 to package entire scientific workflows,
 software and libraries, and even data. It is a simple file that can be shared
 between environments and guarantee exectution and reproducibility.
 
-Originally, Conda provided pre-compiled version of a package. Nowadays, it also provides
-a docker and a singularity image of the tool. Singularity can package an
-entire conda environment.
-As you can see everything is there to build reproducible tools and
+Originally, Conda provided pre-compiled version of a software. Nowadays, it also provides
+a docker and a singularity image of the tool. On the othe side, Singularity can include an
+entire conda environment. As you can see everything is there to build reproducible tools and
 environment.
 
-Now, what about a software in development that depends on third-party packages
-You would create a conda environment and starts installing those packages.
+Now, what about a software in development that depends on third-party packages ? 
+You would create a conda environment and starts installing the required packages.
 Quickly, you will install another package that will break your environment due
 to unresolved conlicts; this is not common but it happens. In the worst case
 scenario, the environment is broken. In facilities where users depends on you,
@@ -75,7 +75,7 @@ started to be cumbersome to have containers in different places and update
 script that generate the aliases to those executables.
 
 
-That's where **damona** started: we wanted to combine the conda-like environment framework to manage our singularitiy containers.
+That's where **damona** started: we wanted to combine the conda-like environment framework to manage our singularitiy containers more easily.
 
 Our goal is not to replace existing registry of biocontainers such as
 biocontainers but to use existing images, download them and manage them locally.
@@ -88,7 +88,7 @@ We will therefore maintain damona in the context of Sequana project. Yet,
 **Damona** may be useful for others developers who wish to have a quick and easy
 solution for their users when they need to install third-party libraries.
 
-Before showing real-case examples, let us install the software itself. 
+Before showing real-case examples, let us install the software itself.
 
 
 Installation
@@ -109,8 +109,8 @@ installation (Python 3.X)::
 
 Type **damona** to create the Damona tree structure. Images and binaries 
 will be saved in your home directory within the
-~/.config/damona directory. There two special files should be available:
-damona.sh and damona.cfg. Check that those files are present.
+~/.config/damona directory. There, two special files should be available:
+**damona.sh** and **damona.cfg**. Check that those files are present.
 
 Finally, you need to tell your system where to find damona. For bashrc users,
 please add those two lines to you bashrc file::
@@ -123,8 +123,8 @@ open a new shell and type **damona** and you should be ready to go.
 Quick Start
 ============
 
-1. *list* available environment
--------------------------------
+1. *list* available environments
+--------------------------------
 
 By default you have an environment called **base**. You can check the list of
 environment and their contents at any time using::
@@ -159,7 +159,7 @@ actullay look for https://biomics.pasteur.fr/drylab/damona/registry.txt
 You may retrieve images from a website where a registry exists (see the developer
 guide to create a registry yourself).
 
-2. *install* a Damona image
+4. *install* a Damona image
 ----------------------------
 
 Download the one you want to use::
@@ -169,30 +169,45 @@ Download the one you want to use::
 This will download the container in your ./config/damona/images directory and create an
 executable for you in ~/.config/damona/bin.
 
-This is your *base* environment. By default there is only one and all images and
-binaries will be stored in this directory.
+This is your *base* environment. All images are stored in this directory
+*~/.config/damona/images*. By default binaries are stored in the *~./config/damona/bin* directory.
 
-The binaries are in the ~./config/damona/bin directory and you may need to append this path to
-your PATH environmental variable. For instance under Linux, type::
+To benefit from thoses binaries, you must change your PATH accordingly using::
 
     export PATH=~/config/damona/bin:$PATH
 
-That's it. You have downloaded a reproducible container and you can try::
+or use the **activate** command explained hereafter, which is more convenient.
 
-    fastqc --version
 
-Check that this is the correct path::
+5. **activate/deactivate** command
+----------------------------------
 
-    which fastqc
+You can change your PATH environment on the fly to use one or several
+environments. However, we provide a more convenient mechanism based on **conda** commands. If you want to used your based environment, you can simply activate it using::
+
+    damona activate base
+
+Once done, you can quit the shell or deactivate your environment specically
+using its name ::
+
+    damona deactivate base
+
+or if you just wish to deactivate the last environment that you have activated::
+
+    damona deactivate
+
+You can call this commands several times until no more **damona** environments
+are active.
 
 3. combine two different environments
 --------------------------------------
 
-In damona, you can have sereral environments. Let us create a new one::
+In damona, you can have sereral environments in parallel and later activate the
+ones you wish to use. Let us create a new one::
 
     damone env --create test1
 
-and check that you now one more environment::
+and check that you now have one more environment::
 
     damona env
 
@@ -205,8 +220,12 @@ then, we install the container::
 
     damona install fastqc:0.11.9
 
-This will not download the image again. Instead it will create an alias in
-~/.config/damona/envs/test1/bin directory
+This will not download the image again. It will just create a binary in the
+~/.config/damona/envs/test1/bin directory.
+
+you can combine this new environemnt with the base one::
+
+    damona activate base
 
 If you are interested to know more, please see the User Guide and Developer
 guide here below.
@@ -222,6 +241,8 @@ Roadmap
   The binary is broken where image A could support this binary ! we should have a
   mechanism that handle this feature to recover the binary from other installed
   images. Like a history.
+* keep a version in damona.sh to allow a smooth/transparent update ?
+
 
 Changelog
 =========
