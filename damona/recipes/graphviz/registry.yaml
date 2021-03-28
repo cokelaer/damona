@@ -1,0 +1,7 @@
+graphviz:
+    binaries: dot
+    releases:
+      2.43.0:
+        download: library://cokelaer/damona/graphviz:2.43.0
+        md5sum: 7cb0908aa4cfb2606cb7ba5c5558da41
+
