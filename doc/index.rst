@@ -17,6 +17,7 @@ User guide and reference
     userguide
     dev
     references
+    faqs
 
 
 Indices and tables
