@@ -3,7 +3,7 @@ sequana_tools:
     releases:
         0.10.0:
             download: damona::sequana_tools_0.10.0.img
-            binaries: STAR bwa bowtie2 featureCounts dsrc samtools bamtools freebayes picard subread snpEff bowtie-build bedtools sambamba pbunzip2 pbzip2 bowtie2-build gffread kraken2 krona ktImportText kraken2-build interleave-reads.py normalize-by-median.py filter-abund.py extract-paired-reads.py split-paired-reads.py MarkDuplicates spades.py gffread deeptools mafft minimap2 ccs vcfutils.pl bamCoverage rnaseqc salmon inner_distance.py read_GC.py geneBody_coverage.py geneBody_coverage2.py clipping_profile.py read_duplication.py junction_annotation.py junction_saturation.py infer_experiments.py bam_stats.py dot
+            binaries: STAR bwa bowtie2 featureCounts dsrc samtools bamtools falco freebayes picard subread snpEff bowtie-build bedtools sambamba pbunzip2 pbzip2 bowtie2-build gffread kraken2 krona ktImportText kraken2-build interleave-reads.py normalize-by-median.py filter-abund.py extract-paired-reads.py split-paired-reads.py MarkDuplicates spades.py gffread deeptools mafft minimap2 ccs vcfutils.pl bamCoverage rnaseqc salmon inner_distance.py read_GC.py geneBody_coverage.py geneBody_coverage2.py clipping_profile.py read_duplication.py junction_annotation.py junction_saturation.py infer_experiments.py bam_stats.py dot
             md5sum: a98002943ae7e93847191b47ef079224
         0.9.0:
           download: damona::sequana_tools_0.9.0.img
