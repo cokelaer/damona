@@ -8,6 +8,9 @@ From: cokelaer/damona/conda:4.9.2
 
 %post
 
+    # snakemake will require this tool:
+    apt-get install -y graphviz
+
     export PATH=$PATH:/usr/local/anaconda/bin
     export LANG=C   # prevents perl for raising warnings
     export PERL5LIB=/usr/local/anaconda/lib/perl5/5.22.0
@@ -20,9 +23,14 @@ From: cokelaer/damona/conda:4.9.2
 
 
     # General libraries easy to install 
-    conda install bcftools deeptools samtools bamtools bwa freebayes sambamba
-    conda install snpEff bedtools
+    conda install bcftools deeptools samtools bamtools bwa freebayes
 
+    # note that v0.6.8 (default in conda 4.9.2 gives a seg fault)
+    # at the time of this recipes, the latest is 0.8.0
+    conda install sambamba==0.8.0
+
+    # other lib easy to install
+    conda install snpEff bedtools
 
     # rnaseq, mapping, variant, etc
     conda install bowtie bowtie2 star
@@ -34,11 +42,11 @@ From: cokelaer/damona/conda:4.9.2
     conda install rseqc
 
     # misc
-    conda install igvtools           
-    conda install picard                        
+    conda install igvtools        
+    conda install picard
 
     # This works only for python<3.7 so cannot be install here
-    # conda install cufflinks                     # rnaseq converts gff to gtf
+    # conda install cufflinks                     # rnaseq converter gff to gtf
     conda install  gffread
 
     # denovo
