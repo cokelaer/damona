@@ -1,0 +1,6 @@
+fitter:
+  binaries: fitter
+  releases:
+      1.3.0:
+        download: damona::fitter_1.3.0.img
+        md5sum: 6ed94a16349e1ee5ed3f236f72f10815
