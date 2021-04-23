@@ -2,6 +2,6 @@ art:
   binaries: art_454 art_SOLiD art_illumina art_profiler_454 art_profiler_illumina
   releases:
     3.11.14:
-      download: damona::art_3.14.0.img
+      download: damona::art_3.11.14.img
       md5sum: e06a9215d9727a2077dd7eee0c06886a
 
