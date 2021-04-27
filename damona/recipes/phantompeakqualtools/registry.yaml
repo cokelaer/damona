@@ -1,0 +1,6 @@
+phantompeakqualtools:
+    binaries: run_spp.R
+    releases:
+      1.2.2:
+        download: damona::phantompeakqualtools_1.2.2
+        md5sum: 55fed758b08da123ff45c7be1d2bab2e
