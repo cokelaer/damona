@@ -102,7 +102,7 @@ class ImageInstaller():
                     # Other type of error could simply be help printed to stderr...
                     # let us assume this is the case but let us print a warning
                     # for future debugging
-                    logger.warning(f"Error while testing presence of {binary}. Most probably related to missing arguments")
+                    logger.warning(f"Error while testing presence of {binary}. Most probably related to missing arguments. Here is the error code returned: \n\n{error}\n\n Proceed")
         return True
 
 
