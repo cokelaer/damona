@@ -1,0 +1,7 @@
+sequana_chipseq:
+    binaries: bedGraphToBigWig bedToBigBed bedCoverage bedIntersect bedToBigBed blastToPsl intersectBed
+    releases:
+        0.1.0:
+            download: damona::ucsc_0.1.0.img
+            md5sum: 976284326d2efff1ab8c50face96e5d6
+
