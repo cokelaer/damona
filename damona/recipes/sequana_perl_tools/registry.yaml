@@ -1,0 +1,9 @@
+sequana_perl_tools:
+    binaries: homer annotatePeaks.pl
+    releases:
+        0.1.0:
+            download: damona::sequana_perl_tools_0.1.0.img
+            binaries:
+            md5sum: 4ec432e6b7b9cc10c9b45fd5ab15e344
+            sha256: cb90c307503792146c4b513c3c7d9fbd3ee9ef5e571914429c15398afe81d7ea
+
