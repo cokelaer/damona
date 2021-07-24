@@ -6,3 +6,4 @@ pytest-timeout
 sphinx>=3
 sphinx_rtd_theme
 coveralls
+mock

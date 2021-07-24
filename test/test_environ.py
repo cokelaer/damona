@@ -41,17 +41,16 @@ def test_environment_no_var(monkeypatch):
         assert True
 
 def test_environment():
-    
     e = Environment("base")
     e.get_installed_binaries()
-    
+    #from tempfile import TemporaryFile
+    #with TemporaryFile() as fout:
+    #    e.create_bundle(output_name=fout.name)
 
     try:
         e = Environment("base_does_not_exist")
         assert False
     except:
         assert True
-    from tempfile import TemporaryFile
-    with TemporaryFile() as fout:
-        e.create_bundle(output_name=fout.name)
+
 
