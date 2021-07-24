@@ -15,8 +15,9 @@ other projects and therefore decided to release it as an independent tool.
 .. image:: https://badge.fury.io/py/damona.svg
     :target: https://pypi.python.org/pypi/damona
 
-.. image:: https://travis-ci.org/cokelaer/damona.svg?branch=master
-    :target: https://travis-ci.org/cokelaer/damona
+
+.. image:: https://github.com/cokelaer/damona/actions/workflows/ci.yml/badge.svg
+   :target: https://github.com/cokelaer/damona/actions/workflows/ci.yml
 
 .. image:: https://coveralls.io/repos/github/cokelaer/damona/badge.svg?branch=master
     :target: https://coveralls.io/github/cokelaer/damona?branch=master
