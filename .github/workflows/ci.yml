@@ -17,8 +17,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: setup docker
-      uses: docker-practice/actions-setup-docker@master
+    - uses: docker-practice/actions-setup-docker@master
       run: |
           set -x
           docker version
