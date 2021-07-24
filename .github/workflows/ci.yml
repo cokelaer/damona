@@ -37,6 +37,9 @@ jobs:
     - name: Test with pytest
       run: |
         pytest --cov-report term --cov=damona 
+      env:
+          DAMONA_EXE:"/home/cokelaer/miniconda3/envs/sequana/bin/damona"
+
     - name: coveralls
       run: |
         coveralls --service=github
