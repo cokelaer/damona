@@ -19,6 +19,7 @@ import os
 import subprocess
 import sys
 import tempfile
+import getpass
 
 from damona.common import Damona
 manager = Damona()
@@ -44,13 +45,13 @@ class Builder():
         return filename
 
     def _get_username(self):
-        import os
-        if 'USERNAME' not in os.environ:
-            logger.critical('USERNAME was not found in your environment. Must be'
-                ' defined in your environement to change permission of the built'
-                ' image. Keep going but your image will have ownership of root'
-                ' user only')
-        return os.environ['USERNAME']
+        username = getpass.getuser()
+        #if 'USERNAME' not in os.environ:
+        #    logger.critical('USERNAME was not found in your environment. Must be'
+        #        ' defined in your environement to change permission of the built'
+        #        ' image. Keep going but your image will have ownership of root'
+        #        ' user only')
+        return username
     username = property(_get_username)
 
 
