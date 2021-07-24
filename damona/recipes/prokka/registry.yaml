@@ -1,5 +1,9 @@
 prokka:
+  # will be replaced by sequana_perl_tools most probably
+  # parallel is required to be set explicitly; other internal tools such as hmm
+  # are found inside the singularity by prokka itself
   releases:
     1.14.5:
       download: library://cokelaer/damona/prokka:1.14.5
       md5sum: 20d8aefe076ff10d54b4edbb474ea879
+      binaries: prokka parallel hmmscan
