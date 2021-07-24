@@ -3,10 +3,6 @@ import os
 from damona.builders import BuilderFromDocker
 
 
-import pytest
-skiptravis = pytest.mark.skipif("TRAVIS_PYTHON_VERSION" in os.environ, reason="On travis. no sudo")
-
-@skiptravis
 def test_docker():
 
     import tempfile

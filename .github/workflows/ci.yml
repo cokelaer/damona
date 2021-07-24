@@ -17,6 +17,12 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    - name: setup docker
+      uses: docker-practice/actions-setup-docker@master
+      run: |
+          set -x
+          docker version
+          docker run --rm hello-world
     - name: Set up Python 3.X
       uses: actions/setup-python@v2
       with:
