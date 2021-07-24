@@ -49,3 +49,10 @@ jobs:
     - name: coveralls
       run: |
         coveralls --service=github
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+
+
+
+
+
