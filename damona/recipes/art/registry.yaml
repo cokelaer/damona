@@ -4,4 +4,7 @@ art:
     3.11.14:
       download: damona::art_3.11.14.img
       md5sum: e06a9215d9727a2077dd7eee0c06886a
+    2.5.8:
+      download: damona::art_2.5.8.img
+      md5sum: 4949d8da803d970e74de7ce898ed3c6b
 
