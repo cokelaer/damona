@@ -1,0 +1,8 @@
+quast:
+  binaries: quast.py
+  releases:
+      5.0.2:
+        download:  damona::quast_5.0.2.img
+        md5sum: ca7ea28ec2ec1cde31b91262a823a68a
+
+
