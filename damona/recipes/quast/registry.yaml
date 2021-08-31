@@ -3,6 +3,6 @@ quast:
   releases:
       5.0.2:
         download:  damona::quast_5.0.2.img
-        md5sum: ca7ea28ec2ec1cde31b91262a823a68a
+        md5sum: 7563c919ad994bf792a7619c54b1b4f6
 
 
