@@ -1,4 +1,9 @@
+# Disclaimer: this singularity is for testing only, not for production. 
+# You can rebuild the singularity yourself by accepting the User License
+# 
 bcl2fastq:
+  binaries: bcl2fastq
   releases:
     2.20.0:
-      download: library://cokelaer/damona/bcl2fastq:2.20.0
+      download: damona::bcl2fastq:2.20.0
+      md5sum: d3f97e9a1d060cca8a90b1d9c736e775
