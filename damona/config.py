@@ -68,7 +68,7 @@ class Config():
         if created:
             logger.critical("Please start a new shell to benefit from "
                 "the configuration file and activate/deactivate command")
-            sys.exit(1)
+            #sys.exit(1)
 
     def read(self):
         from configparser import ConfigParser
@@ -84,7 +84,7 @@ class Config():
             _damona_config_path = self.user_config_dir
             logger.warning(f"Creating damona.sh file in {_damona_config_path}. ")
             import damona.shell
-            shell_path = damona.shell.__path__._path[0]
+            shell_path = damona.shell.__path__[0]
             with open(shell_path + os.sep + "damona.sh", "r") as fin:
                 with open(_damona_config_path / "damona.sh", "w") as fout:
                     fout.write(fin.read())
