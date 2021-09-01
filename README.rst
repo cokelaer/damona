@@ -252,6 +252,7 @@ Changelog
 ========= ====================================================================
 Version   Description
 ========= ====================================================================
+0.5.2     * add missing shell package
 0.5.1     * add DAMONA_SINGULARITY_OPTIONS env variable in the binary
           * Fix the way binaries are found in the releases.
           * new recipes: rtools
