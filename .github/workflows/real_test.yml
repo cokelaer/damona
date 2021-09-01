@@ -1,11 +1,7 @@
-name: Continuous Integration
+name: Real test
 
 on:
-  push:
-    branches:
-      - master
-  pull_request:
-    branches-ignore: []
+  workflow_dispatch:
 
 jobs:
   build-linux:
@@ -38,19 +34,14 @@ jobs:
     - name: Install Damona using pip
       run: |
         pip install -r requirements.txt
-        pip install -r requirements_dev.txt
         pip install .
-    - name: Test with pytest
+    - name: Test local install
       run: |
-        pytest --cov-report term --cov=damona
+        damona install bcl2fastq
+        bcl2fastq --help
       env:
         DAMONA_EXE: /usr/share/miniconda/bin/damona
         DAMONA_PATH: /home/runner/.config/damona
-    - name: coveralls
-      run: |
-        coveralls --service=github
-      env:
-        GITHUB_TOKEN: ${{ github.token }}
 
 
 
