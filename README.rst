@@ -244,7 +244,7 @@ Roadmap
   images. Like a history.
 * keep a version in damona.sh to allow a smooth/transparent update ?
 * check for registry not synchrone with github or shall we download the registry
-from github ? 
+  from github ? 
 
 Changelog
 =========
