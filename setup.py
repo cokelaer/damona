@@ -53,7 +53,6 @@ from setuptools.command.install import install
 
 def copyfile():
     try:
-        print("COPY -----------------------------------------------------")
         # This is to make sure users get the newest version installed
         # If it fails, this will be copied again when calling damona for the
         # first time.
@@ -64,7 +63,6 @@ def copyfile():
             with open(damona_config_path + os.sep + "damona.sh", "w") as fout:
                 fout.write(fin.read())
     except:
-        print("FAILED COPY -----------------------------------------------------")
         # could not copy the file, we will do it when starting damona for the
         # first time. 
         pass
