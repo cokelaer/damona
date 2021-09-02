@@ -20,7 +20,10 @@ logger.addHandler(handler)
 # Here we create a persistent config directory in the Home of the user.
 # This is a small file.
 from damona.config import Config
-Config()
+try:
+    Config()
+except:
+    pass
 
 
 
