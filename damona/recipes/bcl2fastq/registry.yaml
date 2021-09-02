@@ -5,5 +5,5 @@ bcl2fastq:
   binaries: bcl2fastq
   releases:
     2.20.0:
-      download: damona::bcl2fastq:2.20.0
+      download: damona::bcl2fastq_2.20.0.img
       md5sum: d3f97e9a1d060cca8a90b1d9c736e775
