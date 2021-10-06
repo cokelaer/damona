@@ -3,7 +3,7 @@ sequana_tools:
     releases:
         0.12.0:
             download: damona::sequana_tools_0.12.0.img
-            binaries: STAR bcftools bwa bowtie2 featureCounts dsrc samtools bamtools falco fastp freebayes picard subread snpEff bowtie-build bedtools sambamba pbunzip2 pbzip2 bowtie2-build gffread kraken2 krona ktImportText kraken2-build kraken2-inspect interleave-reads.py normalize-by-median.py filter-abund.py extract-paired-reads.py split-paired-reads.py MarkDuplicates spades.py gffread deeptools mafft minimap2 ccs vcfutils.pl bamCoverage rnaseqc salmon inner_distance.py read_GC.py geneBody_coverage.py geneBody_coverage2.py clipping_profile.py read_duplication.py junction_annotation.py junction_saturation.py infer_experiments.py bam_stat.py dot genomeCoverageBed plotFingerprint intersectBed shustring
+            binaries: STAR bcftools bwa bowtie2 featureCounts dsrc samtools bamtools falco fastp freebayes picard subread snpEff bowtie-build bedtools sambamba pbunzip2 pbzip2 bowtie2-build gffread kraken2 krona ktImportText kraken2-build kraken2-inspect interleave-reads.py normalize-by-median.py filter-abund.py extract-paired-reads.py split-paired-reads.py MarkDuplicates spades.py gffread deeptools mafft minimap2 ccs vcfutils.pl bamCoverage rnaseqc salmon inner_distance.py read_GC.py geneBody_coverage.py geneBody_coverage2.py clipping_profile.py read_duplication.py junction_annotation.py junction_saturation.py infer_experiment.py bam_stat.py dot genomeCoverageBed plotFingerprint intersectBed shustring
             md5sum: f47330e72a2a78e5b6538fc505cedaad
             sha256: c5c07a22accd900aa71b974fd0a84a090c5af2d6f535c1ef47c318460ea82cd7
         0.11.0:
