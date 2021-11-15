@@ -1,6 +1,33 @@
-from damona.registry import Software, Registry
+from damona.registry import Software, Registry, ImageName
 import glob
 
+
+
+def test_image_name():
+
+    image = ImageName("fastqc_0.11.8.img")
+    assert image.name == 'fastqc'
+    assert image.version == '0.11.8'
+
+    image = ImageName("fastqc_other_0.11.8.img")
+    assert image.name == 'fastqc_other'
+    assert image.version == '0.11.8'
+    
+
+    try:
+        ImageName("fastqc_0.11.img")
+    except NameError:
+        assert True
+
+    try:
+        ImageName("fastqc_0.11.8.sif")
+    except NameError:
+        assert True
+
+    try:
+        ImageName("fastqc0.11.8.img")
+    except NameError:
+        assert True
 
 
 
@@ -19,6 +46,7 @@ def test_single_registry():
     # Sofware can take as input a full path name, a dictionary, a name
     sr = Software("salmon")
     assert sr.releases['1.3.0'].binaries == ['salmon']
+    sr.releases.last_release
 
     print(sr)
     sr
