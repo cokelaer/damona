@@ -24,18 +24,20 @@ import math
 import subprocess
 
 from damona.common import Damona
+
 manager = Damona()
 
 from damona.common import BinaryReader
 
 import colorlog
+
 logger = colorlog.getLogger(__name__)
 
 
-__all__ = ['Environ', 'Environment']
+__all__ = ["Environ", "Environment"]
 
 
-class Environment():
+class Environment:
     """Class to handle a specific environment
 
 
@@ -44,6 +46,7 @@ class Environment():
 
 
     """
+
     def __init__(self, name):
         if name == "" or name == "base":
             self.name = "base"
@@ -68,17 +71,18 @@ class Environment():
 
     def get_disk_usage(self):
         """Return virtual size of the environment if we were to
-        copy/export all images """
+        copy/export all images"""
         binaries = self.get_installed_binaries()
         S = 0
         images = self.get_images()
         for image in images:
             try:
                 import os
-                if 'DAMONA_PATH' not in os.environ:
+
+                if "DAMONA_PATH" not in os.environ:
                     logger.error("You must define a DAMONA_PATH")
                     sys.exit(1)
-                damona_path = os.environ['DAMONA_PATH']
+                damona_path = os.environ["DAMONA_PATH"]
                 image = image.replace("${DAMONA_PATH}", damona_path)
                 S += os.path.getsize(image)
             except Exception as err:
@@ -102,6 +106,7 @@ class Environment():
         txt = f"Contains {N} binaries from {M} images."
         disk = self.get_disk_usage()
         import math
+
         env_size = math.ceil(disk / 1e6)
 
         txt += f" Disk usage is {env_size}Mb"
@@ -120,7 +125,6 @@ class Environment():
         if output_name is None:
             output_name = self.name
 
-
         if exclude:
             exclude = list(self.path.glob(f"bin/{exclude}"))
         else:
@@ -135,6 +139,7 @@ class Environment():
         images = [pathlib.Path(x) for x in self.get_images()]
 
         import tarfile
+
         archive = tarfile.open(f"damona_{output_name}.tar", "w")
         for filename in binaries:
             logger.info(f"Adding {filename}")
@@ -147,7 +152,7 @@ class Environment():
         logger.info(f"Saved environment {self.name} into damona_{output_name}.tar")
 
 
-class Images():
+class Images:
     def __init__(self):
         self.images_dir = manager.images_directory
 
@@ -156,17 +161,18 @@ class Images():
 
     def _get_images(self):
         return self.images_dir.glob("*.img")
+
     files = property(_get_images)
 
     def get_disk_usage(self, frmt="Mb"):
         env_size = sum(os.path.getsize(f) for f in self.files if os.path.isfile(f))
-        if frmt == 'Mb':
-            return math.ceil(env_size/1e6)
+        if frmt == "Mb":
+            return math.ceil(env_size / 1e6)
         else:
             return env_size
 
 
-class Environ():
+class Environ:
     """Class to deal with the damona environments"""
 
     def __init__(self):
@@ -174,26 +180,29 @@ class Environ():
 
     @staticmethod
     def get_current_env():
-        if 'DAMONA_ENV' not in os.environ:
+        if "DAMONA_ENV" not in os.environ:
             path = manager.damona_path
         else:
-            path = pathlib.Path(os.environ['DAMONA_ENV'])
+            path = pathlib.Path(os.environ["DAMONA_ENV"])
         return path
 
     def _get_N(self):
         return len(self.environments)
+
     N = property(_get_N)
 
     def _get_envs(self):
         path_envs = manager.damona_path / "envs"
         envs = [Environment("base")] + [Environment(x.name) for x in path_envs.iterdir()]
         return envs
+
     environments = property(_get_envs)
 
     def _get_env_names(self):
         envs = os.listdir(manager.environments_path)
-        envs = ['base'] + [Environment(x).name for x in envs ]
+        envs = ["base"] + [Environment(x).name for x in envs]
         return envs
+
     environment_names = property(_get_env_names)
 
     def delete(self, env_name):
@@ -204,14 +213,17 @@ class Environ():
             try:
                 os.rmdir(env_path)
             except OSError:
-                logger.warning("Will delete all contents of {}. Although this concerns only aliases you will lose your environement".format(env_path))
+                logger.warning(
+                    "Will delete all contents of {}. Although this concerns only aliases you will lose your environement".format(
+                        env_path
+                    )
+                )
                 ret = input("Are you sure you want to proceed ? (N/y)")
-                if ret == 'y':
+                if ret == "y":
                     shutil.rmtree(env_path)
 
-
     def _env_in_path(self, env_name):
-        PATH = os.environ['PATH']
+        PATH = os.environ["PATH"]
         paths = PATH.split(":")
         for x in paths:
             if str(manager.damona_path / "envs" / env_name / "bin") == x:
@@ -221,52 +233,52 @@ class Environ():
     def activate(self, env_name=None):
         # Do not change the print statement here below. They are used by
         # damona.sh
-        if env_name not in self.environment_names + ['base']:
+        if env_name not in self.environment_names + ["base"]:
             logger.error(f"invalid environment:  {env_name}. Please use 'damona env' to get the list")
             sys.exit(1)
 
         if self._env_in_path(env_name) is True:
             logger.warning(f"damona environment {env_name} is already in your PATH. nothing done")
-            return 
+            return
 
         if env_name == "base":
             env_path = manager.environments_path.parent
-            print('    export DAMONA_ENV={};'.format(env_path))
-            print('export PATH={}/bin:${{PATH}}'.format(env_path))
+            print("    export DAMONA_ENV={};".format(env_path))
+            print("export PATH={}/bin:${{PATH}}".format(env_path))
         else:
             env_path = manager.environments_path / env_name
-            print('    export DAMONA_ENV={};'.format(env_path))
-            print('export PATH={}/bin:${{PATH}}'.format(env_path))
+            print("    export DAMONA_ENV={};".format(env_path))
+            print("export PATH={}/bin:${{PATH}}".format(env_path))
         logger.info(f"# Added damona path ({env_path}) in your PATH")
 
     def deactivate(self, env_name=None):
         # we deactivate the latest activated damona environment only.
         # can be called several times. If called too many times,
         # we set the main damona environment (base) as default
-        PATH = os.environ['PATH']
+        PATH = os.environ["PATH"]
         paths = PATH.split(":")
 
-        found = False   # this one is the one to deactivate (to ignore)
+        found = False  # this one is the one to deactivate (to ignore)
         newPATH = []
         for path in paths:
-            #logger.info(f"# {env_name} {path}")
+            # logger.info(f"# {env_name} {path}")
 
-            # if an env_name is provided, it may be removed several times. 
-            # if not provided, 
+            # if an env_name is provided, it may be removed several times.
+            # if not provided,
             if env_name and str(manager.damona_path / "envs" / env_name / "bin") == path:
                 logger.info(f"# Found damona path ({path}), now removed from your PATH")
                 found = True
             elif env_name is None and f"/damona/" in path and found is False:
                 logger.info(f"# Found damona path ({path}), now removed from your PATH")
                 found = True
-            else: # keep track of the DAMONA_ENV.
+            else:  # keep track of the DAMONA_ENV.
                 newPATH.append(path)
 
         if found is False:
             logger.info("# no more active damona environment in your path. Use 'damona activate ENVNAME'")
         #
         newPATH = ":".join(newPATH)
-        print('export PATH={}'.format(newPATH))
+        print("export PATH={}".format(newPATH))
 
     def create(self, env_name, force=False):
         if env_name == "base":
@@ -283,8 +295,8 @@ class Environ():
                 os.mkdir(env_path)
                 os.mkdir(env_path / "bin")
                 logger.info("Created {} in {}".format(env_name, env_directory))
-            except: #pragma: no cover
-                pass # if already created, error are caught here
+            except:  # pragma: no cover
+                pass  # if already created, error are caught here
 
     def create_from_bundle(self, env_name, bundle, force=False):
         if env_name in self.environment_names:
@@ -301,38 +313,43 @@ class Environ():
         env_directory = pathlib.Path(manager.damona_path / "envs" / env_name)
 
         import tarfile
+
         archive = tarfile.open(bundle)
         for x in archive.getmembers():
-            if x.name.startswith("bin"): # this is a binary
+            if x.name.startswith("bin"):  # this is a binary
                 archive.extract(x, path=env_directory)
-            elif x.name.startswith("images"): # a contaier
+            elif x.name.startswith("images"):  # a contaier
                 archive.extract(x, path=env_directory)
                 from damona.common import ImageReader
+
                 temp_image = ImageReader(env_directory / x.name)
                 if temp_image.is_installed():
                     target_image = ImageReader(manager.damona_path / x.name)
                     if target_image.md5 == temp_image.md5:
                         logger.info(f"- Image {x.name} exists already with same md5sum. Skipped copy.")
                     else:
-                        logger.warning(f"- Image {x.name} exists already with diffrent "
+                        logger.warning(
+                            f"- Image {x.name} exists already with diffrent "
                             " md5sum. This should not happen with damona images."
-                            " You will need to copy manually if required")
+                            " You will need to copy manually if required"
+                        )
                 else:
                     logger.info(f"- Copying {x.name} into {manager.damona_path}/images")
-                    temp_image.filename.rename(manager.damona_path / "images"/ temp_image.filename.name)
-            else: # we should not enter here
+                    temp_image.filename.rename(manager.damona_path / "images" / temp_image.filename.name)
+            else:  # we should not enter here
                 raise NotImplementedError
 
         # finally, we remove all images since they are redundant or have
         # been copied
         def rm_tree(pth):
             pth = pathlib.Path(pth)
-            for child in pth.glob('*.img'):
+            for child in pth.glob("*.img"):
                 if child.is_file():
                     child.unlink()
                 else:
                     rm_tree(child)
             pth.rmdir()
+
         to_delete = (env_directory / "images").absolute()
         logger.info(f"Removing temporary {to_delete} directory")
         rm_tree(env_directory / "images")

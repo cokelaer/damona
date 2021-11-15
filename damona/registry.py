@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 #  This file is part of Damona software
 #
@@ -27,31 +26,70 @@ import packaging.version
 from damona.config import Config
 
 import colorlog
+
 logger = colorlog.getLogger(__name__)
 
 
+__all__ = ['Releases', 'Software', 'Registry', 'Release']
 
-class Releases(dict):
-    """A collection of :class:`Release`.
 
+class ImageName:
+    """
+
+    An image name must have the following convention:
+
+        name_x.y.z.img
+
+    or
+
+        name_other_x.y.z.img
 
     """
+    def __init__(self, name):
+
+        self.filename = name
+        self.basename = os.path.basename(name)
+
+        if not self.basename.endswith(".img"):
+            raise NameError
+
+        if "_" not in self.basename:
+            raise NameError
+
+        name, version = self.basename.rsplit(".", 1)[0].rsplit("_", 1)
+        self.name = name
+        self.version = version
+
+        # check version
+        if len(version.split(".")) != 3:
+            raise NameError
+
+
+class Releases(dict):
+    """A collection of :class:`Release`."""
+
     def __init__(self, data):
         # a collection of releases
         self._name = list(data.keys())[0]
-        for version, release in data[self._name]['releases'].items():
-            # enforce the keys to be strings
-            # this is for special case of x.y that are read as float instead of
-            # strings for e.g x.y.z
-            self[str(version)] = Release(version, data)
+
+        if "releases" not in data[self._name]:
+            pass
+        else:
+            for version, release in data[self._name]["releases"].items():
+                # enforce the keys to be strings
+                # this is for special case of x.y that are read as float instead of
+                # strings for e.g x.y.z
+                self[str(version)] = Release(version, data)
 
     def _get_last_release(self):
         from packaging import version
+
         return max(list(self.keys()), key=lambda x: version.parse(x))
+
     last_release = property(_get_last_release)
 
 
-class Release():
+class Release:
     """A Release class
 
     This class populates information found in the release section of a
@@ -81,6 +119,7 @@ class Release():
     binaries can be separated by commas or spaces.
 
     """
+
     def __init__(self, version, data):
         """
 
@@ -92,19 +131,19 @@ class Release():
         self._name = list(data.keys())[0]
 
         try:
-            self._binaries = self.split_binaries(data[self._name].get('binaries', []))
-            kwargs = data[self._name]['releases'][version]
-            self.download = kwargs['download']
-        except Exception as err:  #pragma: no cover
+            self._binaries = self.split_binaries(data[self._name].get("binaries", []))
+            kwargs = data[self._name]["releases"][version]
+            self.download = kwargs["download"]
+        except Exception as err:  # pragma: no cover
             logger.error(f"Incorrect formatted registry for {self._name}" + str(err))
             sys.exit(1)
 
-        if 'md5sum' not in kwargs:
+        if "md5sum" not in kwargs:
             logger.debug(f"Missing md5sum entry in {self._name}. Please consider adding one ")
         self.md5sum = kwargs.get("md5sum", None)
-        self._release_binaries = self.split_binaries(kwargs.get('binaries', []))
-        self._extra_binaries = self.split_binaries(kwargs.get('extra_binaries', []))
-        self._exclude_binaries = self.split_binaries(kwargs.get('exclude_binaries', []))
+        self._release_binaries = self.split_binaries(kwargs.get("binaries", []))
+        self._extra_binaries = self.split_binaries(kwargs.get("extra_binaries", []))
+        self._exclude_binaries = self.split_binaries(kwargs.get("exclude_binaries", []))
         self._data = data
 
     def _get_binaries(self):
@@ -116,6 +155,7 @@ class Release():
             return [self._name]
         else:
             return binaries
+
     binaries = property(_get_binaries)
 
     def split_binaries(self, binaries):
@@ -133,33 +173,42 @@ class Release():
         return txt
 
 
-class RemoteRegistry():
-    """
+class RemoteRegistry:
+    """ """
 
-
-    """
     def __init__(self, url):
         self.url = url
         self._read_registry()
 
-
     def _read_registry(self):
 
-        import  urllib.request
+        import urllib.request
+
         response = urllib.request.urlopen(self.url)
         html = response.read()
-        self.rawdata = html.decode('utf-8')
+        self.rawdata = html.decode("utf-8")
         remote_registry = yaml.load(self.rawdata, Loader=Loader)
         self.data = remote_registry
 
 
-class Software():
+class Software:
     """A class to read a given software registry
 
     A Software is made of :class:`Releases`. It contains also a name, a list of
     binaries either globally or per release
 
+    ::
+
+        registry.Software("fastqc")
+
+    prints:
+
+        name: fastqc
+        binaries: {'0.11.9': ['fastqc'], '0.11.8': ['fastqc']}
+
+
     """
+
     def __init__(self, name):
         """
 
@@ -180,7 +229,7 @@ class Software():
             self.releases = self._interpret_registry(data)
         else:
             from damona import __path__
-            self.registry_name = pathlib.Path(__path__[0]) / "recipes"  / name / "registry.yaml"
+            self.registry_name = pathlib.Path(__path__[0]) / "recipes" / name / "registry.yaml"
             data = self._read_registry()
             self.releases = self._interpret_registry(data)
 
@@ -188,12 +237,12 @@ class Software():
         # just an alias
         regname = self.registry_name
 
-        if os.path.exists(regname) is False: #pragma: no cover
+        if os.path.exists(regname) is False:  # pragma: no cover
             raise IOError(f"incorrect input filename {regname}")
 
         # read the yaml
         data = yaml.load(open(regname, "r").read(), Loader=Loader)
-        if len(data.keys()) != 1: #pragma: no cover
+        if len(data.keys()) != 1:  # pragma: no cover
             logger.error(f"{regname} must contain on single entry named after the images. ")
             sys.exit(1)
 
@@ -207,18 +256,22 @@ class Software():
 
     def _get_name(self):
         return self._name
+
     name = property(_get_name)
 
     def _get_binaries(self):
         return dict([(rel, self.releases[rel].binaries) for rel in self.releases.keys()])
+
     binaries = property(_get_binaries)
 
     def _get_versions(self):
         return sorted(self.releases.keys())
+
     versions = property(_get_versions)
 
     def _get_md5(self):
         return dict([(rel, self.releases[rel].md5sum) for rel in self.releases.keys()])
+
     md5 = property(_get_md5)
 
     def check(self):
@@ -227,10 +280,11 @@ class Software():
     def __repr__(self):
         txt = f"name: {self.name}\n"
         txt += f"binaries: {self.binaries}\n"
+        txt += f"releases: {self.releases}\n"
         return txt
 
 
-class Registry():
+class Registry:
     """
 
     The registry contains a dictionary with all images information.::
@@ -245,11 +299,11 @@ class Registry():
 
         self.config = Config().config
         if from_url:
-            if from_url in self.config['urls']:
-                from_url = self.config['urls'][from_url]
+            if from_url in self.config["urls"]:
+                from_url = self.config["urls"][from_url]
             else:
-                assert from_url.startswith('http')
-                assert from_url.endswith('registry.txt')
+                assert from_url.startswith("http")
+                assert from_url.endswith("registry.txt")
         self.from_url = from_url
         self.registry = {}
         self.discovery()
@@ -260,18 +314,22 @@ class Registry():
 
         Note for developers: not the same as get_list"""
         candidates = [x for x in self.registry.keys() if pattern in x]
-        if len(candidates) == 0: #pragma: no cover
-            logger.critical(f"No image found for {pattern}. Make sure it is correct. You can use 'damona search' command")
+        if len(candidates) == 0:  # pragma: no cover
+            logger.critical(
+                f"No image found for {pattern}. Make sure it is correct. You can use 'damona search' command"
+            )
             return None
+
         if len(candidates) == 1:
             return candidates[0]
-        # sequana_tools_0.9.0 should return sequana_tools for the name qnd
+
+        # sequana_tools_0.9.0 should return sequana_tools for the name and
         # 0.9.0 for the version hence the rsplit
-        names = [x.rsplit(":",1)[0] for x in candidates]
-        versions = [x.rsplit(":",1)[1] for x in candidates]
+        names = [x.rsplit(":", 1)[0] for x in candidates]
+        versions = [x.rsplit(":", 1)[1] for x in candidates]
         version = max([packaging.version.parse(ver) for ver in versions])
         name = names[0]
-        registry_name = pattern + ':' + str(version)
+        registry_name = pattern + ":" + str(version)
 
         return registry_name
 
@@ -290,30 +348,31 @@ class Registry():
         for name, content in ext_reg.data.items():
             recipe = Software({name: content})
             recipe.check()
-            name = recipe.name ##+ k.replace("Singularity.", "").lower()
+            name = recipe.name  ##+ k.replace("Singularity.", "").lower()
             # we may have several releases
             for version in recipe.versions:
                 name_version = recipe.name + ":" + version
                 release = recipe.releases[version]
                 if name_version not in self.registry:
-                    if release.download is None: #pragma: no cover
+                    if release.download is None:  # pragma: no cover
                         logger.warning(f"recipe {recipe.name} has no download entry. please fill asap")
-                    elif release.download.startswith("damona::"): 
-                        from_url = self.config['urls']["damona"]
+                    elif release.download.startswith("damona::"):
+                        from_url = self.config["urls"]["damona"]
                         release.download = release.download.replace("damona::", from_url)
                         release.download = release.download.replace("registry.txt", "")
                     self.registry[name_version] = release
-                else: #pragma: no cover
-                    for kk,vv in self.registry.items():
+                else:  # pragma: no cover
+                    for kk, vv in self.registry.items():
                         print("{}: {}".format(kk, vv))
-                        for kkk,vvv in self.registry[kk].items(): 
+                        for kkk, vvv in self.registry[kk].items():
                             print(" - {}:  {}".format(kkk, vvv))
                     raise ValueError("found a duplicated name {}".format(name_version))
 
     def _damona_discovery(self):
 
         from damona.recipes import __path__
-        _registry_files = glob.glob(__path__[0] + '/*/registry.yaml')
+
+        _registry_files = glob.glob(__path__[0] + "/*/registry.yaml")
 
         self.registry = {}
 
@@ -325,17 +384,17 @@ class Registry():
                 name_version = recipe.name + ":" + version
                 release = recipe.releases[version]
                 if name_version not in self.registry:
-                    if release.download is None: #pragma: no cover
+                    if release.download is None:  # pragma: no cover
                         logger.warning(f"recipe {recipe.name} has no download entry. please fill asap")
                     elif release.download.startswith("damona::"):
-                        from_url = self.config['urls']["damona"]
+                        from_url = self.config["urls"]["damona"]
                         release.download = release.download.replace("damona::", from_url)
                         release.download = release.download.replace("registry.txt", "")
                     self.registry[name_version] = release
-                else: #pragma: no cover
-                    for kk,vv in self.registry.items():
+                else:  # pragma: no cover
+                    for kk, vv in self.registry.items():
                         print("{}: {}".format(kk, vv))
-                        for kkk,vvv in self.registry[kk].items(): 
+                        for kkk, vvv in self.registry[kk].items():
                             print(" - {}:  {}".format(kkk, vvv))
                     raise ValueError("found a duplicated name {}".format(name_version))
 
@@ -347,7 +406,7 @@ class Registry():
         recipes = {}
         for name, info in self.registry.items():
             if pattern:
-                if pattern.lower() in name.lower(): 
+                if pattern.lower() in name.lower():
                     recipes[name] = info.download
             else:
                 recipes[name] = info.download

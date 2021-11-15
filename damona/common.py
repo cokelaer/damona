@@ -23,53 +23,61 @@ import re
 import easydev
 
 import colorlog
+
 logger = colorlog.getLogger(__name__)
 
 
-__all__ = ['Damona', 'ImageReader', 'BinaryReader', "DamonaInit"]
+__all__ = ["Damona", "ImageReader", "BinaryReader", "DamonaInit"]
 
 
-
-class DamonaInit():
+class DamonaInit:
     """Class to create images/bin directory from DAMONA_PATH"""
+
     def __init__(self):
         if "DAMONA_PATH" not in os.environ:
-            logger.error("DAMONA_PATH not found in your environment. You must define "
-                "it. In this shell, type 'export DAMONA_PATH=PATH_WHERE_TO_PLACE_DAMONA'")
+            logger.error(
+                "DAMONA_PATH not found in your environment. You must define "
+                "it. In this shell, type 'export DAMONA_PATH=PATH_WHERE_TO_PLACE_DAMONA'"
+            )
             sys.exit(1)
 
         self.damona_path = pathlib.Path(os.environ["DAMONA_PATH"])
         easydev.mkdirs(self.damona_path)
-        easydev.mkdirs(self.damona_path / 'envs')
-        easydev.mkdirs(self.damona_path / 'images')
-        easydev.mkdirs(self.damona_path / 'images' / 'damona_buffer')
-        easydev.mkdirs(self.damona_path / 'bin')
+        easydev.mkdirs(self.damona_path / "envs")
+        easydev.mkdirs(self.damona_path / "images")
+        easydev.mkdirs(self.damona_path / "images" / "damona_buffer")
+        easydev.mkdirs(self.damona_path / "bin")
 
 
-
-class Damona():
+class Damona:
     """Global manager to handle environments, registy, perform general
     task such as cleaning.
 
     """
+
     def __init__(self):
 
         if "DAMONA_PATH" not in os.environ:
-            logger.error("DAMONA_PATH not found in your environment. You must define "
-                         "it. In this shell, type 'export DAMONA_PATH=PATH_WHERE_TO_PLACE_DAMONA'")
+            logger.error(
+                "DAMONA_PATH not found in your environment. You must define "
+                "it. In this shell, type 'export DAMONA_PATH=PATH_WHERE_TO_PLACE_DAMONA'"
+            )
             sys.exit(1)
         self.damona_path = pathlib.Path(os.environ["DAMONA_PATH"])
 
     def _get_config_path(self):
         return self.damona_path / "damona.cfg"
+
     config_path = property(_get_config_path)
 
     def _get_image_directory(self):
         return self.damona_path / "images"
+
     images_directory = property(_get_image_directory)
 
     def _get_environments_path(self):
         return self.damona_path / "envs"
+
     environments_path = property(_get_environments_path)
 
     def find_orphan_binaries(self):
@@ -89,12 +97,14 @@ class Damona():
 
     def get_environments(self):
         from damona.environ import Environ
+
         env = Environ()
         return env.environment_names
 
     def get_all_binaries(self):
         """Return list of all binaries in all environments"""
         from damona.environ import Environ
+
         env = Environ()
         binaries = [e.get_installed_binaries() for e in env.environments]
         binaries = set([x for y in binaries for x in y])
@@ -128,12 +138,14 @@ class Damona():
     def get_all_images(self):
         """Return list of all images"""
         from damona.environ import Images
+
         images = Images()
         return list(images.files)
 
 
-class ImageReader():
+class ImageReader:
     """Manage a single image"""
+
     def __init__(self, name):
         """
 
@@ -149,13 +161,14 @@ class ImageReader():
 
         """
         self.filename = pathlib.Path(name)
-        #.absolute())
+        # .absolute())
         if self.is_valid_name() is False:
             logger.error("Invalid image name. Your input image must end in .img or .sif")
             sys.exit(1)
 
     def _get_short_name(self):
         return self.filename.name
+
     shortname = property(_get_short_name)
 
     def is_valid_name(self):
@@ -170,8 +183,9 @@ class ImageReader():
         pattern = r"_(v|)\d+\.\d+\.\d+(.+|)\.(img|sif)"
         p = re.compile(pattern)
         ss = p.search(self.shortname)
-        guess = self.shortname[0:ss.span()[0]]
+        guess = self.shortname[0 : ss.span()[0]]
         return guess
+
     guessed_executable = property(_get_executable_name)
 
     def _get_version(self):
@@ -181,31 +195,34 @@ class ImageReader():
         version = ss.group().replace(".sif", "").replace(".img", "")
         if version[0] == "_":
             version = version[1:]
-        if version[0] == 'v':
+        if version[0] == "v":
             version = version[1:]
         return version
+
     version = property(_get_version)
 
     def _get_md5sum(self):
         from easydev import md5
+
         md5sum = md5(self.filename)
         return md5sum
+
     md5 = property(_get_md5sum)
 
     def is_orphan(self):
         binaries = Damona().get_all_binaries()
         linked_binaries = []
         for binary in binaries:
-             if self.filename == BinaryReader(binary).image:
-                 linked_binaries.append(binary)
+            if self.filename == BinaryReader(binary).image:
+                linked_binaries.append(binary)
         if len(binaries) == 0:
             return True
         else:
             return False
 
     def is_installed(self):
-        damona_path = pathlib.Path(os.environ['DAMONA_PATH'])
-        if (damona_path / 'images' / self.filename.name).exists():
+        damona_path = pathlib.Path(os.environ["DAMONA_PATH"])
+        if (damona_path / "images" / self.filename.name).exists():
             return True
         else:
             return False
@@ -221,6 +238,7 @@ class ImageReader():
 
 class BinaryReader:
     """Manage a single binary"""
+
     def __init__(self, filename):
         """
 
@@ -238,7 +256,7 @@ class BinaryReader:
             data = [x for x in fin.readlines() if x.strip().startswith("singularity")]
             data = data[0]
 
-            data = data.replace("${DAMONA_SINGULARITY_OPTIONS}", "") 
+            data = data.replace("${DAMONA_SINGULARITY_OPTIONS}", "")
             try:
                 image_path = data.split("exec")[1].split()[0]
             except:
@@ -246,18 +264,17 @@ class BinaryReader:
                 logger.warning(f"command line in {filename} uses 'run'; should be reinstalled ")
 
             if "DAMONA_PATH" in os.environ:
-                DAMONA_PATH = os.environ['DAMONA_PATH']
+                DAMONA_PATH = os.environ["DAMONA_PATH"]
                 self.image = image_path.replace("${DAMONA_PATH}", DAMONA_PATH)
             else:
                 self.image = image_path
 
     def is_image_available(self):
-        if 'DAMONA_PATH' not in os.environ:
+        if "DAMONA_PATH" not in os.environ:
             logger.error("You must define DAMONA_PATH")
             sys.exit(1)
-        damona_path = os.environ['DAMONA_PATH']
+        damona_path = os.environ["DAMONA_PATH"]
         if os.path.exists(self.image.replace("${DAMONA_PATH}", damona_path)):
             return True
         else:
             return False
-

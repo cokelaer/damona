@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 ###########################################################################
 # Damona is a project to manage reproducible containers                  #
 #                                                                         #
@@ -31,6 +29,7 @@ import subprocess
 
 from damona  import version
 from damona import Damona
+from damona.registry import ImageName, Registry, Software
 manager = Damona()
 
 
@@ -199,8 +198,6 @@ def available_images(**kwargs):
         print(f"{k:20} [{v}]")
 
 
-#TODO --rename
-
 @main.command()
 @click.option('--create', type=click.STRING,
     help="""create a new environment""")
@@ -225,7 +222,7 @@ def env(**kwargs):
         damona env --disk-usage
 
     You can also create an environment and install a saved on in it:
-    
+
     \b
         damona export test1
         damona env --create copy_test1 --from-bundle damona_test1.tar
@@ -267,8 +264,6 @@ def env(**kwargs):
 
 @main.command()
 @click.argument('name', required=True, type=click.STRING)
-# TODO:
-# @click.argument('--all', e, type=click.STRING)
 def activate(**kwargs):
     """Activate a damona environment.
 
@@ -587,7 +582,63 @@ def export(**kwargs):
     logger.info(f"Use this command to create a new environment: damona env --create test --from-bundle {environment}.tar")
 
 
+@main.command()
+@click.argument('filename', required=True)
+@click.option('--token', default=None, 
+    help="""A valid zenodo (or sandbox zenodo) token""")
+@click.option('--mode', default="sandbox.zenodo", 
+    help="mode can be either 'zenodo' or 'sandbox.zenodo' and your token must be related.")
+def zenodo_upload(**kwargs):
+    """Upload a singularity file to Zenodo.
 
+    The sandbox.zenodo is a sandbox where you can try to upload a new singularity file.
+
+        damona zenodo-upload file_1.0.0.img --mode sandbox.zenodo
+
+    Once done, you can upload new versions:
+
+        damona zenodo-upload file_2.0.0.img --mode sandbox.zenodo
+
+    The code to be added to the registry will be provided.
+
+    """
+    token = kwargs['token']
+    mode = kwargs['mode']
+    filename = kwargs['filename']
+
+    logger.info(f"Uploading to {mode}")
+    if token is None:
+        from configparser import NoSectionError, NoOptionError
+        from damona import Config
+        try:
+            c = Config()
+            token = c.config.get(f'{mode}', 'token')
+            logger.info(f"Found token for {mode} in your config file in {c.config_file}")
+        except (NoSectionError, NoOptionError):
+            logger.error("A token must be provide on command line or in your damona.cfg file")
+            sys.exit(1)
+
+    # what do we know ? Check this is valid and known
+    image_name = ImageName(filename)
+    registry = Software(image_name.name)
+    print(registry)
+    if image_name.version in registry.versions:
+        logger.info(f"fastqc version {image_name.version} exists already in the registry. Cannot upload same version")
+        logger.info(f"exiting")
+        sys.exit(0)
+
+
+    from damona.zenodo import Zenodo
+    z = Zenodo(mode, token)
+    if registry.releases:
+        # get current_zenodo_id
+        ID = registry.current_zenodo_id
+        # we need to get the doi first
+        z.create_new_version_with_file_and_publish(filename, ID)
+    else:
+        print("==============")
+        z.create_new_deposit_with_file_and_publish(filename)
+        #z.deposit2registry(z.la)
 
 
 

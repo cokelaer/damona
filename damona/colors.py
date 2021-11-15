@@ -1,6 +1,5 @@
-
-
 __all__ = ["Colors"]
+
 
 class Colors:
     """
@@ -11,6 +10,7 @@ class Colors:
         print(color.failed("msg"))
 
     """
+
     PURPLE = "\033[95m"
     BLUE = "\033[94m"
     GREEN = "\033[92m"
@@ -46,4 +46,3 @@ class Colors:
 
     def blue(self, msg):
         return self.BLUE + msg + self.ENDC
-

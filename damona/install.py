@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 #  This file is part of Damona software
 #
@@ -24,28 +23,29 @@ import time
 import subprocess
 
 
-
 from spython.main import Client
 from damona import Registry
 from damona import Environ
 from damona.common import ImageReader
 
 import os
-DAMONA_PATH = os.environ['DAMONA_PATH']
 
+DAMONA_PATH = os.environ["DAMONA_PATH"]
 
 
 import colorlog
+
 logger = colorlog.getLogger(__name__)
 
 
-__all__ = ['LocalImageInstaller', 'RemoteImageInstaller']
+__all__ = ["LocalImageInstaller", "RemoteImageInstaller"]
 
 
-class CMD():
+class CMD:
     def __init__(self, cmd):
         self.cmd = cmd
         from damona import version
+
         self.version = version
 
     def __repr__(self):
@@ -53,8 +53,8 @@ class CMD():
         cmd = "damona " + " ".join(self.cmd[1:])
         return cmd
 
-class ImageInstaller():
 
+class ImageInstaller:
     def _are_binaries_findable(self):
         # TODO add sanity check that stops the installation if a failure occurs
         for binary in self.binaries:
@@ -91,24 +91,24 @@ class ImageInstaller():
             else:
                 if status.stderr is None:
                     logger.critical("Unknown error due to errocode != 0 but not error message reported")
-                    #FIXME. not sure this ever happens
+                    # FIXME. not sure this ever happens
                     return False
 
                 error = status.stderr.read()
-                if 'executable file not found' in error.decode():
+                if "executable file not found" in error.decode():
                     logger.critical(f"{binary} executable not available in the image {self.input_image.filename}")
                     return False
                 else:
                     # Other type of error could simply be help printed to stderr...
                     # let us assume this is the case but let us print a warning
                     # for future debugging
-                    logger.warning(f"Error while testing presence of {binary}. Most probably related to missing arguments. Here is the error code returned: \n\n{error}\n\n Proceed")
+                    logger.warning(
+                        f"Error while testing presence of {binary}. Most probably related to missing arguments. Here is the error code returned: \n\n{error}\n\n Proceed"
+                    )
         return True
 
 
-
 class LocalImageInstaller(ImageInstaller):
-
     def __init__(self, image_name, cmd=None, binaries=None):
         # must be a valid name with version, name, etc so that executable name
         # can be guessed
@@ -137,6 +137,7 @@ class LocalImageInstaller(ImageInstaller):
     def install_image(self, force=False):
         if (self.images_directory / self.input_image.shortname).exists():
             from easydev import md5
+
             md5_target = md5(self.images_directory / self.input_image.shortname)
             if md5_target == self.input_image.md5:
                 logger.info("Image with same md5 exists already. No need to copy")
@@ -146,7 +147,9 @@ class LocalImageInstaller(ImageInstaller):
                 if force:
                     self.copy()
                 else:
-                    logger.warning(f"{self.input_image.filename} exists with different md5sum. Please use --force to overwrite")
+                    logger.warning(
+                        f"{self.input_image.filename} exists with different md5sum. Please use --force to overwrite"
+                    )
         else:
             self.copy()
 
@@ -169,7 +172,6 @@ class LocalImageInstaller(ImageInstaller):
             bininst.install_binaries(force=force)
         else:
             logger.critical("The container image has not been installed. So, binaries cannot be installed either")
-
 
 
 class RemoteImageInstaller(ImageInstaller):
@@ -197,9 +199,9 @@ class RemoteImageInstaller(ImageInstaller):
         damona install fastqc:0.11.9 --from-url https://yourwebsite
 
     """
+
     def __init__(self, image_name, binaries=None, from_url=None, cmd=None):
         super(RemoteImageInstaller, self).__init__()
-
 
         self.image_name = image_name
         self.registry = Registry(from_url=from_url)
@@ -226,40 +228,46 @@ class RemoteImageInstaller(ImageInstaller):
         # However, for users and image stored on sylabs or singularity hub, we
         # use the character :
 
-        # let us first retrieve the image and save it in a temporary file. 
+        # let us first retrieve the image and save it in a temporary file.
         # we keep the original name by only replacing the : with underscore so
         # that we can use ImageReader class to help us later on.
         if ":" in self.image_name:
             logger.info(f"Looking for {self.image_name}...")
             # e.g. fastqc:0.11.9
-            registry_name = self.image_name #.replace(":", "_")
+            registry_name = self.image_name  # .replace(":", "_")
 
             if self.image_name not in self.registry.registry.keys():
                 logger.critical("invalid image name provided: {}. type 'damona list'".format(self.image_name))
                 guess = self.image_name.split(":")[0][0:4]
                 # here we reverse x to start from the end and replace the last _
                 # by :
-                guesses = [x[::-1].replace("_", ":", 1)[::-1] 
-                            for x in self.registry.registry.keys() if x.startswith(guess)]
+                guesses = [
+                    x[::-1].replace("_", ":", 1)[::-1] for x in self.registry.registry.keys() if x.startswith(guess)
+                ]
                 logger.critical("Maybe you meant one of: {}".format(guesses))
                 sys.exit(1)
         else:
             from damona.registry import Software
+
             r = Software(self.image_name).releases
             latest = r.last_release
-            logger.info(f"No version found after {self.image_name} (e.g. fastqc:0.11.8)." + f" Installing latest version {latest}")
+            logger.info(
+                f"No version found after {self.image_name} (e.g. fastqc:0.11.8)."
+                + f" Installing latest version {latest}"
+            )
             registry_name = self.image_name
             # we look only at the prefix name, not the tag. so we should get the
-            # registry names from self.registry that have the prefix in common, 
+            # registry names from self.registry that have the prefix in common,
             # then extract the versions, and figure out the most recent.
 
         registry_name = self.registry.find_candidate(registry_name)
         if registry_name is None:
-            logger.critical(f"No image found for {self.image_name}. Make sure it is correct using 'damona search' command")
+            logger.critical(
+                f"No image found for {self.image_name}. Make sure it is correct using 'damona search' command"
+            )
             sys.exit(1)
 
         download_name = self.registry.registry[registry_name].download
-
 
         # get metadata from the registry recipe
         info = self.registry.registry[registry_name]
@@ -279,6 +287,7 @@ class RemoteImageInstaller(ImageInstaller):
         if info.md5sum:
             if os.path.exists(self.images_directory / output_name):
                 from easydev import md5
+
                 md5_target = md5(self.images_directory / output_name)
 
                 if md5_target == info.md5sum:
@@ -287,8 +296,10 @@ class RemoteImageInstaller(ImageInstaller):
                     self.image_installed = True
                     return
         else:
-            logger.warning(f"md5 field not found or not filled in {registry_name}." 
-f"To be fixed in https://github.com/damona/damona/recipes/{self.image_name}/registry.yaml ")
+            logger.warning(
+                f"md5 field not found or not filled in {registry_name}."
+                f"To be fixed in https://github.com/damona/damona/recipes/{self.image_name}/registry.yaml "
+            )
 
         # now that we have the registry name, we can download the image
         logger.info("Downloading {}".format(download_name))
@@ -310,13 +321,12 @@ f"To be fixed in https://github.com/damona/damona/recipes/{self.image_name}/regi
             if download_name.startswith("https://"):
                 print(f"downloading into {pull_folder} {output_name}")
                 from urllib.request import urlretrieve
+
                 urlretrieve(download_name, filename=str(pull_folder / output_name))
                 # wget.download(download_name, str(pull_folder / output_name))
 
-            else: # use singularity
-                Client.pull(str(download_name), name=output_name,
-                    pull_folder=pull_folder,
-                    force=force)
+            else:  # use singularity
+                Client.pull(str(download_name), name=output_name, pull_folder=pull_folder, force=force)
         logger.info(f"File {self.image_name} uploaded to {pull_folder}")
 
         # Read the image, checking everything is correct
@@ -335,13 +345,13 @@ f"To be fixed in https://github.com/damona/damona/recipes/{self.image_name}/regi
         if info.md5sum:
             if info.md5sum != self.input_image.md5:
                 logger.warning(
-"MD5 of downloaded image does not match the expected md5 found in the "
-f"registry of {registry_name}. The latter may be incorrect in damona and needs "
-f"to be updated in https://github.com/damona/damona/recipes/{self.image_name}/registry.yaml "
-"or the donwload was interrupted")
+                    "MD5 of downloaded image does not match the expected md5 found in the "
+                    f"registry of {registry_name}. The latter may be incorrect in damona and needs "
+                    f"to be updated in https://github.com/damona/damona/recipes/{self.image_name}/registry.yaml "
+                    "or the donwload was interrupted"
+                )
 
         self.image_installed = True
-
 
     def install_binaries(self, force=False):
         if self.image_installed:
@@ -352,40 +362,52 @@ f"to be updated in https://github.com/damona/damona/recipes/{self.image_name}/re
             logger.critical("The container image has not been installed. So, binaries cannot be installed either")
 
 
-class BinaryInstaller():
-    """Install a binary the bin/ directory of current environment given its image"""
+class BinaryInstaller:
+    """Install a binary in the bin/ directory of the current environment given its image"""
+
     def __init__(self, binaries, parent_image_path):
         self.image = ImageReader(parent_image_path)
         self.binaries = binaries
 
-    def install_binaries(self,  force=False):
-        """Install an image and its binary
-
-        """
+    def install_binaries(self, force=False):
+        """Install an image and its binary"""
         env = Environ()
         bin_directory = env.get_current_env() / "bin"
 
         for binary in sorted(self.binaries):
             bin_path = pathlib.Path(bin_directory) / binary
 
-            cmd = """#!/bin/sh\nsingularity -s exec ${{DAMONA_SINGULARITY_OPTIONS}} {} {} ${{1+"$@"}}"""
-
-            cmd = cmd.format(f"${{DAMONA_PATH}}/images/{self.image.shortname}", binary)
+            CMD = """singularity -s exec ${{DAMONA_SINGULARITY_OPTIONS}} {} {} ${{1+"$@"}}"""
+            CMD = CMD.format(f"${{DAMONA_PATH}}/images/{self.image.shortname}", binary)
 
             if bin_path.exists() and force is False:
+
+                # read the data first
+                with open(bin_path, "r") as fin:
+                    data = fin.readlines()
+
+                # save the file with new binary (commenting previous commands)
+                with open(bin_path, "w") as fout:
+                    fout.write("#!/bin/sh")
+                    for line in data:
+                        fout.write('#' + line)
+                    fout.write(CMD)
+                # we keep track of previously installed binaries/history
                 name = pathlib.Path(bin_path).name
                 path = str(bin_path).rstrip(bin_path.name)
                 logger.warning(f"Binary {binary} exists already in {path}. Use --force to overwrite")
             else:
-                # create binary and set correct permission
+                # create a new binary content and save into an executable file
                 with open(bin_path, "w") as fout:
-                    fout.write(cmd)
+                    fout.write(f"#!/bin/sh\n{CMD}")
+
+                # update permission so that it is executable
                 os.chmod(bin_path, 0o755)
-                # aliases to print message
+
+                # print message
                 name = pathlib.Path(bin_path).name
                 path = str(bin_path).rstrip(bin_path.name)
                 if bin_path.exists() and force is True:
                     logger.info(f"Re-installing '{binary}' in {path} since --force was used")
                 else:
                     logger.info(f"Created binary {name} in {path}")
-
