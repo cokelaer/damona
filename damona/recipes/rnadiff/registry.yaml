@@ -1,6 +1,8 @@
 rnadiff:
-    releases:
-      1.7.1:
-        download: damona::rnadiff_1.7.1.img
-        md5sum: 0e4e1a59e10215b41541d19393b92ff4
-        sha256: 960865643c25bb61df704abfe5fe7f25c3acf0b9846191c2925ad67a7e8734a4
+  doi: 10.5281/zenodo.5708855
+  zenodo_id: 5708856
+  releases:
+    1.7.1:
+      download: https://zenodo.org/api/files/8265aeb6-9e62-44be-a966-5585fbaf8d06/rnadiff_1.7.1.img
+      md5sum: 0e4e1a59e10215b41541d19393b92ff4
+      doi: 10.5281/zenodo.5708856
