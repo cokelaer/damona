@@ -1,8 +1,8 @@
 quast:
-  binaries: quast.py
+  doi: 10.5281/zenodo.5708847
+  zenodo_id: 5708848
   releases:
-      5.0.2:
-        download:  damona::quast_5.0.2.img
-        md5sum: 7563c919ad994bf792a7619c54b1b4f6
-
-
+    5.0.2:
+      download: https://zenodo.org/api/files/54558015-e9c4-4ea1-a7e4-bcef7c3d74a5/quast_5.0.2.img
+      md5sum: 7563c919ad994bf792a7619c54b1b4f6
+      doi: 10.5281/zenodo.5708848
