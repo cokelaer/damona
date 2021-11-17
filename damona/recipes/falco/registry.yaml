@@ -1,5 +1,7 @@
 falco:
     binaries: falco
+    doi: 10.5281/zenodo.5675782
+    zenodo_id: 5675783
     releases:
       0.2.1:
         download: https://zenodo.org/record/5675783/files/falco_0.2.1.img
