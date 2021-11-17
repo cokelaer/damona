@@ -1,7 +1,8 @@
 salmon:
-    releases:
-      1.3.0:
-        download: damona::salmon_1.3.0.img
-        md5sum: affaafe23fc5e8974ab52fc976617e51
-
-
+  doi: 10.5281/zenodo.5708842
+  zenodo_id: 5708843
+  releases:
+    1.3.0:
+      download: https://zenodo.org/api/files/dc6ac071-c53e-497b-a708-fac88375364d/salmon_1.3.0.img
+      md5sum: affaafe23fc5e8974ab52fc976617e51
+      doi: 10.5281/zenodo.5708843
