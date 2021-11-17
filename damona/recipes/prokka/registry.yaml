@@ -1,9 +1,8 @@
 prokka:
-  # will be replaced by sequana_perl_tools most probably
-  # parallel is required to be set explicitly; other internal tools such as hmm
-  # are found inside the singularity by prokka itself
+  doi: 10.5281/zenodo.5708863
+  zenodo_id: 5708864
   releases:
     1.14.5:
-      download: library://cokelaer/damona/prokka:1.14.5
+      download: https://zenodo.org/api/files/beeb0647-5c00-44df-8f5a-de487d5b7ec0/prokka_1.14.5.img
       md5sum: 20d8aefe076ff10d54b4edbb474ea879
-      binaries: prokka parallel hmmscan
+      doi: 10.5281/zenodo.5708864
