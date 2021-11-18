@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 #  This file is part of Damona software
 #
@@ -248,6 +247,7 @@ class BinaryReader:
         still available.
 
         """
+        logger.debug(f"{filename}")
         if isinstance(filename, str):
             filename = pathlib.Path(filename)
 

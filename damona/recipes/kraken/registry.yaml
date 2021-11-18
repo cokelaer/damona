@@ -1,7 +1,7 @@
 kraken:
   releases:
-    1.1:
-      download: library://cokelaer/damona/kraken:1.1
+    1.1.0:
+      download: library://cokelaer/damona/kraken:1.1.0
       binaries: kraken kraken-build kraken-filter kraken-mpa-report kraken-report kraken-translate
       md5sum: 4d14031cf4ff4684c43f73fbd09cd442
     2.0.9:

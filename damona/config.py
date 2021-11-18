@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-#
 #  This file is part of Damona software
 #
 #  Copyright (c) 2020-2021 - Damona Development Team

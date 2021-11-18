@@ -1,6 +1,40 @@
 Developer guide
 ===============
 
+All images will be posted on Zenodo
+------------------------------------
+
+The goal is to have a unique and official DOI for each tool.
+
+    git clone git@github.com/your_fork/damona
+    cd damona
+
+Let us consider an example calle SOFTWARE. You must be in the directory:
+
+    cd recipes/SOFTWARE
+
+Case 1: the tool does not exists.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Create a new Singulariry image. Time to upload the resulting (functional !) image::
+
+    damona zenodo-upload SOFTWARE_1.0.0.img --mode zenodo
+
+It creates a registry.yaml file with the metadata ready to commit and push
+
+
+Case 2: the recipe exists already
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~`
+
+Create a new Singulariry image. Time to upload the resulting (functional !) image::
+
+    damona zenodo-upload SOFTWARE_2.0.0.img --mode zenodo
+
+
+It updates the existing registry.yaml ready to commit and push
+
+
+
 tree structure
 --------------
 

@@ -65,7 +65,7 @@ def test_single_registry():
     # two releases with different binary names
     kraken_registry = [x for x in _registry_files if "kraken" in x][0]
     sr = Software(kraken_registry)
-    assert 'kraken' in sr.releases['1.1'].binaries
+    assert 'kraken' in sr.releases['1.1.0'].binaries
     assert 'kraken2' in sr.releases['2.0.9'].binaries
 
     sr.check()

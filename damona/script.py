@@ -584,9 +584,29 @@ def export(**kwargs):
 
 @main.command()
 @click.argument('filename', required=True)
-@click.option('--token', default=None, 
-    help="""A valid zenodo (or sandbox zenodo) token""")
-@click.option('--mode', default="sandbox.zenodo", 
+@click.option('--token', default=None,
+    help="""A valid zenodo (or sandbox zenodo) token.
+You can set the token in your home/.config/damona/damona.cfg
+
+[general]
+show_init_warning_message=False
+
+[urls]
+damona=https://biomics.pasteur.fr/salsa/damona/registry.txt
+
+[zenodo]
+token=APmm6p...
+orcid=0000-0001-...
+affiliation=Your Institute
+name=Surname, firstname
+
+ [sandbox.zenodo]
+token=FFmbAE...
+orcid=0000-0001-...
+
+
+""")
+@click.option('--mode', default="sandbox.zenodo",
     help="mode can be either 'zenodo' or 'sandbox.zenodo' and your token must be related.")
 def zenodo_upload(**kwargs):
     """Upload a singularity file to Zenodo.
@@ -602,43 +622,16 @@ def zenodo_upload(**kwargs):
     The code to be added to the registry will be provided.
 
     """
+    from damona.registry import ImageName
+    from damona.zenodo import Zenodo
     token = kwargs['token']
     mode = kwargs['mode']
     filename = kwargs['filename']
 
-    logger.info(f"Uploading to {mode}")
-    if token is None:
-        from configparser import NoSectionError, NoOptionError
-        from damona import Config
-        try:
-            c = Config()
-            token = c.config.get(f'{mode}', 'token')
-            logger.info(f"Found token for {mode} in your config file in {c.config_file}")
-        except (NoSectionError, NoOptionError):
-            logger.error("A token must be provide on command line or in your damona.cfg file")
-            sys.exit(1)
-
-    # what do we know ? Check this is valid and known
-    image_name = ImageName(filename)
-    registry = Software(image_name.name)
-    print(registry)
-    if image_name.version in registry.versions:
-        logger.info(f"fastqc version {image_name.version} exists already in the registry. Cannot upload same version")
-        logger.info(f"exiting")
-        sys.exit(0)
-
-
-    from damona.zenodo import Zenodo
+    # keep here
     z = Zenodo(mode, token)
-    if registry.releases:
-        # get current_zenodo_id
-        ID = registry.current_zenodo_id
-        # we need to get the doi first
-        z.create_new_version_with_file_and_publish(filename, ID)
-    else:
-        print("==============")
-        z.create_new_deposit_with_file_and_publish(filename)
-        #z.deposit2registry(z.la)
+    logger.info(f"Uploading to {mode}")
+    z._upload(filename)
 
 
 

@@ -56,11 +56,11 @@ def test(mocker):
 
     mocker.patch("damona.zenodo.Zenodo.create_new_deposition", return_values={})
 
-    z = zenodo.Zenodo("sandbox.zenodo", "whatevertoken")
+    z = zenodo.Zenodo("sandbox.zenodo")
     z.params
 
 
-    z._to_registry(deposit)
+    #z._to_registry(deposit)
     data1 = z.get_metadata("fastqc", "v0.1.1")
     data2 = z.get_metadata("fastqc", "0.1.1")
     assert data1 == data2

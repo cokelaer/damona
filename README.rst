@@ -16,8 +16,8 @@ other projects and therefore decided to release it as an independent tool.
     :target: https://pypi.python.org/pypi/damona
 
 
-.. image:: https://github.com/cokelaer/damona/actions/workflows/ci.yml/badge.svg
-   :target: https://github.com/cokelaer/damona/actions/workflows/ci.yml
+.. image:: https://github.com/cokelaer/damona/actions/workflows/main.yml/badge.svg
+   :target: https://github.com/cokelaer/damona/actions/workflows/main.yml
 
 .. image:: https://coveralls.io/repos/github/cokelaer/damona/badge.svg?branch=master
     :target: https://coveralls.io/github/cokelaer/damona?branch=master
@@ -30,7 +30,7 @@ other projects and therefore decided to release it as an independent tool.
    :target: https://zenodo.org/badge/latestdoi/282275608
 
 
-:Python version: Python 3.6, 3.7, 3.8
+:Python version: Python 3.6, 3.7, 3.8, 3.9
 :Source: See  `http://github.com/cokelaer/damona <https://github.com/cokelaer/damona/>`__.
 :Issues: Please fill a report on `github <https://github.com/cokelaer/damona/issues>`__
 :Platform: This is currently only available for Linux distribution with bash shell (contributions are welcome to port the tool on MacOSX and other platforms)
@@ -231,27 +231,15 @@ you can combine this new environemnt with the base one::
 If you are interested to know more, please see the User Guide and Developer
 guide here below.
 
-Roadmap
-=======
-
-**Damona** is pretty new but here is short roadmap
-
-* do we store all images in the damona/images or do we store them in individual
-  environement (with possible duplicates).
-* when installing a binaries from image A, then from image B. If we now delete image B.
-  The binary is broken where image A could support this binary ! we should have a
-  mechanism that handle this feature to recover the binary from other installed
-  images. Like a history.
-* keep a version in damona.sh to allow a smooth/transparent update ?
-* check for registry not synchrone with github or shall we download the registry
-  from github ? 
-
 Changelog
 =========
 
 ========= ====================================================================
 Version   Description
 ========= ====================================================================
+0.6.0     * add ability to upload images on zenodo. No need for external 
+            repositories.
+          * ability to add/delete a software from different images
 0.5.3     * Fixing config/shell 
 0.5.2     * add missing shell package
 0.5.1     * add DAMONA_SINGULARITY_OPTIONS env variable in the binary

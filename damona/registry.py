@@ -30,7 +30,7 @@ import colorlog
 logger = colorlog.getLogger(__name__)
 
 
-__all__ = ['Releases', 'Software', 'Registry', 'Release']
+__all__ = ['Releases', 'Software', 'Registry', 'Release', 'ImageName']
 
 
 class ImageName:
@@ -61,7 +61,7 @@ class ImageName:
         self.version = version
 
         # check version
-        if len(version.split(".")) != 3:
+        if len(version.split(".")) not in [2,3]:
             raise NameError
 
 
@@ -218,6 +218,7 @@ class Software:
         """
 
         if isinstance(name, dict):
+            print('DEPRECATED')
             keys = list(name.keys())
             self.registry_name = keys[0]
             #: a :class:`Releases` attribute
@@ -231,14 +232,22 @@ class Software:
             from damona import __path__
             self.registry_name = pathlib.Path(__path__[0]) / "recipes" / name / "registry.yaml"
             data = self._read_registry()
-            self.releases = self._interpret_registry(data)
+            self._data = data
+            if len(data):
+                self.releases = self._interpret_registry(data)
+                self.doi = data[self.name].get("doi", None)
+                self.zenodo_id = data[self.name].get("zenodo_id", None)
+            else:
+                self._name = None
+                self._version = None
 
     def _read_registry(self):
         # just an alias
         regname = self.registry_name
 
         if os.path.exists(regname) is False:  # pragma: no cover
-            raise IOError(f"incorrect input filename {regname}")
+            logger.warning(f"Input software not found in {regname}")
+            return {}
 
         # read the yaml
         data = yaml.load(open(regname, "r").read(), Loader=Loader)
