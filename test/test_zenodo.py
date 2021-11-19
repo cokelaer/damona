@@ -62,7 +62,7 @@ def test(mocker):
         SystemExit
 
 
-    z = zenodo.Zenodo("sandbox.zenodo", token="dummy")
+    z = zenodo.Zenodo("sandbox.zenodo", token="dummy", affiliation="dummy", author="dummy")
     z.params
 
 

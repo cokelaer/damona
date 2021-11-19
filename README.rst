@@ -30,7 +30,7 @@ other projects and therefore decided to release it as an independent tool.
    :target: https://zenodo.org/badge/latestdoi/282275608
 
 
-:Python version: Python 3.6, 3.7, 3.8, 3.9
+:Python version: Python 3.7, 3.8, 3.9
 :Source: See  `http://github.com/cokelaer/damona <https://github.com/cokelaer/damona/>`__.
 :Issues: Please fill a report on `github <https://github.com/cokelaer/damona/issues>`__
 :Platform: This is currently only available for Linux distribution with bash shell (contributions are welcome to port the tool on MacOSX and other platforms)
