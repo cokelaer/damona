@@ -39,7 +39,6 @@ from damona import logger
 logger.level = 10
 
 
-
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 
 @click.group(context_settings=CONTEXT_SETTINGS)
@@ -193,9 +192,9 @@ def available_images(**kwargs):
     modules = Registry(from_url=url).get_list(pattern=kwargs['pattern'])
     names = sorted(list(modules.keys()))
     downloads = [modules[x] for x in names]
-    print("name                 Download location")
+    click.echo("name                 Download location")
     for k,v in zip(names, downloads):
-        print(f"{k:20} [{v}]")
+        click.echo(f"{k:20} [{v}]")
 
 
 @main.command()
@@ -348,6 +347,7 @@ def install(**kwargs):
     the --from-url/--url (sse developer guide for details).
     """
     logger.debug(kwargs)
+
 
     # url
     if kwargs['url']:
@@ -635,6 +635,21 @@ def zenodo_upload(**kwargs):
 
 
 
+@main.command()
+def stats(**kwargs):
+    """Get information about Damona images and binaries
+
+    Just type:
+
+        damona stats
+
+    """
+    logger.debug(kwargs)
+    from damona import admin
+    admin.stats()
+
+
 if __name__ == "__main__": #pragma: no cover
     main()
+
 

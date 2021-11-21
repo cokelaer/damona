@@ -3,6 +3,6 @@ prokka:
   zenodo_id: 5708864
   releases:
     1.14.5:
-      download: https://zenodo.org/api/files/beeb0647-5c00-44df-8f5a-de487d5b7ec0/prokka_1.14.5.img
+      download: https://zenodo.org/record/5708864/files/prokka_1.14.5.img
       md5sum: 20d8aefe076ff10d54b4edbb474ea879
       doi: 10.5281/zenodo.5708864

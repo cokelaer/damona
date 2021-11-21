@@ -19,7 +19,8 @@ import sys
 import pathlib
 import re
 
-import easydev
+from easydev import md5
+
 
 import colorlog
 
@@ -41,11 +42,11 @@ class DamonaInit:
             sys.exit(1)
 
         self.damona_path = pathlib.Path(os.environ["DAMONA_PATH"])
-        easydev.mkdirs(self.damona_path)
-        easydev.mkdirs(self.damona_path / "envs")
-        easydev.mkdirs(self.damona_path / "images")
-        easydev.mkdirs(self.damona_path / "images" / "damona_buffer")
-        easydev.mkdirs(self.damona_path / "bin")
+        os.makedirs(self.damona_path, exist_ok=True)
+        os.makedirs(self.damona_path / "envs", exist_ok=True)
+        os.makedirs(self.damona_path / "images", exist_ok=True)
+        os.makedirs(self.damona_path / "images" / "damona_buffer", exist_ok=True)
+        os.makedirs(self.damona_path / "bin", exist_ok=True)
 
 
 class Damona:
@@ -201,8 +202,6 @@ class ImageReader:
     version = property(_get_version)
 
     def _get_md5sum(self):
-        from easydev import md5
-
         md5sum = md5(self.filename)
         return md5sum
 

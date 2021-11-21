@@ -15,18 +15,21 @@
 ##############################################################################
 """The Damona configuration"""
 import os
-import sys
 import pathlib
+
+from easydev import CustomConfig
 
 import colorlog
 logger = colorlog.getLogger(__name__)
-
 
 
 # list of URLs where to find registry and their aliases
 urls = {
     'damona': "https://biomics.pasteur.fr/salsa/damona/registry.txt"
 }
+
+
+__all__ =  ['Config']
 
 
 class Config():
@@ -39,9 +42,8 @@ class Config():
         url1=https://....
 
     """
-    def __init__(self):
-        from easydev import CustomConfig
-        configuration = CustomConfig("damona", verbose=True)
+    def __init__(self, name='damona'):
+        configuration = CustomConfig(f"{name}", verbose=True)
 
         #  let us add a damona.cfg in it. This will store URLs to look for singularities
         # This is done only once to not overwrite user options
@@ -63,7 +65,7 @@ class Config():
 
         # create the shell script once for all
         created = self.add_shell()
-        if created:
+        if created: #pragma: no cover
             logger.critical("Please start a new shell to benefit from "
                 "the configuration file and activate/deactivate command")
             #sys.exit(1)

@@ -1,7 +1,7 @@
 import damona
 from damona import zenodo
 
-
+from . import test_dir
 
 
 deposit = {'conceptdoi': '10.5072/zenodo.960007',
@@ -72,3 +72,5 @@ def test(mocker):
     assert data1 == data2
 
     z.get_id(deposit)
+
+

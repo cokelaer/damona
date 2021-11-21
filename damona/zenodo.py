@@ -28,7 +28,7 @@ logger = colorlog.getLogger(__name__)
 logger.setLevel("INFO")
 
 
-class Zenodo:
+class Zenodo: #pragma: no cover
     """
 
     ::
@@ -73,30 +73,30 @@ class Zenodo:
 
     """
 
-    def __init__(self, mode, token=None, author=None, affiliation=None, orcid=None):
+    def __init__(self, mode="sandbox.zenodo", token=None, author=None, affiliation=None, orcid=None):
 
         assert mode in ['zenodo', 'sandbox.zenodo']
         self.mode = mode
         self.headers = {"Content-Type": "application/json"}
         self.last_requests = []
 
+        cfg = Config()
+
         if token is None:
-            try:
-                c = Config()
-                self.token = c.config.get(f'{mode}', 'token')
-                logger.info(f"Found token for {mode} in {c.config_file}")
+            try:                
+                self.token = cfg.config.get(f'{mode}', 'token')
+                logger.info(f"Found token for {mode} in {cfg.config_file}")
             except (NoSectionError, NoOptionError):
                 logger.error("A token must be provided on command line or in your damona.cfg file")
                 sys.exit(1)
         else:
-            logger.warning("A token must be provided on command line or in your damona.cfg file")
+            self.token = token
 
         # Do we have an orcid (optional)
         if orcid is None:
-            try:
-                c = Config()
-                self.orcid = c.config.get(f'{mode}', 'orcid')
-                logger.info(f"Found ORCID for {mode} in {c.config_file}")
+            try:                
+                self.orcid = cfg.config.get(f'{mode}', 'orcid')
+                logger.info(f"Found ORCID for {mode} in {cfg.config_file}")
             except (NoSectionError, NoOptionError):
                 pass
         else:
@@ -104,10 +104,9 @@ class Zenodo:
 
         # Do we have a name ? 
         if author is None:
-            try:
-                c = Config()
-                self.author = c.config.get(f'{mode}', 'name').replace("'", "").replace('"','')
-                logger.info(f"Found Name {self.author} for {mode} in {c.config_file}")
+            try:                
+                self.author = cfg.config.get(f'{mode}', 'name').replace("'", "").replace('"','')
+                logger.info(f"Found Name {self.author} for {mode} in {cfg.config_file}")
             except (NoSectionError, NoOptionError):
                 pass
         else:
@@ -115,10 +114,9 @@ class Zenodo:
 
         # Do we have an affiliation ?
         if affiliation is None:
-            try:
-                c = Config()
-                self.affiliation = c.config.get(f'{mode}', 'affiliation').replace("'",'').replace('"','')
-                logger.info(f"Found Affiliation {self.affiliation} for {mode} in {c.config_file}")
+            try:                
+                self.affiliation = cfg.config.get(f'{mode}', 'affiliation').replace("'",'').replace('"','')
+                logger.info(f"Found Affiliation {self.affiliation} for {mode} in {cfg.config_file}")
             except (NoSectionError, NoOptionError):
                 pass
         else:
@@ -254,7 +252,7 @@ analysis.""",
 
     def create_new_deposit_version(self, deposit): #pragma: no cover
         # expected status 201
-        logger.info("Creating a new version.")
+        logger.info("Creating a new version. Please wait")
         ID = self.get_id(deposit)
         url = f'https://{self.mode}.org/api/deposit/depositions/{ID}/actions/newversion'
         r  = requests.post(url, params=self.params)
@@ -322,20 +320,27 @@ analysis.""",
         msg += "  releases:\n"
 
         this_doi = json['doi']
-        download = entry['links']['download']
+        record_html = json['links']['record_html']
+
         md5sum = entry['checksum']
+        filesize = entry['filesize']
         basename = entry['filename']
         msg += f"    {data.version}:\n"
-        msg += f"      download: {download}\n"
+        msg += f"      download: {record_html}/files/{basename}\n"
         msg += f"      md5sum: {md5sum}\n"
         msg += f"      doi: {this_doi}\n"
+        msg += f"      filesize: {filesize}\n"  # no EOF
         return msg
 
     def create_new_version_with_file_and_publish(self, filename, deposit=None):
 
         data = ImageName(filename)
         registry_data = Software(data.name)._data
-        zenodo_id = registry_data[data.name]['zenodo_id']
+        try:
+            zenodo_id = registry_data[data.name]['zenodo_id']
+        except KeyError:
+            logger.critical(f"Could not find {data.name} in the registry. Filename must have the same name as those to ne found in the recipes.")
+            sys.exit(1)
 
         logger.info(f"Creating and Publising new version for {data.name}_{data.version}")
 
@@ -368,11 +373,14 @@ analysis.""",
         # update the new zenodo ID
 
         this_doi = json['doi']
-        download = entry['links']['download']
         md5sum = entry['checksum']
         basename = entry['filename']
+        record_html = json['links']['record_html']
+        filesize = entry['filesize']
+
         msg = f"    {data.version}:\n"
-        msg += f"      download: {download}\n"
+        msg += f"      download: {record_html}/files/{basename}\n"
         msg += f"      md5sum: {md5sum}\n"
         msg += f"      doi: {this_doi}\n"
+        msg += f"      filesize: {filesize}"   # no EOF
         return msg

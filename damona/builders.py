@@ -66,11 +66,21 @@ class Builder:
 class BuilderFromDocker(Builder):
     """Install a singularity container image and executable from a docker hub container.
 
-        damona build bowtie2_2.4.1.img biocontainers/bowtie2:v2.4.1_cv1
+     This command creates automatically the destination bowtie2_2.4.1.img because the version 
+     follows Damona convention
 
-    This is valid for EXECUTABLES only. We assume that the name of the
-    executable is the name of the container. User may provide a binary or
-    list of binaries to install from the container if it is known.
+        damona build docker://biocontainers/bowtie2:v2.4.1_cv1  
+
+    This command will fail:
+    
+        damona build docker://alpine 
+
+    but this one will tell the version:
+
+        damona build docker://alpine --destination alpine_1.0.0.img
+
+    We assume that the name of the executable is the name of the container. 
+    User may provide a binary or list of binaries to install from the container if it is known.
     """
 
     def __init__(self):
@@ -82,7 +92,7 @@ class BuilderFromDocker(Builder):
         # if the build is successful, we will copy the image
         # into the current environment.
         # Let us check now the present of the image and its executable
-        if destination is None:
+        if destination is None: #pragma: no cover
             if ":v" in dockerhub_name:
                 name, version = dockerhub_name.split(":v")
                 name = name.split("/")[-1]
@@ -108,9 +118,8 @@ class BuilderFromDocker(Builder):
                 elif answer == "yes":
                     pass
                 else:
-                    from damona.colors import Colors
-
-                    print(Colors().warning("please answer yes or no"))
+                    logger.error("please answer yes or no")
+                    sys.exit(1)
 
         # build the image
         cmd = f"sudo singularity pull --force {destination} docker://{dockerhub_name} "
@@ -134,7 +143,7 @@ class BuilderFromSingularityRecipe(Builder):
             logger.error("Recipe must start with Singularity.")
             sys.exit(1)
 
-        if destination is None:
+        if destination is None: #FIXME: do the same as for docker files ?
             destination = os.path.basename(recipe).replace("Singularity.", "") + ".img"
 
         if os.path.exists(destination):
@@ -148,15 +157,14 @@ class BuilderFromSingularityRecipe(Builder):
                 elif answer == "yes":
                     pass
                 else:
-                    from damona.colors import Colors
-
-                    print(Colors().warning("please answer yes or no"))
+                    logger.error("please answer yes or no")
+                    sys.exit(1)
 
         # build the image
         cmd = f"sudo singularity build --force {destination} {recipe} "
         logger.info(f"Running : {cmd}")
         status = subprocess.call(cmd.split())
-        if status != 0:
+        if status != 0: #pragma: no cover
             logger.error("An error occured")
             sys.exit(1)
 

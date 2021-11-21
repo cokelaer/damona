@@ -3,10 +3,10 @@ art:
   zenodo_id: 5708820
   releases:
     2.5.8:
-      download: https://zenodo.org/api/files/48aeb0ed-ef79-47eb-9046-5dc5df21810e/art_2.5.8.img
+      download: https://zenodo.org/record/5708820/files/art_2.5.8.img
       md5sum: 4949d8da803d970e74de7ce898ed3c6b
       doi: 10.5281/zenodo.5708820
     3.11.14:
-      download: https://zenodo.org/api/files/bad9ac38-a2a8-4b3c-a79d-8b1b60d28b35/art_3.11.14.img
+      download: https://zenodo.org/record/5708823/files/art_3.11.14.img
       md5sum: e06a9215d9727a2077dd7eee0c06886a
       doi: 10.5281/zenodo.5708823

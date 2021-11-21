@@ -22,6 +22,9 @@ import shutil
 import time
 import subprocess
 
+from easydev import md5
+
+
 
 from spython.main import Client
 from damona import Registry
@@ -136,7 +139,6 @@ class LocalImageInstaller(ImageInstaller):
 
     def install_image(self, force=False):
         if (self.images_directory / self.input_image.shortname).exists():
-            from easydev import md5
 
             md5_target = md5(self.images_directory / self.input_image.shortname)
             if md5_target == self.input_image.md5:
@@ -370,7 +372,25 @@ class BinaryInstaller:
         self.binaries = binaries
 
     def install_binaries(self, force=False):
-        """Install an image and its binary"""
+        """Install an image and its binary
+        
+        
+        Given the :attr:`image`, we install a set of :atr:`binaries` to be found in the
+        image. If we install a binary again, no need to rewrite the command. For example, 
+        imagine that you install fastqc.0.11.9 for the first time, then in the code 
+        here below:
+
+            damona install fastqc:0.11.9 
+            damona install fastqc:0.11.9 --force
+
+        the second command has no effect. If we now install a new version:
+
+            damona install fastqc:0.11.8 
+
+        The previous binary (v0.11.9) will be commented as the new one (v0.11.8) effective. 
+
+        
+        """
         env = Environ()
         bin_directory = env.get_current_env() / "bin"
 
@@ -381,21 +401,34 @@ class BinaryInstaller:
             CMD = CMD.format(f"${{DAMONA_PATH}}/images/{self.image.shortname}", binary)
 
             if bin_path.exists() and force is False:
+                name = pathlib.Path(bin_path).name
+                path = str(bin_path).rstrip(bin_path.name)
+                logger.warning(f"Binary {binary} exists already in {path} and was not changed. Use --force to overwrite")
+            elif bin_path.exists() and force is True:
 
                 # read the data first
                 with open(bin_path, "r") as fin:
                     data = fin.readlines()
 
-                # save the file with new binary (commenting previous commands)
-                with open(bin_path, "w") as fout:
-                    fout.write("#!/bin/sh")
-                    for line in data:
-                        fout.write('#' + line)
-                    fout.write(CMD)
+                # get rid of empty lines. In theory, no such lines but just in case. 
+                data = [x for x in data if x.strip()]
+
+                # if the last non-commented line is the same as the current cmdn, nothing to
+                if data[-1] != CMD:
+                    # save the file with new binary (commenting previous commands)
+                    # removing duplicated ones
+                    with open(bin_path, "w") as fout:
+                        for line in data:
+                            if line.startswith("#"):
+                                fout.write(line.strip()+"\n")
+                            else:                            
+                                fout.write("#"+line.strip()+"\n")
+                        fout.write(CMD)
+
                 # we keep track of previously installed binaries/history
                 name = pathlib.Path(bin_path).name
                 path = str(bin_path).rstrip(bin_path.name)
-                logger.warning(f"Binary {binary} exists already in {path}. Use --force to overwrite")
+                logger.info(f"Binary {binary} in {path} and was updated.")
             else:
                 # create a new binary content and save into an executable file
                 with open(bin_path, "w") as fout:
@@ -406,8 +439,5 @@ class BinaryInstaller:
 
                 # print message
                 name = pathlib.Path(bin_path).name
-                path = str(bin_path).rstrip(bin_path.name)
-                if bin_path.exists() and force is True:
-                    logger.info(f"Re-installing '{binary}' in {path} since --force was used")
-                else:
-                    logger.info(f"Created binary {name} in {path}")
+                path = str(bin_path).rstrip(bin_path.name)                
+                logger.info(f"Created binary {name} in {path}")

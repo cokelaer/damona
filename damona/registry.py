@@ -51,9 +51,11 @@ class ImageName:
         self.basename = os.path.basename(name)
 
         if not self.basename.endswith(".img"):
+            logger.error("Input file name must follow the convention NAME_x.y.z.img You provided {self.basename}")
             raise NameError
 
         if "_" not in self.basename:
+            logger.error("Input file name must follow the convention NAME_x.y.z.img You provided {self.basename}")
             raise NameError
 
         name, version = self.basename.rsplit(".", 1)[0].rsplit("_", 1)
@@ -218,16 +220,19 @@ class Software:
         """
 
         if isinstance(name, dict):
-            print('DEPRECATED')
+            print('DEPRECATED') # damona build docker:// --from-url damona seems to use it
             keys = list(name.keys())
             self.registry_name = keys[0]
             #: a :class:`Releases` attribute
             self.releases = self._interpret_registry(name)
-        elif os.path.exists(name):
+        # we are interested in existing local YAML files
+        elif os.path.exists(name) and not os.path.isdir(name):  
+            #print("Existing path or name")
             self.registry_name = os.path.abspath(name)
             data = self._read_registry()
             #: a :class:`Releases` attribute
             self.releases = self._interpret_registry(data)
+        # directory to be found in damona directory
         else:
             from damona import __path__
             self.registry_name = pathlib.Path(__path__[0]) / "recipes" / name / "registry.yaml"
@@ -250,6 +255,7 @@ class Software:
             return {}
 
         # read the yaml
+        
         data = yaml.load(open(regname, "r").read(), Loader=Loader)
         if len(data.keys()) != 1:  # pragma: no cover
             logger.error(f"{regname} must contain on single entry named after the images. ")

@@ -1,65 +1,51 @@
 from damona import script
-import damona
 import subprocess
-import builtins
+import pytest
 
 
-def test_damona_app():
+
+def test_damon_builder_docker(tmpdir):
+    directory = tmpdir.mkdir("images")
+    destination = directory / "alpine_1.0.0.img"
     from click.testing import CliRunner
-    from damona.script import install, build,  env, activate, deactivate
-    from damona.script import search
     runner = CliRunner()
 
-    # isntall
-    results = runner.invoke(install, ['fastqc:0.11.9'])
+    results = runner.invoke(script.build, [
+        "docker://alpine",
+        " --destination",
+        destination]
+    )
+    #assert results.exit_code == 0
+
+
+def test_damona_version():
+    cmd = "damona --version"
+    status = subprocess.call(cmd.split())
+    assert status == 0
+
+
+def test_damona_env():
+    from click.testing import CliRunner
+    runner = CliRunner()
+
+    results = runner.invoke(script.env, [])
     assert results.exit_code == 0
 
-    results = runner.invoke(search, ['fastqc'])
+
+def test_damona_available_images():
+    from click.testing import CliRunner
+    runner = CliRunner()
+
+    results = runner.invoke(script.available_images, [])
     assert results.exit_code == 0
 
-    
-    results = runner.invoke(env, [])
-    # wrong
-    results = runner.invoke(env, ["--create", ".dummy_test", "--delete", ".dummy_test"])
-    # good
-    results = runner.invoke(env, ["--create", ".dummy_test"])
-    assert results.exit_code == 0
-    results = runner.invoke(env, ["--create", ".dummy_test"])
-    assert results.exit_code == 0
-    results = runner.invoke(activate, [".dummy_test"])
-    assert results.exit_code == 0
-    results = runner.invoke(deactivate, [])
+    results = runner.invoke(script.available_images, ["--pattern", 'fastqc'])
     assert results.exit_code == 0
 
-    import mock
-    with mock.patch.object(builtins, 'input', lambda _: 'y'):
-        results = runner.invoke(env, ["--delete", ".dummy_test"])
-        assert results.exit_code == 0
+    results = runner.invoke(script.available_images, ["--url", 'damona'])
+    assert results.exit_code == 0
 
+    results = runner.invoke(script.available_images, ["--from-url", 'damona', "--pattern", "fastqc"])
+    assert results.exit_code == 0
+    assert results.output == """DEPRECATED\nDEPRECATED\nDEPRECATED\nDEPRECATED\nname                 Download location\nfastqc:0.11.8        [fastqc_0.11.8.img]\nfastqc:0.11.9        [fastqc_0.11.9.img]\n"""
 
-def test_help():
-    cmd = "damona --help"
-    subprocess.call(cmd.split())
-    cmd = "damona pull --help"
-    subprocess.call(cmd.split())
-
-
-def test_activate_deactivate():
-    cmd = "damona activate base"
-    subprocess.call(cmd.split())
-    cmd = "damona deactivate"
-    subprocess.call(cmd.split())
-
-
-def test_install_dryrun():
-    cmd = "damona install fastqc:0.11.9 --dryrun"
-    subprocess.call(cmd.split())
-
-def test_install_wrong():
-    # non existing image
-    cmd = "damona install tartuffe"  
-    try:
-        subprocess.call(cmd.split())    
-        assert False
-    except:
-        assert True

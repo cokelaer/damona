@@ -3,6 +3,8 @@ from damona.common import *
 import os
 import pytest
 
+from . import test_dir
+
 def test_no_path(monkeypatch):
 
     monkeypatch.delenv("DAMONA_PATH", raising=False)
@@ -26,3 +28,14 @@ def test_path():
     d.get_environments()
     d.find_orphan_images()
 
+
+
+def test_ImageReader():
+
+    ir = ImageReader(f"{test_dir}/data/testing_1.0.0.img")
+    assert ir.version == "1.0.0"
+    ir.md5
+    ir.guessed_executable
+    ir.is_orphan()
+    ir.is_installed()
+    print(ir)

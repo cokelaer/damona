@@ -3,10 +3,10 @@ fastqc:
   zenodo_id: 5708810
   releases:
     0.11.8:
-      download: https://zenodo.org/api/files/0c9e6d24-ca63-4189-bb6d-62c7962e2b6a/fastqc_0.11.8.img
+      download: https://zenodo.org/record/5708810/files/fastqc_0.11.8.img
       md5sum: c445a666f513614331d13faedcb1a767
       doi: 10.5281/zenodo.5708810
     0.11.9:
-      download: https://zenodo.org/api/files/ee71083e-9e77-4c5a-ba5a-9160ba3e87d6/fastqc_0.11.9.img
+      download: https://zenodo.org/record/5708811/files/fastqc_0.11.9.img
       md5sum: 8a8d751504937491a846571816dbc372
       doi: 10.5281/zenodo.5708811

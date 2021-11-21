@@ -3,6 +3,6 @@ gffread:
   zenodo_id: 5708836
   releases:
     0.12.1:
-      download: https://zenodo.org/api/files/7dd80d8b-4882-451e-8c48-869cf60ec141/gffread_0.12.1.img
+      download: https://zenodo.org/record/5708836/files/gffread_0.12.1.img
       md5sum: c0e23ab41fe623ee379df37ffeae3658
       doi: 10.5281/zenodo.5708836
