@@ -44,6 +44,7 @@ jobs:
         pip install .
     - name: Test with pytest
       run: |
+        export PATH=$PATH:"$CONDA/bin"
         echo "$PATH"
         pytest --cov-report term --cov=damona
       env:
