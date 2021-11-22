@@ -28,11 +28,6 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python }}
-
-    - name: Setup ubuntu
-      run: |
-          sudo apt install singularity
-          echo `which singularity`
     - name: conda
       run: |
         # $CONDA is an environment variable pointing to the root of the miniconda directory
@@ -48,6 +43,8 @@ jobs:
         pip install .
     - name: Test with pytest
       run: |
+        echo $GITHUB_PATH
+        ls $GITHUB_PATH
         pytest --cov-report term --cov=damona
       env:
         DAMONA_EXE: /usr/share/miniconda/bin/damona
