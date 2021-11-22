@@ -15,18 +15,18 @@
 ##############################################################################
 """Environments manager"""
 import os
-import glob
 import shutil
 import sys
 import pathlib
 import math
-import subprocess
+
 
 from damona.common import Damona
+from damona.common import BinaryReader
+
 
 manager = Damona()
 
-from damona.common import BinaryReader
 
 import colorlog
 
@@ -76,8 +76,6 @@ class Environment:
         images = self.get_images()
         for image in images:
             try:
-                import os
-
                 if "DAMONA_PATH" not in os.environ:
                     logger.error("You must define a DAMONA_PATH")
                     sys.exit(1)

@@ -1,9 +1,8 @@
 from damona.colors import Colors
 
 
-
 def test_colors():
-    c = Colors()    
+    c = Colors()
     c.failed("test")
     c.bold("test")
     c.purple("test")

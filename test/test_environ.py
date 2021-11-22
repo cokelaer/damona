@@ -4,7 +4,6 @@ import damona
 import builtins
 
 
-
 def test_no_var(monkeypatch):
     monkeypatch.delenv("DAMONA_ENV", raising=False)
     try:
@@ -14,16 +13,15 @@ def test_no_var(monkeypatch):
         assert True
 
 
-
 def test_environ():
     env = Environ()
     env.N
     env.environments
     env.create(".dummy_test")
     import mock
-    with mock.patch.object(builtins, 'input', lambda _: 'y'):
-        env.delete(".dummy_test")
 
+    with mock.patch.object(builtins, "input", lambda _: "y"):
+        env.delete(".dummy_test")
 
     env.get_current_env()
     env.environment_names
@@ -40,11 +38,12 @@ def test_environment_no_var(monkeypatch):
     except:
         assert True
 
+
 def test_environment():
     e = Environment("base")
     e.get_installed_binaries()
-    #from tempfile import TemporaryFile
-    #with TemporaryFile() as fout:
+    # from tempfile import TemporaryFile
+    # with TemporaryFile() as fout:
     #    e.create_bundle(output_name=fout.name)
 
     try:
@@ -52,5 +51,3 @@ def test_environment():
         assert False
     except:
         assert True
-
-

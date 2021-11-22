@@ -1,7 +1,7 @@
 #
 #  This file is part of Damona software
 #
-#  Copyright (c) 2020 - Damona Development Team
+#  Copyright (c) 2020-2021 - Damona Development Team
 #
 #  File author(s):
 #      Thomas Cokelaer <thomas.cokelaer@pasteur.fr>
@@ -90,8 +90,8 @@ class Damona:
         orphans = []
         for x in binaries:
             br = BinaryReader(x)
-            if br.is_image_available() is False:
-                print(f"{x} image is not available. This binary does not work ")
+            if br.is_image_available() is False: #pragma: no cover
+                logger.warning(f"{x} image is not available. This binary is an orphan")
                 orphans.append(x)
         return orphans
 

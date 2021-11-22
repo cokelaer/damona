@@ -5,6 +5,7 @@ import pytest
 
 from . import test_dir
 
+
 def test_no_path(monkeypatch):
 
     monkeypatch.delenv("DAMONA_PATH", raising=False)
@@ -19,8 +20,9 @@ def test_no_path(monkeypatch):
     except:
         assert True
 
+
 def test_path():
-    #os.environ['DAMONA_PATH'] = '/tmp'
+    # os.environ['DAMONA_PATH'] = '/tmp'
     d = Damona()
     d.config_path
 
@@ -29,8 +31,13 @@ def test_path():
     d.find_orphan_images()
 
 
-
 def test_ImageReader():
+
+    try:
+        ir = ImageReader(f"{test_dir}/data/testing_1.0.0")
+        assert False
+    except SystemExit:
+        assert True
 
     ir = ImageReader(f"{test_dir}/data/testing_1.0.0.img")
     assert ir.version == "1.0.0"
