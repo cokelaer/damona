@@ -24,15 +24,20 @@ jobs:
           set -x
           docker version
           docker run --rm hello-world
+    - name: Install singularity
+      run: |
+          sudo wget -O- http://neuro.debian.net/lists/xenial.us-ca.full | sudo tee /etc/apt/sources.list.d/neurodebian.sources.list && \
+          sudo apt-key adv --recv-keys --keyserver hkp://pool.sks-keyservers.net:80 0xA5D32F012649A5A9 && \
+          sudo apt-get update
+          sudo apt-get install -y singularity-container
     - name: Set up Python 3.X
       uses: actions/setup-python@v2
       with:
-        python-version: ${{ matrix.python }}
+        ipython-version: ${{ matrix.python }}
     - name: conda
       run: |
         # $CONDA is an environment variable pointing to the root of the miniconda directory
         echo "$CONDA/bin" >> $GITHUB_PATH
-        export PATH=$PATH:"$CONDA/bin"
     - name: Install dependencies conda
       run: |
         conda install -c conda-forge --quiet mamba python=${{ matrix.python }}
@@ -44,10 +49,6 @@ jobs:
         pip install .
     - name: Test with pytest
       run: |
-        export PATH=$PATH:"$CONDA/bin"
-        echo "$PATH"
-        which pip
-        ls /usr/share/miniconda/bin
         pytest --cov-report term --cov=damona
       env:
         DAMONA_EXE: /usr/share/miniconda/bin/damona
