@@ -46,6 +46,8 @@ jobs:
       run: |
         export PATH=$PATH:"$CONDA/bin"
         echo "$PATH"
+        which pip
+        ls usr/share/miniconda/bin
         pytest --cov-report term --cov=damona
       env:
         DAMONA_EXE: /usr/share/miniconda/bin/damona
