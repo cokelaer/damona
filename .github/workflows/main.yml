@@ -32,7 +32,7 @@ jobs:
       run: |
         # $CONDA is an environment variable pointing to the root of the miniconda directory
         echo "$CONDA/bin" >> $GITHUB_PATH
-        echo "/usr/share/miniconda/bin/" >> $GITHUB_PATH
+        export PATH=$PATH:"$CONDA/bin"
     - name: Install dependencies conda
       run: |
         conda install -c conda-forge --quiet mamba python=${{ matrix.python }}
@@ -44,8 +44,7 @@ jobs:
         pip install .
     - name: Test with pytest
       run: |
-        echo $GITHUB_PATH
-        ls $GITHUB_PATH
+        echo "$PATH"
         pytest --cov-report term --cov=damona
       env:
         DAMONA_EXE: /usr/share/miniconda/bin/damona
