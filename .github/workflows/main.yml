@@ -31,7 +31,8 @@ jobs:
     - name: conda
       run: |
         # $CONDA is an environment variable pointing to the root of the miniconda directory
-        echo $CONDA/bin >> $GITHUB_PATH
+        echo "$CONDA/bin" >> $GITHUB_PATH
+        echo "/usr/share/miniconda/bin/" >> $GITHUB_PATH
     - name: Install dependencies conda
       run: |
         conda install -c conda-forge --quiet mamba python=${{ matrix.python }}
