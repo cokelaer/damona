@@ -47,10 +47,6 @@ jobs:
         echo 'export PATH=/usr/local/go/bin:${PATH}:${GOPATH}/bin' >> ~/.bashrc && \
         source ~/.bashrc
 
-https://github.com/sylabs/singularity/releases/tag/v3.8.0
-https://github.com/sylabs/singularity/archive/refs/tags/v3.8.0.tar.gz
-
-
         export VERSION=3.8.0 && # adjust this as necessary \
         #wget https://github.com/sylabs/singularity/releases/download/v${VERSION}/singularity-${VERSION}.tar.gz && \
         #tar -xzf singularity-${VERSION}.tar.gz && \
