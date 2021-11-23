@@ -52,7 +52,7 @@ jobs:
         #tar -xzf singularity-${VERSION}.tar.gz && \
         wget https://github.com/sylabs/singularity/archive/refs/tags/v${VERSION}.tar.gz && \
         tar -xzf v${VERSION}.tar.gz && \
-        cd singularity
+        cd v${VERSION}
 
         ./mconfig && \
         cd ./builddir && \
