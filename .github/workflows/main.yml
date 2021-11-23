@@ -9,7 +9,7 @@ on:
 
 jobs:
   build-linux:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     strategy:
       max-parallel: 5
       matrix:
@@ -26,8 +26,8 @@ jobs:
           docker run --rm hello-world
     - name: Install singularity
       run: |
-          sudo wget -O- http://neuro.debian.net/lists/xenial.us-ca.full | sudo tee /etc/apt/sources.list.d/neurodebian.sources.list && \
-          sudo apt-key adv --recv-keys --keyserver hkp://pool.sks-keyservers.net:80 0xA5D32F012649A5A9 && \
+          sudo wget -O- http://neuro.debian.net/lists/focal.au.full | sudo tee /etc/apt/sources.list.d/neurodebian.sources.list
+          sudo apt-key adv --recv-keys --keyserver hkps://keyserver.ubuntu.com 0xA5D32F012649A5A9
           sudo apt-get update
           sudo apt-get install -y singularity-container
     - name: Set up Python 3.X
