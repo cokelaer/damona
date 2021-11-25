@@ -425,4 +425,5 @@ class Registry:
                     recipes[name] = info.download
             else:
                 recipes[name] = info.download
+        recipes = sorted(recipes)
         return recipes

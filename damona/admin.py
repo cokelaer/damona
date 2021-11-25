@@ -24,7 +24,8 @@ def stats():
 
     r = Registry()
 
-    names = {ImageName(x.replace(":", "_")+".img").name for x in r.get_list().keys()}
+    names = {ImageName(x.replace(":", "_")+".img").name for x in r.get_list()}
+
     N = len(names)
     print(f"There are currently {N} recipes (containers) in Damona")
 
@@ -32,7 +33,7 @@ def stats():
     print(f"These recipes include {N} versions.")
 
     binaries = set()
-    for x in r.get_list().keys():
+    for x in r.get_list():
         s = Software(x.split(":")[0])
         binaries = binaries.union(set(s.binaries[s.releases.last_release]))
     N = len(binaries)

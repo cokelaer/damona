@@ -189,9 +189,11 @@ def available_images(**kwargs):
         url = kwargs['from_url']
     else:
         url = None
+
+    registry = Registry(from_url=url)
     modules = Registry(from_url=url).get_list(pattern=kwargs['pattern'])
-    names = sorted(list(modules.keys()))
-    downloads = [modules[x] for x in names]
+    names = sorted(list(modules))
+    downloads = [registry.registry[x].download for x in names]
     click.echo("name                 Download location")
     for k,v in zip(names, downloads):
         click.echo(f"{k:20} [{v}]")
@@ -478,7 +480,7 @@ file . Example is available on https://biomics.pasteur.fr/salsa/damona/registry.
 def search(**kwargs):
     """Search for a container given a pattern in damona registry.
 
-    By default searches for a software in Damona only:
+    By default searches for a software in Damona only (based on registry files):
 
         damona search fastqc
 
@@ -586,30 +588,32 @@ def export(**kwargs):
 @click.argument('filename', required=True)
 @click.option('--token', default=None,
     help="""A valid zenodo (or sandbox zenodo) token.
-You can set the token in your home/.config/damona/damona.cfg
+You can set the token in your home/.config/damona/damona.cfg that looks
+like
 
+\b 
 [general]
 show_init_warning_message=False
-
+\b
 [urls]
 damona=https://biomics.pasteur.fr/salsa/damona/registry.txt
-
+\b 
 [zenodo]
 token=APmm6p...
 orcid=0000-0001-...
 affiliation=Your Institute
 name=Surname, firstname
-
- [sandbox.zenodo]
+\b
+[sandbox.zenodo]
 token=FFmbAE...
 orcid=0000-0001-...
 
 
 """)
 @click.option('--mode', default="sandbox.zenodo",
-    help="mode can be either 'zenodo' or 'sandbox.zenodo' and your token must be related.")
+    help="mode can be either 'zenodo' or 'sandbox.zenodo'")
 def zenodo_upload(**kwargs):
-    """Upload a singularity file to Zenodo.
+    """Upload a singularity file to Zenodo. FOR DEVELOPERS ONLY
 
     The sandbox.zenodo is a sandbox where you can try to upload a new singularity file.
 
@@ -619,16 +623,17 @@ def zenodo_upload(**kwargs):
 
         damona zenodo-upload file_2.0.0.img --mode sandbox.zenodo
 
-    The code to be added to the registry will be provided.
+    The code to be added into your registry.yaml wil be printed on stdout.
 
     """
     from damona.registry import ImageName
     from damona.zenodo import Zenodo
+
     token = kwargs['token']
     mode = kwargs['mode']
     filename = kwargs['filename']
 
-    # keep here
+    # 
     z = Zenodo(mode, token)
     logger.info(f"Uploading to {mode}")
     z._upload(filename)
