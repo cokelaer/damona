@@ -6,7 +6,9 @@ fastqc:
       download: https://zenodo.org/record/5708810/files/fastqc_0.11.8.img
       md5sum: c445a666f513614331d13faedcb1a767
       doi: 10.5281/zenodo.5708810
+      filesize: 198107136
     0.11.9:
       download: https://zenodo.org/record/5708811/files/fastqc_0.11.9.img
       md5sum: 8a8d751504937491a846571816dbc372
       doi: 10.5281/zenodo.5708811
+      filesize: 198116894
