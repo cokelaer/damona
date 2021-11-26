@@ -1,9 +1,9 @@
 seqtk:
-  doi: 10.5072/zenodo.968276
-  zenodo_id: 968277
+  doi: 10.5281/zenodo.5729950
+  zenodo_id: 5729951
   releases:
     1.3.0:
-      download: https://sandbox.zenodo.org/record/968277/files/seqtk_1.3.0.img
+      download: https://zenodo.org/record/5729951/files/seqtk_1.3.0.img
       md5sum: 8cf6dcbb6ee2a227202ddb0471938b86
-      doi: 10.5072/zenodo.968277
+      doi: 10.5281/zenodo.5729951
       filesize: 89464832
