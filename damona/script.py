@@ -21,11 +21,10 @@
 ###########################################################################
 """.. rubric:: Standalone application dedicated to conversion"""
 import click
-import glob
+import time
 import sys
 import pathlib
 import os
-import subprocess
 
 from damona  import version
 from damona import Damona
@@ -155,50 +154,6 @@ def build(**kwargs): #pragma: no cover
     else: # could be a damona recipes
         logger.info("Not a docker URL, nor a local file.")
 
-
-@main.command()
-@click.option('--pattern', default=None,
-    help="restrict the output list keeping those with this pattern")
-@click.option('--from-url', help="""download registry from remote URL. The URL must
-contain a registry.txt as explained on damona.readthedocs.io. If you just type
-'damona', the URL will be biomics.pasteur.fr/drylab/damona/registry.txt""")
-@click.option('--url', help="""alias to --from-url""")
-def available_images(**kwargs):
-    """List all available images from Damona.
-
-    # TODO: list in conda is the list of installed paclages. we should rename this comamnd
-    # into e.g.,
-
-     all available images:
-
-        damona list
-
-    List all available images available at a given URL:
-
-        damona list --from-url https://biomics.pasteur.fr/drylab/damona/registry.txt
-
-    Same command as above (alias) using the short name::
-
-        damona list --from-url damona
-
-    """
-    from damona.registry import Registry
-    if kwargs['url']:
-        url = kwargs['url']
-    elif kwargs['from_url']:
-        url = kwargs['from_url']
-    else:
-        url = None
-
-    registry = Registry(from_url=url)
-    modules = Registry(from_url=url).get_list(pattern=kwargs['pattern'])
-    names = sorted(list(modules))
-    downloads = [registry.registry[x].download for x in names]
-    click.echo("name                 Download location")
-    for k,v in zip(names, downloads):
-        click.echo(f"{k:20} [{v}]")
-
-
 @main.command()
 @click.option('--create', type=click.STRING,
     help="""create a new environment""")
@@ -306,10 +261,8 @@ def deactivate(**kwargs):
 @click.option('--force', is_flag=True, help="Replaces images and binaries.")
 @click.option('--force-binaries', is_flag=True, help="Replace binaries.")
 @click.option('--from-url', help="""download image from a remote URL. The URL must
-contain a registry.txt as explained on https://damona.readthedocs.io""")
+  contain a registry.txt as explained on https://damona.readthedocs.io""")
 @click.option('--url', help="""alias to --from-url""")
-
-
 @click.option('--binaries', default=None,
     help="""If not provided, we assume this is an executable singulatrity and its name is the binary name
     """)
@@ -350,7 +303,10 @@ def install(**kwargs):
     """
     logger.debug(kwargs)
 
-
+    from damona import environ
+    env = environ.Environ()
+    cenv = env.get_current_env()
+        
     # url
     if kwargs['url']:
         url = kwargs['url']
@@ -387,21 +343,47 @@ def install(**kwargs):
         if p.is_valid():
             p.pull_image(force=force_image)
             p.install_binaries(force=force_binaries)
+            with open(cenv / "history.log", "a+") as fout:
+                cmd = " ".join(['damona'] + sys.argv[1:])
+                fout.write(f"\n{time.asctime()}: {cmd}")
         else:
             logger.critical("Something wrong with your image/binaries. See message above")
     else:
         # This install the image and associated binary/binaries
-        from damona import environ
-        env = environ.Environ()
-        cenv = env.get_current_env()
         logger.info(f"Installing local container in {cenv}")
         from damona.install import LocalImageInstaller
         lii = LocalImageInstaller(image_path, cmd=sys.argv, binaries=binaries)
         if lii.is_valid():
             lii.install_image(force=force_image)
             lii.install_binaries(force=force_binaries)
+            with open(cenv / "history.log", "a+") as fout:
+                cmd = " ".join(['damona'] + sys.argv[1:])
+                fout.write(f"\n{time.asctime()}: {cmd}")
         else:
             logger.critical("Something wrong with your image/binaries. See message above")
+
+
+@main.command()
+@click.argument('--image', type=click.STRING)
+@click.option('--binaries', 
+    help="""If not provided, we assume this is an executable singulatrity and its name is the binary name
+    """)
+@click.option('--force', is_flag=True, help="force the removal of binaries or images")
+def remove(**kwargs):
+    """Remove images or binaries from an environment.
+    
+    If an image (and its binaries) is removed from an environment, 
+    it may not be removed from DAMONA if it is used in other environments.
+
+    However, all binaries related to this image will be altered. They will be removed 
+    if not linked to an image anymore, or a previous binary related to another environment 
+    may be activated back..
+    """
+    logger.warning("Not implemented")
+    pass
+
+
+
 
 
 '''

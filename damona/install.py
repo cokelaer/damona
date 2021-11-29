@@ -25,7 +25,6 @@ import subprocess
 from easydev import md5
 
 
-
 from spython.main import Client
 from damona import Registry
 from damona import Environ
@@ -441,3 +440,26 @@ class BinaryInstaller:
                 name = pathlib.Path(bin_path).name
                 path = str(bin_path).rstrip(bin_path.name)                
                 logger.info(f"Created binary {name} in {path}")
+
+
+class ImageRemoveFromEnv():
+    """Given an environment, remove all binaries related to an image, 
+    and the image afterwards
+    """
+    def __init__():
+        pass
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+

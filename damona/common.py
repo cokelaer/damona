@@ -161,7 +161,7 @@ class ImageReader:
 
         """
         self.filename = pathlib.Path(name)
-        # .absolute())
+
         if self.is_valid_name() is False:
             logger.error("Invalid image name. Your input image must end in .img or .sif")
             sys.exit(1)

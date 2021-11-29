@@ -29,27 +29,6 @@ def test_damona_env():
     assert results.exit_code == 0
 
 
-def test_damona_available_images():
-    from click.testing import CliRunner
-
-    runner = CliRunner()
-
-    results = runner.invoke(script.available_images, [])
-    assert results.exit_code == 0
-
-    results = runner.invoke(script.available_images, ["--pattern", "fastqc"])
-    assert results.exit_code == 0
-
-    results = runner.invoke(script.available_images, ["--url", "damona"])
-    assert results.exit_code == 0
-
-    results = runner.invoke(script.available_images, ["--from-url", "damona", "--pattern", "fastqc"])
-    assert results.exit_code == 0
-    assert (
-        results.output
-        == """DEPRECATED\nDEPRECATED\nDEPRECATED\nDEPRECATED\nname                 Download location\nfastqc:0.11.8        [fastqc_0.11.8.img]\nfastqc:0.11.9        [fastqc_0.11.9.img]\n"""
-    )
-
 
 def test_damona_create_and_export(monkeypatch):
 
