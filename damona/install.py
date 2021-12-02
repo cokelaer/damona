@@ -17,7 +17,7 @@
 import os
 import sys
 import pathlib
-import packaging.version
+
 import shutil
 import time
 import subprocess
@@ -30,7 +30,6 @@ from damona import Registry
 from damona import Environ
 from damona.common import ImageReader
 
-import os
 
 DAMONA_PATH = os.environ["DAMONA_PATH"]
 
@@ -287,7 +286,6 @@ class RemoteImageInstaller(ImageInstaller):
         # if md5 is already provided, and image exists, nothing to copy
         if info.md5sum:
             if os.path.exists(self.images_directory / output_name):
-                from easydev import md5
 
                 md5_target = md5(self.images_directory / output_name)
 

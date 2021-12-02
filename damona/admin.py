@@ -16,25 +16,29 @@
 from damona import Registry
 from damona.registry import Software
 from damona.registry import ImageName
+from damona import version
 
+__all__ = ["stats"]
 
-__all__ = ['stats']
 
 def stats():
 
     r = Registry()
 
-    names = {ImageName(x.replace(":", "_")+".img").name for x in r.get_list()}
+    names = {ImageName(x.replace(":", "_") + ".img").name for x in r.get_list()}
 
     N = len(names)
-    print(f"There are currently {N} recipes (containers) in Damona")
+    print(f"Welcome to Damona. \n")
+    print(f"- version: {version}")
+
+    print(f"- number of recipes:  {N}")
 
     N = len(r.get_list())
-    print(f"These recipes include {N} versions.")
+    print(f"- number of versions: {N}")
 
     binaries = set()
     for x in r.get_list():
         s = Software(x.split(":")[0])
         binaries = binaries.union(set(s.binaries[s.releases.last_release]))
     N = len(binaries)
-    print(f"These recipes include {N} different software or environments to be installed or re-used")
+    print(f"- unique binaries: {N}")

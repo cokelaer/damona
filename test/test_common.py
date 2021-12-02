@@ -46,3 +46,6 @@ def test_ImageReader():
     ir.is_orphan()
     ir.is_installed()
     print(ir)
+
+
+

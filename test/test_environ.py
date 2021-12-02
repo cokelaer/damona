@@ -1,5 +1,6 @@
 from damona.environ import Environment
 from damona.environ import Environ
+from damona import Damona
 import damona
 import builtins
 
@@ -13,7 +14,8 @@ def test_no_var(monkeypatch):
         assert True
 
 
-def test_environ():
+def test_environ(monkeypatch):
+    manager = Damona()
     env = Environ()
     env.N
     env.environments
@@ -23,9 +25,12 @@ def test_environ():
     with mock.patch.object(builtins, "input", lambda _: "y"):
         env.delete(".dummy_test")
 
-    env.get_current_env()
     env.environment_names
+
+    # this only prints the new PATH on the screen, so we need ti monkey patch the real env
     env.activate("base")
+    monkeypatch.setenv("DAMONA_ENV", manager.damona_path / "envs" / "base")
+    assert env.get_current_env_name() == "base"
     env.deactivate()
 
 

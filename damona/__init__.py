@@ -1,3 +1,18 @@
+#
+#  This file is part of Damona software
+#
+#  Copyright (c) 2020-2021 - Damona Development Team
+#
+#  File author(s):
+#      Thomas Cokelaer <thomas.cokelaer@pasteur.fr>
+#
+#  Distributed under the terms of the 3-clause BSD license.
+#  The full license is in the LICENSE file, distributed with this software.
+#
+#  website: https://github.com/cokelaer/damona
+#  documentation: http://damona.readthedocs.io
+#
+##############################################################################
 import pkg_resources
 import os
 import colorlog
@@ -5,7 +20,7 @@ import colorlog
 try:
     version = pkg_resources.require("damona")[0].version
 except Exception:  # pragma: no cover
-    version = ">=0.8.3"
+    version = ">=0.6.0"
 
 
 # The logger mechanism is here:
@@ -27,7 +42,7 @@ except:  # pragma: no cover
 
 # Some information for the users
 if "DAMONA_EXE" not in os.environ:  # pragma: no cover
-    logger.critical("Damona binaries are installed in ~/.config/damona/bin by default")
+    logger.critical("Damona binaries are installed in ~/.config/damona/base/bin by default")
     logger.critical(
         "You may install them in specific environments and activate/deactivate the environments to you convenience."
     )

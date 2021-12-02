@@ -43,10 +43,11 @@ class DamonaInit:
 
         self.damona_path = pathlib.Path(os.environ["DAMONA_PATH"])
         os.makedirs(self.damona_path, exist_ok=True)
-        os.makedirs(self.damona_path / "envs", exist_ok=True)
+        #os.makedirs(self.damona_path / "envs", exist_ok=True)
+        os.makedirs(self.damona_path / "envs" / "base", exist_ok=True)
         os.makedirs(self.damona_path / "images", exist_ok=True)
         os.makedirs(self.damona_path / "images" / "damona_buffer", exist_ok=True)
-        os.makedirs(self.damona_path / "bin", exist_ok=True)
+        #os.makedirs(self.damona_path / "base" / "bin", exist_ok=True)
 
 
 class Damona:
@@ -249,8 +250,9 @@ class BinaryReader:
         logger.debug(f"{filename}")
         if isinstance(filename, str):
             filename = pathlib.Path(filename)
+        self.filename = filename
 
-        with filename.open("r") as fin:
+        with self.filename.open("r") as fin:
 
             data = [x for x in fin.readlines() if x.strip().startswith("singularity")]
             data = data[0]
@@ -260,7 +262,7 @@ class BinaryReader:
                 image_path = data.split("exec")[1].split()[0]
             except:
                 image_path = data.split("run")[1].split()[0]
-                logger.warning(f"command line in {filename} uses 'run'; should be reinstalled ")
+                logger.warning(f"command line in {self.filename} uses 'run'; should be reinstalled ")
 
             if "DAMONA_PATH" in os.environ:
                 DAMONA_PATH = os.environ["DAMONA_PATH"]
@@ -277,3 +279,18 @@ class BinaryReader:
             return True
         else:
             return False
+
+    def get_image(self):
+        # we assume the user did not edit the binary file
+        # so we expect one uncommented line
+        with self.filename.open("r") as fin:
+            command = [line for line in fin.readlines() if
+                    line.strip() and line.strip()[0] != '#']
+        # where /images is to be followed by the container
+        image = [x for x in command[0].split() if "/images/" in x]
+        image = image[0].split()
+        container = image[0].split("/")[-1]
+        container = container.replace(".img", "")
+        container = ":".join(container.rsplit("_",1)) 
+        return container
+

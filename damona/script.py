@@ -28,6 +28,8 @@ import os
 
 from damona  import version
 from damona import Damona
+from damona import Environ
+
 from damona.registry import ImageName, Registry, Software
 manager = Damona()
 
@@ -62,7 +64,7 @@ def main(level):
 
     or from an online registry (given a URL)::
 
-        damona install fastqc:0.11.9 --from-url https://.../registry.txt
+        damona install fastqc:0.11.9 --url https://.../registry.txt
 
     You may build and install a local image (not recommended; for developers):
 
@@ -93,7 +95,7 @@ def main(level):
     logger.setLevel(level)
 
 
-@main.command()
+@main.command(hidden=True)
 @click.argument('filename', required=True, type=click.STRING)
 @click.option('--destination', default=None,
     help="Not implemented yet")
@@ -159,6 +161,11 @@ def build(**kwargs): #pragma: no cover
     help="""create a new environment""")
 @click.option('--delete', type=click.STRING,
     help="""Delete an existing environment""")
+@click.option('--rename', type=click.STRING,
+    help="""Rename an existing environment""")
+@click.option('--new-name', type=click.STRING,
+    default="",
+    help="""The new environment name (use with --rename) only""")
 @click.option('--disk-usage', is_flag=True,
     help="Prints disk usage of each Damona environments")
 @click.option('--from-bundle', type=click.STRING,
@@ -167,9 +174,9 @@ def build(**kwargs): #pragma: no cover
     help="""When creating an environment with --from-bundle, rewrite binaries and
 images even though the environment exists.""")
 def env(**kwargs):
-    """Get information about Damona environments.
+    """Create/Delete/Rename environents here.
 
-    Print the current environments and available environments:
+    Print information about current environments:
 
         damona env
 
@@ -183,31 +190,32 @@ def env(**kwargs):
         damona export test1
         damona env --create copy_test1 --from-bundle damona_test1.tar
 
-    """
-    logger.debug(kwargs)
-    from damona import Environ
+    """    
     envs = Environ()
-
-    if kwargs['disk_usage']:
-        import math
-        from damona import Environ
+    click.secho("======== Welcome to Damona ========\n", bold=True, fg='red')
+    if kwargs['disk_usage']:        
         envs = Environ()
-        #base = envs.get_current_env() + "/images/*img"
-        #env_size = sum(os.path.getsize(f) for f in glob.glob(base) if os.path.isfile(f))
         N = len(envs.images)
         usage = envs.images.get_disk_usage()
-        #env_size = math.ceil(env_size/1e6)
-        print(f"Found {N} images: Images usage: {usage}.Mb")
-    elif kwargs['create'] is None and kwargs['delete'] is None:
-        print(f"There is currently one base (default) environment and {envs.N-1} user environments.")
+        click.echo(f"Found {N} images: Images usage: {usage}.Mb")
+    elif kwargs['create'] is None and kwargs['delete'] is None and kwargs['rename'] is None:
+        click.secho(f"There are currently {envs.N} Damona environments:\n", bold=True)
         if envs.N !=0:
             for this in envs.environments:
                 name = this.name
-                print(f"{name} -  {this}")
-        current_env = envs.get_current_env()
-        logger.info("""Your current env is {}.""".format(current_env))
+                click.echo(click.style(f"{name}", bold=True) + click.style(f" -  {this}"))
+        current_env = envs.get_current_env_name()
+        click.secho(f"\nYour current env is '{current_env}'.", bold=True)
     elif kwargs['create'] and kwargs['delete']: # mutually exclusive
         logger.error("you cannot use --delete and --create together")
+        sys.exit(1)
+    elif kwargs['create'] and kwargs['rename']: # mutually exclusive
+        logger.error("you cannot use --delete and --rename together")
+        sys.exit(1)
+    elif kwargs['rename'] and kwargs['delete']: # mutually exclusive
+        logger.error("you cannot use --delete and --rename together")
+        sys.exyyit(1)
+        
     elif kwargs['delete']:
         envs.delete(kwargs['delete'])
     elif kwargs['create']:
@@ -216,13 +224,19 @@ def env(**kwargs):
                 bundle=kwargs['from_bundle'], force=kwargs['force'])
         else:
             envs.create(kwargs["create"])
+    elif kwargs['rename']:
+        if kwargs['new_name'] == "":
+            logger.error("If you use --rename, you must provide a new name with --new-name")
+            sys.exit(1)
+        from damona.environ import Environment
+        env = Environment(kwargs['rename'])
+        env.rename(kwargs['new_name'], force=kwargs['force'])
 
 
 @main.command()
 @click.argument('name', required=True, type=click.STRING)
 def activate(**kwargs):
     """Activate a damona environment.
-
 
     The main Damona environment can be activated using
 
@@ -233,7 +247,9 @@ def activate(**kwargs):
         damona activate my_favorite_env
 
     """
-    # logger.debug(kwargs)
+    # DO NOT PRINT ANYTHING HERE OTHERWISE YOU'LL BREADK 
+    # DAMONA BASH EXPORT.If yo do, use # as commented text
+    click.echo('#Inside main command')
     from damona import Environ
     env = Environ()
     env.activate(kwargs['name'])
@@ -249,7 +265,8 @@ def deactivate(**kwargs):
         damona deactivate
 
     """
-    logger.debug(kwargs)
+    # DO NOT PRINT ANYTHING HERE OTHERWISE YOU'LL BREADK 
+    # DAMONA BASH EXPORT.If yo do, use # as commented text
     from damona import Environ
     env = Environ()
     env.deactivate(kwargs['name'])
@@ -260,23 +277,20 @@ def deactivate(**kwargs):
 @click.option('--force-image', is_flag=True, help="Replaces existing image.")
 @click.option('--force', is_flag=True, help="Replaces images and binaries.")
 @click.option('--force-binaries', is_flag=True, help="Replace binaries.")
-@click.option('--from-url', help="""download image from a remote URL. The URL must
+@click.option('--url', help="""download image from a remote URL. The URL must
   contain a registry.txt as explained on https://damona.readthedocs.io""")
-@click.option('--url', help="""alias to --from-url""")
 @click.option('--binaries', default=None,
     help="""If not provided, we assume this is an executable singulatrity and its name is the binary name
     """)
 def install(**kwargs):
     """Download and install an image and its binaries.
 
-    The main idea of Damona is to download and install images already built for
-    you and to install binaries to be found inside the image. An image has a
-    name and a version and can be installed as:
+    An image has a name and a version and can be installed as:
 
         damona install NAME:version
 
     If the version is omitted, the latest version is installed. Therefore, the
-    following two commands are equivalent (as of march 2021):
+    following two commands are equivalent if 0.11.9 is the latest version available:
 
     \b
         damona install fastqc
@@ -299,28 +313,23 @@ def install(**kwargs):
     to install images elsewhere.
 
     Finally, you may have images online on a website. To install such images, use
-    the --from-url/--url (sse developer guide for details).
+    the --url (sse developer guide for details).
     """
     logger.debug(kwargs)
 
     from damona import environ
     env = environ.Environ()
     cenv = env.get_current_env()
-        
+
     # url
-    if kwargs['url']:
-        url = kwargs['url']
-    elif kwargs['from_url']:
-        url = kwargs['from_url']
-    else:
-        url = None
+    url = kwargs.get('from_url', None)
 
     image_path = pathlib.Path(kwargs['image']).absolute()
 
-    force = kwargs['force']
     force_image = kwargs['force_image']
     force_binaries = kwargs['force_binaries']
-    if force:
+
+    if kwargs['force']:
         force_image, force_binaries = True, True
 
     if kwargs['binaries']:
@@ -332,14 +341,14 @@ def install(**kwargs):
         binaries = None
 
     if os.path.exists(image_path) is False:
-        if kwargs['from_url']:
-            url = kwargs['from_url']
+        if kwargs['url']:
+            url = kwargs['url']
             logger.info(f"Installing from online registry  (url: {url})")
         else:
             logger.info("Installing from Damona registry")
         from damona.install import RemoteImageInstaller
         p = RemoteImageInstaller(kwargs['image'],
-                from_url=kwargs['from_url'], cmd=sys.argv, binaries=binaries)
+                from_url=kwargs['url'], cmd=sys.argv, binaries=binaries)
         if p.is_valid():
             p.pull_image(force=force_image)
             p.install_binaries(force=force_binaries)
@@ -455,18 +464,21 @@ def clean(**kwargs):
 
 @main.command()
 @click.argument('pattern', required=True, type=click.STRING)
-@click.option('--from-url', help="""Set the online registry file to search for a
-given container. See damona.readthedocs.io for information on how to write this
+@click.option('--images-only', is_flag=True, default=False, 
+    help="Show images only")
+@click.option('--binaries-only', is_flag=True, default=False, 
+    help="Show binaries only")
+@click.option('--url', help="""Set the online registry file to search for a
+given container. See damona.readthedocs.io for in formation on how to write this
 file . Example is available on https://biomics.pasteur.fr/salsa/damona/registry.txt""")
-@click.option('--url', help="""alias to --from-url""")
 def search(**kwargs):
-    """Search for a container given a pattern in damona registry.
+    """Search for a container or binary.
 
-    By default searches for a software in Damona only (based on registry files):
+    By default, this command introspect the official Damona registry (based on registry files):
 
         damona search fastqc
 
-    IF you want to list all software and their versions, just type:
+    If you want to list all software and their versions, just type:
 
         damona search "*"
 
@@ -480,23 +492,25 @@ def search(**kwargs):
         damona search fastqc --url damona
 
     """
-    logger.debug(kwargs)
     from damona.registry import Registry
-    if kwargs['url']:
-        url = kwargs['url']
-    elif kwargs['from_url']:
-        url = kwargs['from_url']
-    else:
-        url = None
+    url = kwargs.get('url', None)
 
     if kwargs['pattern'] == "*":
         pattern = None
     else:
         pattern = kwargs['pattern']
-    modules = Registry(from_url=url).get_list(pattern=pattern)
 
-    for mod in modules:
-        print(mod)
+    if not kwargs['binaries_only']:
+        click.echo(f"Pattern '{pattern}' found in these releases:")
+        modules = Registry(from_url=url).get_list(pattern=pattern)
+        for mod in modules:
+            click.echo(f" - {mod}")
+
+    if not kwargs['images_only']:
+        click.echo(f"Pattern '{pattern}' found in these releases/binaries:")
+        modules = Registry(from_url=url).get_binaries(pattern=pattern)
+        for k,v in modules.items():
+            click.echo(f" - {k}: {v}")
 
 
 
@@ -506,8 +520,7 @@ def info(**kwargs):
     """Print information about a given environement.
 
     The default environment is called 'base'.
-
-    \b
+b
         damona info base
         damona info test1
 
@@ -524,13 +537,13 @@ def info(**kwargs):
         sys.exit(1)
     else:
         environ = x[0]
-        print(environ)
-        print("Images:")
+        click.echo(environ)
+        click.echo("Images:")
         for item in sorted(environ.get_images()):
-            print(" - " + pathlib.Path(item).name)
-        print("Binaries:")
+            click.echo(" - " + pathlib.Path(item).name)
+        click.echo("Binaries:")
         for item in sorted(environ.get_installed_binaries()):
-            print(" - " + pathlib.Path(item).name)
+            click.echo(" - " + pathlib.Path(item).name)
 
 @main.command()
 @click.argument('environment', required=True, type=click.STRING)
@@ -566,7 +579,7 @@ def export(**kwargs):
     logger.info(f"Use this command to create a new environment: damona env --create test --from-bundle {environment}.tar")
 
 
-@main.command()
+@main.command(hidden=True)
 @click.argument('filename', required=True)
 @click.option('--token', default=None,
     help="""A valid zenodo (or sandbox zenodo) token.
@@ -594,21 +607,23 @@ orcid=0000-0001-...
 """)
 @click.option('--mode', default="sandbox.zenodo",
     help="mode can be either 'zenodo' or 'sandbox.zenodo'")
-def zenodo_upload(**kwargs):
+def zenodo_upload(**kwargs): #pragma: no cover
     """Upload a singularity file to Zenodo. FOR DEVELOPERS ONLY
 
+    This command is for developers of the DAMONA project only.
+    
     The sandbox.zenodo is a sandbox where you can try to upload a new singularity file.
 
         damona zenodo-upload file_1.0.0.img --mode sandbox.zenodo
 
-    Once done, you can upload new versions:
+    Once done and happy with the results, you can upload to Zenodo itself once and for all:
 
         damona zenodo-upload file_2.0.0.img --mode sandbox.zenodo
 
-    The code to be added into your registry.yaml wil be printed on stdout.
+    If no registry.yaml is found in the local directory, it is created.
+    Otherwise, it is updated. The changes are also printed on the stdout.
 
     """
-    from damona.registry import ImageName
     from damona.zenodo import Zenodo
 
     token = kwargs['token']
@@ -631,7 +646,6 @@ def stats(**kwargs):
         damona stats
 
     """
-    logger.debug(kwargs)
     from damona import admin
     admin.stats()
 

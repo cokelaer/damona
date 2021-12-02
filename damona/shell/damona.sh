@@ -95,7 +95,7 @@ damona() {
                 \local level="$1"
                 shift
                 \local maincmd="$1"
-                shift 
+                shift
 
                 case "$maincmd" in
                     activate)
@@ -115,7 +115,17 @@ damona() {
                 __damona_activate "$cmd" "$@"
                 ;;
             deactivate)
-                __damona_deactivate "$cmd" "$@"
+                \local maincmd="$1"
+                shift
+                case "$maincmd" in 
+                    --help)
+                        ask_damona="$( "$DAMONA_EXE" "deactivate" "--help")"
+                        echo "$ask_damona"
+                        ;;
+                    *)
+                        __damona_deactivate "deactivate" "$maincmd" "$@"
+                        ;;
+                        esac
                 ;;
             *)
                 "$DAMONA_EXE"  "$cmd" "$@"

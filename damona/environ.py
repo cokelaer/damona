@@ -43,16 +43,15 @@ class Environment:
     ee = environ.Environment("test1")
     ee.create_bundle("test.tar")
 
-
     """
 
     def __init__(self, name):
-        if name == "" or name == "base":
-            self.name = "base"
-            self.path = manager.damona_path
-        else:
-            self.name = name
-            self.path = manager.damona_path / f"envs/{name}/"
+        self._init(name)
+
+    def _init(self, name):
+        
+        self.name = name
+        self.path = manager.damona_path / f"envs/{name}/"
 
         if self.path.exists() is False:
             logger.error(f"Environment {self.path} does not exits")
@@ -65,7 +64,10 @@ class Environment:
 
         return [x for x in binaries]
 
-    def delete(self):
+    def delete(self, env_name):
+        if env_name == "base":
+            logger.critical("base is a reserved name for environment. Cannot be created")
+            sys.exit(1)
         raise NotImplementedError
 
     def get_disk_usage(self):
@@ -109,14 +111,32 @@ class Environment:
         txt += f" Disk usage is {env_size}Mb"
         return txt
 
-    def rename(self, newname):
-        raise NotImplementedError
-        if newname in []:
-            pass
-        else:
-            logger.info(f"Renaming {self.path} into {newname}")
-            ff = pathlib.Path(self.path)
-            ff.rename(newname)
+    def rename(self, newname, force=False):
+
+        if newname in Environ().environment_names:
+            logger.error(f"{newname} exists already. Please choose another name")
+            sys.exit()
+
+        if not force:
+            logger.warning(f"You are about to rename your current {self.name} environment into {newname}")
+            input("Press enter to accept this change")
+
+        ff = pathlib.Path(self.path)
+        ff.rename(self.path.parent / newname)
+        # reset the path
+        self._init(newname)
+        logger.warning("Please restart a new shell if this is an active environment.")
+
+    def get_current_state(self):
+        images = set()
+        binaries = {}
+        for filename in self.get_installed_binaries():
+            br = BinaryReader(filename)
+            image = br.get_image()
+            binaries[filename.name] = image
+            images.add(image)
+        return {'images': images, 'binaries': binaries, 'name': self.name}
+
 
     def create_bundle(self, output_name=None, exclude=None):
         if output_name is None:
@@ -178,10 +198,22 @@ class Environ:
     @staticmethod
     def get_current_env():
         if "DAMONA_ENV" not in os.environ:
-            path = manager.damona_path
+            logger.error("You do not have any environment activated. Please use "
+            "'damona activate ENVNAME' where ENVNAME is a valid environment")
+            sys.exit(1)
+        else:
+            return pathlib.Path(os.environ["DAMONA_ENV"])
+
+    @staticmethod
+    def get_current_env_name():
+        if "DAMONA_ENV" not in os.environ:
+            logger.warning("You do not have any environment activated. Please use "
+            "'damona activate ENVNAME' where ENVNAME is a valid environment")
+            #sys.exit(1)
+            return None
         else:
             path = pathlib.Path(os.environ["DAMONA_ENV"])
-        return path
+            return path.name
 
     def _get_N(self):
         return len(self.environments)
@@ -190,19 +222,25 @@ class Environ:
 
     def _get_envs(self):
         path_envs = manager.damona_path / "envs"
-        envs = [Environment("base")] + [Environment(x.name) for x in path_envs.iterdir()]
+        envs = [Environment(x.name) for x in path_envs.iterdir()]
         return envs
 
     environments = property(_get_envs)
 
     def _get_env_names(self):
         envs = os.listdir(manager.environments_path)
-        envs = ["base"] + [Environment(x).name for x in envs]
+        envs = sorted([Environment(x).name for x in envs])
         return envs
 
     environment_names = property(_get_env_names)
 
     def delete(self, env_name):
+        # FIXME Probably redundant with Environment.delete
+
+        if env_name == "base":
+            logger.error("Environment 'base' is reserved and cannot not be created or deleted")
+            sys.exit(1)
+
         env_path = manager.environments_path / env_name
         if os.path.exists(env_path) is False:
             logger.error("{} does not exists".format(env_path))
@@ -230,7 +268,7 @@ class Environ:
     def activate(self, env_name=None):
         # Do not change the print statement here below. They are used by
         # damona.sh
-        if env_name not in self.environment_names + ["base"]:
+        if env_name not in self.environment_names:
             logger.error(f"invalid environment:  {env_name}. Please use 'damona env' to get the list")
             sys.exit(1)
 
@@ -238,14 +276,9 @@ class Environ:
             logger.warning(f"damona environment {env_name} is already in your PATH. nothing done")
             return
 
-        if env_name == "base":
-            env_path = manager.environments_path.parent
-            print("    export DAMONA_ENV={};".format(env_path))
-            print("export PATH={}/bin:${{PATH}}".format(env_path))
-        else:
-            env_path = manager.environments_path / env_name
-            print("    export DAMONA_ENV={};".format(env_path))
-            print("export PATH={}/bin:${{PATH}}".format(env_path))
+        env_path = manager.environments_path / env_name
+        print("    export DAMONA_ENV={};".format(env_path))
+        print("export PATH={}/bin:${{PATH}}".format(env_path))
         logger.info(f"# Added damona path ({env_path}) in your PATH")
 
     def deactivate(self, env_name=None):
@@ -254,18 +287,16 @@ class Environ:
         # we set the main damona environment (base) as default
         PATH = os.environ["PATH"]
         paths = PATH.split(":")
+        
 
         found = False  # this one is the one to deactivate (to ignore)
         newPATH = []
-        for path in paths:
-            # logger.info(f"# {env_name} {path}")
-
-            # if an env_name is provided, it may be removed several times.
-            # if not provided,
+        for path in paths:            
+            # if deactivate without name, we remove the last one only
             if env_name and str(manager.damona_path / "envs" / env_name / "bin") == path:
                 logger.info(f"# Found damona path ({path}), now removed from your PATH")
                 found = True
-            elif env_name is None and f"/damona/" in path and found is False:
+            elif not env_name and f"/damona/envs/" in str(path) and not found:
                 logger.info(f"# Found damona path ({path}), now removed from your PATH")
                 found = True
             else:  # keep track of the DAMONA_ENV.
@@ -273,7 +304,13 @@ class Environ:
 
         if found is False:
             logger.info("# no more active damona environment in your path. Use 'damona activate ENVNAME'")
-        #
+        
+        first_damona_path = [x for x in newPATH if "/damona/envs/" in x]
+        if len(first_damona_path):
+            first_damona_path = first_damona_path[0]
+            print(f"    export DAMONA_ENV={first_damona_path};")
+        else:
+            print("    unset DAMONA_ENV")
         newPATH = ":".join(newPATH)
         print("export PATH={}".format(newPATH))
 

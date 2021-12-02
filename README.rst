@@ -240,6 +240,9 @@ Version   Description
 0.6.0     * add ability to upload images on zenodo. No need for external 
             repositories.
           * ability to add/delete a software from different images
+          * implement --help for the activate/deactivate (non trivial)
+          * add --rename option in 'damona env'
+          * 'base' environment is now at the same level as other environments
 0.5.3     * Fixing config/shell 
 0.5.2     * add missing shell package
 0.5.1     * add DAMONA_SINGULARITY_OPTIONS env variable in the binary

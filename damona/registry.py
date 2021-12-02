@@ -242,7 +242,7 @@ class Software:
                 self.releases = self._interpret_registry(data)
                 self.doi = data[self.name].get("doi", None)
                 self.zenodo_id = data[self.name].get("zenodo_id", None)
-            else:
+            else:  #pragma: no cover
                 self._name = None
                 self._version = None
 
@@ -307,6 +307,7 @@ class Registry:
         r = Registry()
         r.registry
         r.registry['prokka_1.14.5']['download']
+        r.registry['prokka_1.14.5']['binaries']
 
     """
 
@@ -316,7 +317,7 @@ class Registry:
         if from_url:
             if from_url in self.config["urls"]:
                 from_url = self.config["urls"][from_url]
-            else:
+            else: #pragma: no cover
                 assert from_url.startswith("http")
                 assert from_url.endswith("registry.txt")
         self.from_url = from_url
@@ -371,7 +372,7 @@ class Registry:
                 if name_version not in self.registry:
                     if release.download is None:  # pragma: no cover
                         logger.warning(f"recipe {recipe.name} has no download entry. please fill asap")
-                    elif release.download.startswith("damona::"):
+                    elif release.download.startswith("damona::"): #pragma: no cover
                         from_url = self.config["urls"]["damona"]
                         release.download = release.download.replace("damona::", from_url)
                         release.download = release.download.replace("registry.txt", "")
@@ -415,9 +416,6 @@ class Registry:
 
     def get_list(self, pattern=None):
         """Return list of :class:`Software` found in the registry"""
-        # a name may have an underscore in it ... e.g. sequana_tools
-        # in which case the singularty name is sequana_tools_0.9.0
-
         recipes = {}
         for name, info in self.registry.items():
             if pattern:
@@ -426,4 +424,15 @@ class Registry:
             else:
                 recipes[name] = info.download
         recipes = sorted(recipes)
+        return recipes
+
+    def get_binaries(self, pattern=None):
+        """Return binaries found and from which recipe"""
+        recipes = {}
+        for name, info in self.registry.items():
+            if pattern:
+                if pattern.lower() in [x.lower() for x in info.binaries]:
+                    recipes[name] = [x for x in info.binaries if pattern.lower() in x.lower()]
+            else: 
+                recipes[name] = info.binaries
         return recipes

@@ -1,6 +1,23 @@
 Developer guide
 ===============
 
+Developers are lucky: they can do more than users. If you type::
+
+    damona --help
+
+you will have the users' commands. However, they are more commands available. 
+They are not shown because they are attended to be used by developers only.
+
+The first useful commands for developers is the **build** command::
+
+    damona build --help
+
+The second is the **zenodo-upload** command::
+
+    damona zenodo-upload --help
+
+
+
 All images will be posted on Zenodo
 ------------------------------------
 
