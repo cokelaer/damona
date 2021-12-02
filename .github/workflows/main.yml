@@ -86,6 +86,7 @@ jobs:
         pip install .
     - name: Test with pytest
       run: |
+        damona env --create damona__testing__
         pytest --cov-report term --cov=damona
       env:
         DAMONA_EXE: /usr/share/miniconda/bin/damona
