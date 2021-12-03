@@ -43,11 +43,8 @@ class DamonaInit:
 
         self.damona_path = pathlib.Path(os.environ["DAMONA_PATH"])
         os.makedirs(self.damona_path, exist_ok=True)
-        #os.makedirs(self.damona_path / "envs", exist_ok=True)
-        os.makedirs(self.damona_path / "envs" / "base", exist_ok=True)
-        os.makedirs(self.damona_path / "images", exist_ok=True)
+        os.makedirs(self.damona_path / "envs" / "base" / "bin", exist_ok=True)
         os.makedirs(self.damona_path / "images" / "damona_buffer", exist_ok=True)
-        #os.makedirs(self.damona_path / "base" / "bin", exist_ok=True)
 
 
 class Damona:
@@ -260,7 +257,7 @@ class BinaryReader:
             data = data.replace("${DAMONA_SINGULARITY_OPTIONS}", "")
             try:
                 image_path = data.split("exec")[1].split()[0]
-            except:
+            except: #pragma: no cover
                 image_path = data.split("run")[1].split()[0]
                 logger.warning(f"command line in {self.filename} uses 'run'; should be reinstalled ")
 
@@ -274,6 +271,7 @@ class BinaryReader:
         if "DAMONA_PATH" not in os.environ:
             logger.error("You must define DAMONA_PATH")
             sys.exit(1)
+
         damona_path = os.environ["DAMONA_PATH"]
         if os.path.exists(self.image.replace("${DAMONA_PATH}", damona_path)):
             return True

@@ -5,7 +5,7 @@ from damona.builders import BuilderFromDocker, BuilderFromSingularityRecipe
 from . import test_dir
 
 # reach too many requests ??
-def _test_docker_alpine(monkeypatch):
+def test_docker_alpine(monkeypatch):
 
     # explcitily named the output file
     with tempfile.TemporaryDirectory() as td:

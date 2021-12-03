@@ -19,6 +19,7 @@ import shutil
 import sys
 import pathlib
 import math
+import tarfile
 
 
 from damona.common import Damona
@@ -49,7 +50,7 @@ class Environment:
         self._init(name)
 
     def _init(self, name):
-        
+
         self.name = name
         self.path = manager.damona_path / f"envs/{name}/"
 
@@ -64,12 +65,6 @@ class Environment:
 
         return [x for x in binaries]
 
-    def delete(self, env_name):
-        if env_name == "base":
-            logger.critical("base is a reserved name for environment. Cannot be created")
-            sys.exit(1)
-        raise NotImplementedError
-
     def get_disk_usage(self):
         """Return virtual size of the environment if we were to
         copy/export all images"""
@@ -77,14 +72,14 @@ class Environment:
         S = 0
         images = self.get_images()
         for image in images:
-            try:
-                if "DAMONA_PATH" not in os.environ:
+            try: 
+                if "DAMONA_PATH" not in os.environ: #pragma: no cover
                     logger.error("You must define a DAMONA_PATH")
                     sys.exit(1)
                 damona_path = os.environ["DAMONA_PATH"]
                 image = image.replace("${DAMONA_PATH}", damona_path)
                 S += os.path.getsize(image)
-            except Exception as err:
+            except Exception as err: #pragma: no cover
                 print(err)
                 logger.error(f"Could not check {image}")
         return S
@@ -112,10 +107,13 @@ class Environment:
         return txt
 
     def rename(self, newname, force=False):
+        if self.name == "base":
+            logger.error("You cannot rename the 'base' environment")
+            sys.exit(1)
 
         if newname in Environ().environment_names:
             logger.error(f"{newname} exists already. Please choose another name")
-            sys.exit()
+            sys.exit(1)
 
         if not force:
             logger.warning(f"You are about to rename your current {self.name} environment into {newname}")
@@ -155,7 +153,6 @@ class Environment:
         # all containers
         images = [pathlib.Path(x) for x in self.get_images()]
 
-        import tarfile
 
         archive = tarfile.open(f"damona_{output_name}.tar", "w")
         for filename in binaries:
@@ -235,7 +232,6 @@ class Environ:
     environment_names = property(_get_env_names)
 
     def delete(self, env_name):
-        # FIXME Probably redundant with Environment.delete
 
         if env_name == "base":
             logger.error("Environment 'base' is reserved and cannot not be created or deleted")
@@ -328,7 +324,8 @@ class Environ:
             try:
                 os.mkdir(env_path)
                 os.mkdir(env_path / "bin")
-                logger.info("Created {} in {}".format(env_name, env_directory))
+                logger.info(f"Created {env_name} in {env_directory}")
+                logger.info(f"Type 'damona activate {env_name}' to activate it")
             except:  # pragma: no cover
                 pass  # if already created, error are caught here
 
@@ -346,7 +343,6 @@ class Environ:
 
         env_directory = pathlib.Path(manager.damona_path / "envs" / env_name)
 
-        import tarfile
 
         archive = tarfile.open(bundle)
         for x in archive.getmembers():

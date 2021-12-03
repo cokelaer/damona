@@ -3,9 +3,10 @@ import subprocess
 from damona import script
 from damona import Config
 from damona import Damona
+from damona import Environ
 import pytest
 from click.testing import CliRunner
-
+import mock
 
 
 def test_damon_builder_docker(tmpdir):
@@ -26,13 +27,16 @@ def test_damona_version():
 
 
 def test_activate_deactivate(monkeypatch):
+    setup()
     manager = Damona()
-    monkeypatch.setenv("DAMONA_ENV", manager.damona_path / "envs/damona__testing__")
+    monkeypatch.setenv("DAMONA_ENV", str(manager.damona_path / "envs/damona__testing__"))
     runner = CliRunner()
     results = runner.invoke(script.activate, ["damona__testing__"])
     assert results.exit_code == 0
     results = runner.invoke(script.deactivate, ["damona__testing__"])
     assert results.exit_code == 0
+
+    teardown()
 
 def test_damona_clean():
     runner = CliRunner()
@@ -56,7 +60,7 @@ def test_damona_create_and_export(monkeypatch):
     results = runner.invoke(script.env, ["--create", "damona__testing__"])
     assert results.exit_code == 0
 
-    monkeypatch.setenv("DAMONA_ENV", manager.damona_path / "envs/damona__testing__")
+    monkeypatch.setenv("DAMONA_ENV", str(manager.damona_path / "envs/damona__testing__"))
     cmd = "damona install fastqc"
     status = subprocess.call(cmd.split())
     assert status == 0
@@ -65,6 +69,7 @@ def test_damona_create_and_export(monkeypatch):
     assert status == 0
 
 def test_env():
+    setup()
 
     # list the packages
     runner = CliRunner()
@@ -110,6 +115,7 @@ def test_env():
         "--new-name", "damona__testing__", "--force"])
     assert results.exit_code == 0
 
+    teardown()
 
 def test_search():
     runner = CliRunner()
@@ -128,7 +134,50 @@ def test_search():
     results = runner.invoke(script.search, ["fastqc", "--url", "damona"])
     assert results.exit_code == 0
 
+
 def test_stats():
     runner = CliRunner()
     results = runner.invoke(script.stats, [])
     assert results.exit_code == 0
+
+
+def test_export():
+    runner = CliRunner()
+
+    if "damona__testing__" not in Environ().environment_names:
+        results = runner.invoke(script.env, ["--create", "damona__testing__"])
+        assert results.exit_code == 0
+
+    results = runner.invoke(script.export, ["damona__testing__"])
+    assert results.exit_code == 0
+
+def test_import_bundle(monkeypatch):
+    manager = Damona()
+    runner = CliRunner()
+
+    setup()
+
+    monkeypatch.setenv("DAMONA_ENV", str(manager.damona_path / "envs/damona__testing__"))
+    results = runner.invoke(script.install, ["fastqc"])
+    results = runner.invoke(script.export, ["damona__testing__"])
+    results = runner.invoke(script.env, ["--create","damona__testing2__", 
+        "--from-bundle", "damona_damona__testing__.tar"])
+
+    teardown()
+
+def teardown():
+    runner = CliRunner()
+    with mock.patch.object(builtins, "input", lambda _: "y"):
+        results = runner.invoke(script.env, ["--delete", "damona__testing__"])
+        assert results.exit_code == 0
+
+    with mock.patch.object(builtins, "input", lambda _: "y"):
+        results = runner.invoke(script.env, ["--delete", "damona__testing2__"])
+        assert results.exit_code == 0
+
+
+def setup():
+    runner = CliRunner()
+    if "damona__testing__" not in Environ().environment_names:
+        results = runner.invoke(script.env, ["--create", "damona__testing__"])
+        assert results.exit_code == 0
