@@ -40,24 +40,6 @@ except:  # pragma: no cover
     logger.warning("Could not create a persistent config file in your home. Unexpected error.")
 
 
-# Some information for the users
-if "DAMONA_EXE" not in os.environ:  # pragma: no cover
-    logger.critical("Damona binaries are installed in ~/.config/damona/base/bin by default")
-    logger.critical(
-        "You may install them in specific environments and activate/deactivate the environments to you convenience."
-    )
-    logger.critical(
-        "You will need to set the PATH manually so that you may "
-        "find binaries in ~/.config/damona/bin or one of the environment "
-        "in ~/.config/damona/envs"
-    )
-    logger.critical(
-        "To remove this message, and benefit from the "
-        "activate/deactivate command, add this line in your .bashrc\n"
-        "source ~/.config/damona/damona.sh\n"
-    )
-
-
 # Based on the previous config path, we may add images, environments and
 # binaries if DAMONA_PATH is not defined. If DAMONA_PATH is redefined,
 # the following call creates the images/ envs/ bin/ directories

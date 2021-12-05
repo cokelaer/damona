@@ -18,6 +18,7 @@ import os
 import sys
 import pathlib
 import re
+import subprocess
 
 from easydev import md5
 
@@ -35,9 +36,15 @@ class DamonaInit:
 
     def __init__(self):
         if "DAMONA_PATH" not in os.environ:
+            try:
+                HOME = os.path.expanduser("~")
+            except Exception:
+                HOME = '/home/user/'
             logger.error(
-                "DAMONA_PATH not found in your environment. You must define "
-                "it. In this shell, type 'export DAMONA_PATH=PATH_WHERE_TO_PLACE_DAMONA'"
+                "DAMONA_PATH was not found in your environment. You must define "
+                "it. In this shell, type 'export DAMONA_PATH=PATH_WHERE_TO_PLACE_DAMONA_ENVIRONMENTS. "
+                f"We recomment to set it to {HOME}/.config/damona altough you may set it to another "
+                "existing directory."
             )
             sys.exit(1)
 
@@ -45,6 +52,18 @@ class DamonaInit:
         os.makedirs(self.damona_path, exist_ok=True)
         os.makedirs(self.damona_path / "envs" / "base" / "bin", exist_ok=True)
         os.makedirs(self.damona_path / "images" / "damona_buffer", exist_ok=True)
+
+        result = subprocess.run(
+              "command -v python", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE
+        )
+        DAMONA_EXE = result.stdout.decode().strip()
+        DAMONA_EXE = pathlib.Path(DAMONA_EXE).parent /  'damona' 
+        logger.critical(
+            "You also need to set this environment variable: DAMONA_EXE\n"
+            "In bash shells, type:\n"
+            f"\texport DAMONA_EXE={DAMONA_EXE}"
+        )
+        sys.exit(1)
 
 
 class Damona:
