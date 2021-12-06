@@ -53,17 +53,23 @@ class DamonaInit:
         os.makedirs(self.damona_path / "envs" / "base" / "bin", exist_ok=True)
         os.makedirs(self.damona_path / "images" / "damona_buffer", exist_ok=True)
 
-        result = subprocess.run(
-              "command -v python", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE
-        )
-        DAMONA_EXE = result.stdout.decode().strip()
-        DAMONA_EXE = pathlib.Path(DAMONA_EXE).parent /  'damona' 
-        logger.critical(
-            "You also need to set this environment variable: DAMONA_EXE\n"
-            "In bash shells, type:\n"
-            f"\texport DAMONA_EXE={DAMONA_EXE}"
-        )
-        sys.exit(1)
+        # This is managed by the damona.sh script but kept for book-keeping
+        """
+        if "DAMONA_EXE" not in os.environ:
+            result = subprocess.run(
+                  "command -v python", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE
+            )
+            DAMONA_EXE = result.stdout.decode().strip()
+            DAMONA_EXE = pathlib.Path(DAMONA_EXE).parent /  'damona' 
+            logger.critical(
+                "In order to use DAMONA, you must set the DAMONA_EXE environmental variable. "
+                "In a bash shell, you can type the following code \n"
+                "\n"
+                f"\texport DAMONA_EXE={DAMONA_EXE}"
+                f"\n\nTo make this statement persistent, you may copy/paste this code in your ~/.bashrc file.\n"
+                "See https://damona.readthedocs.io/en/latest/index.html#installation for more details.")
+            sys.exit(1)
+        """
 
 
 class Damona:
