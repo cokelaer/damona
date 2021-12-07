@@ -58,7 +58,7 @@ extensions = [
     'sphinx.ext.ifconfig',
     'sphinx.ext.viewcode',
     "numpydoc.numpydoc",
-    'matplotlib.sphinxext.plot_directive',
+    #'matplotlib.sphinxext.plot_directive',
     'sphinx.ext.autosummary',
     'sphinx.ext.graphviz',
     ]
