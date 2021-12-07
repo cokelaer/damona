@@ -26,14 +26,11 @@ def stats():
     r = Registry()
 
     names = {ImageName(x.replace(":", "_") + ".img").name for x in r.get_list()}
-
-    N = len(names)
-    print(f"Welcome to Damona. \n")
-    print(f"- version: {version}")
-
-    print(f"- number of recipes:  {N}")
-
     N = len(r.get_list())
+
+    
+    print(f"- version: {version}")
+    print(f"- number of recipes:  {len(names)}")
     print(f"- number of versions: {N}")
 
     binaries = set()

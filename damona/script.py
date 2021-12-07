@@ -42,50 +42,39 @@ logger.level = 10
 
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 
+
+def welcome():
+    click.secho("======== Welcome to Damona ========\n", bold=True, fg='red')
+
 @click.group(context_settings=CONTEXT_SETTINGS)
 @click.option("--level", default="INFO",
     help="""Set level information to DEBUG, INFO, WARNING, CRITICAL, ERROR. Use e.g., "damona --level INFO command" """)
 @click.version_option(version=version)
 def main(level):
-    """Damona is a singularity container manager to ease the deployment of
-    reproducible working environments. It is to singularity container what conda
-    is to packaging.
+    """======== Welcome to Damona ========
 
-    You can create and activate a Damona environment using
+    Damona is an environment manager for singularity containers. 
+    
+    It is to singularity container what conda is to packaging.
 
+    The default environment is called 'base'. You can create and activate 
+    a new environment as follows
+    
     \b
-        damona env --create env1
-        damona activate env1
+        damona env --create TEST
+        damona activate TEST
 
-    Once an environment is activated, you can install a Damona-registered image
-    (otherwise it is installed in the default environement):
+    Once an environment is activated, you can install a Damona-registered image 
+    (and its registered binaries)
 
         damona install fastqc
-
-    or from an online registry (given a URL)::
-
-        damona install fastqc:0.11.9 --url https://.../registry.txt
-
-    You may build and install a local image (not recommended; for developers):
-
-    \b
-        damona build Singularity.test_1.0.0
-        damona install test_1.0.0.img --binary-name fastqc
-
-    Images can be built from docker:
-
-        damona build docker://whatever
-
-    An environment can be exported and installed on another computer as follows
-
-        damona export test1 --name myenv
-        # on the remote computer:
-        damona import myenv
-
+    
     \b
     More information on https://damona.readthedocs.io.
     Please report issues on https://github.com/cokelaer/damona
     Contact: Thomas Cokelaer at pasteur dot fr
+
+    "Make everything as simple as possible, but not simpler." -- Albert Einstein
     """
     from damona.colors import Colors
     ##### !!!!!!!!!!!! this function cannot print anything because the damona
@@ -174,7 +163,7 @@ def build(**kwargs): #pragma: no cover
     help="""When creating an environment with --from-bundle, rewrite binaries and
 images even though the environment exists.""")
 def env(**kwargs):
-    """Create/Delete/Rename environents here.
+    """Create/Delete/Rename environments here.
 
     Print information about current environments:
 
@@ -192,7 +181,8 @@ def env(**kwargs):
 
     """    
     envs = Environ()
-    click.secho("======== Welcome to Damona ========\n", bold=True, fg='red')
+    welcome()
+    
     if kwargs['disk_usage']:        
         envs = Environ()
         N = len(envs.images)
@@ -260,7 +250,7 @@ def activate(**kwargs):
 def deactivate(**kwargs):
     """Deactivate the current Damona environment.
 
-    deactivate the current environement:
+    deactivate the current environment:
 
         damona deactivate
 
@@ -509,7 +499,8 @@ def search(**kwargs):
     if not kwargs['images_only']:
         click.echo(f"Pattern '{pattern}' found in these releases/binaries:")
         modules = Registry(from_url=url).get_binaries(pattern=pattern)
-        for k,v in modules.items():
+        for k in sorted(modules.keys()):
+            v = modules[k]
             click.echo(f" - {k}: {v}")
 
 
@@ -517,7 +508,7 @@ def search(**kwargs):
 @main.command()
 @click.argument('environment', required=True, type=click.STRING)
 def info(**kwargs):
-    """Print information about a given environement.
+    """Print information about a given environment.
 
     The default environment is called 'base'.
 b
@@ -552,7 +543,7 @@ b
 def export(**kwargs):
     """Create a bundle of a given environment.
 
-    the following command copies all binaries from an environement and their
+    the following command copies all binaries from an environment and their
     associated images into a tar ball file named after the
     environment.
 
@@ -647,6 +638,8 @@ def stats(**kwargs):
 
     """
     from damona import admin
+    welcome()
+    
     admin.stats()
 
 

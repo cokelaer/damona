@@ -220,7 +220,7 @@ class Software:
         """
 
         if isinstance(name, dict):
-            print('DEPRECATED') # damona build docker:// --from-url damona seems to use it
+            # Use when calling with --url
             keys = list(name.keys())
             self.registry_name = keys[0]
             #: a :class:`Releases` attribute
