@@ -1,9 +1,14 @@
 canu:
+  doi: 10.5281/zenodo.5765677
+  zenodo_id: 5765678
   releases:
     1.6.0:
-      download: damona::canu_1.6.0.img 
-      md5sum: 9b94a1c08b4ce65d538b78036cf52cd6
-
+      download: https://zenodo.org/record/5765678/files/canu_1.6.0.img
+      md5sum: 99013e9bb70014a0a6728c90fadcd924
+      doi: 10.5281/zenodo.5765678
+      filesize: 848314368
     1.8.0:
-      download: damona::canu_1.8.0.img 
-      md5sum: b161b1249641319dd075468fb00aaafa
+      download: https://zenodo.org/record/5765679/files/canu_1.8.0.img
+      md5sum: 7de1e567c6102f572f760e1f08855013
+      doi: 10.5281/zenodo.5765679
+      filesize: 798138368
