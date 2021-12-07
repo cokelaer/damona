@@ -1,0 +1,14 @@
+bowtie2:
+  doi: 10.5281/zenodo.5765688
+  zenodo_id: 5765689
+  releases:
+    2.3.4:
+      download: https://zenodo.org/record/5765689/files/bowtie2_2.3.4.img
+      md5sum: 130055d18ea89b2c5ff966a0ead6f02a
+      doi: 10.5281/zenodo.5765689
+      filesize: 71208960
+    2.4.2:
+      download: https://zenodo.org/record/5765690/files/bowtie2_2.4.2.img
+      md5sum: 9db75746d96f3b67e599168c9f48fc8b
+      doi: 10.5281/zenodo.5765690
+      filesize: 72019968
