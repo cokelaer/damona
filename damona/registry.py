@@ -30,21 +30,22 @@ import colorlog
 logger = colorlog.getLogger(__name__)
 
 
-__all__ = ['Releases', 'Software', 'Registry', 'Release', 'ImageName']
+__all__ = ["Releases", "Software", "Registry", "Release", "ImageName"]
 
 
 class ImageName:
     """
 
-    An image name must have the following convention:
+    An image name must have the following convention::
 
         name_x.y.z.img
 
-    or
+    or::
 
         name_other_x.y.z.img
 
     """
+
     def __init__(self, name):
 
         self.filename = name
@@ -63,7 +64,7 @@ class ImageName:
         self.version = version
 
         # check version
-        if len(version.split(".")) not in [2,3]:
+        if len(version.split(".")) not in [2, 3]:
             raise NameError
 
 
@@ -127,7 +128,7 @@ class Release:
 
         :param version: a valid x.y.z version to be found in data[name]['release']
             data is a dictionary
-        params: data
+        :param data:
 
         """
         self._name = list(data.keys())[0]
@@ -226,8 +227,8 @@ class Software:
             #: a :class:`Releases` attribute
             self.releases = self._interpret_registry(name)
         # we are interested in existing local YAML files
-        elif os.path.exists(name) and not os.path.isdir(name):  
-            #print("Existing path or name")
+        elif os.path.exists(name) and not os.path.isdir(name):
+            # print("Existing path or name")
             self.registry_name = os.path.abspath(name)
             data = self._read_registry()
             #: a :class:`Releases` attribute
@@ -235,6 +236,7 @@ class Software:
         # directory to be found in damona directory
         else:
             from damona import __path__
+
             self.registry_name = pathlib.Path(__path__[0]) / "recipes" / name / "registry.yaml"
             data = self._read_registry()
             self._data = data
@@ -242,7 +244,7 @@ class Software:
                 self.releases = self._interpret_registry(data)
                 self.doi = data[self.name].get("doi", None)
                 self.zenodo_id = data[self.name].get("zenodo_id", None)
-            else:  #pragma: no cover
+            else:  # pragma: no cover
                 self._name = None
                 self._version = None
 
@@ -255,7 +257,7 @@ class Software:
             return {}
 
         # read the yaml
-        
+
         data = yaml.load(open(regname, "r").read(), Loader=Loader)
         if len(data.keys()) != 1:  # pragma: no cover
             logger.error(f"{regname} must contain on single entry named after the images. ")
@@ -317,7 +319,7 @@ class Registry:
         if from_url:
             if from_url in self.config["urls"]:
                 from_url = self.config["urls"][from_url]
-            else: #pragma: no cover
+            else:  # pragma: no cover
                 assert from_url.startswith("http")
                 assert from_url.endswith("registry.txt")
         self.from_url = from_url
@@ -350,7 +352,7 @@ class Registry:
         return registry_name
 
     def discovery(self):
-        """Look for recipes in the registey and populate the attributes"""
+        """Look for recipes in the registry and populate the attributes"""
         if self.from_url:
             self._url_discovery()
         else:
@@ -372,7 +374,7 @@ class Registry:
                 if name_version not in self.registry:
                     if release.download is None:  # pragma: no cover
                         logger.warning(f"recipe {recipe.name} has no download entry. please fill asap")
-                    elif release.download.startswith("damona::"): #pragma: no cover
+                    elif release.download.startswith("damona::"):  # pragma: no cover
                         from_url = self.config["urls"]["damona"]
                         release.download = release.download.replace("damona::", from_url)
                         release.download = release.download.replace("registry.txt", "")
@@ -433,6 +435,6 @@ class Registry:
             if pattern:
                 if pattern.lower() in [x.lower() for x in info.binaries]:
                     recipes[name] = [x for x in info.binaries if pattern.lower() in x.lower()]
-            else: 
+            else:
                 recipes[name] = info.binaries
         return recipes

@@ -57,10 +57,11 @@ extensions = [
     'sphinx.ext.todo',
     'sphinx.ext.ifconfig',
     'sphinx.ext.viewcode',
-    "numpydoc.numpydoc",
+    #"numpydoc.numpydoc",
+    "sphinx_click",
     #'matplotlib.sphinxext.plot_directive',
     'sphinx.ext.autosummary',
-    'sphinx.ext.graphviz',
+    #'sphinx.ext.graphviz',
     ]
 # note that the numpy directives is buggy. Example: class and init are not recognised as two entities for the autoclass_content=both here below
 

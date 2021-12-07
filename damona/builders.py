@@ -33,9 +33,10 @@ __all__ = ["Builder", "BuilderFromSingularityRecipe", "BuilderFromDocker"]
 
 
 class Builder:
-    """Build a container using different techniques
+    """Build a container using different framework
 
-    Input can be a singularity container
+    Input can be a singularity or docker container.
+
     """
 
     def __init__(self):
@@ -55,9 +56,13 @@ class Builder:
         #        ' user only')
         return username
 
-    username = property(_get_username)
+    username = property(_get_username, doc="return the username (unix)")
 
     def teardown(self, dest):
+        """finalise the build
+
+        Currently, just print information
+        """
         # once built and install, we can stop and save information in
         #  the history if it was susccessul
         logger.info(f"Image built in {dest}")
@@ -66,20 +71,20 @@ class Builder:
 class BuilderFromDocker(Builder):
     """Install a singularity container image and executable from a docker hub container.
 
-     This command creates automatically the destination bowtie2_2.4.1.img because the version 
-     follows Damona convention
+    This command creates automatically the destination bowtie2_2.4.1.img because the version
+    follows Damona convention::
 
-        damona build docker://biocontainers/bowtie2:v2.4.1_cv1  
+        damona build docker://biocontainers/bowtie2:v2.4.1_cv1
 
-    This command will fail:
-    
-        damona build docker://alpine 
+    This command will fail::
 
-    but this one will tell the version:
+        damona build docker://alpine
+
+    but this one will tell the version::
 
         damona build docker://alpine --destination alpine_1.0.0.img
 
-    We assume that the name of the executable is the name of the container. 
+    We assume that the name of the executable is the name of the container.
     User may provide a binary or list of binaries to install from the container if it is known.
     """
 
@@ -92,7 +97,7 @@ class BuilderFromDocker(Builder):
         # if the build is successful, we will copy the image
         # into the current environment.
         # Let us check now the present of the image and its executable
-        if destination is None: #pragma: no cover
+        if destination is None:  # pragma: no cover
             if ":v" in dockerhub_name:
                 name, version = dockerhub_name.split(":v")
                 name = name.split("/")[-1]
@@ -133,6 +138,8 @@ class BuilderFromDocker(Builder):
 
 
 class BuilderFromSingularityRecipe(Builder):
+    """Build a container from its singularity recipe"""
+
     def __init__(self):
         super(BuilderFromSingularityRecipe, self).__init__()
         logger.info("Building a Singularity image from a Singularity recipe")
@@ -143,7 +150,7 @@ class BuilderFromSingularityRecipe(Builder):
             logger.error("Recipe must start with Singularity.")
             sys.exit(1)
 
-        if destination is None: #FIXME: do the same as for docker files ?
+        if destination is None:  # FIXME: do the same as for docker files ?
             destination = os.path.basename(recipe).replace("Singularity.", "") + ".img"
 
         if os.path.exists(destination):
@@ -164,7 +171,7 @@ class BuilderFromSingularityRecipe(Builder):
         cmd = f"sudo singularity build --force {destination} {recipe} "
         logger.info(f"Running : {cmd}")
         status = subprocess.call(cmd.split())
-        if status != 0: #pragma: no cover
+        if status != 0:  # pragma: no cover
             logger.error("An error occured")
             sys.exit(1)
 

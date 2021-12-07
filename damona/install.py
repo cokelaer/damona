@@ -370,23 +370,23 @@ class BinaryInstaller:
 
     def install_binaries(self, force=False):
         """Install an image and its binary
-        
-        
+
+
         Given the :attr:`image`, we install a set of :atr:`binaries` to be found in the
-        image. If we install a binary again, no need to rewrite the command. For example, 
-        imagine that you install fastqc.0.11.9 for the first time, then in the code 
+        image. If we install a binary again, no need to rewrite the command. For example,
+        imagine that you install fastqc.0.11.9 for the first time, then in the code
         here below:
 
-            damona install fastqc:0.11.9 
+            damona install fastqc:0.11.9
             damona install fastqc:0.11.9 --force
 
         the second command has no effect. If we now install a new version:
 
-            damona install fastqc:0.11.8 
+            damona install fastqc:0.11.8
 
-        The previous binary (v0.11.9) will be commented as the new one (v0.11.8) effective. 
+        The previous binary (v0.11.9) will be commented as the new one (v0.11.8) effective.
 
-        
+
         """
         env = Environ()
         bin_directory = env.get_current_env() / "bin"
@@ -400,14 +400,16 @@ class BinaryInstaller:
             if bin_path.exists() and force is False:
                 name = pathlib.Path(bin_path).name
                 path = str(bin_path).rstrip(bin_path.name)
-                logger.warning(f"Binary {binary} exists already in {path} and was not changed. Use --force to overwrite")
+                logger.warning(
+                    f"Binary {binary} exists already in {path} and was not changed. Use --force to overwrite"
+                )
             elif bin_path.exists() and force is True:
 
                 # read the data first
                 with open(bin_path, "r") as fin:
                     data = fin.readlines()
 
-                # get rid of empty lines. In theory, no such lines but just in case. 
+                # get rid of empty lines. In theory, no such lines but just in case.
                 data = [x for x in data if x.strip()]
 
                 # if the last non-commented line is the same as the current cmdn, nothing to
@@ -417,9 +419,9 @@ class BinaryInstaller:
                     with open(bin_path, "w") as fout:
                         for line in data:
                             if line.startswith("#"):
-                                fout.write(line.strip()+"\n")
-                            else:                            
-                                fout.write("#"+line.strip()+"\n")
+                                fout.write(line.strip() + "\n")
+                            else:
+                                fout.write("#" + line.strip() + "\n")
                         fout.write(CMD)
 
                 # we keep track of previously installed binaries/history
@@ -436,28 +438,14 @@ class BinaryInstaller:
 
                 # print message
                 name = pathlib.Path(bin_path).name
-                path = str(bin_path).rstrip(bin_path.name)                
+                path = str(bin_path).rstrip(bin_path.name)
                 logger.info(f"Created binary {name} in {path}")
 
 
-class ImageRemoveFromEnv():
-    """Given an environment, remove all binaries related to an image, 
+class ImageRemoveFromEnv:
+    """Given an environment, remove all binaries related to an image,
     and the image afterwards
     """
+
     def __init__():
         pass
-
-
-    
-
-
-
-
-
-
-
-
-
-
-
-

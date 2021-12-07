@@ -22,15 +22,21 @@ All images will be posted on Zenodo
 ------------------------------------
 
 The goal is to have a unique and official DOI for each tool.
+::
 
     git clone git@github.com/your_fork/damona
     cd damona
 
 Let us consider an example calle SOFTWARE. You must be in the directory:
+::
 
     cd recipes/SOFTWARE
 
-Case 1: the tool does not exists.
+.. warning:: the following required registered token on Zenodo and will upload 
+    images on Zenodo as well ! Consider removing the --mode zenodo to try
+    the sandbox version
+
+Case 1: the tool does not exist.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Create a new Singulariry image. Time to upload the resulting (functional !) image::
@@ -41,7 +47,7 @@ It creates a registry.yaml file with the metadata ready to commit and push
 
 
 Case 2: the recipe exists already
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~`
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Create a new Singulariry image. Time to upload the resulting (functional !) image::
 
@@ -79,8 +85,9 @@ it should be named as pkgname_x.y.z
 
 
 You may have underscore in your package name
-build
------
+
+building
+--------
 
 To test the recipes, type::
 
@@ -94,25 +101,10 @@ This is just an alias to singularity build command::
 Singularity recipes
 --------------------
 
-We have three types of recipes:
+There is no specific instructions. The simpler the better. Please try to reuse 
+existing dockers, singularity. For example, we have a conda recipes. Try to make the final container
+as small as possible.
 
-1. executable
-2. environment
-3. sets of executables
-
-If the class of image is executable, please add these lines::
-
-    %runscript
-        exec THE_EXE_NAME "$@"
-
-so one can run it simply as ::
-
-    singularity run image.img 
-
-The class *environement* is suppose to be used to build other container. When
-installing a *executable* container, a binary is created in ~/.config/damona/bin
-but no such files are created for *environement*. The final class (set of
-executables) will install all the binaries that are provide in the registry. 
 
 registry
 ---------
@@ -143,14 +135,12 @@ like
             download: URL
             md5sum:
 
-md5sum is optional and used if present to not re-download a file, if it is
-already present, so it is quite useful to provide.
 
 
 Where are stored the containers ?
 ----------------------------------
 
-Originally, we stored the container in this collections  https://cloud.sylabs.io/library/cokelaer/damona but we extended **Damona** so that it can fetch containers from other places. The principle is quite simple; you put containers on a web site, place registry.txt file in there, which is just a concatenation of registry for all software that are available.
+Since Dev 2021, we store containers with a DOI on Zenodo website. Originally, we stored some container here: https://cloud.sylabs.io/library/cokelaer/damona but we extended **Damona** so that it can fetch containers from other places. If you have your own containers, it is quite simple to create a registry and place it anywhere on the web and informa damona that you want to use that registry.
 
 We have an example on https://biomics.pasteur.fr/salsa/damona
 

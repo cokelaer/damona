@@ -13,6 +13,7 @@
 #  documentation: http://damona.readthedocs.io
 #
 ##############################################################################
+"""Provide some stats for admin"""
 from damona import Registry
 from damona.registry import Software
 from damona.registry import ImageName
@@ -22,13 +23,20 @@ __all__ = ["stats"]
 
 
 def stats():
+    """Prints statistics about Damona
+
+    ::
+
+        from damona.admin import stats
+        stats()
+
+    """
 
     r = Registry()
 
     names = {ImageName(x.replace(":", "_") + ".img").name for x in r.get_list()}
     N = len(r.get_list())
 
-    
     print(f"- version: {version}")
     print(f"- number of recipes:  {len(names)}")
     print(f"- number of versions: {N}")

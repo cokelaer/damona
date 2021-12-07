@@ -32,17 +32,23 @@ __all__ = ["Damona", "ImageReader", "BinaryReader", "DamonaInit"]
 
 
 class DamonaInit:
-    """Class to create images/bin directory from DAMONA_PATH"""
+    """Class to create images/bin directory for DAMONA
+
+
+    This is called each time damona is started to make sure
+    required config file are present.
+    """
 
     def __init__(self):
         if "DAMONA_PATH" not in os.environ:
             try:
                 HOME = os.path.expanduser("~")
             except Exception:
-                HOME = '/home/user/'
+                HOME = "/home/user/"
             logger.error(
-                "DAMONA_PATH was not found in your environment. You must define "
-                "it. In this shell, type 'export DAMONA_PATH=PATH_WHERE_TO_PLACE_DAMONA_ENVIRONMENTS. "
+                "DAMONA_PATH was not found in your environment. "
+                "Maybe this is the first time you start damona. If so, ignore this message. "
+                "You can redefine the DAMONA_PATH later by typing 'export DAMONA_PATH=PATH_WHERE_TO_PLACE_DAMONA_ENVIRONMENTS. "
                 f"We recomment to set it to {HOME}/.config/damona altough you may set it to another "
                 "existing directory."
             )
@@ -52,24 +58,6 @@ class DamonaInit:
         os.makedirs(self.damona_path, exist_ok=True)
         os.makedirs(self.damona_path / "envs" / "base" / "bin", exist_ok=True)
         os.makedirs(self.damona_path / "images" / "damona_buffer", exist_ok=True)
-
-        # This is managed by the damona.sh script but kept for book-keeping
-        """
-        if "DAMONA_EXE" not in os.environ:
-            result = subprocess.run(
-                  "command -v python", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE
-            )
-            DAMONA_EXE = result.stdout.decode().strip()
-            DAMONA_EXE = pathlib.Path(DAMONA_EXE).parent /  'damona' 
-            logger.critical(
-                "In order to use DAMONA, you must set the DAMONA_EXE environmental variable. "
-                "In a bash shell, you can type the following code \n"
-                "\n"
-                f"\texport DAMONA_EXE={DAMONA_EXE}"
-                f"\n\nTo make this statement persistent, you may copy/paste this code in your ~/.bashrc file.\n"
-                "See https://damona.readthedocs.io/en/latest/index.html#installation for more details.")
-            sys.exit(1)
-        """
 
 
 class Damona:
@@ -113,7 +101,7 @@ class Damona:
         orphans = []
         for x in binaries:
             br = BinaryReader(x)
-            if br.is_image_available() is False: #pragma: no cover
+            if br.is_image_available() is False:  # pragma: no cover
                 logger.warning(f"{x} image is not available. This binary is an orphan")
                 orphans.append(x)
         return orphans
@@ -282,7 +270,7 @@ class BinaryReader:
             data = data.replace("${DAMONA_SINGULARITY_OPTIONS}", "")
             try:
                 image_path = data.split("exec")[1].split()[0]
-            except: #pragma: no cover
+            except:  # pragma: no cover
                 image_path = data.split("run")[1].split()[0]
                 logger.warning(f"command line in {self.filename} uses 'run'; should be reinstalled ")
 
@@ -307,13 +295,11 @@ class BinaryReader:
         # we assume the user did not edit the binary file
         # so we expect one uncommented line
         with self.filename.open("r") as fin:
-            command = [line for line in fin.readlines() if
-                    line.strip() and line.strip()[0] != '#']
+            command = [line for line in fin.readlines() if line.strip() and line.strip()[0] != "#"]
         # where /images is to be followed by the container
         image = [x for x in command[0].split() if "/images/" in x]
         image = image[0].split()
         container = image[0].split("/")[-1]
         container = container.replace(".img", "")
-        container = ":".join(container.rsplit("_",1)) 
+        container = ":".join(container.rsplit("_", 1))
         return container
-

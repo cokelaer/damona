@@ -72,14 +72,14 @@ class Environment:
         S = 0
         images = self.get_images()
         for image in images:
-            try: 
-                if "DAMONA_PATH" not in os.environ: #pragma: no cover
+            try:
+                if "DAMONA_PATH" not in os.environ:  # pragma: no cover
                     logger.error("You must define a DAMONA_PATH")
                     sys.exit(1)
                 damona_path = os.environ["DAMONA_PATH"]
                 image = image.replace("${DAMONA_PATH}", damona_path)
                 S += os.path.getsize(image)
-            except Exception as err: #pragma: no cover
+            except Exception as err:  # pragma: no cover
                 print(err)
                 logger.error(f"Could not check {image}")
         return S
@@ -133,8 +133,7 @@ class Environment:
             image = br.get_image()
             binaries[filename.name] = image
             images.add(image)
-        return {'images': images, 'binaries': binaries, 'name': self.name}
-
+        return {"images": images, "binaries": binaries, "name": self.name}
 
     def create_bundle(self, output_name=None, exclude=None):
         if output_name is None:
@@ -152,7 +151,6 @@ class Environment:
 
         # all containers
         images = [pathlib.Path(x) for x in self.get_images()]
-
 
         archive = tarfile.open(f"damona_{output_name}.tar", "w")
         for filename in binaries:
@@ -195,8 +193,10 @@ class Environ:
     @staticmethod
     def get_current_env():
         if "DAMONA_ENV" not in os.environ:
-            logger.error("You do not have any environment activated. Please use "
-            "'damona activate ENVNAME' where ENVNAME is a valid environment")
+            logger.error(
+                "You do not have any environment activated. Please use "
+                "'damona activate ENVNAME' where ENVNAME is a valid environment"
+            )
             sys.exit(1)
         else:
             return pathlib.Path(os.environ["DAMONA_ENV"])
@@ -204,9 +204,11 @@ class Environ:
     @staticmethod
     def get_current_env_name():
         if "DAMONA_ENV" not in os.environ:
-            logger.warning("You do not have any environment activated. Please use "
-            "'damona activate ENVNAME' where ENVNAME is a valid environment")
-            #sys.exit(1)
+            logger.warning(
+                "You do not have any environment activated. Please use "
+                "'damona activate ENVNAME' where ENVNAME is a valid environment"
+            )
+            # sys.exit(1)
             return None
         else:
             path = pathlib.Path(os.environ["DAMONA_ENV"])
@@ -283,11 +285,10 @@ class Environ:
         # we set the main damona environment (base) as default
         PATH = os.environ["PATH"]
         paths = PATH.split(":")
-        
 
         found = False  # this one is the one to deactivate (to ignore)
         newPATH = []
-        for path in paths:            
+        for path in paths:
             # if deactivate without name, we remove the last one only
             if env_name and str(manager.damona_path / "envs" / env_name / "bin") == path:
                 logger.info(f"# Found damona path ({path}), now removed from your PATH")
@@ -300,7 +301,7 @@ class Environ:
 
         if found is False:
             logger.info("# no more active damona environment in your path. Use 'damona activate ENVNAME'")
-        
+
         first_damona_path = [x for x in newPATH if "/damona/envs/" in x]
         if len(first_damona_path):
             first_damona_path = first_damona_path[0]
@@ -342,7 +343,6 @@ class Environ:
         self.create(env_name, force=force)
 
         env_directory = pathlib.Path(manager.damona_path / "envs" / env_name)
-
 
         archive = tarfile.open(bundle)
         for x in archive.getmembers():

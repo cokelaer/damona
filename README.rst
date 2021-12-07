@@ -1,17 +1,6 @@
 DAMONA
 ######
 
-Damona is a singularity environment manager.
-
-Damona started as a small collections of singularity recipes to help installing third-party tools for
-`Sequana NGS pipelines <https://sequana.readthedocs.io>`_.
-
-Damona is now used to create environments where singularity images and their associated binaries can be installed altogether.
-
-In a nutshell, Damona combines the logic of Conda environments with the
-reproducibility of singularity containers. We believe that it could be useful for
-other projects and therefore decided to release it as an independent tool.
-
 .. image:: https://badge.fury.io/py/damona.svg
     :target: https://pypi.python.org/pypi/damona
 
@@ -35,6 +24,31 @@ other projects and therefore decided to release it as an independent tool.
 :Issues: Please fill a report on `github <https://github.com/cokelaer/damona/issues>`__
 :Platform: This is currently only available for Linux distribution with bash shell (contributions are welcome to port the tool on MacOSX and other platforms)
 
+Overview
+========
+
+Damona is a singularity environment manager.
+
+Damona started as a small collections of singularity recipes to help installing third-party tools for
+`Sequana NGS pipelines <https://sequana.readthedocs.io>`_.
+
+Damona is now used to create environments where singularity images and their associated binaries can be installed altogether.
+
+In a nutshell, Damona combines the logic of Conda environments with the
+reproducibility of singularity containers. We believe that it could be useful for
+other projects and therefore decided to release it as an independent tool.
+
+Installation
+============
+
+If you are in a hurry, just type::
+
+    pip install damona --upgrade
+
+and install `Singularity <https://sylabs.io/docs>`_. 
+
+Type **damona** in a shell. This will initiate the tool with a config file in your HOME/.config/damona directory.
+Open a new shell and you are ready to go. Please the `Installation in details`_ section for more information.
 
 Motivation
 ==========
@@ -43,10 +57,10 @@ As stated on their website, `Conda <https:/docs.conda.io/en/latest>`_ is
 an open source **package** management system
 and **environment** management system.
 Conda provides pre-compiled releases of software; they can be installed in
-different local environment that do not interfer with your system. This has
+different local environments that do not interfer with your system. This has
 great advantages for developers. For example, you can install a pre-compiled
 libraries in a minute instead of trying to compile it yourself including all
-dependencies. Different community have emerge using this
+dependencies. Different communities have emerge using this
 framework. One of them is `Bioconda <https://bioconda.github.io>`_, which is dedicated to bioinformatics.
 
 Another great tool that emerged in the last years is
@@ -56,7 +70,7 @@ software and libraries, and even data. It is a simple file that can be shared
 between environments and guarantee exectution and reproducibility.
 
 Originally, Conda provided pre-compiled version of a software. Nowadays, it also provides
-a docker and a singularity image of the tool. On the othe side, Singularity can include an
+a docker and a singularity image of the tool. On the other side, Singularity can include an
 entire conda environment. As you can see everything is there to build reproducible tools and
 environment.
 
@@ -76,24 +90,19 @@ started to be cumbersome to have containers in different places and update
 script that generate the aliases to those executables.
 
 
-That's where **damona** started: we wanted to combine the conda-like environment framework to manage our singularitiy containers more easily.
+That's where **damona** started: we wanted to combine the conda-like environment 
+framework to manage our singularity containers more easily.
 
-Our goal is not to replace existing registry of biocontainers such as
-biocontainers but to use existing images, download them and manage them locally.
-Although **Damona** has some recipes and images (on
-sylabs/cokelaer/damona dn https://biomics.pasteur.fr/drylab/damona), those
-containers are for testing and help managing and installing the third-party
-tools required by `Sequana <sequana.readthedocs.io>`_ pipelines.
-
-We will therefore maintain damona in the context of Sequana project. Yet,
+Although it was start with the Sequana projet, 
 **Damona** may be useful for others developers who wish to have a quick and easy
 solution for their users when they need to install third-party libraries.
 
 Before showing real-case examples, let us install the software itself.
 
 
-Installation
-============
+
+Installation in details
+=======================
 
 The is the egg and chicken paradox. To get reproducible container with
 singularity, at some point you need to install singularity itself. That the first
@@ -116,7 +125,6 @@ will be saved in your home directory within the
 Finally, you need to tell your system where to find damona. For bashrc users,
 please add those two lines to you bashrc file::
 
-    export DAMONA_EXE="PATH_TO_DAMONA_BINARY"
     source ~/.config/damona/damona.sh
 
 open a new shell and type **damona** and you should be ready to go.
@@ -140,30 +148,36 @@ them)::
 
     damona info base
 
-3. See what is available
+3. Search the registry
 ------------------------
 
 By default, we provide some recipes (for testing mostly but also to complement existing
-registries when a tool is missing) and their images. They can be listed as
-follows::
+registries when a tool is missing) and their images. They can be searched for using::
 
-    damona available-images
+    damona search PATTERN
 
-External registry can be setup. For instance, the damona registry is accessible
+External registry can be set-up. For instance, the damona registry is accessible
 as follows::
 
-    damona available-images --url damona
+    damona search fastqc --url damona
 
 Where *damona* is an alias defined in the .config/damona/damona.cfg that
-actullay look for https://biomics.pasteur.fr/drylab/damona/registry.txt
+actullay looks for https://biomics.pasteur.fr/drylab/damona/registry.txt
 
 You may retrieve images from a website where a registry exists (see the developer
 guide to create a registry yourself).
 
+4. Activate an environment
+--------------------------
+
+::
+
+    damona activate base
+
 4. *install* a Damona image
 ----------------------------
 
-Download the one you want to use::
+Download and install an image in your activate environment::
 
     damona install fastqc:0.11.9
 
@@ -171,13 +185,12 @@ This will download the container in your ./config/damona/images directory and cr
 executable for you in ~/.config/damona/bin.
 
 This is your *base* environment. All images are stored in this directory
-*~/.config/damona/images*. By default binaries are stored in the *~./config/damona/bin* directory.
+*~/.config/damona/images*. By default binaries are stored in the *~./config/damona/envs/base/bin* directory.
 
 To benefit from thoses binaries, you must change your PATH accordingly using::
 
     export PATH=~/config/damona/bin:$PATH
 
-or use the **activate** command explained hereafter, which is more convenient.
 
 
 5. **activate/deactivate** command

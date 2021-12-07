@@ -17,29 +17,29 @@ and one can define its own registry for its projects.
 
 To get a list of the available containers in Damona, type::
 
-   damona available-images
+   damona search "*" --images-only
 
 You should see the container names and their version. You should also see where
 the file is going to be downloaded from.
 
 You can search for specific pattern using::
 
-    damona search qc
+    damona search fastqc
 
 This is not a lot indeed. So, we provide a system where you can look for
 containers elsewhere on internet. For now, there is only one registry available
 on https://biomics.pasteur.fr/salsa/damona (again for demonstration). There, we posted
 some containers and a registry.txt file; if you type::
 
-    damona available-images --from-url https://biomics.pasteur.fr/salsa/damona/registry.txt
+    damona search "*" --url https://biomics.pasteur.fr/salsa/damona/registry.txt
 
 you will get a list of the images that are available. Anybody can provide a
 container on any website with a registry.txt and you will be able to access to
 the images.
 
-The latter command can be simplied into ::
+The latter command can be simplified into ::
 
-    damona available-images --url damona
+    damona search "*" --url damona
 
 This is possible by defining alias in the configuration file (in
 ~/config/damona.cfg as explained in the developer guide)
@@ -77,11 +77,11 @@ current shell.
 To install an image/binary, you can also use an external registry (see developer
 guide to define your own registry)::
 
-    damona install fastqc:0.11.9 --from-url https://biomics.pasteur.fr/drylab/damona/registry.txt
+    damona install fastqc:0.11.9 --url https://biomics.pasteur.fr/drylab/damona/registry.txt
 
 For this particular website, we have an alias::
  
-    damona install fastqc:0.11.9 --from-url damona
+    damona install fastqc:0.11.9 --url damona
 
 You can add aliases in *~/.config/damona/damona.cfg* file.
 
@@ -118,7 +118,7 @@ And to install it in the *test2* environment::
 
     damona deactivate
     damona activate test2
-    damona install fastqc:0.11.8 --from-url damona
+    damona install fastqc:0.11.8 --url damona
 
 You can activate as many environments as you wish. Calling deactivate will only
 deactivate the last activated environment. In works as a Last In First Out mechanism.
