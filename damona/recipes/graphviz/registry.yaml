@@ -1,7 +1,10 @@
 graphviz:
-    binaries: dot
-    releases:
-      2.43.0:
-        download: library://cokelaer/damona/graphviz:2.43.0
-        md5sum: 7cb0908aa4cfb2606cb7ba5c5558da41
-
+  binaries: dot circo
+  doi: 10.5281/zenodo.5767506
+  zenodo_id: 5767507
+  releases:
+    2.43.0:
+      download: https://zenodo.org/record/5767507/files/graphviz_2.43.0.img
+      md5sum: 99a132013e2ea2d4497618ccecc98069
+      doi: 10.5281/zenodo.5767507
+      filesize: 12406784
