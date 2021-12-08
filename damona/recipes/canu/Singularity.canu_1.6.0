@@ -1,17 +1,12 @@
-Bootstrap: localimage
-From: ../conda/conda_4.9.1.img
+Bootstrap: library
+From: cokelaer/damona/conda:4.7.12
 
 %labels
     Author thomas cokelaer
-    Version v1.6.0
-    DAMONA_TYPE exe
-    DAMONA_BIN canu
 
 %post
 
     export PATH=$PATH:/usr/local/anaconda/bin
-    #export LANG=C   # prevents perl for raising warnings
-    #export PERL5LIB=/usr/local/anaconda/lib/perl5/5.22.0
 
     conda install canu==1.6.0
 

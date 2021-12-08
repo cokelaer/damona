@@ -1,6 +1,7 @@
 canu:
   doi: 10.5281/zenodo.5765677
   zenodo_id: 5765678
+  binaries: canu
   releases:
     1.6.0:
       download: https://zenodo.org/record/5765678/files/canu_1.6.0.img
