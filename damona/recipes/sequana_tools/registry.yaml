@@ -1,23 +1,40 @@
 sequana_tools:
-    binaries: fastqc bowtie
-    releases:
-        0.12.0:
-            download: damona::sequana_tools_0.12.0.img
-            binaries: STAR bcftools bwa bowtie2 featureCounts dsrc samtools bamtools falco fastp freebayes picard subread snpEff bowtie-build bedtools sambamba pbunzip2 pbzip2 bowtie2-build gffread kraken2 krona ktImportText kraken2-build kraken2-inspect interleave-reads.py normalize-by-median.py filter-abund.py extract-paired-reads.py split-paired-reads.py MarkDuplicates spades.py gffread deeptools mafft minimap2 ccs vcfutils.pl bamCoverage rnaseqc salmon inner_distance.py read_GC.py geneBody_coverage.py geneBody_coverage2.py clipping_profile.py read_duplication.py junction_annotation.py junction_saturation.py infer_experiment.py bam_stat.py dot genomeCoverageBed plotFingerprint intersectBed shustring
-            md5sum: f47330e72a2a78e5b6538fc505cedaad
-            sha256: c5c07a22accd900aa71b974fd0a84a090c5af2d6f535c1ef47c318460ea82cd7
-        0.11.0:
-            download: damona::sequana_tools_0.11.0.img
-            binaries: STAR bwa bowtie2 featureCounts dsrc samtools bamtools falco fastp freebayes picard subread snpEff bowtie-build bedtools sambamba pbunzip2 pbzip2 bowtie2-build gffread kraken2 krona ktImportText kraken2-build interleave-reads.py normalize-by-median.py filter-abund.py extract-paired-reads.py split-paired-reads.py MarkDuplicates spades.py gffread deeptools mafft minimap2 ccs vcfutils.pl bamCoverage rnaseqc salmon inner_distance.py read_GC.py geneBody_coverage.py geneBody_coverage2.py clipping_profile.py read_duplication.py junction_annotation.py junction_saturation.py infer_experiments.py bam_stats.py dot genomeCoverageBed plotFingerprint intersectBed
-            md5sum: 788aa389f22b519076a19a7e3ca38679
-            sha256: b377d82f08ad5a80cf358a73d1dbd0e277ab85f60d474834cfea50bb553a483b
+  doi: 10.5281/zenodo.5767303
+  binaries:  fastqc bowtie STAR bowtie2 bowtie2-build bowtie-build bwa featureCounts samtools bamtools  gffread dsrc MarkDuplicates spades.py split-paired-reads.py filter-abund.py extract-paired-reads.py snpEff deeptools picard subread sambamba pbunzip2 pbzip2 kraken2 krona ktImportText kraken2-build freebayes minimap2 bedtools interleave-reads.py normalize-by-median.py ccs
+  zenodo_id: 5767304
+  releases:
+    0.12.1:
+      download: https://zenodo.org/record/5767304/files/sequana_tools_0.12.1.img
+      md5sum: 585b4f752e3a46b430ec5529034c62fc
+      doi: 10.5281/zenodo.5767304
+      filesize: 1575124992
+      binaries: fastq-dump  bcftools  falco fastp  kraken2-inspect     mafft vcfutils.pl bamCoverage rnaseqc salmon inner_distance.py read_GC.py geneBody_coverage.py geneBody_coverage2.py clipping_profile.py read_duplication.py junction_annotation.py junction_saturation.py infer_experiment.py bam_stat.py dot genomeCoverageBed plotFingerprint intersectBed shustring
 
-        0.10.0:
-            download: damona::sequana_tools_0.10.0.img
-            binaries: STAR bwa bowtie2 featureCounts dsrc samtools bamtools falco freebayes picard subread snpEff bowtie-build bedtools sambamba pbunzip2 pbzip2 bowtie2-build gffread kraken2 krona ktImportText kraken2-build interleave-reads.py normalize-by-median.py filter-abund.py extract-paired-reads.py split-paired-reads.py MarkDuplicates spades.py gffread deeptools mafft minimap2 ccs vcfutils.pl bamCoverage rnaseqc salmon inner_distance.py read_GC.py geneBody_coverage.py geneBody_coverage2.py clipping_profile.py read_duplication.py junction_annotation.py junction_saturation.py infer_experiments.py bam_stats.py dot
-            md5sum: a98002943ae7e93847191b47ef079224
-        0.9.0:
-          download: damona::sequana_tools_0.9.0.img
-          binaries: STAR bowtie cufflinks cutadapt atropos bwa  bowtie2 featureCounts dsrc samtools bamtools deeptools freebayes fastq_screen picard subread snpEff bowtie-build bedtools sambamba pbunzip2 pbzip2 bowtie2-build gffread kraken2 krona ktImportText minimap2 kraken2-build interleave-reads.py normalize-by-median.py filter-abund.py extract-paired-reads.py split-paired-reads.py ccs  MarkDuplicates spades.py
-          md5sum: 1e2cd02d2488108cfc46032013c65f8a
+    0.12.0:
+      download: https://zenodo.org/record/5767441/files/sequana_tools_0.12.0.img
+      md5sum: 9eeaff21d450d0df86386feea05245e8
+      doi: 10.5281/zenodo.5767441
+      filesize: 1370695198
+      binaries:  bcftools falco fastp kraken2-inspect mafft vcfutils.pl bamCoverage rnaseqc salmon inner_distance.py read_GC.py geneBody_coverage.py geneBody_coverage2.py clipping_profile.py read_duplication.py junction_annotation.py junction_saturation.py infer_experiment.py bam_stat.py dot genomeCoverageBed plotFingerprint intersectBed shustring
 
+    0.11.0:
+      download: https://zenodo.org/record/5767431/files/sequana_tools_0.11.0.img
+      md5sum: 788aa389f22b519076a19a7e3ca38679
+      doi: 10.5281/zenodo.5767431
+      filesize: 1682022400
+      binaries: falco fastp   mafft vcfutils.pl bamCoverage rnaseqc salmon inner_distance.py read_GC.py geneBody_coverage.py geneBody_coverage2.py clipping_profile.py read_duplication.py junction_annotation.py junction_saturation.py infer_experiments.py bam_stats.py dot genomeCoverageBed plotFingerprint intersectBed
+
+
+    0.10.0:
+      download: https://zenodo.org/record/5767315/files/sequana_tools_0.10.0.img
+      md5sum: 566fe2f8ee08153bede621b0c72b7091
+      doi: 10.5281/zenodo.5767315
+      filesize: 1481848350
+      binaries:  falco  mafft vcfutils.pl bamCoverage rnaseqc salmon inner_distance.py read_GC.py geneBody_coverage.py geneBody_coverage2.py clipping_profile.py read_duplication.py junction_annotation.py junction_saturation.py infer_experiments.py bam_stats.py dot
+
+    0.9.0:
+      download: https://zenodo.org/record/5767308/files/sequana_tools_0.9.0.img
+      md5sum: 1e2cd02d2488108cfc46032013c65f8a
+      doi: 10.5281/zenodo.5767308
+      filesize: 1421837854
+      binaries:  cufflinks cutadapt atropos  fastq_screen    
