@@ -1,4 +1,5 @@
 bowtie2:
+  binaries: bowtie2 bowtie2-build bowtie2-inspect bowtie2-align-l bowtie2-build-l bowtie2-inspect-l bowtie2-align-s  bowtie2-build-s  bowtie2-inspect-s
   doi: 10.5281/zenodo.5765688
   zenodo_id: 5765689
   releases:
