@@ -20,7 +20,7 @@ import sys
 import pathlib
 import math
 import tarfile
-
+import time
 
 from damona.common import Damona
 from damona.common import BinaryReader
@@ -162,6 +162,23 @@ class Environment:
         archive.close()
 
         logger.info(f"Saved environment {self.name} into damona_{output_name}.tar")
+
+    def save_snapshot(self):
+
+        ctime = time.asctime().replace(" ", "_")
+        p = self.path / 'bin' /  ctime
+        if not p.exists():
+            p.mkdir()
+        else:
+            time.sleep(1)
+            p.mkdir()
+
+        filenames = [x for x in (self.path / 'bin').glob("*") if not x.is_dir()]
+        for filename in filenames:
+            with open(filename, "r") as fin:
+                data = fin.read()
+                with open(p / filename.name, "w") as fout:
+                    fout.write(data)
 
 
 class Images:
