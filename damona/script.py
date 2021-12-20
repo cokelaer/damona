@@ -26,6 +26,7 @@ import sys
 import pathlib
 import os
 
+
 from damona import version
 from damona import Damona
 from damona import Environ
@@ -45,8 +46,6 @@ logger.level = 10
 CONTEXT_SETTINGS = dict(help_option_names=["-h", "--help"])
 
 
-def welcome():
-    click.secho("======== Welcome to Damona ========\n", bold=True, fg="red")
 
 
 @click.group(context_settings=CONTEXT_SETTINGS)
@@ -57,7 +56,7 @@ def welcome():
 )
 @click.version_option(version=version)
 def main(level):
-    """======== Welcome to Damona ========
+    """
 
     Damona is an environment manager for singularity containers.
 
@@ -84,9 +83,10 @@ def main(level):
     """
     from damona.colors import Colors
 
-    ##### !!!!!!!!!!!! this function cannot print anything because the damona
+    ######################## !!!!!!!!!!!! ####################
+    # this function cannot print anything because the damona
     # activate command prints bash commands read by damona.sh
-    # print(Colors().blue("# Welcome to Damona (Container Manager)"))
+    ######################## !!!!!!!!!!!! ####################
     from damona import logger
 
     logger.setLevel(level)
@@ -186,7 +186,6 @@ def env(**kwargs):
 
     """
     envs = Environ()
-    welcome()
 
     if kwargs["disk_usage"]:
         envs = Environ()
@@ -600,13 +599,14 @@ def export(**kwargs):
 You can set the token in your home/.config/damona/damona.cfg that looks
 like
 
-\b 
+\b
 [general]
-show_init_warning_message=False
+quiet=False
+
 \b
 [urls]
 damona=https://biomics.pasteur.fr/salsa/damona/registry.txt
-\b 
+\b
 [zenodo]
 token=APmm6p...
 orcid=0000-0001-...
@@ -661,7 +661,6 @@ def stats(**kwargs):
     """
     from damona import admin
 
-    welcome()
 
     admin.stats()
 
