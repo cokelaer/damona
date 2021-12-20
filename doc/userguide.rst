@@ -15,7 +15,7 @@ on https://cloud.sylabs.io/library/cokelaer collection, which is limited to 10Gb
 and therefore will not provide many containers. Others are on external registry
 and one can define its own registry for its projects.
 
-To get a list of the available containers in Damona, type::
+To get a list of the available containers in **Damona**, type::
 
    damona search "*" --images-only
 
@@ -124,29 +124,28 @@ You can activate as many environments as you wish. Calling deactivate will only
 deactivate the last activated environment. In works as a Last In First Out mechanism.
 
 
+DAMONA_SINGULARITY_OPTIONS
+--------------------------
 
-Binding directories
---------------------
-
-All binaries created with Damona use this syntax::
+All binaries created with **Damona** use this syntax::
 
     singularity -s exec ${DAMONA_SINGULARITY_OPTIONS} ${DAMONA_PATH}/images/<IMAGE> <EXE> ${1+"$@"}
 
 where EXE is the name of the executable binary, IMAGE the name of the container.
-Then, you can see two environmental variable. The DAMONiA_PATH variable must be
-defined by you and point to the place where all binaries and images are stored.
+Then, you can see two environmental variables.
 
-This is especially useful would you need to bind a path that is not present in
+The DAMONA_SINGULARITY_OPTIONS can be used to provide any required options to singularity.
+If undefined, it is set to an empty string. Otherwise, you can defined it as follows:
+
+    export DAMONA_SINGULARITY_OPTIONS="whatever_you_need"
+
+Example: Binding directories
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This variable is especially useful would you need to bind a path that is not present in
 standard configuration. For example, on a cluster where your admin system set up
 a local scratch in /local/scratch, you can tell singularity to look there by
 binding this path into your container::
 
     export DAMONA_SINGULARITY_OPTIONS="-B /local/scratch:/local/scratch"
-
-
-
-
-
-
-
 
