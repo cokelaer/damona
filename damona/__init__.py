@@ -40,11 +40,8 @@ except:  # pragma: no cover
     logger.warning("Could not create a persistent config file in your home. Unexpected error.")
 
 
-# Based on the previous config path, we may add images, environments and
-# binaries if DAMONA_PATH is not defined. If DAMONA_PATH is redefined,
-# the following call creates the images/ envs/ bin/ directories
+# the following statement checks existence of environemental variables (DAMONA_PATH, DAMONA_EXE, etc)
 from damona.common import DamonaInit
-
 DamonaInit()
 
 
