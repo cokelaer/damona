@@ -53,7 +53,7 @@ class Config:
         if self.config_file.exists() is False:  # pragma: no cover
             with open(self.config_file, "w") as fout:
                 fout.write("[general]\n")
-                fout.write("show_init_warning_message=False\n\n")
+                fout.write("quiet=False\n\n")
                 fout.write("[urls]\n")
                 for k, v in urls.items():
                     fout.write("{}={}".format(k, v))
