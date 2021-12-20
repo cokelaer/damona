@@ -43,16 +43,27 @@ class DamonaInit:
         if "DAMONA_PATH" not in os.environ:
             try:
                 HOME = os.path.expanduser("~")
-            except Exception:
+            except Exception: #pragma: no cover
                 HOME = "/home/user/"
             logger.error(
-                "DAMONA_PATH was not found in your environment. "
-                "Maybe this is the first time you start damona. If so, ignore this message. "
-                "You can redefine the DAMONA_PATH later by typing 'export DAMONA_PATH=PATH_WHERE_TO_PLACE_DAMONA_ENVIRONMENTS. "
-                f"We recomment to set it to {HOME}/.config/damona altough you may set it to another "
-                "existing directory."
+                """DAMONA_PATH was not found in your environment.
+
+Before using Damona, you have to copy/paste the following code in
+your ~/.bashrc file once for all (start a new shell afterwards):
+
+    if [ ! -f  "~/.config/damona/damona.sh" ] ; then
+        source ~/.config/damona/damona.sh
+    fi
+
+This will create DAMONA_PATH variable that points to your home/.config/damona/ directory.
+You can redefine the DAMONA_PATH later to point towards another path if needed."""
             )
             sys.exit(1)
+
+        if "DAMONA_SINGULARITY_OPTIONS" not in os.environ: 
+            logger.warning("""No DAMONA_SINGULARITY_OPTIONS variable found in your environment.
+To remove this message, set a DAMONA_SINGULARITY_OPTIONS variable in your shell. For explanation about
+this variable, please see https://damona.readthedocs.io/en/latest/userguide.html#DAMONA_SINGULARITY_OPTIONS """)
 
         self.damona_path = pathlib.Path(os.environ["DAMONA_PATH"])
         os.makedirs(self.damona_path, exist_ok=True)
