@@ -27,7 +27,7 @@ from easydev import md5
 
 from spython.main import Client
 from damona import Registry
-from damona import Environ
+from damona import Environ, Environment
 from damona.common import ImageReader
 
 
@@ -108,6 +108,17 @@ class ImageInstaller:
                     )
         return True
 
+    def install_binaries(self, force=False):
+
+        if self.image_installed:
+            bininst = BinaryInstaller(self.binaries, self.input_image.filename)
+            bininst.install_binaries(force=force)
+        else:
+            logger.critical("The container image has not been installed. So, binaries cannot be installed either")
+
+
+
+
 
 class LocalImageInstaller(ImageInstaller):
     def __init__(self, image_name, cmd=None, binaries=None):
@@ -164,15 +175,6 @@ class LocalImageInstaller(ImageInstaller):
         # if the image has been copied properly, we set this flag to True so
         # that binaries can be installed
         self.image_installed = True
-
-    def install_binaries(self, force=False):
-
-        if self.image_installed:
-            bininst = BinaryInstaller(self.binaries, self.input_image.filename)
-            bininst.install_binaries(force=force)
-        else:
-            logger.critical("The container image has not been installed. So, binaries cannot be installed either")
-
 
 class RemoteImageInstaller(ImageInstaller):
     """Manager to download container images
@@ -352,17 +354,14 @@ class RemoteImageInstaller(ImageInstaller):
 
         self.image_installed = True
 
-    def install_binaries(self, force=False):
-        if self.image_installed:
-            logger.info("Creating binaries")
-            bininst = BinaryInstaller(self.binaries, self.input_image.filename)
-            bininst.install_binaries(force=force)
-        else:
-            logger.critical("The container image has not been installed. So, binaries cannot be installed either")
-
 
 class BinaryInstaller:
-    """Install a binary in the bin/ directory of the current environment given its image"""
+    """Install a binary in the bin/ directory of the current environment given its image
+
+
+
+    Each time, wew also save a snapshot of current bin/ status in a
+    .history/ hidden directory """
 
     def __init__(self, binaries, parent_image_path):
         self.image = ImageReader(parent_image_path)
@@ -370,7 +369,6 @@ class BinaryInstaller:
 
     def install_binaries(self, force=False):
         """Install an image and its binary
-
 
         Given the :attr:`image`, we install a set of :atr:`binaries` to be found in the
         image. If we install a binary again, no need to rewrite the command. For example,
@@ -391,6 +389,10 @@ class BinaryInstaller:
         env = Environ()
         bin_directory = env.get_current_env() / "bin"
 
+        # before altering a binary, we save the current state
+        cenv = Environment(env.get_current_env_name())
+        cenv.save_snapshot()
+
         for binary in sorted(self.binaries):
             bin_path = pathlib.Path(bin_directory) / binary
 
@@ -403,31 +405,6 @@ class BinaryInstaller:
                 logger.warning(
                     f"Binary {binary} exists already in {path} and was not changed. Use --force to overwrite"
                 )
-            elif bin_path.exists() and force is True:
-
-                # read the data first
-                with open(bin_path, "r") as fin:
-                    data = fin.readlines()
-
-                # get rid of empty lines. In theory, no such lines but just in case.
-                data = [x for x in data if x.strip()]
-
-                # if the last non-commented line is the same as the current cmdn, nothing to
-                if data[-1] != CMD:
-                    # save the file with new binary (commenting previous commands)
-                    # removing duplicated ones
-                    with open(bin_path, "w") as fout:
-                        for line in data:
-                            if line.startswith("#"):
-                                fout.write(line.strip() + "\n")
-                            else:
-                                fout.write("#" + line.strip() + "\n")
-                        fout.write(CMD)
-
-                # we keep track of previously installed binaries/history
-                name = pathlib.Path(bin_path).name
-                path = str(bin_path).rstrip(bin_path.name)
-                logger.info(f"Binary {binary} in {path} and was updated.")
             else:
                 # create a new binary content and save into an executable file
                 with open(bin_path, "w") as fout:
