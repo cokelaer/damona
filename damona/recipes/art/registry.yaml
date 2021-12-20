@@ -1,4 +1,5 @@
 art:
+  binaries: art_454 art_SOLiD art_illumina art_profiler_454 art_profiler_illumina
   doi: 10.5281/zenodo.5708819
   zenodo_id: 5708820
   releases:
