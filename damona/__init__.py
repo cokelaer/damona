@@ -42,6 +42,7 @@ except:  # pragma: no cover
 
 # the following statement checks existence of environemental variables (DAMONA_PATH, DAMONA_EXE, etc)
 from damona.common import DamonaInit
+
 DamonaInit()
 
 

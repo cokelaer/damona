@@ -46,8 +46,6 @@ logger.level = 10
 CONTEXT_SETTINGS = dict(help_option_names=["-h", "--help"])
 
 
-
-
 @click.group(context_settings=CONTEXT_SETTINGS)
 @click.option(
     "--level",
@@ -660,7 +658,6 @@ def stats(**kwargs):
 
     """
     from damona import admin
-
 
     admin.stats()
 

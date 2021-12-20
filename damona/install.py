@@ -117,9 +117,6 @@ class ImageInstaller:
             logger.critical("The container image has not been installed. So, binaries cannot be installed either")
 
 
-
-
-
 class LocalImageInstaller(ImageInstaller):
     def __init__(self, image_name, cmd=None, binaries=None):
         # must be a valid name with version, name, etc so that executable name
@@ -175,6 +172,7 @@ class LocalImageInstaller(ImageInstaller):
         # if the image has been copied properly, we set this flag to True so
         # that binaries can be installed
         self.image_installed = True
+
 
 class RemoteImageInstaller(ImageInstaller):
     """Manager to download container images
@@ -361,7 +359,7 @@ class BinaryInstaller:
 
 
     Each time, wew also save a snapshot of current bin/ status in a
-    .history/ hidden directory """
+    .history/ hidden directory"""
 
     def __init__(self, binaries, parent_image_path):
         self.image = ImageReader(parent_image_path)

@@ -166,14 +166,14 @@ class Environment:
     def save_snapshot(self):
 
         ctime = time.asctime().replace(" ", "_")
-        p = self.path / 'bin' /  ctime
+        p = self.path / "bin" / ctime
         if not p.exists():
             p.mkdir()
         else:
             time.sleep(1)
             p.mkdir()
 
-        filenames = [x for x in (self.path / 'bin').glob("*") if not x.is_dir()]
+        filenames = [x for x in (self.path / "bin").glob("*") if not x.is_dir()]
         for filename in filenames:
             with open(filename, "r") as fin:
                 data = fin.read()
