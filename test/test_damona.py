@@ -184,15 +184,17 @@ def setup():
 
 
 
-def test_install_remove():
+def test_install_remove(monkeypatch):
     runner = CliRunner()
 
-    if "damona__testing__" not in Environ().environment_names:
-        results = runner.invoke(script.env, ["--create", "damona__testing__"])
-        assert results.exit_code == 0
+    setup()
+    manager = Damona()
+    monkeypatch.setenv("DAMONA_ENV", str(manager.damona_path / "envs/damona__testing__"))
 
     results = runner.invoke(script.install, ["fastqc"])
     assert results.exit_code == 0
     results = runner.invoke(script.remove, ["fastqc"])
     assert results.exit_code == 0
+
+    teardown()
 
