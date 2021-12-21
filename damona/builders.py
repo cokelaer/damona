@@ -20,7 +20,7 @@ import sys
 import tempfile
 import getpass
 
-from damona.common import Damona
+from damona.common import Damona, requires_singularity
 
 manager = Damona()
 
@@ -92,6 +92,7 @@ class BuilderFromDocker(Builder):
         super(BuilderFromDocker, self).__init__()
         logger.info("Building a singularity image from docker")
 
+    @requires_singularity
     def build(self, dockerhub_name, destination=None, force=False):
 
         # if the build is successful, we will copy the image
@@ -144,6 +145,7 @@ class BuilderFromSingularityRecipe(Builder):
         super(BuilderFromSingularityRecipe, self).__init__()
         logger.info("Building a Singularity image from a Singularity recipe")
 
+    @requires_singularity
     def build(self, recipe, destination=None, force=False):
 
         if os.path.basename(recipe).startswith("Singularity.") is False:

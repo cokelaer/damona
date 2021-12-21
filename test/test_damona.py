@@ -181,3 +181,18 @@ def setup():
     if "damona__testing__" not in Environ().environment_names:
         results = runner.invoke(script.env, ["--create", "damona__testing__"])
         assert results.exit_code == 0
+
+
+
+def test_install_remove():
+    runner = CliRunner()
+
+    if "damona__testing__" not in Environ().environment_names:
+        results = runner.invoke(script.env, ["--create", "damona__testing__"])
+        assert results.exit_code == 0
+
+    results = runner.invoke(script.install, ["fastqc"])
+    assert results.exit_code == 0
+    results = runner.invoke(script.remove, ["fastqc"])
+    assert results.exit_code == 0
+

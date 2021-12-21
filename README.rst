@@ -50,6 +50,33 @@ and install `Singularity <https://sylabs.io/docs>`_.
 Type **damona** in a shell. This will initiate the tool with a config file in your HOME/.config/damona directory.
 Open a new shell and you are ready to go. Please the `Installation in details`_ section for more information.
 
+Quick Start
+===========
+
+First create an environment called TEST::
+
+    damona env --create TEST
+
+Second, activate it::
+
+    damona activate TEST
+
+Third install some binaries/images::
+
+    damona install fastqc:0.11.9
+
+That's it. Time to test. Type **fastqc**.
+
+To rename this TEST example::
+
+    damona env --rename TEST --new-name prod
+
+or delete it::
+
+    damona env --delete prod
+
+See more examples hereafter or in the user guide on https://damona.readthedocs.io
+
 Motivation
 ==========
 
@@ -250,12 +277,15 @@ Changelog
 ========= ====================================================================
 Version   Description
 ========= ====================================================================
+0.6.1     * Check that singularity is installed
+          * implement the remove command
 0.6.0     * add ability to upload images on zenodo. No need for external 
             repositories.
           * ability to add/delete a software from different images
           * implement --help for the activate/deactivate (non trivial)
           * add --rename option in 'damona env'
           * 'base' environment is now at the same level as other environments
+          * better bash script; no need for DAMONA_EXE variable anymore.
 0.5.3     * Fixing config/shell 
 0.5.2     * add missing shell package
 0.5.1     * add DAMONA_SINGULARITY_OPTIONS env variable in the binary

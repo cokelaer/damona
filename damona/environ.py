@@ -65,6 +65,10 @@ class Environment:
 
         return [x for x in binaries]
 
+    def __contains__(self, name):
+        binaries = [x.name for x in self.get_installed_binaries()]
+        return name in binaries
+
     def get_disk_usage(self):
         """Return virtual size of the environment if we were to
         copy/export all images"""
@@ -173,7 +177,8 @@ class Environment:
             time.sleep(1)
             p.mkdir()
 
-        filenames = [x for x in (self.path / "bin").glob("*") if not x.is_dir()]
+        filenames = [x for x in (self.path / "bin").glob("*") if not x.is_dir() 
+                        and not x.is_symlink() and x.name[0] != "."]
         for filename in filenames:
             with open(filename, "r") as fin:
                 data = fin.read()
@@ -219,13 +224,13 @@ class Environ:
             return pathlib.Path(os.environ["DAMONA_ENV"])
 
     @staticmethod
-    def get_current_env_name():
+    def get_current_env_name(warning=True):
         if "DAMONA_ENV" not in os.environ:
-            logger.warning(
-                "You do not have any environment activated. Please use "
-                "'damona activate ENVNAME' where ENVNAME is a valid environment"
-            )
-            # sys.exit(1)
+            if warning:
+                logger.warning(
+                    "You do not have any environment activated. Please use "
+                    "'damona activate ENVNAME' where ENVNAME is a valid environment"
+                )
             return None
         else:
             path = pathlib.Path(os.environ["DAMONA_ENV"])

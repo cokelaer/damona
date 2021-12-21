@@ -18,9 +18,8 @@ import os
 import sys
 import pathlib
 import re
-import subprocess
 
-from easydev import md5
+from easydev import md5, cmd_exists
 
 
 import colorlog
@@ -141,6 +140,7 @@ class Damona:
         Nb = len(binaries)
         Ni = len(images)
 
+        # keep print to make sure it is seen
         print(f"Found {Ni} images and {Nb} binaries. Checking consistencies")
         used_images = []
         for binary in binaries:
@@ -150,12 +150,13 @@ class Damona:
         used_images = set(used_images)
         Nu = len(used_images)
         No = Ni - Nu
-        print(f"{Nu} images is/are used. Meaning {No} are orphans and could be removed")
+        # keep print to make sure it is seen
+        print(f"{Nu} images is/are used. Meaning {No} are orphans and could be removed:")
         orphans = []
 
         for image in images:
             if image not in used_images:
-                logger.info(f"{image} image not used in any environments")
+                logger.info(f"{image} image not used.")
                 orphans.append(image)
         return orphans
 
@@ -316,3 +317,13 @@ class BinaryReader:
         container = container.replace(".img", "")
         container = ":".join(container.rsplit("_", 1))
         return container
+
+
+
+def requires_singularity(func):
+    def wrapper(ref, *args, **kwargs):
+        if cmd_exists("singularity"):
+            return func(ref, *args, **kwargs)
+        else:
+            logger.error("singularity command was not found. You must install 'singularity' to use Damona")
+    return wrapper

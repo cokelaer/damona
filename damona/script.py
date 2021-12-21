@@ -1,8 +1,8 @@
 ###########################################################################
-# Damona is a project to manage reproducible containers                  #
+# Damona is a project to manage reproducible containers                   #
 #                                                                         #
 # Authors: see CONTRIBUTORS.rst                                           #
-# Copyright © 2020-2021  Institut Pasteur, Paris and CNRS.                     #
+# Copyright © 2020-2021  Institut Pasteur, Paris and CNRS.                #
 # See the COPYRIGHT file for details                                      #
 #                                                                         #
 # Damona is free software: you can redistribute it and/or modify          #
@@ -26,10 +26,9 @@ import sys
 import pathlib
 import os
 
-
 from damona import version
 from damona import Damona
-from damona import Environ
+from damona import Environ, Environment
 
 from damona.registry import ImageName, Registry, Software
 
@@ -79,8 +78,6 @@ def main(level):
 
     "Make everything as simple as possible, but not simpler." -- Albert Einstein
     """
-    from damona.colors import Colors
-
     ######################## !!!!!!!!!!!! ####################
     # this function cannot print anything because the damona
     # activate command prints bash commands read by damona.sh
@@ -241,12 +238,10 @@ def activate(**kwargs):
     """
     # DO NOT PRINT ANYTHING HERE OTHERWISE YOU'LL BREADK
     # DAMONA BASH EXPORT.If yo do, use # as commented text
-    click.echo("#Inside main command")
     from damona import Environ
 
-    env = Environ()
-    env.activate(kwargs["name"])
-
+    envs = Environ()
+    envs.activate(kwargs['name'])
 
 @main.command()
 @click.argument("name", required=False, type=click.STRING, default=None)
@@ -375,25 +370,43 @@ def install(**kwargs):
 
 
 @main.command()
-@click.argument("--image", type=click.STRING)
-@click.option(
-    "--binaries",
-    help="""If not provided, we assume this is an executable singulatrity and its name is the binary name
-    """,
-)
-@click.option("--force", is_flag=True, help="force the removal of binaries or images")
+@click.argument("name", required=True, type=click.STRING)
+@click.option("--environment", type=click.STRING, default=None)
+#@click.option("--force", is_flag=True, help="force the removal of binaries or images")
 def remove(**kwargs):
-    """Remove images or binaries from an environment.
+    """Remove binaries or image from an environment.
 
-    If an image (and its binaries) is removed from an environment,
-    it may not be removed from DAMONA if it is used in other environments.
+    You can remove a binary from an environment.
 
-    However, all binaries related to this image will be altered. They will be removed
-    if not linked to an image anymore, or a previous binary related to another environment
-    may be activated back..
+    You can also remove an image (and its binaries) from an environment. Note, however, 
+    that the image is not deleted if usde in other environments.
     """
-    logger.warning("Not implemented")
-    pass
+    # First, let us figure out the current or user-defined environment
+    envs = Environ()
+    env_name = kwargs["environment"]
+    if not env_name:
+        env_name = envs.get_current_env_name(warning=False)
+        if env_name is None:
+            logger.error("You must activate a damina environment or use the --environment to define one where binary:image will be removed.")
+            sys.exit(1)
+
+    env = Environment(env_name)
+
+    # then, let us figure out what the user wants (remove a binary or image ?) and do it
+    name = kwargs["name"]
+    if kwargs["name"].endswith(".img"):
+        print(f"Removing image {name}")
+    else:
+        #Search for the name in the installed binaries
+        if name in env:
+            logger.info(f"Removing binary {name}")
+            binary = [x for x in env.get_installed_binaries() if x.name == name]
+            binary = binary[0]
+            binary.unlink()
+        else:
+            logger.warning(f"{name} was not found in the environment {env_name}. Not removed")
+
+
 
 
 '''
@@ -430,7 +443,6 @@ def clean(**kwargs):
     conda env --delete NAME
     """
     logger.debug(kwargs)
-    from damona import Damona
 
     dmn = Damona()
 
@@ -443,7 +455,7 @@ def clean(**kwargs):
         for x in orphans:
             os.remove(os.path.expanduser(x))
             logger.info(f"Removed {x}")
-    else:
+    elif len(orphans) != 0:
         logger.warning("Please use --remove to confirm that you want to remove the orphans")
 
     # Second, we find images that have no more binaries
@@ -531,9 +543,9 @@ def info(**kwargs):
 
         Images abd binaries available are shown
     """
+    from damona.environ import Environ
     logger.debug(kwargs)
     envname = kwargs["environment"]
-    from damona.environ import Environ
 
     manager = Environ()
 
@@ -570,21 +582,20 @@ def export(**kwargs):
         damona env --create TEST1 --from-bundle damona_test1.tar
 
     """
+    from damona import Environment
     logger.debug(kwargs)
+
     environment = kwargs["environment"]
     exclude = kwargs["exclude"]
+    envname = kwargs["environment"]
 
     # TODO This should be based on the binaries of the environment, not the images
     # to do so, we'll need an installed.txt file
 
-    from damona import Environment
-
-    envname = kwargs["environment"]
     env = Environment(envname)
     env.create_bundle(exclude=exclude)
-    logger.info(f"Saved environment into {environment}.tar")
     logger.info(
-        f"Use this command to create a new environment: damona env --create test --from-bundle {environment}.tar"
+        f"Use this command to create a new environment: \n\n\tdamona env --create test --from-bundle {environment}.tar"
     )
 
 
@@ -658,7 +669,6 @@ def stats(**kwargs):
 
     """
     from damona import admin
-
     admin.stats()
 
 

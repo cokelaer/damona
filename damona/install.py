@@ -28,7 +28,7 @@ from easydev import md5
 from spython.main import Client
 from damona import Registry
 from damona import Environ, Environment
-from damona.common import ImageReader
+from damona.common import ImageReader, requires_singularity
 
 
 DAMONA_PATH = os.environ["DAMONA_PATH"]
@@ -56,6 +56,8 @@ class CMD:
 
 
 class ImageInstaller:
+
+    @requires_singularity
     def _are_binaries_findable(self):
         # TODO add sanity check that stops the installation if a failure occurs
         for binary in self.binaries:
@@ -216,6 +218,7 @@ class RemoteImageInstaller(ImageInstaller):
 
         return True
 
+    @requires_singularity
     def pull_image(self, output_name=None, force=False):
 
         self.image_installed = False
@@ -249,7 +252,13 @@ class RemoteImageInstaller(ImageInstaller):
         else:
             from damona.registry import Software
 
-            r = Software(self.image_name).releases
+            soft = Software(self.image_name)
+
+            try:
+                r = soft.releases
+            except AttributeError:
+                logger.error(f"Could not find {self.image_name}. Use 'damona search' maybe")
+                sys.exit(1)
             latest = r.last_release
             logger.info(
                 f"No version found after {self.image_name} (e.g. fastqc:0.11.8)."
@@ -365,6 +374,7 @@ class BinaryInstaller:
         self.image = ImageReader(parent_image_path)
         self.binaries = binaries
 
+    @requires_singularity
     def install_binaries(self, force=False):
         """Install an image and its binary
 
