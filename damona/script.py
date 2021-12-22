@@ -28,7 +28,7 @@ import os
 
 from damona import version
 from damona import Damona
-from damona.common import  BinaryReader
+from damona.common import  BinaryReader, ImageReader, get_damona_path
 from damona import Environ, Environment
 
 from damona.registry import ImageName, Registry, Software
@@ -377,7 +377,25 @@ def install(**kwargs):
 def remove(**kwargs):
     """Remove binaries or image from an environment.
 
-    You can remove a binary from an environment.
+    You can remove a binary from an environment given its path. It will not be removed
+    if used by an executable if an environment.
+
+        damona remove /home/cokelaer/.config/damona/images/fastqc_0.11.8.img
+
+    if you have the name of the image, it works as well:
+
+        damona remove fastqc_0.11.8.img
+
+    You must give the .img extension in both cases otherwise it is considered 
+    to be a binary that you want to remove.
+
+    If you suppress a binary like here:
+
+        damona remove fastqc
+
+    it removes the binary from the activate environnt only. Then, it the image is now orpha, 
+    it is also removed.
+
 
     You can also remove an image (and its binaries) from an environment. Note, however, 
     that the image is not deleted if usde in other environments.
@@ -392,11 +410,20 @@ def remove(**kwargs):
             sys.exit(1)
 
     env = Environment(env_name)
+    dam = Damona()
 
     # then, let us figure out what the user wants (remove a binary or image ?) and do it
     name = kwargs["name"]
     if kwargs["name"].endswith(".img"):
-        print(f"Removing image {name}")
+
+        # we delete the image if it is an orphan
+        p = get_damona_path() / "images" / kwargs['name']
+        if p.exists():
+            ir = ImageReader(p)
+            ir.delete()
+        else:
+            logger.warning(f"input file {p} does not exists")
+
     else:
         #Search for the name in the installed binaries
         if name in env:
@@ -405,14 +432,17 @@ def remove(**kwargs):
             binary = binary[0]
             br = BinaryReader(binary)
             br.image
+
             # keep this info before deleting the file
             image_name = br.get_image()
+
             # we now delete the executable
             binary.unlink()
 
-            d = Damona()
-            if not d.is_image_used(image_name):
-                logger.warning(f"Warning. Be aware that the image {image_name} is not use anymore. Use damona remove {image_name}.img")
+            # and the image if required
+            p = get_damona_path() / "images" / (image_name.replace(":", "_") + ".img")
+            ir = ImageReader(p)
+            ir.delete()
         else:
             logger.warning(f"{name} was not found in the environment {env_name}. Not removed")
 
