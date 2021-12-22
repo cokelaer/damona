@@ -1,6 +1,15 @@
 minimap2:
+  doi: 10.5281/zenodo.5799480
+  zenodo_id: 5799481
   binaries: minimap2
   releases:
     2.17.0:
-      download: library://cokelaer/damona/minimap2:2.17.0
-      md5sum: a78eef5db5a07bf4f75d59fe4210280c
+      download: https://zenodo.org/record/5799481/files/minimap2_2.17.0.img
+      md5sum: 1c2d10150dd77814e1000af8f3654a59
+      doi: 10.5281/zenodo.5799481
+      filesize: 39202816
+    2.23.0:
+      download: https://zenodo.org/record/5799482/files/minimap2_2.23.0.img
+      md5sum: ed8f0fa9c690d7e6fc1dfdd17dbd5ed7
+      doi: 10.5281/zenodo.5799482
+      filesize: 38088704
