@@ -167,6 +167,11 @@ class Damona:
         images = Images()
         return list(images.files)
 
+    def is_image_used(self, name):
+        images_used = set([x for x in self.get_all_binaries() if name in BinaryReader(x).get_image()])
+        return name in images_used
+
+
 
 class ImageReader:
     """Manage a single image"""
