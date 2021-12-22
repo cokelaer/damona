@@ -47,7 +47,11 @@ If you are in a hurry, just type::
 
 and install `Singularity <https://sylabs.io/docs>`_. 
 
-Type **damona** in a shell. This will initiate the tool with a config file in your HOME/.config/damona directory.
+Type **damona** in a shell. This will initiate the tool with a config file in your HOME/.config/damona directory and tell you 
+to add this command in your .bashrc::
+
+    source ~/.config/damona/damona.sh
+
 Open a new shell and you are ready to go. Please the `Installation in details`_ section for more information.
 
 Quick Start
