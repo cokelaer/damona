@@ -30,6 +30,15 @@ logger = colorlog.getLogger(__name__)
 __all__ = ["Damona", "ImageReader", "BinaryReader", "DamonaInit"]
 
 
+def get_damona_path():
+    if "DAMONA_PATH" not in os.environ:
+        logger.error(
+            "DAMONA_PATH not found in your environment. You must define "
+            "it. In this shell, type 'export DAMONA_PATH=PATH_WHERE_TO_PLACE_DAMONA'"
+        )
+        sys.exit(1)
+    return pathlib.Path(os.environ["DAMONA_PATH"])
+
 class DamonaInit:
     """Class to create images/bin directory for DAMONA
 
@@ -79,14 +88,7 @@ class Damona:
     """
 
     def __init__(self):
-
-        if "DAMONA_PATH" not in os.environ:
-            logger.error(
-                "DAMONA_PATH not found in your environment. You must define "
-                "it. In this shell, type 'export DAMONA_PATH=PATH_WHERE_TO_PLACE_DAMONA'"
-            )
-            sys.exit(1)
-        self.damona_path = pathlib.Path(os.environ["DAMONA_PATH"])
+        self.damona_path = get_damona_path()
 
     def _get_config_path(self):
         return self.damona_path / "damona.cfg"
@@ -196,6 +198,13 @@ class ImageReader:
             logger.error("Invalid image name. Your input image must end in .img or .sif")
             sys.exit(1)
 
+    def delete(self):
+        if self.is_orphan():
+            logger.warning(f"deleting {self.filename} since it is not used anymore by any environments")
+            self.filename.unlink()
+        else:
+            logger.warning(f"{self.filename} not deleted because it is still used. Removing an image that is used is not yet implemented")
+
     def _get_short_name(self):
         return self.filename.name
 
@@ -241,9 +250,10 @@ class ImageReader:
         binaries = Damona().get_all_binaries()
         linked_binaries = []
         for binary in binaries:
-            if self.filename == BinaryReader(binary).image:
+            if BinaryReader(binary).is_image_available():
                 linked_binaries.append(binary)
-        if len(binaries) == 0:
+
+        if len(linked_binaries) == 0:
             return True
         else:
             return False
