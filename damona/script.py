@@ -28,6 +28,7 @@ import os
 
 from damona import version
 from damona import Damona
+from damona.common import  BinaryReader
 from damona import Environ, Environment
 
 from damona.registry import ImageName, Registry, Software
@@ -402,7 +403,16 @@ def remove(**kwargs):
             logger.info(f"Removing binary {name}")
             binary = [x for x in env.get_installed_binaries() if x.name == name]
             binary = binary[0]
+            br = BinaryReader(binary)
+            br.image
+            # keep this info before deleting the file
+            image_name = br.get_image()
+            # we now delete the executable
             binary.unlink()
+
+            d = Damona()
+            if not d.is_image_used(image_name):
+                logger.warning(f"Warning. Be aware that the image {image_name} is not use anymore. Use damona remove {image_name}.img")
         else:
             logger.warning(f"{name} was not found in the environment {env_name}. Not removed")
 
