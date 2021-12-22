@@ -84,10 +84,10 @@ jobs:
         pip install .
     - name: Test with pytest
       run: |
-	damona env --create TEST
+        damona env --create TEST
         damona activate TEST
         damona install hisat2
-	damona install fastqc
+        damona install fastqc
       env:
         DAMONA_EXE: /usr/share/miniconda/bin/damona
         DAMONA_PATH: /home/runner/.config/damona
