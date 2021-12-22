@@ -1,6 +1,9 @@
 rnaseqc:
-    releases:
-      2.35.0:
-        download: damona::rnaseqc_2.35.0.img
-        md5sum: v6097f3d124cbfc0e053afa6c61970468
-
+  doi: 10.5281/zenodo.5799563
+  zenodo_id: 5799564
+  releases:
+    2.35.0:
+      download: https://zenodo.org/record/5799564/files/rnaseqc_2.35.0.img
+      md5sum: 42f2cfdac1fbfbd536ec9ec0a226521a
+      doi: 10.5281/zenodo.5799564
+      filesize: 364236800
