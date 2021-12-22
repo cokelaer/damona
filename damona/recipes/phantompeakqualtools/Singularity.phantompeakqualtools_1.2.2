@@ -5,8 +5,6 @@ From: cokelaer/damona/conda:4.7.12
 %labels
     Author thomas cokelaer
     Version v1.2.2
-    DAMONA_TYPE exe
-    DAMONA_BIN run_spp.R
 
 %post
 
@@ -19,7 +17,6 @@ From: cokelaer/damona/conda:4.7.12
     # Let us save some space
     conda clean --packages -y
     conda clean --all -y # next requires lots of space
-    ###rm -rf /usr/local/anaconda/pkgs
 
     export PATH=/usr/local/anaconda/bin:$PATH
 
