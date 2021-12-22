@@ -17,9 +17,8 @@ The second is the **zenodo-upload** command::
     damona zenodo-upload --help
 
 
-
-All images will be posted on Zenodo
-------------------------------------
+All images will be posted on Zenodo if Singularity recipe is in Damona
+----------------------------------------------------------------------
 
 The goal is to have a unique and official DOI for each tool.
 ::
@@ -184,5 +183,28 @@ Upload image on sylabs
     singularity build salmon.img Singularity.salmon_1.3.0
     singularity sign salmon.img
 	singularity push salmon.img library://cokelaer/damona/salmon:1.3.0
+
+What about reusing a docker image
+----------------------------------
+
+
+You can. See for example the hisat2 image here: https://github.com/cokelaer/damona/tree/master/damona/recipes/hisat2
+
+It looks like::
+
+
+    hisat2:
+        releases:
+          2.1.0:
+            download: docker://biocontainers/hisat2:v2.1.0-2-deb_cv1
+            binaries: hisat2 hisat2-build
+            md5sum: e680e5ab181e73a8b367693a7bd71098
+
+Here, there is no zenodo link though because it is already on docker.
+
+
+
+
+
 
 
