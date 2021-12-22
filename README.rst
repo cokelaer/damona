@@ -274,11 +274,13 @@ guide here below.
 Changelog
 =========
 
-========= ====================================================================
+========= ========================================================================
 Version   Description
-========= ====================================================================
-0.6.1     * Check that singularity is installed
-          * implement the remove command
+========= ========================================================================
+0.7.0     * Check that singularity is installed
+          * implement the remove command: 
+            https://github.com/cokelaer/damona/issues/15
+          * more recipes cleanup (https://github.com/cokelaer/damona/issues/12)
 0.6.0     * add ability to upload images on zenodo. No need for external 
             repositories.
           * ability to add/delete a software from different images
@@ -321,7 +323,7 @@ Version   Description
 0.2.0     first working version of damona to pull image locally with binaries
 0.1.1     small update to fix RTD, travis, coveralls
 0.1       first release to test feasibility of the project
-========= ====================================================================
+========= ========================================================================
 
 
 
