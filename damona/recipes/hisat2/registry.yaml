@@ -3,3 +3,5 @@ hisat2:
       2.1.0:
         download: docker://biocontainers/hisat2:v2.1.0-2-deb_cv1
         binaries: hisat2 hisat2-build
+        md5sum: e680e5ab181e73a8b367693a7bd71098
+
