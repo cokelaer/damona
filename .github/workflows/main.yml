@@ -70,7 +70,7 @@ jobs:
     - name: Set up Python 3.X
       uses: actions/setup-python@v2
       with:
-        ipython-version: ${{ matrix.python }}
+        python-version: ${{ matrix.python }}
     - name: conda
       run: |
         # $CONDA is an environment variable pointing to the root of the miniconda directory
