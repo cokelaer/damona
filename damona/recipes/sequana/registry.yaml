@@ -1,0 +1,10 @@
+sequana:
+  doi: 10.5281/zenodo.5799538
+  binaries: sequana sequana_coverage sequana_taxonomy
+  zenodo_id: 5799539
+  releases:
+    0.12.6:
+      download: https://zenodo.org/record/5799539/files/sequana_0.12.6.img
+      md5sum: 1adeb0ea33a1174cb1393e5ef48b353c
+      doi: 10.5281/zenodo.5799539
+      filesize: 528461824
