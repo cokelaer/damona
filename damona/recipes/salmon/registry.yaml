@@ -6,3 +6,4 @@ salmon:
       download: https://zenodo.org/record/5708843/files/salmon_1.3.0.img
       md5sum: affaafe23fc5e8974ab52fc976617e51
       doi: 10.5281/zenodo.5708843
+      filesize: 336496158
