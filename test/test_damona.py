@@ -162,7 +162,13 @@ def test_import_bundle(monkeypatch):
     results = runner.invoke(script.export, ["damona__testing__"])
     results = runner.invoke(script.env, ["--create","damona__testing2__", 
         "--from-bundle", "damona_damona__testing__.tar"])
+    
+    # supress this temporary environment
+    with mock.patch.object(builtins, "input", lambda _: "y"):
+        results = runner.invoke(script.env, ["--delete", "damona__testing2__"])
+        assert results.exit_code == 0
 
+    # supress the damona__testing__ temporary environment
     teardown()
 
 def teardown():
@@ -171,9 +177,6 @@ def teardown():
         results = runner.invoke(script.env, ["--delete", "damona__testing__"])
         assert results.exit_code == 0
 
-    with mock.patch.object(builtins, "input", lambda _: "y"):
-        results = runner.invoke(script.env, ["--delete", "damona__testing2__"])
-        assert results.exit_code == 0
 
 
 def setup():
