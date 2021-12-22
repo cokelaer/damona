@@ -4,8 +4,6 @@ From: cokelaer/damona:r_4.0.2
 %labels
     Author thomas cokelaer
     Version v1.7.1
-    DAMONA_BIN rnadiff
-    DAMONA_ENV exe
 
 %post
     export PATH=$PATH:/usr/bin
@@ -21,9 +19,6 @@ From: cokelaer/damona:r_4.0.2
     apt-get update
     apt-get install -y texlive-latex-base
     apt-get install -y texlive-fonts-extra
-
-    ###apt-get install texlive-fonts-recommended
-    ###apt-get install texlive-latex-extra
 
     # This remove 900Mb of tex documentation...
     apt-get -y --purge remove tex.\*-doc$
