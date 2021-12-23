@@ -1,10 +1,16 @@
 kraken:
+  doi: 10.5281/zenodo.5801359
+  zenodo_id: 5801360
   releases:
     1.1.0:
-      download: library://cokelaer/damona/kraken:1.1.0
+      download: https://zenodo.org/record/5801360/files/kraken_1.1.0.img
+      md5sum: 76eeee10ca6b713772f2353513d9f133
+      doi: 10.5281/zenodo.5801360
+      filesize: 332509184
       binaries: kraken kraken-build kraken-filter kraken-mpa-report kraken-report kraken-translate
-      md5sum: 4d14031cf4ff4684c43f73fbd09cd442
     2.0.9:
-      download: library://cokelaer/damona/kraken:2.0.9
-      binaries: kraken2 kraken2-build ktImportText 
+      download: https://zenodo.org/record/5801365/files/kraken_2.0.9.img
       md5sum: bc195a921148969c7f9482f9fe25b3cd
+      doi: 10.5281/zenodo.5801365
+      filesize: 723301918
+      binaries: kraken2 kraken2-build ktImportText 
