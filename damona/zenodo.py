@@ -377,3 +377,24 @@ analysis.""",
         msg += f"      doi: {this_doi}\n"
         msg += f"      filesize: {filesize}"  # no EOF
         return msg
+
+
+def get_stats_id(ID):
+    """Returns number of downloads"""
+    from bs4 import BeautifulSoup
+    r = requests.get(f'https://zenodo.org/record/{ID}')
+    bs = BeautifulSoup(r.content)
+
+    for x in bs.find(id="collapse-stats").find_all("tr"):
+        entries = []
+        for xx in x.find_all("td"):
+            entries.append(xx)
+        if len(entries):
+            if entries[0].contents[0].strip() == "Downloads":
+                stats = entries[2].contents[0]
+                return int(stats)
+
+    # if could not find the info, return -1
+    return -1
+ 
+

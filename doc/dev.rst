@@ -52,10 +52,7 @@ Create a new Singulariry image. Time to upload the resulting (functional !) imag
 
     damona zenodo-upload SOFTWARE_2.0.0.img --mode zenodo
 
-
 It updates the existing registry.yaml ready to commit and push
-
-
 
 tree structure
 --------------
@@ -133,6 +130,20 @@ like
         0.11.8:
             download: URL
             md5sum:
+
+
+The download link can be of three types:
+
+1. a valid URL
+2. an image on the damona website. For instance with ucsc recipes, we stored it on the damona URL, which is::
+
+       download: damona::ucsc_0.1.0.img
+
+   it will look for the damona URL. This is an alias to https://biomics.pasteur.fr/salsa/damona/ucsc_0.1.0.img
+3. an image stored on syslab.io::
+
+   library://cokelaer/damona/conda:4.7.12
+
 
 
 

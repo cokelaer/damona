@@ -199,7 +199,7 @@ class RemoteImageInstaller(ImageInstaller):
 
     If you have a damona registry on your website, you can download from a URL:
 
-        damona install fastqc:0.11.9 --from-url https://yourwebsite
+        damona install fastqc:0.11.9 --url https://yourwebsite
 
     """
 

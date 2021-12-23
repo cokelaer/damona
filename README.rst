@@ -282,10 +282,12 @@ Changelog
 Version   Description
 ========= ========================================================================
 0.7.0     * Check that singularity is installed
-          * implement the remove command: 
+          * implement the remove command 
             https://github.com/cokelaer/damona/issues/15
           * more recipes cleanup (https://github.com/cokelaer/damona/issues/12)
           * removed damona recipes (pure python package)
+          * cleanup all recipes
+          * add zenodo stats (for admin)
 0.6.0     * add ability to upload images on zenodo. No need for external 
             repositories.
           * ability to add/delete a software from different images

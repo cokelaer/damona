@@ -85,12 +85,13 @@ jobs:
     - name: Test installation hisat2
       run: |
         damona env --create TEST
-        damona activate TEST
+        #damona activate TEST
         damona install hisat2
         damona install fastqc
       env:
         DAMONA_EXE: /usr/share/miniconda/bin/damona
         DAMONA_PATH: /home/runner/.config/damona
+        DAMONA_ENV: /home/runner/.config/damona/envs/TEST
         DAMONA_SINGULARITY_OPTIONS: ""
    
 

@@ -77,3 +77,8 @@ def test(mocker):
     #assert data1 == data2
 
     z.get_id(deposit)
+
+def test_get_stat():
+    from damona.zenodo import get_stats_id
+    stats = get_stats_id("5708811")
+    assert stats >0
