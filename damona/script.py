@@ -30,8 +30,10 @@ from damona import version
 from damona import Damona
 from damona.common import  BinaryReader, ImageReader, get_damona_path
 from damona import Environ, Environment
-
+from damona.install import RemoteImageInstaller
+from damona.install import LocalImageInstaller
 from damona.registry import ImageName, Registry, Software
+
 
 manager = Damona()
 
@@ -237,7 +239,7 @@ def activate(**kwargs):
         damona activate my_favorite_env
 
     """
-    # DO NOT PRINT ANYTHING HERE OTHERWISE YOU'LL BREADK
+    # DO NOT PRINT ANYTHING HERE OTHERWISE YOU'LL BREAK
     # DAMONA BASH EXPORT.If yo do, use # as commented text
     from damona import Environ
 
@@ -254,7 +256,7 @@ def deactivate(**kwargs):
         damona deactivate
 
     """
-    # DO NOT PRINT ANYTHING HERE OTHERWISE YOU'LL BREADK
+    # DO NOT PRINT ANYTHING HERE OTHERWISE YOU'LL BREAK
     # DAMONA BASH EXPORT.If yo do, use # as commented text
     from damona import Environ
 
@@ -343,7 +345,6 @@ def install(**kwargs):
             logger.info(f"Installing from online registry  (url: {url})")
         else:
             logger.info("Installing from Damona registry")
-        from damona.install import RemoteImageInstaller
 
         p = RemoteImageInstaller(kwargs["image"], from_url=kwargs["url"], cmd=sys.argv, binaries=binaries)
         if p.is_valid():
@@ -357,7 +358,6 @@ def install(**kwargs):
     else:
         # This install the image and associated binary/binaries
         logger.info(f"Installing local container in {cenv}")
-        from damona.install import LocalImageInstaller
 
         lii = LocalImageInstaller(image_path, cmd=sys.argv, binaries=binaries)
         if lii.is_valid():
@@ -445,29 +445,6 @@ def remove(**kwargs):
             ir.delete()
         else:
             logger.warning(f"{name} was not found in the environment {env_name}. Not removed")
-
-
-
-
-'''
-@main.command()
-@click.argument('name', required=True, type=click.STRING)
-@click.option("--from-image", required=True)
-@click.option("--env", required=True)
-def add_binary(**kwargs):
-    """Create a binary linked to an existing image in a specfici environment
-
-        conda add-binary fastqc --from-image test_0.4.0.img --env ENVNAME
-    """
-    logger.debug(kwargs)
-    raise NotImplementedError
-    #TODO check that env exists
-    env = kwargs['env']
-    if env not in manager.environment_names:
-        logger.error(f"Environment {env} not found. Check valid names using 'damona env'")
-        sys.exit()
-    raise NotImplementedError
-'''
 
 
 @main.command()

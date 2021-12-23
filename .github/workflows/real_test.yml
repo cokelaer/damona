@@ -82,7 +82,7 @@ jobs:
         pip install -r requirements.txt
         pip install -r requirements_dev.txt
         pip install .
-    - name: Test with pytest
+    - name: Test installation hisat2
       run: |
         damona env --create TEST
         damona activate TEST
@@ -91,6 +91,7 @@ jobs:
       env:
         DAMONA_EXE: /usr/share/miniconda/bin/damona
         DAMONA_PATH: /home/runner/.config/damona
+        DAMONA_SINGULARITY_OPTIONS: ""
    
 
 

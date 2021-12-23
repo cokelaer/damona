@@ -285,6 +285,7 @@ Version   Description
           * implement the remove command: 
             https://github.com/cokelaer/damona/issues/15
           * more recipes cleanup (https://github.com/cokelaer/damona/issues/12)
+          * removed damona recipes (pure python package)
 0.6.0     * add ability to upload images on zenodo. No need for external 
             repositories.
           * ability to add/delete a software from different images
