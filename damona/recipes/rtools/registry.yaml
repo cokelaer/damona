@@ -1,9 +1,15 @@
 rtools:
-    binaries: R Rscript
-    releases:
-      1.0.0:
-        download: library://cokelaer/damona/rtools:1.0.0
-        md5sum: aca2d4bc42486926dccc4613502913e3
-      1.1.0:
-        download: library://cokelaer/damona/rtools:1.1.0
-        md5sum: abc0955827c1c411825eafbb494c5fcf
+  binaries: R Rscript
+  doi: 10.5281/zenodo.5801841
+  zenodo_id: 5801842
+  releases:
+    1.0.0:
+      download: https://zenodo.org/record/5801842/files/rtools_1.0.0.img
+      md5sum: aca2d4bc42486926dccc4613502913e3
+      doi: 10.5281/zenodo.5801842
+      filesize: 1657333278
+    1.1.0:
+      download: https://zenodo.org/record/5801845/files/rtools_1.1.0.img
+      md5sum: abc0955827c1c411825eafbb494c5fcf
+      doi: 10.5281/zenodo.5801845
+      filesize: 1732617758
