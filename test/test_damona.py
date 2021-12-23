@@ -53,6 +53,8 @@ def test_damona_info():
 
 
 def test_damona_create_and_export(monkeypatch):
+    setup()
+
     manager = Damona()
 
     # make sure it exists
@@ -68,8 +70,9 @@ def test_damona_create_and_export(monkeypatch):
     status = subprocess.call(cmd.split())
     assert status == 0
 
+    teardown()
+
 def test_env():
-    setup()
 
     # list the packages
     runner = CliRunner()
@@ -90,9 +93,8 @@ def test_env():
     results = runner.invoke(script.env, ["--rename", "test", "--delete" , "test"])
     assert results.exit_code == 1
 
-    # make sure it exists
-    results = runner.invoke(script.env, ["--create", "damona__testing__"])
-    assert results.exit_code == 0
+    # create damona__testing__ env
+    setup()
 
     # delete it
     import mock
@@ -143,6 +145,7 @@ def test_stats():
 
 def test_export():
     runner = CliRunner()
+    setup()
 
     if "damona__testing__" not in Environ().environment_names:
         results = runner.invoke(script.env, ["--create", "damona__testing__"])
@@ -150,6 +153,8 @@ def test_export():
 
     results = runner.invoke(script.export, ["damona__testing__"])
     assert results.exit_code == 0
+
+    teardown()
 
 def test_import_bundle(monkeypatch):
     manager = Damona()

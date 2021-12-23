@@ -383,7 +383,7 @@ def get_stats_id(ID):
     """Returns number of downloads"""
     from bs4 import BeautifulSoup
     r = requests.get(f'https://zenodo.org/record/{ID}')
-    bs = BeautifulSoup(r.content)
+    bs = BeautifulSoup(r.content, features="html.parser")
 
     for x in bs.find(id="collapse-stats").find_all("tr"):
         entries = []
