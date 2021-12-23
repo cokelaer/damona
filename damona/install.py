@@ -29,6 +29,7 @@ from spython.main import Client
 from damona import Registry
 from damona import Environ, Environment
 from damona.common import ImageReader, requires_singularity
+from damona.registry import Software
 
 
 DAMONA_PATH = os.environ["DAMONA_PATH"]
@@ -250,7 +251,6 @@ class RemoteImageInstaller(ImageInstaller):
                 logger.critical("Maybe you meant one of: {}".format(guesses))
                 sys.exit(1)
         else:
-            from damona.registry import Software
 
             soft = Software(self.image_name)
 
