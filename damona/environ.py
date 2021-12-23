@@ -298,7 +298,7 @@ class Environ:
 
         env_path = manager.environments_path / env_name
         print("    export DAMONA_ENV={};".format(env_path))
-        print("export PATH={}/bin:${{PATH}}".format(env_path))
+        print("    export PATH={}/bin:${{PATH}}".format(env_path))
         logger.info(f"# Added damona path ({env_path}) in your PATH")
 
     def deactivate(self, env_name=None):
@@ -313,20 +313,26 @@ class Environ:
         for path in paths:
             # if deactivate without name, we remove the last one only
             if env_name and str(manager.damona_path / "envs" / env_name / "bin") == path:
-                logger.info(f"# Found damona path ({path}), now removed from your PATH")
+                logger.info(f"# Found damona path ({path}), to be removed from your PATH")
                 found = True
             elif not env_name and f"/damona/envs/" in str(path) and not found:
-                logger.info(f"# Found damona path ({path}), now removed from your PATH")
+                logger.info(f"# Found a damona path ({path}), to be removed from your PATH")
                 found = True
-            else:  # keep track of the DAMONA_ENV.
+            else:  # keep track of other paths.
                 newPATH.append(path)
 
         if found is False:
             logger.info("# no more active damona environment in your path. Use 'damona activate ENVNAME'")
 
+
         first_damona_path = [x for x in newPATH if "/damona/envs/" in x]
         if len(first_damona_path):
-            first_damona_path = first_damona_path[0]
+            # in theory, there must be a /bin at the end of the path;
+            # we should get rid of it
+            first_damona_path = pathlib.Path(first_damona_path[0])
+            assert first_damona_path.name == "bin", "found a damona path with name different from 'bin'"
+            first_damona_path = str(first_damona_path.parent)
+
             print(f"    export DAMONA_ENV={first_damona_path};")
         else:
             print("    unset DAMONA_ENV")
