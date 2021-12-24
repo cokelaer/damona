@@ -1,6 +1,10 @@
 DAMONA
 ######
 
+.. image:: https://raw.githubusercontent.com/cokelaer/damona/master/doc/damona_logo.png
+
+--
+
 .. image:: https://badge.fury.io/py/damona.svg
     :target: https://pypi.python.org/pypi/damona
 
