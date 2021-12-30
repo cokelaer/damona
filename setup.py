@@ -108,8 +108,9 @@ setup(
     package_data = {
         'damona': ['*.cfg'],
         'damona.shell': ['*/*'],
-        'damona.recipes' : ['*/Singularity.*', '*/registry.yaml'],
-        '': ["damona/shell/damona.sh"]
+        'damona.software' : ['*/Singularity.*', '*/registry.yaml'],
+        '': ["damona/shell/bash/damona.sh"]
+        '': ["damona/shell/fish/damona.fish"]
         },
 
     cmdclass={"develop": PostDevelopCommand, "install": PostInstallCommand},
