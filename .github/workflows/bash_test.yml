@@ -1,4 +1,4 @@
-name: Real test
+name: bash shelll test
 
 on:
   workflow_dispatch:

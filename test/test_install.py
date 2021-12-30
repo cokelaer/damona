@@ -30,9 +30,10 @@ def test_cmd():
 def test_ImageInstaller(monkeypatch):
 
     runner = CliRunner()
-    setup()
+    NAME = "damona__testing__install_ImageInstaller"
+    setup(NAME)
     manager = Damona()
-    monkeypatch.setenv("DAMONA_ENV", str(manager.damona_path / "envs/damona__testing__"))
+    monkeypatch.setenv("DAMONA_ENV", str(manager.damona_path / "envs" / NAME))
 
     # This re-installs the image, interfering with the user's local image but should be safe
     results = runner.invoke(script.install, [f"{test_dir}/data/testing_1.0.0.img", "--binaries", "hello", "--force"])
@@ -51,21 +52,21 @@ def test_ImageInstaller(monkeypatch):
     assert results.exit_code == 1
 
 
-    teardown()
+    teardown(NAME)
 
 
-def teardown():
+def teardown(NAME):
     runner = CliRunner()
     with mock.patch.object(builtins, "input", lambda _: "y"):
-        results = runner.invoke(script.env, ["--delete", "damona__testing__"])
+        results = runner.invoke(script.env, ["--delete", NAME])
         assert results.exit_code == 0
 
 
 
-def setup():
+def setup(NAME):
     runner = CliRunner()
-    if "damona__testing__" not in Environ().environment_names:
-        results = runner.invoke(script.env, ["--create", "damona__testing__"])
+    if NAME not in Environ().environment_names:
+        results = runner.invoke(script.env, ["--create", NAME])
         assert results.exit_code == 0
 
 

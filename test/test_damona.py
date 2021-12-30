@@ -82,7 +82,7 @@ def test_damona_create_and_install(monkeypatch):
     results = runner.invoke(script.env, ["--create", NAME])
     assert results.exit_code == 0
 
-    monkeypatch.setenv("DAMONA_ENV", str(manager.damona_path / "envs/damona__testing__"))
+    monkeypatch.setenv("DAMONA_ENV", str(manager.damona_path / "envs" / NAME))
     cmd = "damona install fastqc"
     status = subprocess.call(cmd.split())
     assert status == 0
