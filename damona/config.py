@@ -20,6 +20,8 @@ import pathlib
 from easydev import CustomConfig
 
 import colorlog
+            
+import damona.shell
 
 logger = colorlog.getLogger(__name__)
 
@@ -32,7 +34,7 @@ __all__ = ["Config"]
 
 
 class Config:
-    """A place holder to store our configutation file
+    """A place holder to store our configuration file and shell scripts
 
     ::
 
@@ -65,6 +67,7 @@ class Config:
 
         # create the shell script once for all
         created = self.add_shell()
+        created = self.add_fish()
         if created:  # pragma: no cover
             logger.critical(
                 "Please start a new shell to benefit from " "the configuration file and activate/deactivate command"
@@ -85,12 +88,36 @@ class Config:
             logger.info("adding a damona.sh in your DAMONA_PATH")
             _damona_config_path = self.user_config_dir
             logger.warning(f"Creating damona.sh file in {_damona_config_path}. ")
-            import damona.shell
 
-            shell_path = damona.shell.__path__[0]
-            with open(shell_path + os.sep + "damona.sh", "r") as fin:
+            shell_path = pathlib.Path(damona.shell.__path__[0])
+            with open(shell_path / "bash" /  "damona.sh", "r") as fin:
                 with open(_damona_config_path / "damona.sh", "w") as fout:
                     fout.write(fin.read())
             return True
         else:
             return False
+
+    def add_fish(self):
+        if os.path.exists(self.user_config_dir/ "damona.fish") is False:
+            logger.info("adding a damona.fish in your DAMONA_PATH")
+            _damona_config_path = self.user_config_dir
+            logger.warning(f"Creating damona.fish file in {_damona_config_path}. ")
+
+            shell_path = pathlib.Path(damona.shell.__path__[0])
+            with open(shell_path / "fish" /  "damona.fish", "r") as fin:
+                with open(_damona_config_path / "damona.fish", "w") as fout:
+                    fout.write(fin.read())
+            return True
+        else:
+            return False
+
+
+def get_damona_commands():
+    """Print commands. This is for the fish completion"""
+    from damona import script 
+    commands = [x for x in dir(script) if "allow_interspersed_args" in dir(getattr(script, x))]
+    commands = [x for x in commands if not getattr(script, x).hidden]
+    commands = [x for x in commands if x != "main"]
+    print("\n".join(commands))
+
+
