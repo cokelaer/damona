@@ -25,7 +25,8 @@ jobs:
           docker version
           docker run --rm hello-world
     - name: Install Fish
-        run: FISH_RELEASE=${{ matrix.fish }} tools/ci-install-fish.sh
+      run: |
+        FISH_RELEASE=${{ matrix.fish }} tools/ci-install-fish.sh
     - name: Install singularity
       run: |
 
