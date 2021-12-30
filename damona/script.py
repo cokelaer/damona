@@ -26,6 +26,7 @@ import sys
 import pathlib
 import os
 
+
 from damona import version
 from damona import Damona
 from damona.common import  BinaryReader, ImageReader, get_damona_path
@@ -85,73 +86,12 @@ def main(level):
     # this function cannot print anything because the damona
     # activate command prints bash commands read by damona.sh
     ######################## !!!!!!!!!!!! ####################
-    from damona import logger
-
     logger.setLevel(level)
 
 
-@main.command(hidden=True)
-@click.argument("filename", required=True, type=click.STRING)
-@click.option("--destination", default=None, help="Not implemented yet")
-@click.option("--force", is_flag=True, help="add --force option")
-def build(**kwargs):  # pragma: no cover
-    """Build a container from dockerhub, singularity file or damona recipes.
-
-    Note that to use this command, you must have sudo permissions.
-    If not, you will need to download existing images. See the "damona install
-    command".
-
-    You can build a singularity image from a local singularity file. Note that
-    your Singulary recipes must follow the naming convention
-    Singularity.NAME_x,y,z
-
-    \b
-        # a local recipes (recipes must have a version)
-        damona build Singularity.salmon_1.3.0
-
-    You may build an image from a singularity recipes to be found in Damona
-    itself. In such case, the name and version are enough. Siuch recipes can be
-    listed using "damona list"
-
-        damona build salmon:1.3.0
-
-    You may also build image from a docker image to be found on docker hub:
-
-    \b
-        damona build docker://biocontainers/bowtie2:v2.4.1_cv1
-        damona build docker://kapeel/hisat2
-
-    TO be implemented: from singularity hub or sylabs.io
-
-    """
-    logger.debug(kwargs)
-    filename = kwargs["filename"]
-    force = kwargs["force"]
-    destination = kwargs["destination"]
-
-    if destination:
-        if destination.endswith(".img") is False:
-            logger.warning("You should end your image with the .img extension")
-        if "_" not in destination:
-            logger.warning("You should name your image as NAME_x.y.z")
-
-    if os.path.exists(filename) and os.path.isdir(filename) is False:
-        # TODO check that it starts with Singularity
-        # local recipes ?
-        from damona.builders import BuilderFromSingularityRecipe
-
-        builder = BuilderFromSingularityRecipe()
-        builder.build(filename, destination=destination, force=force)
-    elif kwargs["filename"].startswith("docker://"):
-        from damona.builders import BuilderFromDocker
-
-        builder = BuilderFromDocker()
-        filename = filename.replace("docker://", "")
-        builder.build(filename, destination=destination, force=force)
-    else:  # could be a damona recipes
-        logger.info("Not a docker URL, nor a local file.")
 
 
+# =================================================================== env
 @main.command()
 @click.option("--create", type=click.STRING, help="""create a new environment""")
 @click.option("--delete", type=click.STRING, help="""Delete an existing environment""")
@@ -219,12 +159,11 @@ def env(**kwargs):
         if kwargs["new_name"] == "":
             logger.error("If you use --rename, you must provide a new name with --new-name")
             sys.exit(1)
-        from damona.environ import Environment
-
         env = Environment(kwargs["rename"])
         env.rename(kwargs["new_name"], force=kwargs["force"])
 
 
+# =================================================================== activate
 @main.command()
 @click.argument("name", required=True, type=click.STRING)
 def activate(**kwargs):
@@ -241,11 +180,11 @@ def activate(**kwargs):
     """
     # DO NOT PRINT ANYTHING HERE OTHERWISE YOU'LL BREAK
     # DAMONA BASH EXPORT.If yo do, use # as commented text
-    from damona import Environ
-
     envs = Environ()
     envs.activate(kwargs['name'])
 
+
+# =================================================================== deactivate
 @main.command()
 @click.argument("name", required=False, type=click.STRING, default=None)
 def deactivate(**kwargs):
@@ -258,12 +197,11 @@ def deactivate(**kwargs):
     """
     # DO NOT PRINT ANYTHING HERE OTHERWISE YOU'LL BREAK
     # DAMONA BASH EXPORT.If yo do, use # as commented text
-    from damona import Environ
-
     env = Environ()
     env.deactivate(kwargs["name"])
 
 
+# =================================================================== install
 @main.command()
 @click.argument("image", required=True, type=click.STRING)
 @click.option("--force-image", is_flag=True, help="Replaces existing image.")
@@ -315,9 +253,7 @@ def install(**kwargs):
     """
     logger.debug(kwargs)
 
-    from damona import environ
-
-    env = environ.Environ()
+    env = Environ()
     cenv = env.get_current_env()
 
     # url
@@ -368,8 +304,10 @@ def install(**kwargs):
                 fout.write(f"\n{time.asctime()}: {cmd}")
         else:
             logger.critical("Something wrong with your image/binaries. See message above")
+            sys.exit(1)
 
 
+# =================================================================== remove
 @main.command()
 @click.argument("name", required=True, type=click.STRING)
 @click.option("--environment", type=click.STRING, default=None)
@@ -447,6 +385,7 @@ def remove(**kwargs):
             logger.warning(f"{name} was not found in the environment {env_name}. Not removed")
 
 
+# =================================================================== clean
 @main.command()
 @click.option("--remove", is_flag=True, help="--remove the binary and image orphans in all environments ")
 def clean(**kwargs):
@@ -482,7 +421,7 @@ def clean(**kwargs):
     else:
         logger.info(f"Found {len(orphans)} orphans.")
 
-    if kwargs["remove"]:
+    if kwargs["remove"]: #pragma: no cover
         for x in orphans:
             answer = input(f"You are going to delete this image: {x}. Are you sure ? (yes/no)")
             if answer == "yes":
@@ -494,6 +433,7 @@ def clean(**kwargs):
         logger.warning("Please use --remove to confirm that you want to remove the orphans")
 
 
+# =================================================================== search
 @main.command()
 @click.argument("pattern", required=True, type=click.STRING)
 @click.option("--images-only", is_flag=True, default=False, help="Show images only")
@@ -515,6 +455,11 @@ def search(**kwargs):
 
         damona search "*"
 
+    With fish shells, use:
+
+        damona search '"*"'
+
+
     One can also search in an online registry:
 
         damona search fastqc --url https://biomics.pasteur.fr/salsa/damona/registry.txt
@@ -525,7 +470,6 @@ def search(**kwargs):
         damona search fastqc --url damona
 
     """
-    from damona.registry import Registry
 
     url = kwargs.get("url", None)
 
@@ -541,13 +485,14 @@ def search(**kwargs):
             click.echo(f" - {mod}")
 
     if not kwargs["images_only"]:
-        click.echo(f"Pattern '{pattern}' found in these releases/binaries:")
+        click.echo(f"Pattern '{pattern}' found as binaries:")
         modules = Registry(from_url=url).get_binaries(pattern=pattern)
         for k in sorted(modules.keys()):
             v = modules[k]
             click.echo(f" - {k}: {v}")
 
 
+# ============================================================  export
 @main.command()
 @click.argument("environment", required=True, type=click.STRING)
 def info(**kwargs):
@@ -560,7 +505,6 @@ def info(**kwargs):
 
         Images abd binaries available are shown
     """
-    from damona.environ import Environ
     logger.debug(kwargs)
     envname = kwargs["environment"]
 
@@ -581,9 +525,9 @@ def info(**kwargs):
             click.echo(" - " + pathlib.Path(item).name)
 
 
+# ============================================================  export
 @main.command()
 @click.argument("environment", required=True, type=click.STRING)
-@click.option("--exclude", default=None, help="--exclude 'bowtie*' ")
 def export(**kwargs):
     """Create a bundle of a given environment.
 
@@ -591,7 +535,7 @@ def export(**kwargs):
     associated images into a tar ball file named after the
     environment.
 
-        damona export test1 --exclude "bowtie*"
+        damona export test1
 
     This create a bundle named damona_test1.tar. You can then create a new
     environment starting from this bundle:
@@ -603,17 +547,44 @@ def export(**kwargs):
     logger.debug(kwargs)
 
     environment = kwargs["environment"]
-    exclude = kwargs["exclude"]
     envname = kwargs["environment"]
 
     # TODO This should be based on the binaries of the environment, not the images
     # to do so, we'll need an installed.txt file
 
     env = Environment(envname)
-    env.create_bundle(exclude=exclude)
+    env.create_bundle()
     logger.info(
         f"Use this command to create a new environment: \n\n\tdamona env --create test --from-bundle {environment}.tar"
     )
+
+
+# ============================================================  stats
+
+@main.command()
+def stats(**kwargs):
+    """Get information about Damona images and binaries
+
+    Just type:
+
+        damona stats
+
+    """
+    from damona import admin
+    admin.stats()
+
+# ===================================================================  list 
+
+@main.command()
+def list(**kwargs):
+    """List all packages that can be installed"""
+    r = Registry()
+    names = "\n".join(sorted([x for x in r.get_list()]))
+    click.echo(names)
+
+
+# ============================================================  HIDDEN commands
+# ============================================================  zenodo-upload
 
 
 @main.command(hidden=True)
@@ -675,18 +646,67 @@ def zenodo_upload(**kwargs):  # pragma: no cover
     logger.info(f"Uploading to {mode}")
     z._upload(filename)
 
+# =================================================================== build
+@main.command(hidden=True)
+@click.argument("filename", required=True, type=click.STRING)
+@click.option("--destination", default=None, help="Not implemented yet")
+@click.option("--force", is_flag=True, help="add --force option")
+def build(**kwargs):  # pragma: no cover
+    """Build a container from dockerhub, singularity file or damona recipes.
 
-@main.command()
-def stats(**kwargs):
-    """Get information about Damona images and binaries
+    Note that to use this command, you must have sudo permissions.
+    If not, you will need to download existing images. See the "damona install
+    command".
 
-    Just type:
+    You can build a singularity image from a local singularity file. Note that
+    your Singulary recipes must follow the naming convention
+    Singularity.NAME_x,y,z
 
-        damona stats
+    \b
+        # a local recipes (recipes must have a version)
+         build Singularity.salmon_1.3.0
+
+    You may build an image from a singularity recipes to be found in Damona
+    itself. In such case, the name and version are enough. Siuch recipes can be
+    listed using "damona list"
+
+        damona build salmon:1.3.0
+
+    You may also build image from a docker image to be found on docker hub:
+
+    \b
+        damona build docker://biocontainers/bowtie2:v2.4.1_cv1
+        damona build docker://kapeel/hisat2
+
+    TO be implemented: from singularity hub or sylabs.io
 
     """
-    from damona import admin
-    admin.stats()
+    logger.debug(kwargs)
+    filename = kwargs["filename"]
+    force = kwargs["force"]
+    destination = kwargs["destination"]
+
+    if destination:
+        if destination.endswith(".img") is False:
+            logger.warning("You should end your image with the .img extension")
+        if "_" not in destination:
+            logger.warning("You should name your image as NAME_x.y.z")
+
+    if os.path.exists(filename) and os.path.isdir(filename) is False:
+        # TODO check that it starts with Singularity
+        # local recipes ?
+        from damona.builders import BuilderFromSingularityRecipe
+
+        builder = BuilderFromSingularityRecipe()
+        builder.build(filename, destination=destination, force=force)
+    elif kwargs["filename"].startswith("docker://"):
+        from damona.builders import BuilderFromDocker
+
+        builder = BuilderFromDocker()
+        filename = filename.replace("docker://", "")
+        builder.build(filename, destination=destination, force=force)
+    else:  # could be a damona recipes
+        logger.info("Not a docker URL, nor a local file.")
 
 
 if __name__ == "__main__":  # pragma: no cover
