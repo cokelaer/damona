@@ -77,10 +77,6 @@ def test_damona_create_and_install(monkeypatch):
 
     manager = Damona()
 
-    # make sure it exists
-    runner = CliRunner()
-    results = runner.invoke(script.env, ["--create", NAME])
-    assert results.exit_code == 0
 
     monkeypatch.setenv("DAMONA_ENV", str(manager.damona_path / "envs" / NAME))
     cmd = "damona install fastqc"

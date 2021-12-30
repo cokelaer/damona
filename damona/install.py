@@ -200,9 +200,19 @@ class RemoteImageInstaller(ImageInstaller):
 
         damona install fastqc:0.11.9
 
-    If you have a damona registry on your website, you can download from a URL:
+    If you have a damona registry on your website called registry.txt, you can download
+    third-party images/software from a URL as follows:
 
-        damona install fastqc:0.11.9 --url https://yourwebsite
+        damona install fastqc:0.11.9 --url https://yourwebsite/.../registry.txt
+
+    If you use this command often, you may want to add this line in your damona.cfg file::
+
+        [urls]
+        damona=https://biomics.pasteur.fr/salsa/damona/registry.txt
+
+    so that you can simply type:
+
+        damona install fastqc:0.11.9 --url damona
 
     """
 
@@ -213,7 +223,12 @@ class RemoteImageInstaller(ImageInstaller):
         self.registry = Registry(from_url=from_url)
         self.images_directory = pathlib.Path(DAMONA_PATH) / "images"
 
-        self.from_url = from_url
+        # if alias is given, this attribute contains the augmented (real) URL
+        # but it contains registry.txt so we need to get rid of the registry filename
+        try:
+            self.from_url = self.registry.from_url.replace("registry.txt", "")
+        except AttributeError: # the url may not be set
+            self.from_url = from_url
         self.cmd = cmd
         self.binaries = binaries
         self.image_installed = False
@@ -325,7 +340,8 @@ class RemoteImageInstaller(ImageInstaller):
             cmd = f"singularity pull --dir {pull_folder} "
             if force:
                 cmd += " --force "
-            cmd += f"{download_name}"
+            cmd += f"{self.from_url}/{download_name}"
+            print(cmd)
             subprocess.call(cmd.split())
         else:
 
