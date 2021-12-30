@@ -1,0 +1,10 @@
+bowtie:
+  doi: 10.5281/zenodo.5810334
+  binaries: bowtie bowtie-inspect-l bowtie-inspect-s bowtie-align-l bowtie-align-s bowtie-build bowtie-build-l bowtie-build-s bowtie-inspect
+  zenodo_id: 5810335
+  releases:
+    1.3.1:
+      download: https://zenodo.org/record/5810335/files/bowtie_1.3.1.img
+      md5sum: 28556f0d9f81e7f7b6e9f6a63a5fd970
+      doi: 10.5281/zenodo.5810335
+      filesize: 59883520
