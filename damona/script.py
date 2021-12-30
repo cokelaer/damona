@@ -531,6 +531,7 @@ def info(**kwargs):
 # ============================================================  export
 @main.command()
 @click.argument("environment", required=True, type=click.STRING)
+@click.option("--output", default=None, help="name of output file")
 def export(**kwargs):
     """Create a bundle of a given environment.
 
@@ -556,9 +557,9 @@ def export(**kwargs):
     # to do so, we'll need an installed.txt file
 
     env = Environment(envname)
-    env.create_bundle()
+    output = env.create_bundle(output_name=kwargs["output"])
     logger.info(
-        f"Use this command to create a new environment: \n\n\tdamona env --create test --from-bundle {environment}.tar"
+        f"Use this command to create a new environment: \n\n\tdamona env --create test --from-bundle {output}"
     )
 
 

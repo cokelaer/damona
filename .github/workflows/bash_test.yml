@@ -85,10 +85,11 @@ jobs:
     - name: Init damona in bash
       run: |
         bash
-        damona
+        damona 
+        echo " source ~/.config/damona/damona.sh" >> ~/.bashrc
     - name: Test installation hisat2
       run: |
-        source /home/runner/.config/damona/damona.sh
+        #source /home/runner/.config/damona/damona.sh
         damona env --create TEST
         damona activate TEST
         damona install hisat2  # a docker file

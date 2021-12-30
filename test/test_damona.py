@@ -164,7 +164,10 @@ def test_stats():
     assert results.exit_code == 0
 
 
-def test_export(monkeypatch):
+def test_export(monkeypatch, tmpdir):
+    directory = tmpdir.mkdir("output")
+    output = directory / "test.tar"
+
     runner = CliRunner()
 
     NAME = "damona__testing__export"
@@ -172,12 +175,14 @@ def test_export(monkeypatch):
 
     manager = Damona()
     monkeypatch.setenv("DAMONA_ENV", str(manager.damona_path / "envs" / NAME))
-    results = runner.invoke(script.export, [NAME])
+    results = runner.invoke(script.export, [NAME, "--output", output])
     assert results.exit_code == 0
 
     Teardown(NAME)
 
-def test_import_bundle(monkeypatch):
+def test_import_bundle(monkeypatch, tmpdir):
+    directory = tmpdir.mkdir("output")
+    output = directory / "test.tar"
     manager = Damona()
     runner = CliRunner()
 
@@ -187,9 +192,9 @@ def test_import_bundle(monkeypatch):
 
     monkeypatch.setenv("DAMONA_ENV", str(manager.damona_path / "envs" / NAME))
     results = runner.invoke(script.install, ["fastqc"])
-    results = runner.invoke(script.export, [NAME])
+    results = runner.invoke(script.export, [NAME, "--output", output])
     results = runner.invoke(script.env, ["--create", NAME2,
-        "--from-bundle", "damona_damona__testing__.tar"])
+        "--from-bundle", output])
 
     # suppress this temporary environment
     with mock.patch.object(builtins, "input", lambda _: "y"):
@@ -257,8 +262,6 @@ def test_install_local(monkeypatch):
     runner = CliRunner()
     results = runner.invoke(script.install, [f"{test_dir}/data/testing_1.0.0.img", 
         "--binaries", "hello", "--force"])
-
-
     assert results.exit_code == 0
 
     Teardown(NAME)

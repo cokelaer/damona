@@ -141,7 +141,7 @@ class Environment:
 
     def create_bundle(self, output_name=None):
         if output_name is None:
-            output_name = self.name
+            output_name = f"damona_{self.name}.tar"
 
         # for later maybe 
         exclude = []
@@ -154,7 +154,7 @@ class Environment:
         # all containers
         images = [pathlib.Path(x) for x in self.get_images()]
 
-        archive = tarfile.open(f"damona_{output_name}.tar", "w")
+        archive = tarfile.open(output_name, "w")
         for filename in binaries:
             logger.info(f"Adding {filename}")
             archive.add(filename, arcname=f"bin/{filename.name}")
@@ -163,8 +163,8 @@ class Environment:
             archive.add(filename, arcname=f"images/{filename.name}")
         archive.close()
 
-        logger.info(f"Saved environment {self.name} into damona_{output_name}.tar")
-
+        logger.info(f"Saved environment {self.name} into {output_name}")
+        return output_name
 
 class Images:
     def __init__(self):

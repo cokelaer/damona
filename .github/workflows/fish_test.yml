@@ -82,11 +82,12 @@ jobs:
         pip install .
     - name: Init damona in bash
       run: |
-        fish && damona
+        damona
+        mkdir -p ~/.config/fish
+        echo "source ~/.config/damona/damona.fish" >> ~/.config/fish/config.fish
     - name: Test installation hisat2
       run: |
-        fish 
-        source /home/runner/.config/damona/damona.fish
+        fish
         damona env --create TEST
         damona activate TEST
         damona install hisat2
