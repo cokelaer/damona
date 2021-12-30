@@ -261,7 +261,10 @@ def test_install_local(monkeypatch):
     # This re-installs the image, interfering with the user's local image but should be safe
     runner = CliRunner()
     results = runner.invoke(script.install, [f"{test_dir}/data/testing_1.0.0.img", 
-        "--binaries", "hello", "--force"])
+        "--binaries", "hello" ])
+    assert results.exit_code == 0
+    results = runner.invoke(script.install, [f"{test_dir}/data/testing_1.0.0.img", 
+        "--binaries", "hello", "--force" ])
     assert results.exit_code == 0
 
     Teardown(NAME)

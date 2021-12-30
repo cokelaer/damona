@@ -50,9 +50,12 @@ class CMD:
         self.version = damona_version
 
     def __repr__(self):
-        assert self.cmd[0].endswith("damona")
-        cmd = "damona " + " ".join(self.cmd[1:])
-        return cmd
+        if self.cmd[0].endswith("damona"):
+            cmd = "damona " + " ".join(self.cmd[1:])
+            return cmd
+        else: # not a correct damona command (maybe from pytest)
+            return "#test"
+
 
 
 class ImageInstaller:
@@ -171,9 +174,8 @@ class LocalImageInstaller(ImageInstaller):
         logger.info(f"Copying {self.input_image.filename} into {self.images_directory}")
         shutil.copy(self.input_image.filename, self.images_directory)
         with open(self.images_directory / "history.log", "a+") as fout:
-            if self.cmd:
-                cmd = CMD(self.cmd).__repr__()
-                fout.write(f"{time.asctime()}: {cmd}\n")
+            cmd = CMD(self.cmd).__repr__()
+            fout.write(f"{time.asctime()}: {cmd}\n")
         # if the image has been copied properly, we set this flag to True so
         # that binaries can be installed
         self.image_installed = True

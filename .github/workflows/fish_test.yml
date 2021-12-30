@@ -12,6 +12,8 @@ jobs:
       max-parallel: 5
       matrix:
         python: [3.9]
+        fish:
+         - 3
       fail-fast: false
 
     steps:
@@ -22,6 +24,8 @@ jobs:
           set -x
           docker version
           docker run --rm hello-world
+    - name: Install Fish
+        run: FISH_RELEASE=${{ matrix.fish }} tools/ci-install-fish.sh
     - name: Install singularity
       run: |
 
@@ -36,7 +40,6 @@ jobs:
           wget \
           pkg-config \
           git \
-          fish
 
         export VERSION=1.13.15 OS=linux ARCH=amd64  # change this as you need
         wget -O /tmp/go${VERSION}.${OS}-${ARCH}.tar.gz https://dl.google.com/go/go${VERSION}.${OS}-${ARCH}.tar.gz
