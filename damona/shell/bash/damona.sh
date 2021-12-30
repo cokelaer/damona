@@ -21,6 +21,7 @@ __damona_find_damona() {
             echo "$mycmd"
         else
             export DAMONA_EXE_INTERN="$mycmd"
+            export DAMONA_SHELL_INFO="bash"
         fi
     #else
     #    echo "Using Damona executable: $DAMONA_EXE_INTERN"
@@ -121,6 +122,7 @@ damona() {
             echo "Searching for damona executable"
         fi
         unset DAMONA_EXE_INTERN
+        unset DAMONA_SHELL_INFO
         __damona_find_damona
     fi
 

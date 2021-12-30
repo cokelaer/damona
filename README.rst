@@ -282,6 +282,10 @@ Changelog
 ========= ========================================================================
 Version   Description
 ========= ========================================================================
+0.7.1     * Implement the fish shell 
+          * add command "damona list"
+          * rename recipes/ directory into software/ and created a new library/ 
+            directory for images used as library, that are not installed.
 0.7.0     * Check that singularity is installed
           * implement the remove command 
             https://github.com/cokelaer/damona/issues/15
