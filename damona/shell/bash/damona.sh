@@ -14,10 +14,10 @@ __damona_find_damona() {
         status=$?
 
         if [ $status != 0 ]; then
-            echo "damona not found."
+            echo "damona was not found. Install damona using 'pip install damona'"
             echo "$mycmd"
         elif [ -z $mycmd ]; then
-            echo "damona not found."
+            echo "damona was not found. Install damona using 'pip install damona'"
             echo "$mycmd"
         else
             export DAMONA_EXE_INTERN="$mycmd"
