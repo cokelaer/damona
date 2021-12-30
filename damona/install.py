@@ -30,6 +30,7 @@ from damona import Registry
 from damona import Environ, Environment
 from damona.common import ImageReader, requires_singularity
 from damona.registry import Software
+from damona import version as damona_version
 
 
 DAMONA_PATH = os.environ["DAMONA_PATH"]
@@ -46,9 +47,7 @@ __all__ = ["LocalImageInstaller", "RemoteImageInstaller"]
 class CMD:
     def __init__(self, cmd):
         self.cmd = cmd
-        from damona import version
-
-        self.version = version
+        self.version = damona_version
 
     def __repr__(self):
         assert self.cmd[0].endswith("damona")
@@ -83,13 +82,13 @@ class ImageInstaller:
 
             status = subprocess.Popen(cmd2, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             status.wait()
-            if status.returncode == 0:
+            if status.returncode == 0: #pragma: no cover
                 logger.info(f"'{binary}' binary found in the container. Planned to be installed")
                 continue
 
             status = subprocess.Popen(cmd1, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             status.wait()
-            if status.returncode == 0:
+            if status.returncode == 0: # pragma: no cover
                 logger.info(f"'{binary}' binary found in the container. Planned to be installed")
                 continue
             else:
@@ -126,6 +125,10 @@ class LocalImageInstaller(ImageInstaller):
         # can be guessed
         super(LocalImageInstaller, self).__init__()
 
+        if os.path.exists(image_name) and pathlib.Path(image_name).is_dir():
+            logger.error(f"image name must be a singulatity file, not a directory")
+            sys.exit(1)
+
         self.input_image = ImageReader(image_name)
         self.target = pathlib.Path(DAMONA_PATH) / "images" / self.input_image.shortname
         self.images_directory = pathlib.Path(DAMONA_PATH) / "images"
@@ -154,7 +157,7 @@ class LocalImageInstaller(ImageInstaller):
                 logger.info("Image with same md5 exists already. No need to copy")
                 # image is not copied since it is already installed
                 self.image_installed = True
-            else:
+            else: #pragma: no cover
                 if force:
                     self.copy()
                 else:
@@ -164,10 +167,10 @@ class LocalImageInstaller(ImageInstaller):
         else:
             self.copy()
 
-    def copy(self):
+    def copy(self): # pragma: no cover
 
         logger.info(f"Copying {self.input_image.filename} into {self.images_directory}")
-        shutil.copy(self.input_image.shortname, self.images_directory)
+        shutil.copy(self.input_image.filename, self.images_directory)
         with open(self.images_directory / "history.log", "a+") as fout:
             if self.cmd:
                 cmd = CMD(self.cmd).__repr__()
@@ -425,12 +428,3 @@ class BinaryInstaller:
                 name = pathlib.Path(bin_path).name
                 path = str(bin_path).rstrip(bin_path.name)
                 logger.info(f"Created binary {name} in {path}")
-
-
-class ImageRemoveFromEnv:
-    """Given an environment, remove all binaries related to an image,
-    and the image afterwards
-    """
-
-    def __init__():
-        pass
