@@ -107,7 +107,7 @@ setup(
     exclude_package_data = {"": ["__pycache__"]},
     package_data = {
         'damona': ['*.cfg'],
-        'damona.shell': ['*.sh'],
+        'damona.shell': ['*/*'],
         'damona.recipes' : ['*/Singularity.*', '*/registry.yaml'],
         '': ["damona/shell/damona.sh"]
         },
