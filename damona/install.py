@@ -111,7 +111,6 @@ class ImageInstaller:
         return True
 
     def install_binaries(self, force=False):
-
         if self.image_installed:
             bininst = BinaryInstaller(self.binaries, self.input_image.filename)
             bininst.install_binaries(force=force)
@@ -413,12 +412,11 @@ class BinaryInstaller:
 
 
         """
+
         env = Environ()
         bin_directory = env.get_current_env() / "bin"
+        logger.info(bin_directory)
 
-        # before altering a binary, we save the current state
-        cenv = Environment(env.get_current_env_name())
-        cenv.save_snapshot()
 
         for binary in sorted(self.binaries):
             bin_path = pathlib.Path(bin_directory) / binary

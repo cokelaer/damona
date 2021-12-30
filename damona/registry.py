@@ -339,7 +339,7 @@ class Registry:
 
 
         Note for developers: not the same as get_list"""
-        candidates = [x for x in self.registry.keys() if pattern in x]
+        candidates = [x for x in self.registry.keys() if pattern in x.split(":")]
         if len(candidates) == 0:  # pragma: no cover
             logger.critical(
                 f"No image found for {pattern}. Make sure it is correct. You can use 'damona search' command"

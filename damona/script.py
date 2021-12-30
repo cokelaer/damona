@@ -275,6 +275,7 @@ def install(**kwargs):
     else:
         binaries = None
 
+
     if os.path.exists(image_path) is False:
         if kwargs["url"]:
             url = kwargs["url"]
@@ -283,6 +284,7 @@ def install(**kwargs):
             logger.info("Installing from Damona registry")
 
         p = RemoteImageInstaller(kwargs["image"], from_url=kwargs["url"], cmd=sys.argv, binaries=binaries)
+
         if p.is_valid():
             p.pull_image(force=force_image)
             p.install_binaries(force=force_binaries)
@@ -291,6 +293,7 @@ def install(**kwargs):
                 fout.write(f"\n{time.asctime()}: {cmd}")
         else:
             logger.critical("Something wrong with your image/binaries. See message above")
+            sys.exit(1)
     else:
         # This install the image and associated binary/binaries
         logger.info(f"Installing local container in {cenv}")

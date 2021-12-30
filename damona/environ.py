@@ -55,7 +55,7 @@ class Environment:
         self.path = manager.damona_path / f"envs/{name}/"
 
         if self.path.exists() is False:
-            logger.error(f"Environment {self.path} does not exits")
+            logger.error(f"Environment {self.path} does not exists")
             sys.exit(1)
 
     def get_installed_binaries(self):
@@ -164,24 +164,6 @@ class Environment:
         archive.close()
 
         logger.info(f"Saved environment {self.name} into damona_{output_name}.tar")
-
-    def save_snapshot(self):
-
-        ctime = time.asctime().replace(" ", "_")
-        p = self.path / "bin" / ctime
-        if not p.exists():
-            p.mkdir()
-        else: #pragma: no cover
-            time.sleep(1)
-            p.mkdir()
-
-        filenames = [x for x in (self.path / "bin").glob("*") if not x.is_dir() 
-                        and not x.is_symlink() and x.name[0] != "."]
-        for filename in filenames:
-            with open(filename, "r") as fin:
-                data = fin.read()
-                with open(p / filename.name, "w") as fout:
-                    fout.write(data)
 
 
 class Images:

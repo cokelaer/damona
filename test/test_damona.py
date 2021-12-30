@@ -84,6 +84,7 @@ def test_damona_create_and_install(monkeypatch):
 
     results = runner.invoke(script.install, ["fastqc", "--force"])
     assert results.exit_code == 0
+
     Teardown(NAME)
 
 def test_env():
