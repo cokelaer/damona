@@ -53,7 +53,7 @@ class DamonaInit:
                 HOME = os.path.expanduser("~")
             except Exception:  # pragma: no cover
                 HOME = "/home/user/"
-            logger.error(
+            logger.critical(
                 """DAMONA_PATH was not found in your environment.
 
 Before using Damona, you have to copy/paste the following code in
@@ -66,7 +66,9 @@ your ~/.bashrc file once for all (start a new shell afterwards):
 This will create DAMONA_PATH variable that points to your home/.config/damona/ directory.
 You can redefine the DAMONA_PATH later to point towards another path if needed."""
             )
-            sys.exit(1)
+            # This is not an error per se but damona cannot work without DAMONA_PATH
+            # Yet, we do not want to raise an error especially for the CI
+            sys.exit(0)
 
         if "DAMONA_SINGULARITY_OPTIONS" not in os.environ:
             logger.warning(
