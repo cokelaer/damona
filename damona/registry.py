@@ -143,7 +143,13 @@ class Release:
 
         if "md5sum" not in kwargs:
             logger.debug(f"Missing md5sum entry in {self._name}. Please consider adding one ")
+        if "filesize" not in kwargs:
+            logger.debug(f"Missing filesize entry in {self._name}. Please consider adding one ")
+
         self.md5sum = kwargs.get("md5sum", None)
+        self.filesize = kwargs.get("filesize", None)
+        self.doi = kwargs.get("doi", None)
+
         self._release_binaries = self.split_binaries(kwargs.get("binaries", []))
         self._extra_binaries = self.split_binaries(kwargs.get("extra_binaries", []))
         self._exclude_binaries = self.split_binaries(kwargs.get("exclude_binaries", []))
@@ -171,6 +177,8 @@ class Release:
         binaries = ",".join(self.binaries)
         txt = f"name: {self._name}\n"
         txt += f" md5: {self.md5sum}\n"
+        txt += f" filesize: {self.filesize}\n"
+        txt += f" doi: {self.doi}\n"
         txt += f" binaries to be installed : {binaries}\n"
         txt += f" download from: {self.download}"
         return txt
@@ -198,7 +206,7 @@ class Software:
     """A class to read a given software registry
 
     A Software is made of :class:`Releases`. It contains also a name, a list of
-    binaries either globally or per release
+    binaries either globally or per release, a DOI.
 
     ::
 
@@ -237,7 +245,7 @@ class Software:
         else:
             from damona import __path__
 
-            self.registry_name = pathlib.Path(__path__[0]) / "recipes" / name / "registry.yaml"
+            self.registry_name = pathlib.Path(__path__[0]) / "software" / name / "registry.yaml"
             data = self._read_registry()
             self._data = data
             if len(data):
@@ -388,7 +396,7 @@ class Registry:
 
     def _damona_discovery(self):
 
-        from damona.recipes import __path__
+        from damona.software import __path__
 
         _registry_files = glob.glob(__path__[0] + "/*/registry.yaml")
 
