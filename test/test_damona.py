@@ -8,6 +8,7 @@ import pytest
 from click.testing import CliRunner
 import mock
 
+from . import test_dir
 
 def test_damon_builder_docker(tmpdir):
     directory = tmpdir.mkdir("images")
@@ -26,17 +27,35 @@ def test_damona_version():
     assert status == 0
 
 
-def test_activate_deactivate(monkeypatch):
-    setup()
-    manager = Damona()
-    monkeypatch.setenv("DAMONA_ENV", str(manager.damona_path / "envs/damona__testing__"))
-    runner = CliRunner()
-    results = runner.invoke(script.activate, ["damona__testing__"])
-    assert results.exit_code == 0
-    results = runner.invoke(script.deactivate, ["damona__testing__"])
-    assert results.exit_code == 0
+def test_activate_deactivate_bash(monkeypatch):
 
-    teardown()
+    NAME = "damona__testing__deactivate_bash"
+    setup(NAME)
+    manager = Damona()
+    monkeypatch.setenv("DAMONA_ENV", str(manager.damona_path / "envs" / NAME ))
+    runner = CliRunner()
+    results = runner.invoke(script.activate, [NAME])
+    assert results.exit_code == 0
+    results = runner.invoke(script.deactivate, [NAME])
+    assert results.exit_code == 0
+    teardown(NAME)
+
+def test_activate_deactivate_fish(monkeypatch, mocker):
+
+    NAME = "damona__testing__deactivate_fish"
+
+    setup(NAME)
+    mocker.patch("damona.environ.Environ._is_fish_shell", return_values=True)
+
+    manager = Damona()
+    monkeypatch.setenv("DAMONA_ENV", str(manager.damona_path / "envs" /  NAME))
+    runner = CliRunner()
+    results = runner.invoke(script.activate, [NAME])
+    assert results.exit_code == 0
+    results = runner.invoke(script.deactivate, [NAME])
+    assert results.exit_code == 0
+    teardown(NAME)
+
 
 def test_damona_clean():
     runner = CliRunner()
@@ -52,14 +71,15 @@ def test_damona_info():
     assert results.exit_code == 1
 
 
-def test_damona_create_and_export(monkeypatch):
-    setup()
+def test_damona_create_and_install(monkeypatch):
+    NAME = "damona__testing__create_and_install"
+    setup(NAME)
 
     manager = Damona()
 
     # make sure it exists
     runner = CliRunner()
-    results = runner.invoke(script.env, ["--create", "damona__testing__"])
+    results = runner.invoke(script.env, ["--create", NAME])
     assert results.exit_code == 0
 
     monkeypatch.setenv("DAMONA_ENV", str(manager.damona_path / "envs/damona__testing__"))
@@ -70,7 +90,7 @@ def test_damona_create_and_export(monkeypatch):
     status = subprocess.call(cmd.split())
     assert status == 0
 
-    teardown()
+    teardown(NAME)
 
 def test_env():
 
@@ -94,30 +114,32 @@ def test_env():
     assert results.exit_code == 1
 
     # create damona__testing__ env
-    setup()
+
+    NAME = "damona__testing__env"
+    setup(NAME)
 
     # delete it
     import mock
     with mock.patch.object(builtins, "input", lambda _: "y"):
-        results = runner.invoke(script.env, ["--delete", "damona__testing__"])
+        results = runner.invoke(script.env, ["--delete", NAME])
         assert results.exit_code == 0
 
     # and install again
-    results = runner.invoke(script.env, ["--create", "damona__testing__"])
+    results = runner.invoke(script.env, ["--create", NAME])
     assert results.exit_code == 0
 
     with mock.patch.object(builtins, "input", lambda _: ""):
-        results = runner.invoke(script.env, ["--rename", "damona__testing__"])
+        results = runner.invoke(script.env, ["--rename", NAME])
         assert results.exit_code == 1
-        results = runner.invoke(script.env, ["--rename", "damona__testing__", 
-            "--new-name", "damona__testing__new"])
+        results = runner.invoke(script.env, ["--rename", NAME, 
+            "--new-name", NAME+"new"])
         assert results.exit_code == 0
 
-    results = runner.invoke(script.env, ["--rename", "damona__testing__new", 
-        "--new-name", "damona__testing__", "--force"])
+    results = runner.invoke(script.env, ["--rename", NAME + "new", 
+        "--new-name", NAME, "--force"])
     assert results.exit_code == 0
 
-    teardown()
+    teardown(NAME)
 
 def test_search():
     runner = CliRunner()
@@ -136,6 +158,10 @@ def test_search():
     results = runner.invoke(script.search, ["fastqc", "--url", "damona"])
     assert results.exit_code == 0
 
+def test_list():
+    runner = CliRunner()
+    results = runner.invoke(script.list, [])
+    assert results.exit_code == 0
 
 def test_stats():
     runner = CliRunner()
@@ -145,49 +171,49 @@ def test_stats():
 
 def test_export():
     runner = CliRunner()
-    setup()
 
-    if "damona__testing__" not in Environ().environment_names:
-        results = runner.invoke(script.env, ["--create", "damona__testing__"])
-        assert results.exit_code == 0
+    NAME = "damona__testing__export"
+    setup(NAME)
 
-    results = runner.invoke(script.export, ["damona__testing__"])
+    results = runner.invoke(script.export, [NAME])
     assert results.exit_code == 0
 
-    teardown()
+    teardown(NAME)
 
 def test_import_bundle(monkeypatch):
     manager = Damona()
     runner = CliRunner()
 
-    setup()
+    NAME="damona__testing__import_bundle"
+    NAME2="damona__testing__import_bundle2"
+    setup(NAME)
 
-    monkeypatch.setenv("DAMONA_ENV", str(manager.damona_path / "envs/damona__testing__"))
+    monkeypatch.setenv("DAMONA_ENV", str(manager.damona_path / "envs" / NAME))
     results = runner.invoke(script.install, ["fastqc"])
-    results = runner.invoke(script.export, ["damona__testing__"])
-    results = runner.invoke(script.env, ["--create","damona__testing2__", 
+    results = runner.invoke(script.export, [NAME])
+    results = runner.invoke(script.env, ["--create", NAME2, 
         "--from-bundle", "damona_damona__testing__.tar"])
-    
-    # supress this temporary environment
+
+    # suppress this temporary environment
     with mock.patch.object(builtins, "input", lambda _: "y"):
-        results = runner.invoke(script.env, ["--delete", "damona__testing2__"])
+        results = runner.invoke(script.env, ["--delete", NAME2])
         assert results.exit_code == 0
 
     # supress the damona__testing__ temporary environment
-    teardown()
+    teardown(NAME)
 
-def teardown():
+def teardown(name="damona__testing__"):
     runner = CliRunner()
     with mock.patch.object(builtins, "input", lambda _: "y"):
-        results = runner.invoke(script.env, ["--delete", "damona__testing__"])
+        results = runner.invoke(script.env, ["--delete", name])
         assert results.exit_code == 0
 
 
 
-def setup():
+def setup(name="damona__testing__"):
     runner = CliRunner()
-    if "damona__testing__" not in Environ().environment_names:
-        results = runner.invoke(script.env, ["--create", "damona__testing__"])
+    if name not in Environ().environment_names:
+        results = runner.invoke(script.env, ["--create", name])
         assert results.exit_code == 0
 
 
@@ -195,14 +221,55 @@ def setup():
 def test_install_remove(monkeypatch):
     runner = CliRunner()
 
-    setup()
+    NAME = "damona__testing__install_remove"
+    setup(NAME)
     manager = Damona()
-    monkeypatch.setenv("DAMONA_ENV", str(manager.damona_path / "envs/damona__testing__"))
+    monkeypatch.setenv("DAMONA_ENV", str(manager.damona_path / "envs" / NAME))
 
     results = runner.invoke(script.install, ["fastqc"])
     assert results.exit_code == 0
     results = runner.invoke(script.remove, ["fastqc"])
     assert results.exit_code == 0
 
-    teardown()
+    teardown(NAME)
+
+
+def test_install_remove_from_url(monkeypatch):
+    runner = CliRunner()
+
+    NAME = "damona__testing__install_remove_from_url"
+    setup(NAME)
+    manager = Damona()
+    monkeypatch.setenv("DAMONA_ENV", str(manager.damona_path / "envs" / NAME))
+
+    # This re-installs the image, interfering with the user's local image but should be safe
+    results = runner.invoke(script.install, ["fastqc", "--url", "damona", "--force"])
+    assert results.exit_code == 0
+
+    teardown(NAME)
+
+
+def test_install_local(monkeypatch):
+    runner = CliRunner()
+
+    NAME = "damona__testing__install_local"
+    setup(NAME)
+    manager = Damona()
+    monkeypatch.setenv("DAMONA_ENV", str(manager.damona_path / "envs" / NAME ))
+
+    # This re-installs the image, interfering with the user's local image but should be safe
+    results = runner.invoke(script.install, [f"{test_dir}/data/testing_1.0.0.img", "--binaries", "hello", "--force"])
+
+
+    assert results.exit_code == 0
+
+    teardown(NAME)
+
+
+
+
+
+
+
+
 

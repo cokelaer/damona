@@ -10,6 +10,7 @@ import damona
 from click.testing import CliRunner
 import subprocess
 
+
 def test_no_var(monkeypatch):
     monkeypatch.delenv("DAMONA_ENV", raising=False)
     try:
@@ -79,17 +80,29 @@ def test_environment():
         # cleanup
         env.delete(".dummy_test")
 
+    try:
+        env = Environ()
+        env.create("base")
+        assert False
+    except SystemExit:
+        assert True
+
+    env._is_bash_shell()
+    env._is_fish_shell()
+
 
 
 def test_create_bundle(tmpdir, monkeypatch):
     # make sure it exists
     runner = CliRunner()
 
-    if "damona__testing__" not in Environ().environment_names:
-        results = runner.invoke(script.env, ["--create", "damona__testing__"])
+    NAME = "damona__testing__environ__create_bundle"
+
+    if NAME not in Environ().environment_names:
+        results = runner.invoke(script.env, ["--create", NAME])
 
     manager = Damona()
-    monkeypatch.setenv("DAMONA_ENV", str(manager.damona_path / "envs/damona__testing__"))
+    monkeypatch.setenv("DAMONA_ENV", str(manager.damona_path / "envs" / NAME))
     cmd = "damona install fastqc --force"
     status = subprocess.call(cmd.split())
 
@@ -97,13 +110,13 @@ def test_create_bundle(tmpdir, monkeypatch):
     directory = tmpdir.mkdir("bundle")
     destination = directory / "test"
     #print(destination)
-    e = Environment("damona__testing__")
+    e = Environment(NAME)
     e.create_bundle()
-    os.remove("damona_damona__testing__.tar")
+    os.remove(f"damona_{NAME}.tar")
 
     # cleanup
     with mock.patch.object(builtins, "input", lambda _: "y"):
-        results = runner.invoke(script.env, ["--delete", "damona__testing__"])
+        results = runner.invoke(script.env, ["--delete", NAME])
 
 
 

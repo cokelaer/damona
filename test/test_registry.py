@@ -30,7 +30,7 @@ def test_image_name():
 
 def test_single_registry():
 
-    from damona.recipes import __path__
+    from damona.software import __path__
 
     _registry_files = glob.glob(__path__[0] + "/*/registry.yaml")
 
