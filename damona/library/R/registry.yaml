@@ -1,0 +1,7 @@
+R:
+  class: env
+  releases:
+    4.0.2:
+      download: shub://cokelaer/damona:r_4.0.2
+    3.6.3:
+      download: shub://cokelaer/damona:r_3.6.3

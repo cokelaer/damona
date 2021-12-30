@@ -1,0 +1,9 @@
+conda:
+  class: env
+  releases:
+    4.7.12:
+      download: library://cokelaer/damona/conda:4.7.12
+    4.9.2:
+      md5sum: 7f8c473ac4be048c4bd4832e107e5373
+      download: library://cokelaer/damona/conda:4.9.2
+
