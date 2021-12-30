@@ -82,12 +82,18 @@ jobs:
         pip install -r requirements.txt
         pip install -r requirements_dev.txt
         pip install .
+    - name: Init damona in bash
+      run: |
+        bash
+        damona
     - name: Test installation hisat2
       run: |
+        source /home/runner/.config/damona/damona.sh
         damona env --create TEST
         damona activate TEST
-        damona install hisat2
-        damona install fastqc
+        damona install hisat2  # a docker file
+        damona install fastqc  # a zenodo/damona file
+        damona install minimap2  # a zenodo/damona file
         damona deactivate
       env:
         DAMONA_EXE: /usr/share/miniconda/bin/damona
