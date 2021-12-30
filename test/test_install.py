@@ -9,15 +9,10 @@ from damona import Environ
 from damona import script
 from damona import Damona
 import mock
+import pytest
 
 from . import test_dir
 
-
-def test_local_image_installer():
-
-    pass
-    # define a dummy environ
-    #lii = LocalImageInstaller(test_dir + "/data/testing_1.0.0.img")
 
 
 def test_cmd():
@@ -31,7 +26,7 @@ def test_ImageInstaller(monkeypatch):
 
     runner = CliRunner()
     NAME = "damona__testing__install_ImageInstaller"
-    setup(NAME)
+    Setup(NAME)
     manager = Damona()
     monkeypatch.setenv("DAMONA_ENV", str(manager.damona_path / "envs" / NAME))
 
@@ -52,10 +47,10 @@ def test_ImageInstaller(monkeypatch):
     assert results.exit_code == 1
 
 
-    teardown(NAME)
+    Teardown(NAME)
 
 
-def teardown(NAME):
+def Teardown(NAME):
     runner = CliRunner()
     with mock.patch.object(builtins, "input", lambda _: "y"):
         results = runner.invoke(script.env, ["--delete", NAME])
@@ -63,7 +58,7 @@ def teardown(NAME):
 
 
 
-def setup(NAME):
+def Setup(NAME):
     runner = CliRunner()
     if NAME not in Environ().environment_names:
         results = runner.invoke(script.env, ["--create", NAME])

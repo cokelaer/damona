@@ -68,17 +68,17 @@ def test_environment():
         assert True
 
     env = Environ()
-    env.create(".dummy_test")
+    env.create(".dummy_test2")
     with mock.patch.object(builtins, "input", lambda _: "y"):
-        this_env = Environment(".dummy_test")
+        this_env = Environment(".dummy_test2")
         try:
             # cannot rename with existing  name
-            this_env.rename(".dummy_test")
+            this_env.rename(".dummy_test2")
             assert False
         except SystemExit:
             assert True
         # cleanup
-        env.delete(".dummy_test")
+        env.delete(".dummy_test2")
 
     try:
         env = Environ()
