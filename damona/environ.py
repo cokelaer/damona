@@ -139,14 +139,12 @@ class Environment:
             images.add(image)
         return {"images": images, "binaries": binaries, "name": self.name}
 
-    def create_bundle(self, output_name=None, exclude=None):
+    def create_bundle(self, output_name=None):
         if output_name is None:
             output_name = self.name
 
-        if exclude:
-            exclude = list(self.path.glob(f"bin/{exclude}"))
-        else:
-            exclude = []
+        # for later maybe 
+        exclude = []
 
         # all binaries
         binaries = self.get_installed_binaries()
@@ -173,7 +171,7 @@ class Environment:
         p = self.path / "bin" / ctime
         if not p.exists():
             p.mkdir()
-        else:
+        else: #pragma: no cover
             time.sleep(1)
             p.mkdir()
 
@@ -214,7 +212,7 @@ class Environ:
 
     @staticmethod
     def get_current_env():
-        if "DAMONA_ENV" not in os.environ:
+        if "DAMONA_ENV" not in os.environ: #pragma: no cover
             logger.error(
                 "You do not have any environment activated. Please use "
                 "'damona activate ENVNAME' where ENVNAME is a valid environment"
@@ -285,6 +283,16 @@ class Environ:
                 return True
         return False
 
+    def _is_fish_shell(self):
+        if "DAMONA_SHELL_INFO" in os.environ:
+            return os.environ["DAMONA_SHELL_INFO"] == "fish"
+        return False
+    
+    def _is_bash_shell(self):
+        if "DAMONA_SHELL_INFO" in os.environ:
+            return os.environ["DAMONA_SHELL_INFO"] == "bash"
+        return False
+
     def activate(self, env_name=None):
         # Do not change the print statement here below. They are used by
         # damona.sh
@@ -297,8 +305,13 @@ class Environ:
             return
 
         env_path = manager.environments_path / env_name
-        print("    export DAMONA_ENV={};".format(env_path))
-        print("    export PATH={}/bin:${{PATH}}".format(env_path))
+
+        if self._is_fish_shell():
+            print(f"    set -gx DAMONA_ENV {env_path};")
+            print(f"    set -gx fish_user_paths {env_path}/bin $fish_user_paths")
+        else:
+            print(f"   export DAMONA_ENV={env_path};")
+            print("    export PATH={}/bin:${{PATH}}".format(env_path))
         logger.info(f"# Added damona path ({env_path}) in your PATH")
 
     def deactivate(self, env_name=None):
@@ -324,20 +337,31 @@ class Environ:
         if found is False:
             logger.info("# no more active damona environment in your path. Use 'damona activate ENVNAME'")
 
-
-        first_damona_path = [x for x in newPATH if "/damona/envs/" in x]
-        if len(first_damona_path):
+        damona_paths = [x for x in newPATH if "/damona/envs/" in x]
+        if len(damona_paths):
             # in theory, there must be a /bin at the end of the path;
             # we should get rid of it
-            first_damona_path = pathlib.Path(first_damona_path[0])
+            first_damona_path = pathlib.Path(damona_paths[0])
             assert first_damona_path.name == "bin", "found a damona path with name different from 'bin'"
             first_damona_path = str(first_damona_path.parent)
 
-            print(f"    export DAMONA_ENV={first_damona_path};")
+            if self._is_fish_shell():
+                print(f"set DAMONA_ENV {first_damona_path};")
+            else:
+                print(f"    export DAMONA_ENV={first_damona_path};")
         else:
-            print("    unset DAMONA_ENV")
-        newPATH = ":".join(newPATH)
-        print("export PATH={}".format(newPATH))
+            if self._is_fish_shell():
+                print("set -e DAMONA_ENV;")
+            else:
+                print("    unset DAMONA_ENV")
+
+        if self._is_fish_shell():
+            print("set -e fish_user_paths;")
+            for x in damona_paths:
+                print(f"set -gx fish_user_paths {x} $fish_user_paths;")
+        else:
+            newPATH = ":".join(newPATH)
+            print("export PATH={}".format(newPATH))
 
     def create(self, env_name, force=False):
         if env_name == "base":
