@@ -63,8 +63,6 @@ jobs:
 
         singularity version
 
-
-
     - name: Set up Python 3.X
       uses: actions/setup-python@v2
       with:
@@ -89,12 +87,17 @@ jobs:
         echo "source ~/.config/damona/damona.fish" >> ~/.config/fish/config.fish
     - name: Test installation hisat2
       run: |
-        fish
+        which fish
+        cat << EOF > test.fish
+        #!/usr/bin/fish
         damona env --create TEST
         damona activate TEST
         damona install hisat2
         damona install fastqc
         damona deactivate
+        EOF
+        cat test.fish
+        fish test.fish
       env:
         DAMONA_EXE: /usr/share/miniconda/bin/damona
         DAMONA_PATH: /home/runner/.config/damona
