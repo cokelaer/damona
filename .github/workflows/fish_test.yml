@@ -102,6 +102,7 @@ jobs:
         DAMONA_EXE: /usr/share/miniconda/bin/damona
         DAMONA_PATH: /home/runner/.config/damona
         DAMONA_ENV: /home/runner/.config/damona/envs/TEST
+        DAMONA_SHELL_INFO: "fish"
         DAMONA_SINGULARITY_OPTIONS: ""
    
 
