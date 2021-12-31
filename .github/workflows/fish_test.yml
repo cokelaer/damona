@@ -97,7 +97,7 @@ jobs:
         damona deactivate
         EOF
         cat test.fish
-        fish test.fish
+        `(fish test.fish)`
       env:
         DAMONA_EXE: /usr/share/miniconda/bin/damona
         DAMONA_PATH: /home/runner/.config/damona
