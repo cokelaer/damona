@@ -88,8 +88,8 @@ jobs:
         mkdir -p ~/.config/fish
         echo "source ~/.config/damona/damona.fish" >> ~/.config/fish/config.fish
     - name: Test installation hisat2
-      shell: fish
       run: |
+        fish
         damona env --create TEST
         damona activate TEST
         damona install hisat2
