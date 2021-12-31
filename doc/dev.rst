@@ -73,14 +73,23 @@ If you wish to have several recipes for different version, name it::
 Naming convention
 -----------------
 
-Singularity recipes must be named as Singularity.PKGNAME_x.y.z
+A valid singularity image must have the following name::
+
+        Singularity.NAME_x.y.z
+        Singularity.NAME_SUFFIX_x.y.z
+
+Underscore can be part of the name.
+
+Images names for users will appear as::
+
+     NAME:x.y.z
+     NAME_SUFFIX:x.y.z
+
 
 Note that PKGNAME could be in small or big caps but the final image with be all
 lower caps (singularity-hub feature). Consequently, when downloading an image,
-it should be named as pkgname_x.y.z
+it should be named as pkgname:x.y.z
 
-
-You may have underscore in your package name
 
 building
 --------

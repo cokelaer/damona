@@ -28,12 +28,10 @@ import os
 
 
 from damona import version
-from damona import Damona
-from damona.common import  BinaryReader, ImageReader, get_damona_path
-from damona import Environ, Environment
-from damona.install import RemoteImageInstaller
-from damona.install import LocalImageInstaller
-from damona.registry import ImageName, Registry, Software
+from damona import Damona, Environment, Environ
+from damona.common import BinaryReader, ImageReader, get_damona_path
+from damona.install import RemoteImageInstaller, LocalImageInstaller
+from damona.registry import Registry
 
 
 manager = Damona()
@@ -57,23 +55,21 @@ CONTEXT_SETTINGS = dict(help_option_names=["-h", "--help"])
 )
 @click.version_option(version=version)
 def main(level):
-    """
-
-    Damona is an environment manager for singularity containers.
+    """Damona is an environment manager for singularity containers.
 
     It is to singularity container what conda is to packaging.
 
     The default environment is called 'base'. You can create and activate
-    a new environment as follows
+    a new environment as follows:
 
-    \b
+    \b 
         damona env --create TEST
         damona activate TEST
 
     Once an environment is activated, you can install a Damona-registered image
-    (and its registered binaries)
+    (and its registered binaries):
 
-        damona install fastqc
+        damona install fastqc:0.11.9
 
     \b
     More information on https://damona.readthedocs.io.
@@ -87,8 +83,6 @@ def main(level):
     # activate command prints bash commands read by damona.sh
     ######################## !!!!!!!!!!!! ####################
     logger.setLevel(level)
-
-
 
 
 # =================================================================== env
@@ -108,7 +102,7 @@ images even though the environment exists.""",
 def env(**kwargs):
     """Create/Delete/Rename environments here.
 
-    Print information about current environments:
+    Print information about current environments::
 
         damona env
 
@@ -116,7 +110,7 @@ def env(**kwargs):
 
         damona env --disk-usage
 
-    You can also create an environment and install a saved on in it:
+    You can also create an environment and install a saved on in it::
 
     \b
         damona export test1
@@ -169,11 +163,11 @@ def env(**kwargs):
 def activate(**kwargs):
     """Activate a damona environment.
 
-    The main Damona environment can be activated using
+    The main Damona environment can be activated using::
 
         damona activate base
 
-    Then, activation of a specific environment is done as :
+    Then, activation of a specific environment is done as ::
 
         damona activate my_favorite_env
 
@@ -181,7 +175,7 @@ def activate(**kwargs):
     # DO NOT PRINT ANYTHING HERE OTHERWISE YOU'LL BREAK
     # DAMONA BASH EXPORT.If yo do, use # as commented text
     envs = Environ()
-    envs.activate(kwargs['name'])
+    envs.activate(kwargs["name"])
 
 
 # =================================================================== deactivate
@@ -221,12 +215,12 @@ def deactivate(**kwargs):
 def install(**kwargs):
     """Download and install an image and its binaries.
 
-    An image has a name and a version and can be installed as:
+    An image has a name and a version and can be installed as::
 
         damona install NAME:version
 
     If the version is omitted, the latest version is installed. Therefore, the
-    following two commands are equivalent if 0.11.9 is the latest version available:
+    following two commands are equivalent if 0.11.9 is the latest version available::
 
     \b
         damona install fastqc
@@ -234,7 +228,7 @@ def install(**kwargs):
 
     You may also install a local image. In such case, you must name your
     image with a version (e.g. fastqc_0.11.9.img). We assume that name of
-    the image is the binary name, however, binaries can be set manually:
+    the image is the binary name, however, binaries can be set manually::
 
     \b
         damona install fastqc_0.4.2.img
@@ -275,7 +269,6 @@ def install(**kwargs):
     else:
         binaries = None
 
-
     if os.path.exists(image_path) is False:
         if kwargs["url"]:
             url = kwargs["url"]
@@ -308,38 +301,37 @@ def install(**kwargs):
         else:
             logger.critical("Something wrong with your image/binaries. See message above")
             sys.exit(1)
-        
 
 
 # =================================================================== remove
 @main.command()
 @click.argument("name", required=True, type=click.STRING)
 @click.option("--environment", type=click.STRING, default=None)
-#@click.option("--force", is_flag=True, help="force the removal of binaries or images")
+# @click.option("--force", is_flag=True, help="force the removal of binaries or images")
 def remove(**kwargs):
     """Remove binaries or image from an environment.
 
     You can remove a binary from an environment given its path. It will not be removed
-    if used by an executable if an environment.
+    if used by an executable if an environment.::
 
         damona remove /home/cokelaer/.config/damona/images/fastqc_0.11.8.img
 
-    if you have the name of the image, it works as well:
+    if you have the name of the image, it works as well::
 
         damona remove fastqc_0.11.8.img
 
-    You must give the .img extension in both cases otherwise it is considered 
+    You must give the .img extension in both cases otherwise it is considered
     to be a binary that you want to remove.
 
-    If you suppress a binary like here:
+    If you suppress a binary like here::
 
         damona remove fastqc
 
-    it removes the binary from the activate environnt only. Then, it the image is now orpha, 
+    it removes the binary from the activate environnt only. Then, it the image is now orpha,
     it is also removed.
 
 
-    You can also remove an image (and its binaries) from an environment. Note, however, 
+    You can also remove an image (and its binaries) from an environment. Note, however,
     that the image is not deleted if usde in other environments.
     """
     # First, let us figure out the current or user-defined environment
@@ -348,7 +340,9 @@ def remove(**kwargs):
     if not env_name:
         env_name = envs.get_current_env_name(warning=False)
         if env_name is None:
-            logger.error("You must activate a damina environment or use the --environment to define one where binary:image will be removed.")
+            logger.error(
+                "You must activate a damina environment or use the --environment to define one where binary:image will be removed."
+            )
             sys.exit(1)
 
     env = Environment(env_name)
@@ -359,7 +353,7 @@ def remove(**kwargs):
     if kwargs["name"].endswith(".img"):
 
         # we delete the image if it is an orphan
-        p = get_damona_path() / "images" / kwargs['name']
+        p = get_damona_path() / "images" / kwargs["name"]
         if p.exists():
             ir = ImageReader(p)
             ir.delete()
@@ -367,7 +361,7 @@ def remove(**kwargs):
             logger.warning(f"input file {p} does not exists")
 
     else:
-        #Search for the name in the installed binaries
+        # Search for the name in the installed binaries
         if name in env:
             logger.info(f"Removing binary {name}")
             binary = [x for x in env.get_installed_binaries() if x.name == name]
@@ -395,12 +389,13 @@ def remove(**kwargs):
 def clean(**kwargs):
     """Remove orphan images and binaries from all environments.
 
-    This commnd finds images that have no more binary in any environment.
+    This command finds images that have no associated binaries in any environment.
     This may happen with prior version of a given binary.
 
-    Note that if you want to remove an environmnt, just delete it or use:
+    Note that if you want to remove an environmnt, just delete it or use::
 
-    conda env --delete NAME
+        conda env --delete NAME
+
     """
     logger.debug(kwargs)
 
@@ -425,7 +420,7 @@ def clean(**kwargs):
     else:
         logger.info(f"Found {len(orphans)} orphans.")
 
-    if kwargs["remove"]: #pragma: no cover
+    if kwargs["remove"]:  # pragma: no cover
         for x in orphans:
             answer = input(f"You are going to delete this image: {x}. Are you sure ? (yes/no)")
             if answer == "yes":
@@ -451,25 +446,24 @@ file . Example is available on https://biomics.pasteur.fr/salsa/damona/registry.
 def search(**kwargs):
     """Search for a container or binary.
 
-    By default, this command introspect the official Damona registry (based on registry files):
+    By default, this command introspect the official Damona registry (based on registry files)::
 
         damona search fastqc
 
-    If you want to list all software and their versions, just type:
+    If you want to list all software and their versions, just type::
 
         damona search "*"
 
-    With fish shells, use:
+    With fish shells, use::
 
         damona search '"*"'
 
-
-    One can also search in an online registry:
+    One can also search in an online registry::
 
         damona search fastqc --url https://biomics.pasteur.fr/salsa/damona/registry.txt
 
     You may define aliases to URLs in your ~/.config/damona/damona.cfg file to
-    make it easier:
+    make it easier::
 
         damona search fastqc --url damona
 
@@ -502,8 +496,9 @@ def search(**kwargs):
 def info(**kwargs):
     """Print information about a given environment.
 
-        The default environment is called 'base'.
-    b
+    The default environment is called 'base'.::
+
+    \b
             damona info base
             damona info test1
 
@@ -538,17 +533,18 @@ def export(**kwargs):
 
     the following command copies all binaries from an environment and their
     associated images into a tar ball file named after the
-    environment.
+    environment.::
 
         damona export test1
 
     This create a bundle named damona_test1.tar. You can then create a new
-    environment starting from this bundle:
+    environment starting from this bundle::
 
         damona env --create TEST1 --from-bundle damona_test1.tar
 
     """
     from damona import Environment
+
     logger.debug(kwargs)
 
     environment = kwargs["environment"]
@@ -559,26 +555,28 @@ def export(**kwargs):
 
     env = Environment(envname)
     output = env.create_bundle(output_name=kwargs["output"])
-    logger.info(
-        f"Use this command to create a new environment: \n\n\tdamona env --create test --from-bundle {output}"
-    )
+    logger.info(f"Use this command to create a new environment: \n\n\tdamona env --create test --from-bundle {output}")
 
 
 # ============================================================  stats
+
 
 @main.command()
 def stats(**kwargs):
     """Get information about Damona images and binaries
 
-    Just type:
+    Just type::
 
         damona stats
 
     """
     from damona import admin
+
     admin.stats()
 
-# ===================================================================  list 
+
+# ===================================================================  list
+
 
 @main.command()
 def list(**kwargs):
@@ -628,11 +626,11 @@ def zenodo_upload(**kwargs):  # pragma: no cover
 
     This command is for developers of the DAMONA project only.
 
-    The sandbox.zenodo is a sandbox where you can try to upload a new singularity file.
+    The sandbox.zenodo is a sandbox where you can try to upload a new singularity file.::
 
         damona zenodo-upload file_1.0.0.img --mode sandbox.zenodo
 
-    Once done and happy with the results, you can upload to Zenodo itself once and for all:
+    Once done and happy with the results, you can upload to Zenodo itself once and for all::
 
         damona zenodo-upload file_2.0.0.img --mode sandbox.zenodo
 
@@ -650,6 +648,7 @@ def zenodo_upload(**kwargs):  # pragma: no cover
     z = Zenodo(mode, token)
     logger.info(f"Uploading to {mode}")
     z._upload(filename)
+
 
 # =================================================================== build
 @main.command(hidden=True)

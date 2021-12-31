@@ -20,7 +20,6 @@ import sys
 import pathlib
 import math
 import tarfile
-import time
 
 from damona.common import Damona
 from damona.common import BinaryReader
@@ -38,15 +37,21 @@ __all__ = ["Environ", "Environment"]
 
 
 class Environment:
-    """Class to handle a specific environment
+    """Class to handle a specific environment given its name
 
+    ::
 
-    ee = environ.Environment("test1")
-    ee.create_bundle("test.tar")
+        from damona import Environment
+        ee = Environment("test1")
+        ee.create_bundle("test.tar")
 
     """
 
     def __init__(self, name):
+        """.. rubric:: **Constructor**
+
+        :param str name: the name of the environment
+        """
         self._init(name)
 
     def _init(self, name):
@@ -89,6 +94,7 @@ class Environment:
         return S
 
     def get_images(self):
+        """Return list of singularity images used by the environment"""
         binaries = self.get_installed_binaries()
         images = []
         for binary in binaries:
@@ -111,6 +117,10 @@ class Environment:
         return txt
 
     def rename(self, newname, force=False):
+        """Rename an environment. 
+
+        Note that the *base* environment cannot be renamed
+        """
         if self.name == "base":
             logger.error("You cannot rename the 'base' environment")
             sys.exit(1)
@@ -130,6 +140,11 @@ class Environment:
         logger.warning("Please restart a new shell if this is an active environment.")
 
     def get_current_state(self):
+        """Return dictionary with statistics about the environment
+        
+        It includes the number of binariesm images and name of the 
+        environment for now.
+        """
         images = set()
         binaries = {}
         for filename in self.get_installed_binaries():
@@ -140,10 +155,15 @@ class Environment:
         return {"images": images, "binaries": binaries, "name": self.name}
 
     def create_bundle(self, output_name=None):
+        """Create a bundle with all images and binaries used by the environment.
+
+        :param str output_name: if provided this will be the output filename
+        :return: the name of the bundle. If output_name is None, set to damona_ENVNAME.tar
+        """
         if output_name is None:
             output_name = f"damona_{self.name}.tar"
 
-        # for later maybe 
+        # for later maybe
         exclude = []
 
         # all binaries
@@ -165,6 +185,7 @@ class Environment:
 
         logger.info(f"Saved environment {self.name} into {output_name}")
         return output_name
+
 
 class Images:
     def __init__(self):
@@ -194,7 +215,7 @@ class Environ:
 
     @staticmethod
     def get_current_env():
-        if "DAMONA_ENV" not in os.environ: #pragma: no cover
+        if "DAMONA_ENV" not in os.environ:  # pragma: no cover
             logger.error(
                 "You do not have any environment activated. Please use "
                 "'damona activate ENVNAME' where ENVNAME is a valid environment"
@@ -269,7 +290,7 @@ class Environ:
         if "DAMONA_SHELL_INFO" in os.environ:
             return os.environ["DAMONA_SHELL_INFO"] == "fish"
         return False
-    
+
     def _is_bash_shell(self):
         if "DAMONA_SHELL_INFO" in os.environ:
             return os.environ["DAMONA_SHELL_INFO"] == "bash"

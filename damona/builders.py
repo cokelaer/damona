@@ -35,7 +35,7 @@ __all__ = ["Builder", "BuilderFromSingularityRecipe", "BuilderFromDocker"]
 class Builder:
     """Build a container using different framework
 
-    Input can be a singularity or docker container.
+    Input can be a singularity or docker container/recipes.
 
     """
 
@@ -48,13 +48,7 @@ class Builder:
         return filename
 
     def _get_username(self):
-        username = getpass.getuser()
-        # if 'USERNAME' not in os.environ:
-        #    logger.critical('USERNAME was not found in your environment. Must be'
-        #        ' defined in your environement to change permission of the built'
-        #        ' image. Keep going but your image will have ownership of root'
-        #        ' user only')
-        return username
+        return getpass.getuser()
 
     username = property(_get_username, doc="return the username (unix)")
 
@@ -94,6 +88,7 @@ class BuilderFromDocker(Builder):
 
     @requires_singularity
     def build(self, dockerhub_name, destination=None, force=False):
+        """Build the singularity image from docker image"""
 
         # if the build is successful, we will copy the image
         # into the current environment.
@@ -139,7 +134,13 @@ class BuilderFromDocker(Builder):
 
 
 class BuilderFromSingularityRecipe(Builder):
-    """Build a container from its singularity recipe"""
+    """Build a container from its singularity recipe
+
+    This command creates the destination file bowtie2_2.4.1.img::
+
+        damona build Singularity.bowtie2_2.4.1
+
+    """
 
     def __init__(self):
         super(BuilderFromSingularityRecipe, self).__init__()

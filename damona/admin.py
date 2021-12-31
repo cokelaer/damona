@@ -25,12 +25,17 @@ __all__ = ["stats"]
 def stats():
     """Prints statistics about Damona
 
+    It includes the number of software and their releases.
+    It also includes the nmbr of binaries.
+
     ::
 
         from damona.admin import stats
         stats()
 
     """
+
+    data = {}
 
     r = Registry()
 
@@ -41,9 +46,16 @@ def stats():
     print(f"- number of recipes:  {len(names)}")
     print(f"- number of versions: {N}")
 
+    data["version"] = version
+    data["recipes"] = len(names)
+    data["releases"] = N
+
     binaries = set()
     for x in r.get_list():
         s = Software(x.split(":")[0])
         binaries = binaries.union(set(s.binaries[s.releases.last_release]))
     N = len(binaries)
     print(f"- unique binaries: {N}")
+    data["unique_binaries"] = N
+
+    return data

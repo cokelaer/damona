@@ -30,11 +30,11 @@ import colorlog
 logger = colorlog.getLogger(__name__)
 
 
-__all__ = ["Releases", "Software", "Registry", "Release", "ImageName"]
+__all__ = ["Releases", "Software", "Registry", "Release", "ImageName", "RemoteRegistry"]
 
 
 class ImageName:
-    """
+    """Check image name
 
     An image name must have the following convention::
 
@@ -69,7 +69,15 @@ class ImageName:
 
 
 class Releases(dict):
-    """A collection of :class:`Release`."""
+    """A collection of :class:`Release` for a given software.
+    
+    
+    ::
+
+        from damona import Software
+        s = Software("fastqc")
+        s.releases.last_release
+    """
 
     def __init__(self, data):
         # a collection of releases
@@ -89,7 +97,8 @@ class Releases(dict):
 
         return max(list(self.keys()), key=lambda x: version.parse(x))
 
-    last_release = property(_get_last_release)
+    last_release = property(_get_last_release, doc="return the last version")
+
 
 
 class Release:
@@ -185,7 +194,12 @@ class Release:
 
 
 class RemoteRegistry:
-    """ """
+    """A remote registry consists of a single yaml file
+    
+    
+    The files is expected to be a concatenation of registry YAML files.
+    See the fastqc resigtry file for an example.
+    """
 
     def __init__(self, url):
         self.url = url
@@ -312,16 +326,28 @@ class Software:
 class Registry:
     """
 
-    The registry contains a dictionary with all images information.::
+    The registry contains a dictionary with all images information::
 
+        from damona import Registry
         r = Registry()
         r.registry
         r.registry['prokka_1.14.5']['download']
         r.registry['prokka_1.14.5']['binaries']
 
+    One can use its own registy, in which case the URL to a file called registy.txt must be provided::
+
+        r = Registry(fro;_url="https://.../registry.txt")
+
+    Must end in **/registry.txt**.
+
     """
 
     def __init__(self, from_url=None):
+        """.. rubric:: **Constructor**
+        
+        
+        :param str from_url: if set, uses the URL provided, otherwise uses Damona registry
+        """
 
         self.config = Config().config
         if from_url:
@@ -338,7 +364,7 @@ class Registry:
         """Find a unique recipe within the registry.
 
 
-        Note for developers: not the same as get_list"""
+        """
         candidates = [x for x in self.registry.keys() if pattern in x.split(":")]
         if len(candidates) == 0:  # pragma: no cover
             logger.critical(
@@ -360,7 +386,7 @@ class Registry:
         return registry_name
 
     def discovery(self):
-        """Look for recipes in the registry and populate the attributes"""
+        """Look for software/release in the registry and populate the attributes"""
         if self.from_url:
             self._url_discovery()
         else:
@@ -403,15 +429,15 @@ class Registry:
         self.registry = {}
 
         for registry in _registry_files:
-            recipe = Software(registry)
-            recipe.check()
+            software = Software(registry)
+            software.check()
 
-            for version in recipe.versions:
-                name_version = recipe.name + ":" + version
-                release = recipe.releases[version]
+            for version in software.versions:
+                name_version = software.name + ":" + version
+                release = software.releases[version]
                 if name_version not in self.registry:
                     if release.download is None:  # pragma: no cover
-                        logger.warning(f"recipe {recipe.name} has no download entry. please fill asap")
+                        logger.warning(f"recipe {software.name} has no download entry. please fill asap")
                     elif release.download.startswith("damona::"):
                         from_url = self.config["urls"]["damona"]
                         release.download = release.download.replace("damona::", from_url)
@@ -426,14 +452,14 @@ class Registry:
 
     def get_list(self, pattern=None):
         """Return list of :class:`Software` found in the registry"""
-        recipes = {}
+        software = {}
         for name, info in self.registry.items():
             if pattern:
                 if pattern.lower() in name.lower():
-                    recipes[name] = info.download
+                    software[name] = info.download
             else:
-                recipes[name] = info.download
-        recipes = sorted(recipes)
+                software[name] = info.download
+        recipes = sorted(software)
         return recipes
 
     def get_binaries(self, pattern=None):

@@ -27,7 +27,7 @@ from easydev import md5
 
 from spython.main import Client
 from damona import Registry
-from damona import Environ, Environment
+from damona import Environ 
 from damona.common import ImageReader, requires_singularity
 from damona.registry import Software
 from damona import version as damona_version
@@ -41,7 +41,7 @@ import colorlog
 logger = colorlog.getLogger(__name__)
 
 
-__all__ = ["LocalImageInstaller", "RemoteImageInstaller"]
+__all__ = ["LocalImageInstaller", "RemoteImageInstaller", "BinaryInstaller"]
 
 
 class CMD:
@@ -53,13 +53,11 @@ class CMD:
         if self.cmd[0].endswith("damona"):
             cmd = "damona " + " ".join(self.cmd[1:])
             return cmd
-        else: # not a correct damona command (maybe from pytest)
+        else:  # not a correct damona command (maybe from pytest)
             return "#test"
 
 
-
 class ImageInstaller:
-
     @requires_singularity
     def _are_binaries_findable(self):
         # TODO add sanity check that stops the installation if a failure occurs
@@ -85,13 +83,13 @@ class ImageInstaller:
 
             status = subprocess.Popen(cmd2, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             status.wait()
-            if status.returncode == 0: #pragma: no cover
+            if status.returncode == 0:  # pragma: no cover
                 logger.info(f"'{binary}' binary found in the container. Planned to be installed")
                 continue
 
             status = subprocess.Popen(cmd1, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             status.wait()
-            if status.returncode == 0: # pragma: no cover
+            if status.returncode == 0:  # pragma: no cover
                 logger.info(f"'{binary}' binary found in the container. Planned to be installed")
                 continue
             else:
@@ -122,7 +120,26 @@ class ImageInstaller:
 
 
 class LocalImageInstaller(ImageInstaller):
+    """Install a local singularity image.
+
+
+    When using the standalone, you can install a local singularity even though it is not registered.
+    This is not recommended but very useful for developers::
+
+        damona install fastqc_0.11.9.img --binaries fastqc
+
+    Since there is no registry, you can set the list of binaries.
+
+    """
     def __init__(self, image_name, cmd=None, binaries=None):
+        """.. rubric:: **Constructor**
+
+        :param str image_name: The location of the singularity image to be installed.
+        :param cmd: internal place holder to fill the history log with the calling command.
+        :param list binaries: The list of binaries to be installed and expected to be 
+            found in the :attr:`image_name`
+
+        """
         # must be a valid name with version, name, etc so that executable name
         # can be guessed
         super(LocalImageInstaller, self).__init__()
@@ -146,12 +163,18 @@ class LocalImageInstaller(ImageInstaller):
         self.image_installed = False
 
     def is_valid(self):
+        """Check whether binaries are findable in the image"""
 
         # let us check the  presence of the binaries in the image
         status = self._are_binaries_findable()
         return status
 
     def install_image(self, force=False):
+        """Install the singularity image in the environment
+        
+        If an image exists with the same name, we check the md5sum of the destination and target.
+        If they are identical, no need to overwrite the destination.
+        """
         if (self.images_directory / self.input_image.shortname).exists():
 
             md5_target = md5(self.images_directory / self.input_image.shortname)
@@ -159,7 +182,7 @@ class LocalImageInstaller(ImageInstaller):
                 logger.info("Image with same md5 exists already. No need to copy")
                 # image is not copied since it is already installed
                 self.image_installed = True
-            else: #pragma: no cover
+            else:  # pragma: no cover
                 if force:
                     self.copy()
                 else:
@@ -169,7 +192,7 @@ class LocalImageInstaller(ImageInstaller):
         else:
             self.copy()
 
-    def copy(self): # pragma: no cover
+    def copy(self):  # pragma: no cover
 
         logger.info(f"Copying {self.input_image.filename} into {self.images_directory}")
         shutil.copy(self.input_image.filename, self.images_directory)
@@ -182,42 +205,42 @@ class LocalImageInstaller(ImageInstaller):
 
 
 class RemoteImageInstaller(ImageInstaller):
-    """Manager to download container images
-
-    A valid singularity image must have the following name::
-
-        Singularity.NAME_x.y.z
-        Singularity.NAME_SUFFIX_x.y.z
-
-    Meaning underscore can be part of the name.
-
-    User interface is simplified into::
-
-        NAME:x.y.z
-        NAME_SUFFIX:x.y.z
+    """Install a singulariy image and binaries from a damona registered image.
 
     The following command will download the fastqc singularity version 0.11.9
     from the damona website.::
 
         damona install fastqc:0.11.9
 
-    If you have a damona registry on your website called registry.txt, you can download
-    third-party images/software from a URL as follows:
+    It introspects all registry files to be found in damona package.
+
+    However, if you have a damona registry on your website called registry.txt, you can download
+    third-party images/software from any URL as follows::
 
         damona install fastqc:0.11.9 --url https://yourwebsite/.../registry.txt
 
-    If you use this command often, you may want to add this line in your damona.cfg file::
+    If you use this command often, you may want to add this line in your damona.cfg file. By
+    default you should have this section in your config file::
 
         [urls]
         damona=https://biomics.pasteur.fr/salsa/damona/registry.txt
 
-    so that you can simply type:
+    so that you can simply type::
 
         damona install fastqc:0.11.9 --url damona
 
     """
 
     def __init__(self, image_name, binaries=None, from_url=None, cmd=None):
+        """.. rubric:: **Constructor**
+
+        :param str image_name: The location of the singularity image to be installed.
+        :param list binaries: The list of binaries to be installed and expected to be 
+            found in the :attr:`image_name`
+        :param cmd: internal place holder to fill the history log with the calling command.
+        :param from_url: provide a URL if you want to use a third-party online registry 
+
+        """
         super(RemoteImageInstaller, self).__init__()
 
         self.image_name = image_name
@@ -228,7 +251,7 @@ class RemoteImageInstaller(ImageInstaller):
         # but it contains registry.txt so we need to get rid of the registry filename
         try:
             self.from_url = self.registry.from_url.replace("registry.txt", "")
-        except AttributeError: # the url may not be set
+        except AttributeError:  # the url may not be set
             self.from_url = from_url
         self.cmd = cmd
         self.binaries = binaries
@@ -240,6 +263,9 @@ class RemoteImageInstaller(ImageInstaller):
 
     @requires_singularity
     def pull_image(self, output_name=None, force=False):
+        """Pull and Install a singularity image from the web.
+
+        """
 
         self.image_installed = False
 
@@ -386,39 +412,42 @@ class BinaryInstaller:
     """Install a binary in the bin/ directory of the current environment given its image
 
 
-
-    Each time, wew also save a snapshot of current bin/ status in a
-    .history/ hidden directory"""
-
+    """
     def __init__(self, binaries, parent_image_path):
+        """.. rubric:: **Constructor**
+        
+        :param list binaries: list of binaries to install
+        :param str parent_image_path: the location of the images where binaries are to be found
+        
+        """
+        #: instance of :class:`damona.common.ImageReader`
         self.image = ImageReader(parent_image_path)
         self.binaries = binaries
 
     @requires_singularity
     def install_binaries(self, force=False):
-        """Install an image and its binary
+        """Install an image and its binaries
 
-        Given the :attr:`image`, we install a set of :atr:`binaries` to be found in the
-        image. If we install a binary again, no need to rewrite the command. For example,
-        imagine that you install fastqc.0.11.9 for the first time, then in the code
-        here below:
+        Given the :attr:`~damona.install.BinaryInstaller.image`, we install a set of :attr:`~damona.install.BinaryInstaller.binaries` to be found in the
+        image registry. If we install a binary again, no need to rewrite the command. For example,
+        imagine that you installed fastqc.0.11.9 for the first time, then in the commands
+        here below::
 
             damona install fastqc:0.11.9
             damona install fastqc:0.11.9 --force
 
-        the second command has no effect. If we now install a new version:
+        the second command has no effect. If we now install a new version::
 
             damona install fastqc:0.11.8
 
-        The previous binary (v0.11.9) will be commented as the new one (v0.11.8) effective.
-
-
+        The previous binary (v0.11.9) will be replaced by the new one (v0.11.8).
+        The old image is kept in the images directory (it may be used in another 
+        environment indeed).
         """
 
         env = Environ()
         bin_directory = env.get_current_env() / "bin"
         logger.info(bin_directory)
-
 
         for binary in sorted(self.binaries):
             bin_path = pathlib.Path(bin_directory) / binary

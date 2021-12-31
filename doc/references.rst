@@ -2,7 +2,7 @@
 .. _references:
 
 References
-##############
+==========
 
 
 .. autosummary::

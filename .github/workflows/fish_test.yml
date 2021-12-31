@@ -24,9 +24,6 @@ jobs:
           set -x
           docker version
           docker run --rm hello-world
-    - name: Install Fish
-      run: |
-        FISH_RELEASE=${{ matrix.fish }} tools/ci-install-fish.sh
     - name: Install singularity
       run: |
 
@@ -90,8 +87,8 @@ jobs:
         mkdir -p ~/.config/fish
         echo "source ~/.config/damona/damona.fish" >> ~/.config/fish/config.fish
     - name: Test installation hisat2
+      shell: fish
       run: |
-        fish
         damona env --create TEST
         damona activate TEST
         damona install hisat2

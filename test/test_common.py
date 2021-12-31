@@ -29,7 +29,7 @@ def test_path():
     d.find_orphan_binaries()
     d.get_environments()
     d.find_orphan_images()
-
+    d.is_image_used('fastqc_0.11.9')
 
 def test_ImageReader():
 

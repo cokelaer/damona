@@ -33,11 +33,13 @@ Damona is a singularity environment manager.
 Damona started as a small collections of singularity recipes to help installing third-party tools for
 `Sequana NGS pipelines <https://sequana.readthedocs.io>`_.
 
-Damona is now used to create environments where singularity images and their associated binaries can be installed altogether.
+Damona is now used in production to create reproducible environments where singularity images and their associated binaries are installed altogether.
 
 In a nutshell, Damona combines the logic of Conda environments with the
 reproducibility of singularity containers. We believe that it could be useful for
 other projects and therefore decided to release it as an independent tool.
+
+As of 30th Dec 2021, **Damona** contains 26 software, 38 releases, 105 binaries.
 
 Installation
 ============
@@ -46,27 +48,37 @@ If you are in a hurry, just type::
 
     pip install damona --upgrade
 
-and install `Singularity <https://sylabs.io/docs>`_. 
+You must install `Singularity <https://sylabs.io/docs>`_ to make use of **Damona**. 
 
-Type **damona** in a shell. This will initiate the tool with a config file in your HOME/.config/damona directory and tell you 
-to add this command in your .bashrc::
+If you are familiar with conda, I believe you can do::
+
+    conda install singularity
+
+Type **damona** in a shell. This will initiate the tool with a config file in your HOME/.config/damona directory for bash shell and `fish shell <https://fishshell.com/>`_ users.
+
+Bash users should add this code in their ~/.bashrc file::
 
     source ~/.config/damona/damona.sh
 
-Open a new shell and you are ready to go. Please the `Installation in details`_ section for more information.
+and fishshell users should add the following code in their ~/.config/fish/config.fish file::
+
+    source ~/.config/damona/damona.fish
+
+Open a new shell and you are ready to go. Please see the `Installation in details`_ section for more information.
 
 Quick Start
 ===========
 
-First create an environment called TEST::
+**Damona** needs environments to work with.
+First, let us *create* one, which is called TEST::
 
     damona env --create TEST
 
-Second, activate it::
+Second, we need to *activate* it. Subsequent insallation will happen in this environment::
 
     damona activate TEST
 
-Third install some binaries/images::
+From there, we can install some binaries/images::
 
     damona install fastqc:0.11.9
 
@@ -92,7 +104,7 @@ Conda provides pre-compiled releases of software; they can be installed in
 different local environments that do not interfer with your system. This has
 great advantages for developers. For example, you can install a pre-compiled
 libraries in a minute instead of trying to compile it yourself including all
-dependencies. Different communities have emerge using this
+dependencies. Different communities have emerged using this
 framework. One of them is `Bioconda <https://bioconda.github.io>`_, which is dedicated to bioinformatics.
 
 Another great tool that emerged in the last years is
@@ -125,11 +137,12 @@ script that generate the aliases to those executables.
 That's where **damona** started: we wanted to combine the conda-like environment 
 framework to manage our singularity containers more easily.
 
-Although it was start with the Sequana projet, 
+Although **Damona** was started with the `Sequana projet <https://sequana.readthedocs.io>`_,
 **Damona** may be useful for others developers who wish to have a quick and easy
 solution for their users when they need to install third-party libraries.
 
-Before showing real-case examples, let us install the software itself.
+Before showing real-case examples, let us install the software itself and 
+understand the details.
 
 
 
@@ -151,105 +164,158 @@ installation (Python 3.X)::
 
 Type **damona** to create the Damona tree structure. Images and binaries 
 will be saved in your home directory within the
-~/.config/damona directory. There, two special files should be available:
-**damona.sh** and **damona.cfg**. Check that those files are present.
+~/.config/damona directory. There, special files should be available:
+**damona.sh**, **damona.fish**  and **damona.cfg**. Check that those files are present.
 
 Finally, you need to tell your system where to find damona. For bashrc users,
-please add those two lines to you bashrc file::
+please add this line to you bashrc file::
 
     source ~/.config/damona/damona.sh
 
 open a new shell and type **damona** and you should be ready to go.
 
-Quick Start
+For fishshell users, please add this line in **~/.config/fish/config.fish***::
+
+    source ~/.config/damona/damona.fish
+
+Tutorial
 ============
+
+The **Damona** standalone is called **damona**. It has a documentation that should suffice for most users.
+
+The main documentation is obtained using::
+
+    damona --help
+
+where you will see the list of **Damona** commands (may be different with time) (may be::
+
+    activate
+    clean
+    deactivate
+    env
+    export
+    info
+    install
+    list
+    remove
+    search
+    stats
+
+To get help for the *install* command, type::
+
+    damona install --help
+
 
 1. *list* available environments
 --------------------------------
 
-By default you have an environment called **base**. You can check the list of
-environment and their contents at any time using::
+By default you have an environment called **base**. Unlike the **base** environment found in **conda**, it is not
+essential and may be altered. However, it cannot be removed or created. You can check the list of environments using::
 
     damona env
 
-2. list installed images and binaries
--------------------------------------
+2. *create* environments
+------------------------
+All environments are stored in *~/.config/damona/envs/*. You can create a new one as follows::
+
+    damona env --create TEST
+
+There, you have a *bin* directory where binaries are going to be installed.
+
+You can check that it has been created::
+
+    damona env
+
+Note the last line telling you that::
+
+    Your current env is 'TEST'.
+
+3. activate and deactivate environments
+----------------------------------------
+
+In order to install new binaries or software package, you must activate an environment. You may activate several but the last one is the *active* one. Let us activate the *TEST* environment::
+
+    damona activate TEST
+
+Check that it is active using::
+
+    damona env
+
+and look at the last line. It should look like::
+
+    Your current env is 'TEST'.
+
+What is going on when you activate an environment called TEST ? Simple: we append the directory ~/.config/damona/envs/TEST/bin to your PATH where binaries are searched for. This directory is removed when you use the *deactivate* command.
+
+::
+
+    damona deactivate TEST
+    damona env 
+
+should remove the TEST environment from your PATH. You may activate several and deactivate them. In such case, the
+environments behave as a Last In First Out principle::
+
+    damona activate base
+    damona activate TEST
+    damona deactivate 
+
+Removes the last activated environments. While this set of commands is more specific::
+
+    damona activate base
+    damona activate TEST
+    damona deactivate base
+
+and keep the TEST environment only in your PATH.
+
+4. **install** a software
+--------------------------
+
+Let us now consider that the TEST environment is active.
+
+Damona provides software that may have several releases. Each software/release comes with binaries that will be
+installed together with the underlying singularity image.::
+
+    damona install fastqc:0.11.9
+
+Here, the singularity image corresponding to the release 0.11.9 of the **fastqc** software is downloaded. Then, binaries registered in this release are installed (here the **fastqc** binary only).
+
+All images are stored in *~/.config/damona/images* and are shared between environments. 
+
+
+5. Get **info** about installed images and binaries
+----------------------------------------------------
 
 You can get the binaries installed in an environment (and the images used by
-them)::
+them) using the **info** command::
 
-    damona info base
+    damona info TEST
 
-3. Search the registry
+
+6. Search the registry
 ------------------------
 
-By default, we provide some recipes (for testing mostly but also to complement existing
-registries when a tool is missing) and their images. They can be searched for using::
+By default, we provide recipes (26 in Dec 2021 ; 38 releases) available in **Damona**. 
+They can be searched for using::
 
     damona search PATTERN
 
-External registry can be set-up. For instance, the damona registry is accessible
-as follows::
+External registry can be set-up. For instance, a damona registry is accessible
+as follows (for demonstration)::
 
     damona search fastqc --url damona
 
 Where *damona* is an alias defined in the .config/damona/damona.cfg that
-actullay looks for https://biomics.pasteur.fr/drylab/damona/registry.txt
+is set to https://biomics.pasteur.fr/drylab/damona/registry.txt
 
 You may retrieve images from a website where a registry exists (see the developer
 guide to create a registry yourself).
 
-4. Activate an environment
---------------------------
 
-::
-
-    damona activate base
-
-4. *install* a Damona image
-----------------------------
-
-Download and install an image in your activate environment::
-
-    damona install fastqc:0.11.9
-
-This will download the container in your ./config/damona/images directory and create an
-executable for you in ~/.config/damona/bin.
-
-This is your *base* environment. All images are stored in this directory
-*~/.config/damona/images*. By default binaries are stored in the *~./config/damona/envs/base/bin* directory.
-
-To benefit from thoses binaries, you must change your PATH accordingly using::
-
-    export PATH=~/config/damona/bin:$PATH
-
-
-
-5. **activate/deactivate** command
-----------------------------------
-
-You can change your PATH environment on the fly to use one or several
-environments. However, we provide a more convenient mechanism based on **conda** commands. If you want to used your based environment, you can simply activate it using::
-
-    damona activate base
-
-Once done, you can quit the shell or deactivate your environment specically
-using its name ::
-
-    damona deactivate base
-
-or if you just wish to deactivate the last environment that you have activated::
-
-    damona deactivate
-
-You can call this commands several times until no more **damona** environments
-are active.
-
-3. combine two different environments
+7. combine two different environments
 --------------------------------------
 
 In damona, you can have sereral environments in parallel and later activate the
-ones you wish to use. Let us create a new one::
+one you wish to use. Let us create a new one::
 
     damone env --create test1
 
