@@ -6,7 +6,7 @@ on:
       - master
     paths:
         - damona/*py
-        - .github/workflow/
+        - .github/workflows/
 
   pull_request:
     branches-ignore: []

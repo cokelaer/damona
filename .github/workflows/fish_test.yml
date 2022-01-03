@@ -1,4 +1,4 @@
-name: fishshell test
+name: fish shell test
 
 on:
   workflow_dispatch:
@@ -7,7 +7,7 @@ on:
         - master
       paths:
         - damona/*py
-        - .github/workflow/fish/*
+        - .github/workflows/fish/*
 
 jobs:
   build-linux:

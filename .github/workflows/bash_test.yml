@@ -7,7 +7,7 @@ on:
         - master
       paths:
         - damona/*py
-        - .github/workflow/bash/*
+        - .github/workflows/bash/*
 
 jobs:
   build-linux:
