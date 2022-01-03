@@ -6,8 +6,11 @@ on:
       branches:
         - master
       paths:
-        - damona/*py
-        - .github/workflows/fish/*
+        - '**.py'
+        - '.github/workflows/fish/**'
+      paths-ignore:
+        - 'doc/**'
+
 
 jobs:
   build-linux:

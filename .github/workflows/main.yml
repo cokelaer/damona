@@ -5,8 +5,10 @@ on:
     branches:
       - master
     paths:
-        - damona/*py
-        - .github/workflows/
+      - '**.py'
+      - '.github/workflows/**'
+    paths-ignore:
+      - 'doc/**'
 
   pull_request:
     branches-ignore: []
