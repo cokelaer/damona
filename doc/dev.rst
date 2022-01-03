@@ -1,6 +1,13 @@
 Developer guide
 ===============
 
+
+.. contents:: Table of Contents
+
+Introduction
+------------
+
+
 Developers are lucky: they can do more than users. If you type::
 
     damona --help

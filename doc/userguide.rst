@@ -1,10 +1,116 @@
 User Guide
 ##########
 
-Print the list of  containers (from damona or from a remote registry)
----------------------------------------------------------------------
 
-**Damona** itself contains just a few containers. As explained in the motivation, other
+.. contents:: Table of Contents
+
+Getting help 
+-------------
+
+The Damona standalone is called damona. It has a documentation that should suffice for most users.
+
+The main documentation is obtained using::
+
+    damona --help
+
+where you will see the list of Damona commands (may be different with time) (may be::
+
+    activate
+    clean
+    deactivate
+    env
+    export
+    info
+    install
+    list
+    remove
+    search
+    stats
+
+To get help for the install command, type::
+
+    damona install --help
+
+Environments
+------------
+
+Damona provide a way to manage environments where Singularity images and binaries are installed.
+Environments are independent from each other. We decided to go for a very simple design where an environment is nothing
+else than a physical directory with a subdirectory called *bin/* to store the binaries. All images are shared between
+environments to decrease the storage needs.
+
+list environments
+~~~~~~~~~~~~~~~~~~
+
+If you type::
+
+    damona env
+
+You will get the list of environments available on your system. In theory, if you start from scratch there is only one
+called **base** that cannot be deleted or created. You can use it as a sandbox though where software can be installed or
+removed.
+
+Create environments
+~~~~~~~~~~~~~~~~~~~
+
+All environments are stored in ~/.config/damona/envs/. You can create a new one as follows::
+
+    damona env --create TEST
+
+There, you have a bin directory where binaries are going to be installed.
+
+You can check that it has been created::
+
+    damona env
+
+Note the last line telling you that::
+
+    Your current env is 'TEST'.
+
+Activate/Deactivate environments
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In order to install new binaries or software package, you must activate an environment. You may activate several but the last one is the active one. Let us activate the TEST environment::
+
+    damona activate TEST
+
+Check that it is active using::
+
+    damona env
+
+and look at the last line. It should look like::
+
+    Your current env is 'TEST'.
+
+
+What is going on when you activate an environment called TEST ? Simple: we append the directory ~/.config/damona/envs/TEST/bin to your PATH where binaries are searched for. This directory is removed when you use the deactivate command.
+::
+
+    damona deactivate TEST
+    damona env
+
+should remove the TEST environment from your PATH. You may activate several and deactivate them. In such case, the environments behave as a Last In First Out principle::
+
+    damona activate base
+    damona activate TEST
+    damona deactivate
+
+Removes the last activated environments. While this set of commands is more specific::
+
+    damona activate base
+    damona activate TEST
+    damona deactivate base
+
+and keep the TEST environment only in your PATH.
+
+
+
+Software and releases
+---------------------
+
+Search for existing software
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**Damona** itself contains metadata to download containers and installed software. As explained in the motivation, other
 projects provide thousands of containers but here we provide containers for
 testing and proof of concept. 
 
@@ -47,9 +153,20 @@ This is possible by defining alias in the configuration file (in
 
 
 Download and install an image
------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Given the container name an dversion, you can now download a container image as follows::
+The first thing to do before installing is software is to activate the environment where you wish to install the
+software::
+
+    damona env
+
+tells you which is currently active. Otherwise activate one::
+
+    damona activate TEST
+
+See above for more details.
+
+Given the container name and version, you can now download a container image as follows::
 
     damona install fastqc:0.11.9
 
@@ -60,19 +177,12 @@ If there are several version and you just want the latest, remove the tag::
 That's it, you should get the image in your config path ~/.config/damona/images
 directory. In addition, a binary alias is created in ~/.config/damona/bin
 
-Now, we need to tell you shell where the binaries can be found. You may do it
-yourself by changing your PATH environemental variable. We have also a mechanism
-in DAMONA using the **activate** command. More about it later but for testing,
-you can type::
-
-    damona activate base
-
 And the *fastqc* command should be available::
 
     fastqc
 
-Note that using the activate command above, your PATH has been changed in your
-current shell. 
+.. note:: using the activate command above, your PATH has been changed in your current shell. If you open a new shlle,
+   you will need to activate the environment again.
 
 To install an image/binary, you can also use an external registry (see developer
 guide to define your own registry)::
@@ -80,21 +190,21 @@ guide to define your own registry)::
     damona install fastqc:0.11.9 --url https://biomics.pasteur.fr/drylab/damona/registry.txt
 
 For this particular website, we have an alias::
- 
+
     damona install fastqc:0.11.9 --url damona
 
 You can add aliases in *~/.config/damona/damona.cfg* file.
 
-Different Environments
-----------------------
+Application: set several Environments
+--------------------------------------
 
-So far, we have downloaded and created aliases in the main **damona**
-environment, which is named **base**. It is in  *~/.config/damona*. There, you have two sub-directories: 
+In **damona**, environments are stored in *~/.config/damona*. There, you have two sub-directories: 
 
-* bin
+* envs
 * images
 
-In the *images* directory, we store the singularity containers. In *bin* directory, we create aliases
+In the *images* directory, we store the singularity containers. In *envs* directory, we store the environments.
+There, a sub-directory **bin/** can be found. That is where we create aliases
 so as to make the container executables.
 
 Now what about having different environments ? It would be nice to handle
@@ -123,9 +233,10 @@ And to install it in the *test2* environment::
 You can activate as many environments as you wish. Calling deactivate will only
 deactivate the last activated environment. In works as a Last In First Out mechanism.
 
-
+Environmental varaibles
+------------------------
 DAMONA_SINGULARITY_OPTIONS
---------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 All binaries created with **Damona** use this syntax::
 
