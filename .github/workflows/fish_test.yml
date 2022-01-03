@@ -5,6 +5,10 @@ on:
   push:
       branches:
         - master
+      paths:
+        - damona/*py
+        - .github/workflow/fish/*
+
 jobs:
   build-linux:
     runs-on: ubuntu-20.04
