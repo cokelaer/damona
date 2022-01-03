@@ -8,8 +8,6 @@ on:
       paths:
         - '**.py'
         - '.github/workflows/bash/**'
-      paths-ignore:
-        - 'doc/**'
 
 jobs:
   build-linux:
