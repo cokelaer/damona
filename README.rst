@@ -348,6 +348,7 @@ Changelog
 ========= ========================================================================
 Version   Description
 ========= ========================================================================
+0.7.2     * Fix regression to install a software with its version
 0.7.1     * Implement the fish shell 
           * add command "damona list"
           * rename recipes/ directory into software/ and created a new library/ 
