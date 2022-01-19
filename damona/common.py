@@ -159,10 +159,10 @@ class Damona:
         Nu = len(used_images)
         No = Ni - Nu
         # keep print to make sure it is seen
-        print(f"{Nu} images is/are used. Meaning {No} are orphans and could be removed:")
+        print(f"{Nu} images is/are used. ")
         orphans = []
 
-        for image in images:
+        for image in sorted(images):
             if image not in used_images:  # pragma: no cover
                 logger.info(f"{image} image not used.")
                 orphans.append(image)
