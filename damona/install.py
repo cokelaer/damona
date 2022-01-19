@@ -22,12 +22,14 @@ import shutil
 import time
 import subprocess
 
+from urllib.request import urlretrieve
+
 from easydev import md5
 
 
 from spython.main import Client
 from damona import Registry
-from damona import Environ 
+from damona import Environ
 from damona.common import ImageReader, requires_singularity
 from damona.registry import Software
 from damona import version as damona_version
@@ -136,7 +138,7 @@ class LocalImageInstaller(ImageInstaller):
 
         :param str image_name: The location of the singularity image to be installed.
         :param cmd: internal place holder to fill the history log with the calling command.
-        :param list binaries: The list of binaries to be installed and expected to be 
+        :param list binaries: The list of binaries to be installed and expected to be
             found in the :attr:`image_name`
 
         """
@@ -171,7 +173,7 @@ class LocalImageInstaller(ImageInstaller):
 
     def install_image(self, force=False):
         """Install the singularity image in the environment
-        
+
         If an image exists with the same name, we check the md5sum of the destination and target.
         If they are identical, no need to overwrite the destination.
         """
@@ -235,10 +237,10 @@ class RemoteImageInstaller(ImageInstaller):
         """.. rubric:: **Constructor**
 
         :param str image_name: The location of the singularity image to be installed.
-        :param list binaries: The list of binaries to be installed and expected to be 
+        :param list binaries: The list of binaries to be installed and expected to be
             found in the :attr:`image_name`
         :param cmd: internal place holder to fill the history log with the calling command.
-        :param from_url: provide a URL if you want to use a third-party online registry 
+        :param from_url: provide a URL if you want to use a third-party online registry
 
         """
         super(RemoteImageInstaller, self).__init__()
@@ -357,8 +359,6 @@ class RemoteImageInstaller(ImageInstaller):
         # now that we have the registry name, we can download the image
         logger.info("Downloading {}".format(download_name))
 
-        # By default we downlaods from syslab.
-        # if not found, one can provide an URL
         pull_folder = self.images_directory / "damona_buffer"
 
         if self.from_url:
@@ -374,7 +374,6 @@ class RemoteImageInstaller(ImageInstaller):
 
             if download_name.startswith("https://"):
                 print(f"downloading into {pull_folder} {output_name}")
-                from urllib.request import urlretrieve
 
                 urlretrieve(download_name, filename=str(pull_folder / output_name))
                 # wget.download(download_name, str(pull_folder / output_name))
@@ -408,6 +407,104 @@ class RemoteImageInstaller(ImageInstaller):
         self.image_installed = True
 
 
+class BiocontainersInstaller(ImageInstaller):
+    """
+
+    Using bioservices.Biocontainers, we can retrieve all tools and versions.
+    We store the list once in a while in damona/biocontainers/registry.yaml
+
+        from bioservices import Biocontainers
+        b = Biocontainers()
+        info = b.get_tools()
+        tools = {}
+        for name, versions in zip(info['name'], info['versions']):
+            tools[name] = [x['meta_version'] for x in versions]
+
+    """
+
+    def __init__(self, image_name, binaries=None, cmd=None):
+        super(BiocontainersInstaller, self).__init__()
+
+
+        # get the biocontainers prefix and the name:version suffix
+        prefix, suffix = image_name.split("/")
+
+        if prefix != "biocontainers":
+            logger.error(f"Biocontainers name must start with 'biocontainers/' ({prefix} provided")
+            sys.exit(1)
+
+        try:
+            name, version = suffix.split(":")
+            self.name = name
+            self.version = version
+        except ValueError as err:
+            logger.error(f"Biocontainers name must be formatted as NAME:VERSION ({suffix} provided)")
+            sys.exit(1)
+
+        logger.info("Reading biocontainer registry. Takes a few seconds")
+        self.registry = Registry(from_biocontainers=True)
+
+        if name not in self.registry.data.keys():
+            logger.error(f"{name} not found in the biocontainers registry. Use damona search PATTERN --include-biocontainers")
+            sys.exit(1)
+
+        self.image_name = image_name
+        self.images_directory = pathlib.Path(DAMONA_PATH) / "images"
+
+        self.cmd = cmd
+        self.binaries = binaries
+        self.image_installed = False
+
+    def is_valid(self):
+        return True
+
+    @requires_singularity
+    def pull_image(self, output_name=None, force=False):
+        """Pull and Install a biocontainer image.
+
+        """
+        self.image_installed = False
+
+        download_name = self.image_name
+
+        # now that we have the registry name, we can download the image
+        logger.info("Downloading {}".format(self.image_name))
+
+        pull_folder = self.images_directory / "damona_buffer"
+        if output_name is None:
+            output_name = self.image_name.replace("biocontainers/", "")
+            output_name = output_name.replace(":", "_") + ".img"
+
+        #
+        Client.pull("docker://" + str(self.image_name), name=output_name, pull_folder=pull_folder, force=force)
+        logger.info(f"File {self.image_name} uploaded to {pull_folder}")
+
+        #
+        self.input_image = ImageReader(pull_folder / output_name)
+
+        shortname = self.input_image.shortname
+        try:
+            logger.info(f"Copying into damona image directory: {self.images_directory}")
+            self.input_image.filename.rename(self.images_directory / shortname)
+            self.input_image.filename = pathlib.Path(self.images_directory / shortname)
+        except FileNotFoundError:
+            logger.warning("File not installed properly. Stopping")
+            self.image_installed = False
+
+        # for the install_binaries to work, we need to set the binaries
+        if 'binaries' in self.registry.data[self.name]:
+            self.binaries = self.registry.data[self.name]['binaries'].split()
+        else:
+            self.binaries = [self.input_image.guessed_executable]
+
+        print(self.binaries)
+
+
+        self.image_installed = True
+
+
+
+
 class BinaryInstaller:
     """Install a binary in the bin/ directory of the current environment given its image
 
@@ -415,10 +512,10 @@ class BinaryInstaller:
     """
     def __init__(self, binaries, parent_image_path):
         """.. rubric:: **Constructor**
-        
+
         :param list binaries: list of binaries to install
         :param str parent_image_path: the location of the images where binaries are to be found
-        
+
         """
         #: instance of :class:`damona.common.ImageReader`
         self.image = ImageReader(parent_image_path)

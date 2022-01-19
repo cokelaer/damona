@@ -19,7 +19,7 @@ import glob
 import sys
 import os
 import yaml
-from yaml import Loader
+from yaml import Loader, CSafeLoader
 import packaging.version
 
 
@@ -30,7 +30,7 @@ import colorlog
 logger = colorlog.getLogger(__name__)
 
 
-__all__ = ["Releases", "Software", "Registry", "Release", "ImageName", "RemoteRegistry"]
+__all__ = ["Releases", "Software", "Registry", "Release", "ImageName", "RemoteRegistry" ]
 
 
 class ImageName:
@@ -70,8 +70,8 @@ class ImageName:
 
 class Releases(dict):
     """A collection of :class:`Release` for a given software.
-    
-    
+
+
     ::
 
         from damona import Software
@@ -195,8 +195,8 @@ class Release:
 
 class RemoteRegistry:
     """A remote registry consists of a single yaml file
-    
-    
+
+
     The files is expected to be a concatenation of registry YAML files.
     See the fastqc resigtry file for an example.
     """
@@ -214,6 +214,28 @@ class RemoteRegistry:
         self.rawdata = html.decode("utf-8")
         remote_registry = yaml.load(self.rawdata, Loader=Loader)
         self.data = remote_registry
+
+
+class BiocontainersRegistry:
+
+    def __init__(self, filename=None):
+        from damona import __path__
+
+
+        if filename in [True, None]:
+            self.filename = pathlib.Path(__path__[0]) / "biocontainers" /  "registry.yaml"
+        elif os.path.exists(filename):
+            self.filename = filename
+        else:
+            raise ValueError(f"Expected a valid input filename. you provided {filename}")
+        self._read_registry()
+
+    def _read_registry(self):
+        # Here we use CSafeLoader to speed up reading of the large input file
+        logger.info("Reading Biocontainer registry. Takes a few seconds")
+        with open(self.filename, "r") as fin:
+            rawdata = fin.read()
+            self.data = yaml.load(rawdata, Loader=CSafeLoader)
 
 
 class Software:
@@ -280,12 +302,12 @@ class Software:
 
         # read the yaml
 
-        data = yaml.load(open(regname, "r").read(), Loader=Loader)
-        if len(data.keys()) != 1:  # pragma: no cover
+        self._yaml = yaml.load(open(regname, "r").read(), Loader=Loader)
+        if len(self._yaml.keys()) != 1:  # pragma: no cover
             logger.error(f"{regname} must contain on single entry named after the images. ")
             sys.exit(1)
 
-        return data
+        return self._yaml
 
     def _interpret_registry(self, data):
         regname = self.registry_name
@@ -342,10 +364,9 @@ class Registry:
 
     """
 
-    def __init__(self, from_url=None):
+    def __init__(self, from_url=None, biocontainers=None):
         """.. rubric:: **Constructor**
-        
-        
+
         :param str from_url: if set, uses the URL provided, otherwise uses Damona registry
         """
 
@@ -356,15 +377,14 @@ class Registry:
             else:  # pragma: no cover
                 assert from_url.startswith("http")
                 assert from_url.endswith("registry.txt")
+
+        self.from_biocontainers = biocontainers
         self.from_url = from_url
         self.registry = {}
         self.discovery()
 
     def find_candidate(self, pattern):
-        """Find a unique recipe within the registry.
-
-
-        """
+        """Find a unique recipe within the registry."""
         candidates = [x for x in self.registry.keys() if pattern==x or pattern in x.split(":")]
 
         if len(candidates) == 0:  # pragma: no cover
@@ -390,25 +410,26 @@ class Registry:
         """Look for software/release in the registry and populate the attributes"""
         if self.from_url:
             self._url_discovery()
+        elif self.from_biocontainers:
+            self._biocontainers_discovery()
         else:
             self._damona_discovery()
 
-    def _url_discovery(self):
+    def _populate(self, data):
+        #Used by _url_discovery, _biocontainers_discovery, _damona_discovery 
+
         self.registry = {}
 
-        ext_reg = RemoteRegistry(self.from_url)
-
-        for name, content in ext_reg.data.items():
-            recipe = Software({name: content})
-            recipe.check()
-            name = recipe.name  ##+ k.replace("Singularity.", "").lower()
+        for name, content in data.items():
+            software = Software({name: content})
+            software.check()
             # we may have several releases
-            for version in recipe.versions:
-                name_version = recipe.name + ":" + version
-                release = recipe.releases[version]
+            for version in software.versions:
+                name_version = software.name + ":" + version
+                release = software.releases[version]
                 if name_version not in self.registry:
                     if release.download is None:  # pragma: no cover
-                        logger.warning(f"recipe {recipe.name} has no download entry. please fill asap")
+                        logger.warning(f"software {software.name} has no download entry. please fill asap")
                     elif release.download.startswith("damona::"):  # pragma: no cover
                         from_url = self.config["urls"]["damona"]
                         release.download = release.download.replace("damona::", from_url)
@@ -419,37 +440,29 @@ class Registry:
                         print("{}: {}".format(kk, vv))
                         for kkk, vvv in self.registry[kk].items():
                             print(" - {}:  {}".format(kkk, vvv))
-                    raise ValueError("found a duplicated name {}".format(name_version))
+
+    def _url_discovery(self):
+        ext_reg = RemoteRegistry(self.from_url)
+        self._populate(ext_reg.data)
+
+    def _biocontainers_discovery(self):
+
+        # we read the biocontainers information
+        ext_reg = BiocontainersRegistry(self.from_biocontainers)
+        self._populate(ext_reg.data)
 
     def _damona_discovery(self):
 
+        # read all damona registry and store in expected dictionary structure
         from damona.software import __path__
-
         _registry_files = glob.glob(__path__[0] + "/*/registry.yaml")
-
-        self.registry = {}
-
+        data = {}
         for registry in _registry_files:
             software = Software(registry)
-            software.check()
+            data[software.name] = software._yaml[software.name]
 
-            for version in software.versions:
-                name_version = software.name + ":" + version
-                release = software.releases[version]
-                if name_version not in self.registry:
-                    if release.download is None:  # pragma: no cover
-                        logger.warning(f"recipe {software.name} has no download entry. please fill asap")
-                    elif release.download.startswith("damona::"):
-                        from_url = self.config["urls"]["damona"]
-                        release.download = release.download.replace("damona::", from_url)
-                        release.download = release.download.replace("registry.txt", "")
-                    self.registry[name_version] = release
-                else:  # pragma: no cover
-                    for kk, vv in self.registry.items():
-                        print("{}: {}".format(kk, vv))
-                        for kkk, vvv in self.registry[kk].items():
-                            print(" - {}:  {}".format(kkk, vvv))
-                    raise ValueError("found a duplicated name {}".format(name_version))
+        self._populate(data)
+
 
     def get_list(self, pattern=None):
         """Return list of :class:`Software` found in the registry"""
