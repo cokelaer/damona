@@ -30,8 +30,8 @@ import os
 from damona import version
 from damona import Damona, Environment, Environ
 from damona.common import BinaryReader, ImageReader, get_damona_path
-from damona.install import RemoteImageInstaller, LocalImageInstaller
-from damona.registry import Registry
+from damona.install import RemoteImageInstaller, LocalImageInstaller, BiocontainersInstaller
+from damona.registry import Registry, BiocontainersRegistry
 
 
 manager = Damona()
@@ -243,7 +243,7 @@ def install(**kwargs):
     to install images elsewhere.
 
     Finally, you may have images online on a website. To install such images, use
-    the --url (sse developer guide for details).
+    the --url (see developer guide for details).
     """
     logger.debug(kwargs)
 
@@ -269,7 +269,14 @@ def install(**kwargs):
     else:
         binaries = None
 
-    if os.path.exists(image_path) is False:
+
+    if kwargs['image'].startswith("biocontainers/"):
+        p = BiocontainersInstaller(kwargs['image'], binaries=binaries)
+        p.pull_image(force=force_image)
+
+        p.install_binaries(force=force_binaries)
+
+    elif os.path.exists(image_path) is False:
         if kwargs["url"]:
             url = kwargs["url"]
             logger.info(f"Installing from online registry  (url: {url})")
@@ -382,10 +389,14 @@ def remove(**kwargs):
         else:
             logger.warning(f"{name} was not found in the environment {env_name}. Not removed")
 
+    with open(env.path / "history.log", "a+") as fout:
+        cmd = " ".join(["damona"] + sys.argv[1:])
+        fout.write(f"\n{time.asctime()}: {cmd}")
+
 
 # =================================================================== clean
 @main.command()
-@click.option("--remove", is_flag=True, help="--remove the binary and image orphans in all environments ")
+@click.option("--remove", is_flag=True, help="remove the binary and image orphans in all environments ")
 def clean(**kwargs):
     """Remove orphan images and binaries from all environments.
 
@@ -423,7 +434,7 @@ def clean(**kwargs):
     if kwargs["remove"]:  # pragma: no cover
         for x in orphans:
             answer = input(f"You are going to delete this image: {x}. Are you sure ? (yes/no)")
-            if answer == "yes":
+            if answer in [ "yes", 'y']:
                 os.remove(os.path.expanduser(x))
                 logger.info(f"Removed {x}")
             else:
@@ -436,6 +447,8 @@ def clean(**kwargs):
 @main.command()
 @click.argument("pattern", required=True, type=click.STRING)
 @click.option("--images-only", is_flag=True, default=False, help="Show images only")
+@click.option("--include-biocontainers", is_flag=True, default=False, 
+    help="include also biocontainers hits")
 @click.option("--binaries-only", is_flag=True, default=False, help="Show binaries only")
 @click.option(
     "--url",
@@ -467,6 +480,13 @@ def search(**kwargs):
 
         damona search fastqc --url damona
 
+    Although not recommended (not curated by Damona), you can also 
+    install any container available on biocontainer. To do som you first 
+    need to know the name and version:
+
+        damona search fastqc --include-biocontainers
+
+
     """
 
     url = kwargs.get("url", None)
@@ -480,14 +500,26 @@ def search(**kwargs):
         click.echo(f"Pattern '{pattern}' found in these releases:")
         modules = Registry(from_url=url).get_list(pattern=pattern)
         for mod in modules:
-            click.echo(f" - {mod}")
+            click.echo(f" - {mod}  (damona install {mod})")
 
     if not kwargs["images_only"]:
         click.echo(f"Pattern '{pattern}' found as binaries:")
         modules = Registry(from_url=url).get_binaries(pattern=pattern)
         for k in sorted(modules.keys()):
             v = modules[k]
-            click.echo(f" - {k}: {v}")
+            click.echo(f" - {k}: {v} (damona install {k})")
+
+    if kwargs["include_biocontainers"]:
+        click.echo("Searching biocontainers:")
+        br = BiocontainersRegistry()
+        for k,data in br.data.items():
+            if pattern in k:
+                click.echo(f" - {k}: ")
+                for version, location in data['releases'].items():
+                    install = f"(damona install biocontainers/{k}:{version})"
+                    click.echo(f" -     {version}: {install} ")
+            elif pattern == "*":
+                click.echo(f" - {k}: {v}")
 
 
 # ============================================================  export
@@ -562,6 +594,7 @@ def export(**kwargs):
 
 
 @main.command()
+@click.option("--include-biocontainers", is_flag=True, help="include also biocontainers (experimental)")
 def stats(**kwargs):
     """Get information about Damona images and binaries
 
@@ -573,6 +606,8 @@ def stats(**kwargs):
     from damona import admin
 
     admin.stats()
+    if kwargs['include_biocontainers']:
+        admin.stats(True)
 
 
 # ===================================================================  list
