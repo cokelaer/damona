@@ -8,7 +8,7 @@ import glob
 
 _MAJOR               = 0
 _MINOR               = 8
-_MICRO               = 0
+_MICRO               = 1
 version              = '%d.%d.%d' % (_MAJOR, _MINOR, _MICRO)
 release              = '%d.%d' % (_MAJOR, _MINOR)
 
@@ -29,8 +29,9 @@ metainfo = {
           'Intended Audience :: Science/Research',
           'License :: OSI Approved :: BSD License',
           'Operating System :: OS Independent',
-          'Programming Language :: Python :: 3.6',
           'Programming Language :: Python :: 3.7',
+          'Programming Language :: Python :: 3.8',
+          'Programming Language :: Python :: 3.9',
           'Topic :: Software Development :: Libraries :: Python Modules',
           'Topic :: Scientific/Engineering :: Bio-Informatics',
           'Topic :: Scientific/Engineering :: Information Analysis',
@@ -108,7 +109,10 @@ setup(
     package_data = {
         'damona': ['*.cfg'],
         'damona.shell': ['*/*'],
-        'damona.software' : ['*/Singularity.*', '*/registry.yaml'],
+        'damona.software' :      ['*/Singularity.*', '*/registry.yaml'],
+        'damona.library' :       ['*/Singularity.*', '*/registry.yaml'],
+        'damona.papers' :         ['*/registry.yaml'],
+        'damona.biocontainers' : ['registry.yaml'],
         '': ["damona/shell/bash/damona.sh", "damona/shell/fish/damona.fish"]
         },
 

@@ -348,7 +348,13 @@ Changelog
 ========= ========================================================================
 Version   Description
 ========= ========================================================================
-0.7.2     * Fix regression to install a software with its version
+0.8.1     * Include ability to interact with biocontainers by allowing retrieval
+            of all biocontainers docker images using this syntax:
+            'damona install biocontainers/xx:1.2.3' Note that although 9000 
+            containers are available, in practice, only about 1000 dockers are 
+            on dockerhub, which is already nice :-)
+          * 
+0.8.0     * Fix regression to install a software with its version
 0.7.1     * Implement the fish shell 
           * add command "damona list"
           * rename recipes/ directory into software/ and created a new library/ 

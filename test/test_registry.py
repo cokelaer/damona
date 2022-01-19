@@ -1,6 +1,7 @@
 from damona.registry import Software, Registry, ImageName
 import glob
 
+from . import test_dir
 
 def test_image_name():
 
@@ -88,8 +89,10 @@ def test_registry():
     # and a regression bug when adding the version:
     reg.find_candidate("sequana_tools:0.12.0") 
  
-
-
 def test_remote_registry():
     reg = Registry("https://biomics.pasteur.fr/salsa/damona/registry.txt")
     reg.get_list()
+
+
+def test_biocontainer_registry():
+    reg = Registry(biocontainers=f"{test_dir}/data/biocontainers.yaml")
