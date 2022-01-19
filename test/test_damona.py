@@ -269,6 +269,28 @@ def test_install_local(monkeypatch):
 
     Teardown(NAME)
 
+def test_install_biocontainers(monkeypatch):
+
+    NAME = "damona__testing__install_biocontainers"
+    Setup(NAME)
+    manager = Damona()
+    monkeypatch.setenv("DAMONA_ENV", str(manager.damona_path / "envs" / NAME ))
+
+    # This re-installs the image, interfering with the user's local image but should be safe
+    runner = CliRunner()
+    results = runner.invoke(script.install, [f"biocontainers/hisat2:v2.1.0-2-deb_cv1"])
+    assert results.exit_code == 0
+
+    Teardown(NAME)
+
+
+
+
+
+
+
+
+
 
 
 

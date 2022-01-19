@@ -242,8 +242,13 @@ def install(**kwargs):
     DAMONA_PATH environment variable. Therefore, you can redefine this variable
     to install images elsewhere.
 
-    Finally, you may have images online on a website. To install such images, use
+    You may have images online on a website. To install such images, use
     the --url (see developer guide for details).
+
+    Or wish to use a biocontainers docker file::
+
+        damona install biocontainers/hisat2:v2.0.5-1-deb
+
     """
     logger.debug(kwargs)
 

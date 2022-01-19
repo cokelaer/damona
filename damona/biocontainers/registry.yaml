@@ -66257,8 +66257,8 @@ hisat2:
       download: docker://biocontainers/hisat2:2.0.5
     v2.0.5-1-deb:
       download: docker://biocontainers/hisat2:v2.0.5-1-deb
-    v2.1.0-2-deb:
-      download: docker://biocontainers/hisat2:v2.1.0-2-deb
+    v2.1.0-2-deb_cv1:
+      download: docker://biocontainers/hisat2:v2.1.0-2-deb_cv1
     2.2.0:
       download: docker://biocontainers/hisat2:2.2.0
     2.2.1:

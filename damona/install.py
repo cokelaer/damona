@@ -441,10 +441,9 @@ class BiocontainersInstaller(ImageInstaller):
             logger.error(f"Biocontainers name must be formatted as NAME:VERSION ({suffix} provided)")
             sys.exit(1)
 
-        logger.info("Reading biocontainer registry. Takes a few seconds")
-        self.registry = Registry(from_biocontainers=True)
+        self.registry = Registry(biocontainers=True)
 
-        if name not in self.registry.data.keys():
+        if suffix not in self.registry.registry:
             logger.error(f"{name} not found in the biocontainers registry. Use damona search PATTERN --include-biocontainers")
             sys.exit(1)
 
@@ -492,12 +491,9 @@ class BiocontainersInstaller(ImageInstaller):
             self.image_installed = False
 
         # for the install_binaries to work, we need to set the binaries
-        if 'binaries' in self.registry.data[self.name]:
-            self.binaries = self.registry.data[self.name]['binaries'].split()
-        else:
-            self.binaries = [self.input_image.guessed_executable]
+        prefix, suffix = self.image_name.split("/")
+        self.binaries = self.registry.registry[suffix].binaries
 
-        print(self.binaries)
 
 
         self.image_installed = True
