@@ -83,16 +83,19 @@ def test_registry():
     reg.find_candidate("fa")  # several candidate
 
     # there was a fixed bug when searching for similar patterns
-    reg.find_candidate("bowtie")  
-    reg.find_candidate("bowtie2") 
+    reg.find_candidate("bowtie")
+    reg.find_candidate("bowtie2")
 
     # and a regression bug when adding the version:
-    reg.find_candidate("sequana_tools:0.12.0") 
- 
+    reg.find_candidate("sequana_tools:0.12.0")
+
 def test_remote_registry():
     reg = Registry("https://biomics.pasteur.fr/salsa/damona/registry.txt")
     reg.get_list()
 
 
 def test_biocontainer_registry():
-    reg = Registry(biocontainers=f"{test_dir}/data/biocontainers.yaml")
+    try:
+        reg = Registry(biocontainers=f"{test_dir}/data/biocontainers.yaml")
+    except ValueError:
+        reg = Registry(biocontainers=f"../{test_dir}/data/biocontainers.yaml")
