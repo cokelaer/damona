@@ -64,7 +64,7 @@ class Zenodo:  # pragma: no cover
         data = z.get_metadata("fastqc", "v0.11.8")
         update = z.update_metadata(deposit, data)
 
-    4. publish  NOTE THAT PUBLISHED DEPOSITION CANNOT BE MODIFIED NOT DELETED::
+    4. publish  NOTE THAT PUBLISHED DEPOSITION CANNOT BE MODIFIED NOR DELETED::
 
         published = z.publish(deposit)
 
