@@ -348,6 +348,7 @@ Changelog
 ========= ========================================================================
 Version   Description
 ========= ========================================================================
+0.8.2     * add seqkit recipe and container
 0.8.1     * Include ability to interact with biocontainers by allowing retrieval
             of all biocontainers docker images using this syntax:
             'damona install biocontainers/xx:1.2.3' Note that although 9000 

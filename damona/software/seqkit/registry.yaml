@@ -1,0 +1,9 @@
+seqkit:
+  doi: 10.5281/zenodo.6313000
+  zenodo_id: 6313001
+  releases:
+    2.1.0:
+      download: https://zenodo.org/record/6313001/files/seqkit_2.1.0.img
+      md5sum: 5e7f7abb02e892ee875a6f3e4e56ebe0
+      doi: 10.5281/zenodo.6313001
+      filesize: 16142336
