@@ -8,3 +8,8 @@ falco:
         md5sum:  a8961617f8920fade322cdba618fec80
         doi: 10.5281/zenodo.5675783
         filesize: 185673246
+      1.0.0:
+        download: https://zenodo.org/record/7014954/files/falco_1.0.0.img
+        md5sum: 6774cde64e8d257532b1aaa12bd46eeb
+        doi: 10.5281/zenodo.7014954
+        filesize: 110555136

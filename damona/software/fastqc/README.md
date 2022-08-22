@@ -1,0 +1,1 @@
+Singularity.fastqc_0.11.9_py3 has the same version as Singularity.fastqc_0.11.9 but we has to include python3 and bash for snakemake pipeline to be able to run. We took this opportunity to bootstrap from an alpine version to decrease the image size

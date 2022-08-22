@@ -12,3 +12,8 @@ fastqc:
       md5sum: 8a8d751504937491a846571816dbc372
       doi: 10.5281/zenodo.5708811
       filesize: 198116894
+    0.11.9-py3:
+      download: https://zenodo.org/record/7015004/files/fastqc_0.11.9-py3.img
+      md5sum: 10d09a5d67f8a93bd1d1b7cba46db883
+      doi: 10.5281/zenodo.7015004
+      filesize: 138665984
