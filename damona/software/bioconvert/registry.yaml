@@ -1,0 +1,10 @@
+bioconvert:
+  doi: 10.5281/zenodo.7034821
+  binaries: bioconvert
+  zenodo_id: 7034822
+  releases:
+    0.6.1:
+      download: https://zenodo.org/record/7034822/files/bioconvert_0.6.1.img
+      md5sum: 11d45a19cb18353eda8c943aac41f9dc
+      doi: 10.5281/zenodo.7034822
+      filesize: 958177280
