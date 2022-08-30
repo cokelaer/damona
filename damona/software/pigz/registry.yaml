@@ -1,0 +1,10 @@
+pigz:
+  doi: 10.5281/zenodo.7034375
+  binaries: pigz unpigz
+  zenodo_id: 7034376
+  releases:
+    2.4.0:
+      download: https://zenodo.org/record/7034376/files/pigz_2.4.0.img
+      md5sum: b10dcb45848ac1860395126c4a58f95a
+      doi: 10.5281/zenodo.7034376
+      filesize: 3534848

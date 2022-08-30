@@ -1,0 +1,10 @@
+gzip:
+  doi: 10.5281/zenodo.7034359
+  binaries: gzip gunzip
+  zenodo_id: 7034360
+  releases:
+    1.9.0:
+      download: https://zenodo.org/record/7034360/files/gzip_1.9.0.img
+      md5sum: 42a44db7f5c4f698671fc0eabdcddfc5
+      doi: 10.5281/zenodo.7034360
+      filesize: 3522560
