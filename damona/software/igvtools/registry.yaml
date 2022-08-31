@@ -1,0 +1,10 @@
+igvtools:
+  binaries: igv igvtools
+  doi: 10.5281/zenodo.7022634
+  zenodo_id: 7022635
+  releases:
+    2.12.0:
+      download: https://zenodo.org/record/7022635/files/igvtools_2.12.0.img
+      md5sum: 17bffa345cbfd551e6189075c20f6428
+      doi: 10.5281/zenodo.7022635
+      filesize: 126578688
