@@ -2,13 +2,32 @@ sequana_tools:
   doi: 10.5281/zenodo.5767303
   binaries:  fastqc bowtie STAR bowtie2 bowtie2-build bowtie-build bwa featureCounts samtools bamtools  gffread dsrc MarkDuplicates spades.py split-paired-reads.py filter-abund.py extract-paired-reads.py snpEff deeptools picard subread sambamba pbunzip2 pbzip2 kraken2 krona ktImportText kraken2-build freebayes minimap2 bedtools interleave-reads.py normalize-by-median.py ccs
   zenodo_id: 5767304
+
   releases:
+    0.14.3:
+      download: https://zenodo.org/record/7102074/files/sequana_tools_0.14.3.img
+      md5sum: b580d898575ad164c460738dd8c64172
+      doi: 10.5281/zenodo.7102074
+      filesize: 1999458304
+      binaries:  bcftools falco fastp kraken2-inspect mafft vcfutils.pl bamCoverage rnaseqc salmon inner_distance.py read_GC.py geneBody_coverage.py geneBody_coverage2.py clipping_profile.py read_duplication.py junction_annotation.py junction_saturation.py infer_experiment.py bam_stat.py dot genomeCoverageBed plotFingerprint intersectBed shustring hmmalign hmmconvert hmmfetch hmmpgmd hmmpress hmmsearch hmmstat hmmbuild hmmemit hmmlogo hmmpgmd_shard hmmscan hmmsim trinotate_report_summary.pl kallisto Build_Trinotate_Boilerplate_SQLite_db.pl Trinity seqkit seqtk sequana sequana_taxonomy nanopolish
+    0.14.2:
+      download: https://zenodo.org/record/7031863/files/sequana_tools_0.14.2.img
+      md5sum: 7c944db77d8c3adc262b6828d96357df
+      doi: 10.5281/zenodo.7031863
+      filesize: 1846890496
+      binaries:  bcftools falco fastp kraken2-inspect mafft vcfutils.pl bamCoverage rnaseqc salmon inner_distance.py read_GC.py geneBody_coverage.py geneBody_coverage2.py clipping_profile.py read_duplication.py junction_annotation.py junction_saturation.py infer_experiment.py bam_stat.py dot genomeCoverageBed plotFingerprint intersectBed shustring hmmalign hmmconvert hmmfetch hmmpgmd hmmpress hmmsearch hmmstat hmmbuild hmmemit hmmlogo hmmpgmd_shard hmmscan hmmsim trinotate_report_summary.pl kallisto Build_Trinotate_Boilerplate_SQLite_db.pl Trinity seqkit seqtk sequana sequana_taxonomy nanopolish
+    0.14.1:
+      download: https://zenodo.org/record/6794508/files/sequana_tools_0.14.1.img
+      md5sum: 3436493ee8c4c1682ca99f96ecfce951
+      doi: 10.5281/zenodo.6794508
+      filesize: 1614946304
+      binaries:  bcftools falco fastp kraken2-inspect mafft vcfutils.pl bamCoverage rnaseqc salmon inner_distance.py read_GC.py geneBody_coverage.py geneBody_coverage2.py clipping_profile.py read_duplication.py junction_annotation.py junction_saturation.py infer_experiment.py bam_stat.py dot genomeCoverageBed plotFingerprint intersectBed shustring hmmalign hmmconvert hmmfetch hmmpgmd hmmpress hmmsearch hmmstat hmmbuild hmmemit hmmlogo hmmpgmd_shard hmmscan hmmsim trinotate_report_summary.pl kallisto Build_Trinotate_Boilerplate_SQLite_db.pl Trinity
     0.12.1:
       download: https://zenodo.org/record/5767304/files/sequana_tools_0.12.1.img
       md5sum: 585b4f752e3a46b430ec5529034c62fc
       doi: 10.5281/zenodo.5767304
       filesize: 1575124992
-      binaries: fastq-dump  bcftools  falco fastp  kraken2-inspect     mafft vcfutils.pl bamCoverage rnaseqc salmon inner_distance.py read_GC.py geneBody_coverage.py geneBody_coverage2.py clipping_profile.py read_duplication.py junction_annotation.py junction_saturation.py infer_experiment.py bam_stat.py dot genomeCoverageBed plotFingerprint intersectBed shustring
+      binaries: fastq-dump  bcftools  falco fastp  kraken2-inspect mafft vcfutils.pl bamCoverage rnaseqc salmon inner_distance.py read_GC.py geneBody_coverage.py geneBody_coverage2.py clipping_profile.py read_duplication.py junction_annotation.py junction_saturation.py infer_experiment.py bam_stat.py dot genomeCoverageBed plotFingerprint intersectBed shustring
 
     0.12.0:
       download: https://zenodo.org/record/5767441/files/sequana_tools_0.12.0.img
@@ -39,9 +58,3 @@ sequana_tools:
       filesize: 1421837854
       binaries:  cufflinks cutadapt atropos  fastq_screen    
 
-    0.14.1:
-      download: https://zenodo.org/record/6794508/files/sequana_tools_0.14.1.img
-      md5sum: 3436493ee8c4c1682ca99f96ecfce951
-      doi: 10.5281/zenodo.6794508
-      filesize: 1614946304
-      binaries:  bcftools falco fastp kraken2-inspect mafft vcfutils.pl bamCoverage rnaseqc salmon inner_distance.py read_GC.py geneBody_coverage.py geneBody_coverage2.py clipping_profile.py read_duplication.py junction_annotation.py junction_saturation.py infer_experiment.py bam_stat.py dot genomeCoverageBed plotFingerprint intersectBed shustring hmmalign hmmconvert hmmfetch hmmpgmd hmmpress hmmsearch hmmstat hmmbuild hmmemit hmmlogo hmmpgmd_shard hmmscan hmmsim trinotate_report_summary.pl kallisto Build_Trinotate_Boilerplate_SQLite_db.pl Trinity

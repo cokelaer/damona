@@ -1,4 +1,5 @@
 salmon:
+  binaries: salmon
   doi: 10.5281/zenodo.5708842
   zenodo_id: 5708843
   releases:
