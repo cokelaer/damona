@@ -1,9 +1,15 @@
 phantompeakqualtools:
   doi: 10.5281/zenodo.5799573
   zenodo_id: 5799574
+  binaries: run_spp.R
   releases:
+  #  1.2.2:
+  #    download: https://zenodo.org/record/5799574/files/phantompeakqualtools_1.2.2.img
+  #    md5sum: 55fed758b08da123ff45c7be1d2bab2e
+  #    doi: 10.5281/zenodo.5799574
+  #    filesize: 904667136
     1.2.2:
-      download: https://zenodo.org/record/5799574/files/phantompeakqualtools_1.2.2.img
-      md5sum: 55fed758b08da123ff45c7be1d2bab2e
-      doi: 10.5281/zenodo.5799574
-      filesize: 904667136
+      download: https://zenodo.org/record/7301453/files/phantompeakqualtools_1.2.2.img
+      md5sum: e591ae3f427e551693126bc6a1fd8aea
+      doi: 10.5281/zenodo.7301453
+      filesize: 787251200
