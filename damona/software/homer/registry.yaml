@@ -1,0 +1,10 @@
+homer:
+  doi: 10.5281/zenodo.7305500
+  zenodo_id: 7305501
+  binaries: homer annotatePeaks.pl
+  releases:
+    4.11.0:
+      download: https://zenodo.org/record/7305501/files/homer_4.11.0.img
+      md5sum: b1a373c6931a5668ac5df18051dc9609
+      doi: 10.5281/zenodo.7305501
+      filesize: 486887424
