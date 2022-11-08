@@ -1,0 +1,10 @@
+idr:
+  doi: 10.5281/zenodo.7305442
+  zenodo_id: 7305443
+  binaries: idr
+  releases:
+    2.0.3:
+      download: https://zenodo.org/record/7305443/files/idr_2.0.3.img
+      md5sum: 0686b5198b1c4b13df4059b9394677bf
+      doi: 10.5281/zenodo.7305443
+      filesize: 582025216
