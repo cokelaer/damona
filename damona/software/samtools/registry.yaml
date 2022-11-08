@@ -1,0 +1,10 @@
+samtools:
+  doi: 10.5281/zenodo.7215277
+  binaries: samtools
+  zenodo_id: 7215278
+  releases:
+    1.15.0:
+      download: https://zenodo.org/record/7215278/files/samtools_1.15.0.img
+      md5sum: d575c3d91b6a7d352660a00256022628
+      doi: 10.5281/zenodo.7215278
+      filesize: 74117120
