@@ -4,7 +4,7 @@ fastp:
   binaries: fastp
   releases:
     0.23.2:
-      download: https://zenodo.org/record/7319704/files/fastp_0.23.2.img
-      md5sum: f90970b8c3abd3c7fd3f1e2834ccfd9a
-      doi: 10.5281/zenodo.7319704
-      filesize: 63070208
+      download: https://zenodo.org/record/7319782/files/fastp_0.23.2.img
+      md5sum: efd2883c080b360c3d0019708baf6ec7
+      doi: 10.5281/zenodo.7319782
+      filesize: 73031680
