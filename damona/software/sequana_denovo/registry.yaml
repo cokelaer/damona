@@ -1,0 +1,9 @@
+sequana_denovo:
+  doi: 10.5281/zenodo.7335175
+  zenodo_id: 7335176
+  releases:
+    0.0.2:
+      download: https://zenodo.org/record/7335176/files/denovo_tools_0.0.2.img
+      md5sum: e9b9fc132ac0aa62e3fc43af5a65fe9f
+      doi: 10.5281/zenodo.7335176
+      filesize: 1761562624
