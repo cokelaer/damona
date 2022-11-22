@@ -1,10 +1,14 @@
 fastp:
-  doi: 10.5281/zenodo.7319703
-  zenodo_id: 7319704
-  binaries: fastp
+  doi: 10.5072/zenodo.1130036
+  zenodo_id: 1130037
   releases:
     0.23.2:
-      download: https://zenodo.org/record/7319782/files/fastp_0.23.2.img
+      download: https://sandbox.zenodo.org/record/1130037/files/fastp_0.23.2.img
       md5sum: efd2883c080b360c3d0019708baf6ec7
-      doi: 10.5281/zenodo.7319782
+      doi: 10.5072/zenodo.1130037
       filesize: 73031680
+    0.23.3:
+      download: https://sandbox.zenodo.org/record/1130038/files/fastp_0.23.3.img
+      md5sum: 3eef8a8f9ad3ee1efad61e28f1088ad6
+      doi: 10.5072/zenodo.1130038
+      filesize: 269
