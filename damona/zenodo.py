@@ -208,7 +208,7 @@ class Zenodo:  # pragma: no cover
                 "description": f"""Singularity image(s) of {software} software to be used and installed with damona
 (<a href="https://damona.readthedocs.org">See https://damona.readthedocs.org</a>) for reproducible bioinformatics
 analysis.""",
-                "keywords": ["singularity", "damona", "bioinformatics", "reproducibility", "container"],
+                "keywords": ["apptainer", "singularity", "damona", "bioinformatics", "reproducibility", "container"],
                 "version": f"{version}",
             }
         }
