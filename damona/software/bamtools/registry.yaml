@@ -1,0 +1,9 @@
+bamtools:
+  doi: 10.5281/zenodo.7345681
+  zenodo_id: 7345682
+  releases:
+    2.5.2:
+      download: https://zenodo.org/record/7345682/files/bamtools_2.5.2.img
+      md5sum: 42e8e29a93d46c347d1551a9af67d90c
+      doi: 10.5281/zenodo.7345682
+      filesize: 91881472
