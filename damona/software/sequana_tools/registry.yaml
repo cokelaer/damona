@@ -58,3 +58,9 @@ sequana_tools:
       filesize: 1421837854
       binaries:  cufflinks cutadapt atropos  fastq_screen    
 
+    0.14.5:
+      download: https://zenodo.org/record/7341710/files/sequana_tools_0.14.5.img
+      md5sum: 0b486ed2050459e469cde9eca3fd00bc
+      doi: 10.5281/zenodo.7341710
+      filesize: 2002989056
+      binaries:  bcftools falco fastp kraken2-inspect mafft vcfutils.pl bamCoverage rnaseqc salmon inner_distance.py read_GC.py geneBody_coverage.py geneBody_coverage2.py clipping_profile.py read_duplication.py junction_annotation.py junction_saturation.py infer_experiment.py bam_stat.py dot genomeCoverageBed plotFingerprint intersectBed shustring hmmalign hmmconvert hmmfetch hmmpgmd hmmpress hmmsearch hmmstat hmmbuild hmmemit hmmlogo hmmpgmd_shard hmmscan hmmsim trinotate_report_summary.pl kallisto Build_Trinotate_Boilerplate_SQLite_db.pl Trinity seqkit seqtk sequana sequana_taxonomy nanopolish
