@@ -33,8 +33,7 @@ The goal is to have a unique and official DOI for each tool.
     git clone git@github.com/your_fork/damona
     cd damona
 
-Let us consider an example calle SOFTWARE. You must be in the directory:
-::
+Let us consider an example called SOFTWARE. You must be in the directory of the SOFTWARE package::
 
     cd recipes/SOFTWARE
 
@@ -49,7 +48,8 @@ Create a new Singulariry image. Time to upload the resulting (functional !) imag
 
     damona zenodo-upload SOFTWARE_1.0.0.img --mode zenodo
 
-It creates a registry.yaml file with the metadata ready to commit and push
+This command uploads the image on Zenodo with all correct metadata already pre-filled for you. It also
+creates a registry.yaml file with the metadata ready to commit and push. **edit the registry file to add a binaries section if neeeded**.
 
 
 Case 2: the recipe exists already
