@@ -1,10 +1,11 @@
 bedtools:
-  doi: 10.5281/zenodo.7345873
-  zenodo_id: 7345874
+  doi: 10.5281/zenodo.7346773
+  zenodo_id: 7346774
   binaries: bedtools
   releases:
     2.30.0:
-      download: https://zenodo.org/record/7345874/files/bedtools_2.30.0.img
-      md5sum: 9e2aef78601ba87bba4948bb45a2f957
-      doi: 10.5281/zenodo.7345874
-      filesize: 19476480
+      download: https://zenodo.org/record/7346774/files/bedtools_2.30.0.img
+      md5sum: 181ffe3dcab510272f6741612c5520d3
+      doi: 10.5281/zenodo.7346774
+      filesize: 20262912
+
