@@ -348,6 +348,7 @@ Changelog
 ========= ========================================================================
 Version   Description
 ========= ========================================================================
+0.8.3     * add idr, samtools, homer, bamtools, bedtools, sequana_denovo
 0.8.2     * add seqkit recipe and container
 0.8.1     * Include ability to interact with biocontainers by allowing retrieval
             of all biocontainers docker images using this syntax:
