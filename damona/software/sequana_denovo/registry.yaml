@@ -1,5 +1,6 @@
 sequana_denovo:
   doi: 10.5281/zenodo.7335175
+  binaries: prokka quast.py blastn blastp busco spades unicycler
   zenodo_id: 7335176
   releases:
     0.0.2:
