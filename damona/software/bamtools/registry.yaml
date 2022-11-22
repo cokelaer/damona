@@ -1,6 +1,7 @@
 bamtools:
   doi: 10.5281/zenodo.7345681
   zenodo_id: 7345682
+  binaries: bamtools
   releases:
     2.5.2:
       download: https://zenodo.org/record/7345682/files/bamtools_2.5.2.img
