@@ -4,7 +4,7 @@ pigz:
   zenodo_id: 7034376
   releases:
     2.4.0:
-      download: https://zenodo.org/record/7034376/files/pigz_2.4.0.img
-      md5sum: b10dcb45848ac1860395126c4a58f95a
-      doi: 10.5281/zenodo.7034376
-      filesize: 3534848
+      download: https://zenodo.org/record/7346805/files/pigz_2.4.0.img
+      md5sum: d9ce61c0db96303a3073d735da05efce
+      doi: 10.5281/zenodo.7346805
+      filesize: 4644864
