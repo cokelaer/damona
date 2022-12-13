@@ -1,7 +1,10 @@
 ucsc:
-    binaries: bedGraphToBigWig bedToBigBed bedCoverage bedIntersect bedToBigBed blastToPsl 
-    releases:
-        0.1.0:
-            download: damona::ucsc_0.1.0.img
-            md5sum: 976284326d2efff1ab8c50face96e5d6
-
+  doi: 10.5072/zenodo.1135853
+  binaries: bedGraphToBigWig bedToBigBed bedCoverage bedIntersect bedToBigBed blastToPsl 
+  zenodo_id: 1135854
+  releases:
+    3.7.7:
+      download: https://sandbox.zenodo.org/record/1135854/files/ucsc_3.7.7.img
+      md5sum: abe2137ad5cc6ef5ae92f29b7d9300ab
+      doi: 10.5072/zenodo.1135854
+      filesize: 648601600
