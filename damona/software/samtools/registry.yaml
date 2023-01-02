@@ -8,3 +8,8 @@ samtools:
       md5sum: d575c3d91b6a7d352660a00256022628
       doi: 10.5281/zenodo.7215278
       filesize: 74117120
+    1.16.1:
+      download: https://zenodo.org/record/7437898/files/samtools_1.16.1.img
+      md5sum: 63b3d906b0547ff83e741baad035f9ee
+      doi: 10.5281/zenodo.7437898
+      filesize: 74977280
