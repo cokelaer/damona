@@ -4,7 +4,8 @@ on:
   workflow_dispatch:
   push:
       branches:
-        - master
+        - main
+        - dev
       paths:
         - '**.py'
         - '.github/workflows/fish/**'
