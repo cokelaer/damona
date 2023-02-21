@@ -20,6 +20,12 @@ jobs:
       fail-fast: false
 
     steps:
+
+    - name: precleanup
+      run: |
+        sudo rm -rf /usr/share/dotnet
+        sudo rm -rf "$AGENT_TOOLSDIRECTORY"
+
     - uses: actions/checkout@v2
     - uses: docker-practice/actions-setup-docker@master
     - name: Test docker
@@ -27,66 +33,22 @@ jobs:
           set -x
           docker version
           docker run --rm hello-world
-    - name: Install singularity
+
+    - name: install apptainer
       run: |
-
-        sudo apt-get update && \
-        sudo apt-get update && sudo apt-get install -y \
-          build-essential \
-          libssl-dev \
-          uuid-dev \
-          libgpgme11-dev \
-          squashfs-tools \
-          libseccomp-dev \
-          wget \
-          pkg-config \
-          git
-
-        export VERSION=1.13.15 OS=linux ARCH=amd64  # change this as you need
-        wget -O /tmp/go${VERSION}.${OS}-${ARCH}.tar.gz https://dl.google.com/go/go${VERSION}.${OS}-${ARCH}.tar.gz
-        sudo tar -C /usr/local -xzf /tmp/go${VERSION}.${OS}-${ARCH}.tar.gz
-
-        echo 'export GOPATH=${HOME}/go' >> ~/.bashrc && \
-        echo 'export PATH=/usr/local/go/bin:${PATH}:${GOPATH}/bin' >> ~/.bashrc && \
-        source ~/.bashrc
-
-        export VERSION=3.8.0 && # adjust this as necessary \
-        #wget https://github.com/sylabs/singularity/releases/download/v${VERSION}/singularity-${VERSION}.tar.gz && \
-        #tar -xzf singularity-${VERSION}.tar.gz && \
-        wget https://github.com/sylabs/singularity/archive/refs/tags/v${VERSION}.tar.gz && \
-        tar xzvf v${VERSION}.tar.gz && \
-        # extracted directory has extra singularity- and no v character
-        cd singularity-${VERSION}
-
-        ./mconfig && \
-        cd ./builddir && \
-        make && \
-        sudo make install
-
+        sudo add-apt-repository -y ppa:apptainer/ppa
+        sudo apt update
+        sudo apt install -y apptainer
         singularity version
 
-
-        #  sudo wget -O- http://neuro.debian.net/lists/focal.au.full | sudo tee /etc/apt/sources.list.d/neurodebian.sources.list
-        #  sudo apt-key adv --recv-keys --keyserver hkps://keyserver.ubuntu.com 0xA5D32F012649A5A9
-        #  sudo apt-get update
-        #  sudo apt-get install -y singularity-container
     - name: Set up Python 3.X
       uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python }}
-    - name: conda
-      run: |
-        # $CONDA is an environment variable pointing to the root of the miniconda directory
-        echo "$CONDA/bin" >> $GITHUB_PATH
-    - name: Install dependencies conda
-      run: |
-        conda install -c conda-forge --quiet mamba python=${{ matrix.python }}
-        mamba install -c conda-forge singularity --quiet
+
     - name: Install Damona using pip
       run: |
-        pip install -r requirements.txt
-        pip install -r requirements_dev.txt
-        pip install .
+        pip install .[testing]
     - name: Init damona in bash
       run: |
         bash
