@@ -100,7 +100,8 @@ class Releases(dict):
     def _get_last_release(self):
         from packaging import version
 
-        return max(list(self.keys()), key=lambda x: version.parse(x))
+        # split on - for the special cases 0.11.9-py3
+        return max(list(self.keys()), key=lambda x: version.parse(x.split('-')[0]))
 
     last_release = property(_get_last_release, doc="return the last version")
 
@@ -403,8 +404,11 @@ class Registry:
 
         # sequana_tools_0.9.0 should return sequana_tools for the name and
         # 0.9.0 for the version hence the rsplit
+        # similarly fastq_0.11.0-py3 should return 0.11.0
+
         names = [x.rsplit(":", 1)[0] for x in candidates]
         versions = [x.rsplit(":", 1)[1] for x in candidates]
+        versions = [x.split("-")[0] for x in versions]
         version = max([packaging.version.parse(ver) for ver in versions])
         name = names[0]
         registry_name = pattern + ":" + str(version)

@@ -15,7 +15,8 @@ def test_image_name():
 
     try:
         ImageName("fastqc_0.11.img")
-    except NameError:
+        assert False
+    except SystemExit:
         assert True
 
     try:
