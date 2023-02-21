@@ -77,6 +77,7 @@ class Zenodo:  # pragma: no cover
 
     def __init__(self, mode="sandbox.zenodo", token=None, author=None, affiliation=None, orcid=None):
 
+
         assert mode in ["zenodo", "sandbox.zenodo"]
         self.mode = mode
         self.headers = {"Content-Type": "application/json"}
@@ -178,6 +179,7 @@ class Zenodo:  # pragma: no cover
         return r
 
     def upload(self, filename, json_deposit):  # pragma: no cover
+
 
         try:
             bucket_url = json_deposit["links"]["bucket"]

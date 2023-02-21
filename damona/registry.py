@@ -60,6 +60,11 @@ class ImageName:
             raise NameError
 
         name, version = self.basename.rsplit(".", 1)[0].rsplit("_", 1)
+
+        if len(version.split(".")) != 3:
+            logger.error(f"Version must be formatted as X.Y.Z. You provided {version}")
+            sys.exit(1)
+
         self.name = name
         self.version = version
 
