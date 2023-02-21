@@ -13,3 +13,8 @@ rtools:
       md5sum: abc0955827c1c411825eafbb494c5fcf
       doi: 10.5281/zenodo.5801845
       filesize: 1732617758
+    1.2.0:
+      download: https://zenodo.org/record/7662645/files/rtools_1.2.0.img
+      md5sum: 62437caced87120fdcd1c5f53e696918
+      doi: 10.5281/zenodo.7662645
+      filesize: 506191872
