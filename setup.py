@@ -29,6 +29,7 @@ metainfo = {
           'Programming Language :: Python :: 3.7',
           'Programming Language :: Python :: 3.8',
           'Programming Language :: Python :: 3.9',
+          'Programming Language :: Python :: 3.10',
           'Topic :: Software Development :: Libraries :: Python Modules',
           'Topic :: Scientific/Engineering :: Bio-Informatics',
           'Topic :: Scientific/Engineering :: Information Analysis',
@@ -99,7 +100,23 @@ setup(
     packages = packages,
     install_requires = requirements,
     # specific packages for testing
-    tests_require = open('requirements_dev.txt').read().split(),
+    extras_require={
+         "testing": [
+             "pytest",
+             "pytest-cov",
+             "pytest-xdist",
+             "pytest-mock",
+             "pytest-timeout",
+             "pytest-runner",
+             "coveralls",
+             "mock"
+         ],
+        "doc": [
+            "sphinx>=3",
+            "sphinx_rtd_theme"
+            "sphinx-click"
+        ]
+    },
 
     # This is recursive include of data files
     exclude_package_data = {"": ["__pycache__"]},
