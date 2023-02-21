@@ -1,0 +1,10 @@
+shustring:
+  doi: 10.5281/zenodo.7660519
+  zenodo_id: 7660520
+  binaries: shustring
+  releases:
+    2.6.0:
+      download: https://zenodo.org/record/7660520/files/shustring_2.6.0.img
+      md5sum: ca5417a266bf6793152cfceaeb7a18bb
+      doi: 10.5281/zenodo.7660520
+      filesize: 56365056
