@@ -1,0 +1,9 @@
+polypolish:
+  doi: 10.5281/zenodo.7704078
+  zenodo_id: 7704079
+  releases:
+    0.5.0:
+      download: https://zenodo.org/record/7704079/files/polypolish_0.5.0.img
+      md5sum: 98204368df50470302f8646d07e4c5f4
+      doi: 10.5281/zenodo.7704079
+      filesize: 63504384
