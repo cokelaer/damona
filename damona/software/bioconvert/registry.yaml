@@ -18,3 +18,8 @@ bioconvert:
       md5sum: c2a2e44c4dc2e9af11a661fa39367c81
       doi: 10.5281/zenodo.7603984
       filesize: 1365348352
+    1.0.0:
+      download: https://zenodo.org/record/7704649/files/bioconvert_1.0.0.img
+      md5sum: 45827ef4d866aac9076b3924d2594776
+      doi: 10.5281/zenodo.7704649
+      filesize: 1369206784
