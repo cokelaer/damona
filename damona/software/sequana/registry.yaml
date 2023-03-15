@@ -8,3 +8,8 @@ sequana:
       md5sum: 1adeb0ea33a1174cb1393e5ef48b353c
       doi: 10.5281/zenodo.5799539
       filesize: 528461824
+    0.14.6:
+      download: https://zenodo.org/record/7734816/files/sequana_0.14.6.img
+      md5sum: 574d01ea3b43868b2fe1f61c3b1005ae
+      doi: 10.5281/zenodo.7734816
+      filesize: 695410688

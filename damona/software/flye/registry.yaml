@@ -1,9 +1,15 @@
 flye:
   doi: 10.5281/zenodo.5730046
   zenodo_id: 5730047
+  binaries: flye
   releases:
     2.9.0:
       download: https://zenodo.org/record/5730047/files/flye_2.9.0.img
       md5sum: e16e4e06cd91353e38db935f412065ad
       doi: 10.5281/zenodo.5730047
       filesize: 285933568
+    2.9.1:
+      download: https://zenodo.org/record/7733985/files/flye_2.9.1.img
+      md5sum: bd5eccfc03615e49b0b664549f5e2e9d
+      doi: 10.5281/zenodo.7733985
+      filesize: 205021184
