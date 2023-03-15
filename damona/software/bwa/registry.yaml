@@ -1,0 +1,9 @@
+bwa:
+  doi: 10.5281/zenodo.7736676
+  zenodo_id: 7736677
+  releases:
+    0.7.17:
+      download: https://zenodo.org/record/7736677/files/bwa_0.7.17.img
+      md5sum: 79f9af3d971239327ebadeb4afb4511b
+      doi: 10.5281/zenodo.7736677
+      filesize: 8802304
