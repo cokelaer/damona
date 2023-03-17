@@ -1,0 +1,10 @@
+pycoqc:
+  doi: 10.5281/zenodo.7746268
+  zenodo_id: 7746269
+  binaries: pycoQC
+  releases:
+    2.5.2:
+      download: https://zenodo.org/record/7746269/files/pycoqc_2.5.2.img
+      md5sum: 7a50d8fdc320bdddb0b984471dc1c8cf
+      doi: 10.5281/zenodo.7746269
+      filesize: 247431168
