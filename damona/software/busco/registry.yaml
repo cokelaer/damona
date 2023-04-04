@@ -1,0 +1,10 @@
+busco:
+  doi: 10.5281/zenodo.7794877
+  binaries: busco
+  zenodo_id: 7794877
+  releases:
+    5.4.6:
+      download: https://zenodo.org/record/7794877/files/busco_5.4.6.img
+      md5sum: 9707085637957d598d4d5bd8b0886bcf 
+      doi: 10.5281/zenodo.7794877
+      filesize: 546848768
