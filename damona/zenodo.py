@@ -212,6 +212,7 @@ class Zenodo:  # pragma: no cover
 analysis.""",
                 "keywords": ["apptainer", "singularity", "damona", "bioinformatics", "reproducibility", "container"],
                 "version": f"{version}",
+                "communities": [{"identifier": "damona"}]
             }
         }
 
