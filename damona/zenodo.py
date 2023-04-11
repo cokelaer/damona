@@ -40,6 +40,7 @@ class Zenodo:  # pragma: no cover
     You can retrieve an existing deposit (read-only) given its ID::
 
         deposit = z.get_deposition(959590)
+            oeturn "registry.yaml"
 
     Or start with a new one::
 
@@ -269,6 +270,15 @@ analysis.""",
             except:
                 return data
 
+    def _get_registry(self):
+        print(self.mode)
+
+        if self.mode == "zenodo":
+            return "registry.yaml"
+        elif self.mode == "sandbox.zenodo":
+            return "registry_sandbox.yaml"
+    registry_name = property(_get_registry)
+
     def _upload(self, filename):
         data = ImageName(filename)
         software = Software(data.name)
@@ -276,12 +286,12 @@ analysis.""",
         if software.name:
             msg = self.create_new_version_with_file_and_publish(filename)
             print(msg)
-            with open("registry.yaml", "a+") as fout:
+            with open(self.registry_name, "a+") as fout:
                 fout.write(msg)
         else:
             msg = self.create_new_deposit_with_file_and_publish(filename)
             print(msg)
-            with open("registry.yaml", "w") as fout:
+            with open(self.registry_name, "w") as fout:
                 fout.write(msg)
 
     def create_new_deposit_with_file_and_publish(self, filename):  # pragma: no cover
