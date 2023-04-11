@@ -348,6 +348,11 @@ Changelog
 ========= ========================================================================
 Version   Description
 ========= ========================================================================
+0.8.3     * create registry specifically for the sandbox (for testing)
+          * add damona community in the uploads
+          * add pbbam, bioconvert, busco, canu, ccs
+          * add polypolish, samtools 1.16.1, sequana 0.14.6, flye 2.9, canu 2.1.1
+            circlator 1.5.5
 0.8.2     * add idr, samtools, homer, bamtools, bedtools, sequana_denovo
           * add seqkit recipe and container
           * add shustring

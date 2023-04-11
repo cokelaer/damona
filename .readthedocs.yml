@@ -9,7 +9,6 @@ python:
     version: 3.6
     install:
         - requirements: requirements.txt
-        - requirements: requirements_dev.txt
         - method: pip
           path: .
 
