@@ -1,0 +1,9 @@
+ccs:
+  doi: 10.5281/zenodo.7817324
+  zenodo_id: 7817325
+  releases:
+    6.4.0:
+      download: https://zenodo.org/record/7817325/files/ccs_6.4.0.img
+      md5sum: f0baa3a000c6ad692df628849a64fe0f
+      doi: 10.5281/zenodo.7817325
+      filesize: 11993088
