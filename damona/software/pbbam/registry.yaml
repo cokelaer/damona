@@ -1,0 +1,15 @@
+pbbam:
+  doi: 10.5281/zenodo.7814653
+  zenodo_id: 7814654
+  binaries: bam2sam pbmerge pbbamify pbindex
+  releases:
+    2.1.0:
+      download: https://zenodo.org/record/7814654/files/pbbam_2.1.0.img
+      md5sum: af5c1300e7eecb78e39ecca7e2f85a4c
+      doi: 10.5281/zenodo.7814654
+      filesize: 212955136
+    2.3.0:
+      download: https://zenodo.org/record/7817189/files/pbbam_2.3.0.img
+      md5sum: 869163050c10ef5751b5d3251968c64d
+      doi: 10.5281/zenodo.7817189
+      filesize: 213422080
