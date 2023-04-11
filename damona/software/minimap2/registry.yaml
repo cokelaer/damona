@@ -13,3 +13,8 @@ minimap2:
       md5sum: ed8f0fa9c690d7e6fc1dfdd17dbd5ed7
       doi: 10.5281/zenodo.5799482
       filesize: 38088704
+    2.24.0:
+      download: https://zenodo.org/record/7817800/files/minimap2_2.24.0.img
+      md5sum: 986ab0b714c384bdad741a192d19f9ca
+      doi: 10.5281/zenodo.7817800
+      filesize: 7053312

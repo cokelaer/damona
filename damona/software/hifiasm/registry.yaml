@@ -1,0 +1,9 @@
+hifiasm:
+  doi: 10.5281/zenodo.7737423
+  zenodo_id: 7737424
+  releases:
+    0.19.1:
+      download: https://zenodo.org/record/7737424/files/hifiasm_0.19.1.img
+      md5sum: 1a1c5138cf562f4592b0384322807993
+      doi: 10.5281/zenodo.7737424
+      filesize: 14749696

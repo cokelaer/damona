@@ -1,0 +1,10 @@
+circlator:
+  doi: 10.5281/zenodo.7734819
+  zenodo_id: 7734820
+  binaries: circlator
+  releases:
+    1.5.5:
+      download: https://zenodo.org/record/7734820/files/circlator_1.5.5.img
+      md5sum: ab5ca88bcd9d085d16a0e7f6900ddbaf
+      doi: 10.5281/zenodo.7734820
+      filesize: 303005696
