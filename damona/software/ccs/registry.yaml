@@ -1,6 +1,7 @@
 ccs:
   doi: 10.5281/zenodo.7817324
   zenodo_id: 7817325
+  binaries: ccs
   releases:
     6.4.0:
       download: https://zenodo.org/record/7817325/files/ccs_6.4.0.img
