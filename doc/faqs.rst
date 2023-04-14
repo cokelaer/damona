@@ -44,4 +44,7 @@ As a developper you can then use conda to try a new or complementary software
 while keeping your core software identical between environments. 
 
 
+Useful other projects
+----------------------
 
+* https://hub.docker.com/u/staphb

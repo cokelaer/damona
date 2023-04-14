@@ -16,3 +16,4 @@ From: alpine:3.17
 
 %runscript
   exec minimap2 "$@"
+
