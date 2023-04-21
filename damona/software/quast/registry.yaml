@@ -7,3 +7,8 @@ quast:
       md5sum: 7563c919ad994bf792a7619c54b1b4f6
       doi: 10.5281/zenodo.5708848
       filesize: 1398779904
+    5.2.0:
+      download: https://zenodo.org/record/7848771/files/quast_5.2.0.img
+      md5sum: 3c26537555724347341f93e86b7f5c28
+      doi: 10.5281/zenodo.7848771
+      filesize: 300236800

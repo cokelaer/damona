@@ -1,13 +1,16 @@
 Bootstrap: docker
 From: python:3.10-slim-bullseye
 
+%files
+    quast-downloads-gridss
+
 %post
   MINIMAP2_VERSION=2.24
   QUAST_VERSION=5.2.0
   SAMBAMBA_VERSION=0.8.2
 
-  apt update && apt install --no-install-recommends -yq pkg-config libfreetype6-dev libpng-dev bwa bedtools curl
-  pip install matplotlib
+  apt update && apt install --no-install-recommends -yq pkg-config libfreetype6-dev libpng-dev bwa bedtools curl bzip2 
+  pip install matplotlib 
 
   curl -L "https://github.com/lh3/minimap2/releases/download/v${MINIMAP2_VERSION}/minimap2-${MINIMAP2_VERSION}_x64-linux.tar.bz2" | tar -jxf - --no-same-owner "minimap2-${MINIMAP2_VERSION}_x64-linux/minimap2" \
     && mv "./minimap2-${MINIMAP2_VERSION}_x64-linux/minimap2" /usr/local/bin
@@ -26,4 +29,12 @@ From: python:3.10-slim-bullseye
   mkdir -p "/usr/local/lib/python3.10/dist-packages/quast-${QUAST_VERSION}-py3.10.egg/quast_libs/gridss"
   mv gridss-1.4.1.jar "/usr/local/lib/python3.10/dist-packages/quast-${QUAST_VERSION}-py3.10.egg/quast_libs/gridss"
 
-  apt purge -yq curl
+ chmod 755 quast-downloads-gridss
+ ./quast-downloads-gridss
+
+ apt purge -yq curl
+
+
+%environment
+    export LC_ALL=C.UTF-8
+
