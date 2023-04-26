@@ -14,7 +14,7 @@ canu:
       doi: 10.5281/zenodo.5765679
       filesize: 798138368
     2.1.1:
-      download: https://zenodo.org/record/7808153/files/canu_2.1.1.img
-      md5sum: 483122e00fa0f3d7611fa2e170308296
-      doi: 10.5281/zenodo.7808153
-      filesize: 233267200
+      download: https://zenodo.org/record/7866415/files/canu_2.1.1.img
+      md5sum: 191b8eca9c40945fb975c6a6e69970f2
+      doi: 10.5281/zenodo.7866415
+      filesize: 363024384
