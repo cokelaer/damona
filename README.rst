@@ -20,7 +20,7 @@ DAMONA
    :target: https://zenodo.org/badge/latestdoi/282275608
 
 
-:Python version: Python 3.7, 3.8, 3.9
+:Python version: Python 3.8, 3.9, 3.10
 :Source: See  `http://github.com/cokelaer/damona <https://github.com/cokelaer/damona/>`__.
 :Issues: Please fill a report on `github <https://github.com/cokelaer/damona/issues>`__
 :Platform: This is currently only available for Linux distribution with bash shell (contributions are welcome to port the tool on MacOSX and other platforms)
@@ -40,6 +40,7 @@ reproducibility of singularity containers. We believe that it could be useful fo
 other projects and therefore decided to release it as an independent tool.
 
 As of 30th Dec 2021, **Damona** contains 26 software, 38 releases, 105 binaries.
+As of 12th May 2023, **Damona** contains 54 software, 88 releases, 359 binaries.
 
 Installation
 ============
@@ -350,6 +351,8 @@ Changelog
 ========= ========================================================================
 Version   Description
 ========= ========================================================================
+0.8.4     * fix damona stats command to return unique binaries
+          * more recipes and version (e.g. fastqc 0.12.1, graphviz update, etc)
 0.8.3     * create registry specifically for the sandbox (for testing)
           * add damona community in the uploads
           * add pbbam, bioconvert, busco, canu, ccs

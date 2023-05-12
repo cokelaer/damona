@@ -48,7 +48,7 @@ def stats(biocontainers=False):
     r = Registry(biocontainers=biocontainers)
 
     Nv = len(r.get_list())
-    Nb = sum([len(x) for x in r.get_binaries().values()])
+    Nb = len(set([y for x in r.get_binaries().values() for y in x]))
     Ns = len(set([x.split(":")[0] for x in r.get_list()]))
     if biocontainers:
         print("From biocontainers, in theory*, we also have:")
