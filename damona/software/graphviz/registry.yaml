@@ -3,8 +3,13 @@ graphviz:
   doi: 10.5281/zenodo.5767506
   zenodo_id: 5767507
   releases:
+    #2.43.0:
+    #  download: https://zenodo.org/record/5767507/files/graphviz_2.43.0.img
+    #  md5sum: 99a132013e2ea2d4497618ccecc98069
+    #  doi: 10.5281/zenodo.5767507
+    #  filesize: 12406784
     2.43.0:
-      download: https://zenodo.org/record/5767507/files/graphviz_2.43.0.img
-      md5sum: 99a132013e2ea2d4497618ccecc98069
-      doi: 10.5281/zenodo.5767507
-      filesize: 12406784
+      download: https://zenodo.org/record/7927016/files/graphviz_2.43.0.img
+      md5sum: ee17b23fa7baf81f96df122d4c34b5d5
+      doi: 10.5281/zenodo.7927016
+      filesize: 13516800
