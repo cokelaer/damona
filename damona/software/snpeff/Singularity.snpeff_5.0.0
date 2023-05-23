@@ -21,7 +21,7 @@ From: alpine:3.11
     BINDIR=/usr/local/bin
 
     # at the time
-    wget https://snpeff.blob.core.windows.net/versions/snpEff_v5_1d_core.zip
+    wget https://snpeff.blob.core.windows.net/versions/snpEff_v5_0_core.zip
 
     # Unzip snpEff archive
     ls $TMPDIR | xargs -i unzip "$TMPDIR/{}" -d $INSTALLDIR

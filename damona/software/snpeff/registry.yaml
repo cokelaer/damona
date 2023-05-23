@@ -1,0 +1,14 @@
+snpeff:
+  doi: 10.5281/zenodo.7962843
+  zenodo_id: 7962844
+  releases:
+    5.0.0:
+      download: https://zenodo.org/record/7962844/files/snpeff_5.0.0.img
+      md5sum: 2cff114cc09af5f333026223eae3a292
+      doi: 10.5281/zenodo.7962844
+      filesize: 258269184
+    5.1.0:
+      download: https://zenodo.org/record/7962849/files/snpeff_5.1.0.img
+      md5sum: 7f49652aa6763acf2b4bfe7e29c6623a
+      doi: 10.5281/zenodo.7962849
+      filesize: 279199744
