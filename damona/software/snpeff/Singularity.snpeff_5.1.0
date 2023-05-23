@@ -9,7 +9,7 @@ From: alpine:3.11
     apk update && apk upgrade
 
     #Add here what kind of dependencies you need in general
-    apk add --no-cache wget curl build-base git ca-certificates unzip bash openjdk11
+    apk add --no-cache wget curl build-base git ca-certificates unzip bash openjdk11 bash
 
     # Temp dir for downloading and building stuff
     TMPDIR=/build
