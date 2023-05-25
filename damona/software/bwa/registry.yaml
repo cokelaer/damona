@@ -3,7 +3,7 @@ bwa:
   zenodo_id: 7736677
   releases:
     0.7.17:
-      download: https://zenodo.org/record/7736677/files/bwa_0.7.17.img
-      md5sum: 79f9af3d971239327ebadeb4afb4511b
-      doi: 10.5281/zenodo.7736677
-      filesize: 8802304
+      download: https://zenodo.org/record/7970243/files/bwa_0.7.17.img
+      md5sum: d538df257a4f1e3ab313de57dee5ccf3
+      doi: 10.5281/zenodo.7970243
+      filesize: 9392128
