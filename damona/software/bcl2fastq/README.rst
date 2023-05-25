@@ -1,6 +1,6 @@
 In order to build this recipes, you must have your own license of bcl2fastq by
 downloading and agreeing to the terms for your user license. We cannot provide
-the RPM or source even though they are available for free. 
+the RPM or source even though they are available for free.
 
 This can be done on Illumina website in the download section you should find the
 RPM link to download bcl2fastq2.20 RPM file.

@@ -1,0 +1,10 @@
+raxml:
+  doi: 10.5281/zenodo.7968243
+  binaries: raxmlHPC raxmlHPC-PTHREADS raxmlHPC-PTHREADS-SSE3 raxmlHPC-AVX2 raxmlHPC-PTHREADS-AVX2  raxmlHPC-SSE3
+  zenodo_id: 7968244
+  releases:
+    8.2.12:
+      download: https://zenodo.org/record/7968244/files/raxml_8.2.12.img
+      md5sum: d0cdbc2ba224a36e1de2b19dfa942c42
+      doi: 10.5281/zenodo.7968244
+      filesize: 60207104

@@ -1,0 +1,10 @@
+vt:
+  doi: 10.5281/zenodo.7969803
+  binaries: vt
+  zenodo_id: 7969804
+  releases:
+    0.57721.0:
+      download: https://zenodo.org/record/7969804/files/vt_0.57721.0.img
+      md5sum: 6ae0a3486b9d74fd5045c9acd3e04514
+      doi: 10.5281/zenodo.7969804
+      filesize: 192376832
