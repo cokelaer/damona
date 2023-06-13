@@ -1,0 +1,9 @@
+ivar:
+  doi: 10.5281/zenodo.8033025
+  zenodo_id: 8033026
+  releases:
+    1.3.1:
+      download: https://zenodo.org/record/8033026/files/ivar_1.3.1.img
+      md5sum: 213e286c708e12d6423b0bd8fa723327
+      doi: 10.5281/zenodo.8033026
+      filesize: 139108352
