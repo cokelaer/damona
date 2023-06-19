@@ -138,7 +138,7 @@ def create(**kwargs):
 def delete(**kwargs):
     """Remove an environment"""
     env = Environ()
-    env.delete(kwargs["environment"], force=True)
+    env.delete(kwargs["environment"], force=kwargs['force'])
 
 
 @main.command()
