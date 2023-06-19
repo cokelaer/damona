@@ -5,3 +5,5 @@ easydev>=0.9.36
 packaging
 spython
 pyyaml
+tqdm
+requests
