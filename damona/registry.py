@@ -30,7 +30,7 @@ import colorlog
 logger = colorlog.getLogger(__name__)
 
 
-__all__ = ["Releases", "Software", "Registry", "Release", "ImageName", "RemoteRegistry" ]
+__all__ = ["Releases", "Software", "Registry", "Release", "ImageName", "RemoteRegistry"]
 
 
 class ImageName:
@@ -101,10 +101,9 @@ class Releases(dict):
         from packaging import version
 
         # split on - for the special cases 0.11.9-py3
-        return max(list(self.keys()), key=lambda x: version.parse(x.split('-')[0]))
+        return max(list(self.keys()), key=lambda x: version.parse(x.split("-")[0]))
 
     last_release = property(_get_last_release, doc="return the last version")
-
 
 
 class Release:
@@ -223,13 +222,11 @@ class RemoteRegistry:
 
 
 class BiocontainersRegistry:
-
     def __init__(self, filename=None):
         from damona import __path__
 
-
         if filename in [True, None]:
-            self.filename = pathlib.Path(__path__[0]) / "biocontainers" /  "registry.yaml"
+            self.filename = pathlib.Path(__path__[0]) / "biocontainers" / "registry.yaml"
         elif os.path.exists(filename):
             self.filename = filename
         else:
@@ -391,7 +388,7 @@ class Registry:
 
     def find_candidate(self, pattern):
         """Find a unique recipe within the registry."""
-        candidates = [x for x in self.registry.keys() if pattern==x or pattern in x.split(":")]
+        candidates = [x for x in self.registry.keys() if pattern == x or pattern in x.split(":")]
 
         if len(candidates) == 0:  # pragma: no cover
             logger.critical(
@@ -425,7 +422,7 @@ class Registry:
             self._damona_discovery()
 
     def _populate(self, data):
-        #Used by _url_discovery, _biocontainers_discovery, _damona_discovery 
+        # Used by _url_discovery, _biocontainers_discovery, _damona_discovery
 
         self.registry = {}
 
@@ -464,6 +461,7 @@ class Registry:
 
         # read all damona registry and store in expected dictionary structure
         from damona.software import __path__
+
         _registry_files = glob.glob(__path__[0] + "/*/registry.yaml")
         data = {}
         for registry in _registry_files:
@@ -471,7 +469,6 @@ class Registry:
             data[software.name] = software._yaml[software.name]
 
         self._populate(data)
-
 
     def get_list(self, pattern=None):
         """Return list of :class:`Software` found in the registry"""

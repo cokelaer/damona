@@ -1,0 +1,10 @@
+nextclade:
+  doi: 10.5281/zenodo.8033045
+  zenodo_id: 8033046
+  binaries: nextclade
+  releases:
+    2.15.0:
+      download: https://zenodo.org/record/8033046/files/nextclade_2.15.0.img
+      md5sum: d43dbd07df40a3aa11a7488b206f6e06
+      doi: 10.5281/zenodo.8033046
+      filesize: 156852224

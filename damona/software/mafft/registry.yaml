@@ -1,0 +1,10 @@
+mafft:
+  doi: 10.5281/zenodo.8037104
+  zenodo_id: 8037105
+  binaries: mafft
+  releases:
+    7.520.0:
+      download: https://zenodo.org/record/8037105/files/mafft_7.520.0.img
+      md5sum: 43cb6b2bf07196be37ba8f39c613a72c
+      doi: 10.5281/zenodo.8037105
+      filesize: 123727872

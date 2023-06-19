@@ -71,14 +71,14 @@ def test(mocker):
     z = zenodo.Zenodo("sandbox.zenodo", token="dummy", affiliation="dummy", author="dummy")
     z.params
 
-    # z._to_registry(deposit)
-    #data1 = z.get_metadata("fastqc", "v0.1.1")
-    #data2 = z.get_metadata("fastqc", "0.1.1")
-    #assert data1 == data2
-
     z.get_id(deposit)
 
-def test_get_stat():
+def test_get_stat_id():
     from damona.zenodo import get_stats_id
     stats = get_stats_id("5708811")
     assert stats >0
+
+
+def test_get_stat_software():
+    from damona.zenodo import get_stats_software
+    stats = get_stats_software("fastqc")

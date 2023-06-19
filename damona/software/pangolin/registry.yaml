@@ -1,0 +1,10 @@
+pangolin:
+  doi: 10.5281/zenodo.8034796
+  zenodo_id: 8034797
+  binaries: pangolin
+  releases:
+    4.3.0:
+      download: https://zenodo.org/record/8034797/files/pangolin_4.3.0.img
+      md5sum: 65fe650c9afda3151f053b91b2bae593
+      doi: 10.5281/zenodo.8034797
+      filesize: 443596800

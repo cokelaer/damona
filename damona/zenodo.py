@@ -74,10 +74,30 @@ class Zenodo:  # pragma: no cover
         new_version = z.create_new_deposit_version(deposit)
 
 
+    A damona registry looks like::
+
+        ivar:
+          doi: 10.5281/zenodo.8033025
+          zenodo_id: 8033026
+          releases:
+            1.3.1:
+              download: https://zenodo.org/record/8033026/files/ivar_1.3.1.img
+              md5sum: 213e286c708e12d6423b0bd8fa723327
+              doi: 10.5281/zenodo.8033026
+              filesize: 139108352
+
+    This is create when using::
+
+        damona zenodo-upload file.img --mode zenodo
+
+    The zenodo_id is the record on the main page. e.g https://zenodo.org/record/8033026
+    The zenodo_id is also related to the main DOI to be shared in papers.
+    To cite all versions, this is the field zenodo_doi here above (8033026), which is also
+    the latest doi of the latests release. If there is a new release, the zenodo_id is therefore updated.
+
     """
 
     def __init__(self, mode="sandbox.zenodo", token=None, author=None, affiliation=None, orcid=None):
-
 
         assert mode in ["zenodo", "sandbox.zenodo"]
         self.mode = mode
@@ -181,7 +201,6 @@ class Zenodo:  # pragma: no cover
 
     def upload(self, filename, json_deposit):  # pragma: no cover
 
-
         try:
             bucket_url = json_deposit["links"]["bucket"]
         except:
@@ -213,7 +232,7 @@ class Zenodo:  # pragma: no cover
 analysis.""",
                 "keywords": ["apptainer", "singularity", "damona", "bioinformatics", "reproducibility", "container"],
                 "version": f"{version}",
-                "communities": [{"identifier": "damona"}]
+                "communities": [{"identifier": "damona"}],
             }
         }
 
@@ -277,6 +296,7 @@ analysis.""",
             return "registry.yaml"
         elif self.mode == "sandbox.zenodo":
             return "registry_sandbox.yaml"
+
     registry_name = property(_get_registry)
 
     def _upload(self, filename):
@@ -392,21 +412,34 @@ analysis.""",
         return msg
 
 
+def get_stats_software(software):
+    from damona.registry import Software
+
+    s = Software(software)
+    try:
+        return get_stats_id(s.zenodo_id)
+    except AttributeError:
+        return 0
+
+
 def get_stats_id(ID):
-    """Returns number of downloads"""
+    """Returns number of downloads
+
+
+    For instance, for this link: https://zenodo.org/record/7319782
+    you should provide the ID 7319782
+
+
+
+    """
     from bs4 import BeautifulSoup
 
     r = requests.get(f"https://zenodo.org/record/{ID}")
     bs = BeautifulSoup(r.content, features="html.parser")
 
-    for x in bs.find(id="collapse-stats").find_all("tr"):
-        entries = []
-        for xx in x.find_all("td"):
-            entries.append(xx)
-        if len(entries):
-            if entries[0].contents[0].strip() == "Downloads":
-                stats = entries[2].contents[0]
-                return int(stats)
-
-    # if could not find the info, return -1
-    return -1
+    try:
+        data = list(bs.find(id="accordion").div.children)[3].span.contents[0]
+        data = int(data.replace(",", ""))
+        return data
+    except Exception:
+        return 1

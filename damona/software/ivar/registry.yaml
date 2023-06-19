@@ -1,6 +1,7 @@
 ivar:
   doi: 10.5281/zenodo.8033025
   zenodo_id: 8033026
+  binaries: ivar
   releases:
     1.3.1:
       download: https://zenodo.org/record/8033026/files/ivar_1.3.1.img

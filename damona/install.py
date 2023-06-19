@@ -17,12 +17,10 @@
 import os
 import sys
 import pathlib
-
 import shutil
 import time
 import subprocess
 
-from urllib.request import urlretrieve
 
 from easydev import md5
 
@@ -33,6 +31,7 @@ from damona import Environ
 from damona.common import ImageReader, requires_singularity
 from damona.registry import Software
 from damona import version as damona_version
+from damona.utils import download_with_progress
 
 
 DAMONA_PATH = os.environ["DAMONA_PATH"]
@@ -133,6 +132,7 @@ class LocalImageInstaller(ImageInstaller):
     Since there is no registry, you can set the list of binaries.
 
     """
+
     def __init__(self, image_name, cmd=None, binaries=None):
         """.. rubric:: **Constructor**
 
@@ -265,9 +265,7 @@ class RemoteImageInstaller(ImageInstaller):
 
     @requires_singularity
     def pull_image(self, output_name=None, force=False):
-        """Pull and Install a singularity image from the web.
-
-        """
+        """Pull and Install a singularity image from the web."""
 
         self.image_installed = False
 
@@ -373,10 +371,9 @@ class RemoteImageInstaller(ImageInstaller):
         else:
 
             if download_name.startswith("https://"):
-                print(f"downloading into {pull_folder} {output_name}")
+                logger.info(f"downloading into {pull_folder} {output_name}")
 
-                urlretrieve(download_name, filename=str(pull_folder / output_name))
-                # wget.download(download_name, str(pull_folder / output_name))
+                download_with_progress(download_name, filename=str(pull_folder / output_name))
 
             else:  # use singularity
                 Client.pull(str(download_name), name=output_name, pull_folder=pull_folder, force=force)
@@ -425,7 +422,6 @@ class BiocontainersInstaller(ImageInstaller):
     def __init__(self, image_name, binaries=None, cmd=None):
         super(BiocontainersInstaller, self).__init__()
 
-
         # get the biocontainers prefix and the name:version suffix
         prefix, suffix = image_name.split("/")
 
@@ -444,7 +440,9 @@ class BiocontainersInstaller(ImageInstaller):
         self.registry = Registry(biocontainers=True)
 
         if suffix not in self.registry.registry:
-            logger.error(f"{name} not found in the biocontainers registry. Use damona search PATTERN --include-biocontainers")
+            logger.error(
+                f"{name} not found in the biocontainers registry. Use damona search PATTERN --include-biocontainers"
+            )
             sys.exit(1)
 
         self.image_name = image_name
@@ -459,9 +457,7 @@ class BiocontainersInstaller(ImageInstaller):
 
     @requires_singularity
     def pull_image(self, output_name=None, force=False):
-        """Pull and Install a biocontainer image.
-
-        """
+        """Pull and Install a biocontainer image."""
         self.image_installed = False
 
         download_name = self.image_name
@@ -494,19 +490,13 @@ class BiocontainersInstaller(ImageInstaller):
         prefix, suffix = self.image_name.split("/")
         self.binaries = self.registry.registry[suffix].binaries
 
-
-
         self.image_installed = True
 
 
-
-
 class BinaryInstaller:
-    """Install a binary in the bin/ directory of the current environment given its image
+    """Install a binary in the bin/ directory of the current environment given its image"""
 
-
-    """
-    def __init__(self, binaries, parent_image_path):
+    def __init__(self, binaries, parent_image_path, env_name=None):
         """.. rubric:: **Constructor**
 
         :param list binaries: list of binaries to install
@@ -516,6 +506,14 @@ class BinaryInstaller:
         #: instance of :class:`damona.common.ImageReader`
         self.image = ImageReader(parent_image_path)
         self.binaries = binaries
+
+        if env_name:
+            from damona.common import get_damona_path
+
+            self.env_name = get_damona_path() / "envs" / env_name
+        else:
+            env = Environ()
+            self.env_name = env.get_current_env()
 
     @requires_singularity
     def install_binaries(self, force=False):
@@ -534,12 +532,11 @@ class BinaryInstaller:
             damona install fastqc:0.11.8
 
         The previous binary (v0.11.9) will be replaced by the new one (v0.11.8).
-        The old image is kept in the images directory (it may be used in another 
+        The old image is kept in the images directory (it may be used in another
         environment indeed).
         """
 
-        env = Environ()
-        bin_directory = env.get_current_env() / "bin"
+        bin_directory = self.env_name / "bin"
         logger.info(bin_directory)
 
         for binary in sorted(self.binaries):

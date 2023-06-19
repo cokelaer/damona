@@ -1,0 +1,9 @@
+micromamba:
+  doi: 10.5281/zenodo.8034806
+  zenodo_id: 8034807
+  releases:
+    1.4.3:
+      download: https://zenodo.org/record/8034807/files/micromamba_1.4.3.img
+      md5sum: e2296d2ad59759db338dd773c6e3b468
+      doi: 10.5281/zenodo.8034807
+      filesize: 35971072

@@ -1,9 +1,9 @@
 samtools_1.17_minimap2:
-  doi: 10.5281/zenodo.7822909
-  zenodo_id: 7822910
+  doi: 10.5281/zenodo.7987998
+  zenodo_id: 7987999
   releases:
     2.24.0:
-      download: https://zenodo.org/record/7822910/files/samtools_1.17_minimap2_2.24.0.img
-      md5sum: 0d1597ff0ebcf6d196d8e4b8fdde8813
-      doi: 10.5281/zenodo.7822910
-      filesize: 101687296
+      download: https://zenodo.org/record/7987999/files/samtools_1.17_minimap2_2.24.0.img
+      md5sum: c9db587f312dfab627c8746397f1a977
+      doi: 10.5281/zenodo.7987999
+      filesize: 117575680

@@ -1,0 +1,10 @@
+subread:
+  doi: 10.5281/zenodo.8037098
+  zenodo_id: 8037099
+  binaries: featureCounts subread-align subread-buildindex  subread-fullscan
+  releases:
+    2.0.3:
+      download: https://zenodo.org/record/8037099/files/subread_2.0.3.img
+      md5sum: f27f72595f4c0dc4265d62b9da566f47
+      doi: 10.5281/zenodo.8037099
+      filesize: 152403968

@@ -1,0 +1,10 @@
+sequana_minimal:
+  doi: 10.5281/zenodo.8037161
+  zenodo_id: 8037162
+  binaries: STAR minimap2 samtools bamtools bcftools bedToBam bedtools bgzip bowtie bwa intersectBed unpigz bedtools bgzip bowtie bowtie-align-l  bowtie-align-s bowtie-buildlz bowtie-build-l bowtie-build-s bowtie-inspect bowtie-inspect-l bowtie-inspect-s bowtie2  bowtie2-align-l bowtie2-align-s bowtie2-build bowtie2-build-l bowtie2-build-s bowtie2-inspect bowtie2-inspect-l bowtie2-inspect-s bowtie2sam.pl bunzip2 bzip2 pbunzip2 pbzip2 coverageBed coverage_to_regions.py freebayes freebayes-parallel generate_freebayes_region_scripts.sh sambamba sortBed  tabix tabix++
+  releases:
+    23.6.13:
+      download: https://zenodo.org/record/8037162/files/sequana_minimal_23.6.13.img
+      md5sum: 16446c37ef2e6fdcbef9402b49a7a663
+      doi: 10.5281/zenodo.8037162
+      filesize: 331116544

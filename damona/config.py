@@ -37,7 +37,7 @@ class Config:
 
 
     This class is called each time damona is started. The config file, if not present
-    is created, otherwise nothing happens. Same for the bash and fish shell configuration 
+    is created, otherwise nothing happens. Same for the bash and fish shell configuration
     files
 
     The damona configuration file looks like::
@@ -62,7 +62,7 @@ class Config:
         name='Cokelaer, Thomas'
         affiliation='Institut Pasteur'
 
-    Where the urls section can be used to store aliases to external registry. When 
+    Where the urls section can be used to store aliases to external registry. When
     installing software using::
 
         damona install example --from url damona
@@ -145,7 +145,7 @@ class Config:
 
 
 def get_damona_commands():
-    """Print commands available in Damona if not hidden. 
+    """Print commands available in Damona if not hidden.
 
     This function is used for the fish completion"""
     from damona import script

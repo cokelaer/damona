@@ -20,6 +20,7 @@ import sys
 import pathlib
 import math
 import tarfile
+from tqdm import tqdm
 
 from damona.common import Damona
 from damona.common import BinaryReader
@@ -44,6 +45,7 @@ class Environment:
         from damona import Environment
         ee = Environment("test1")
         ee.create_bundle("test.tar")
+        ee.create_yaml("test.yaml")
 
     """
 
@@ -77,7 +79,6 @@ class Environment:
     def get_disk_usage(self):
         """Return virtual size of the environment if we were to
         copy/export all images"""
-        binaries = self.get_installed_binaries()
         S = 0
         images = self.get_images()
         for image in images:
@@ -117,7 +118,7 @@ class Environment:
         return txt
 
     def rename(self, newname, force=False):
-        """Rename an environment. 
+        """Rename an environment.
 
         Note that the *base* environment cannot be renamed
         """
@@ -141,8 +142,8 @@ class Environment:
 
     def get_current_state(self):
         """Return dictionary with statistics about the environment
-        
-        It includes the number of binariesm images and name of the 
+
+        It includes the number of binariesm images and name of the
         environment for now.
         """
         images = set()
@@ -185,6 +186,50 @@ class Environment:
 
         logger.info(f"Saved environment {self.name} into {output_name}")
         return output_name
+
+    def create_yaml(self, output_name=None):
+        if output_name is None:
+            output_name = f"damona_{self.name}.yaml"
+
+        images = [pathlib.Path(x) for x in self.get_images()]
+
+        with open(output_name, "w") as fout:
+
+            fout.write(f"name: {self.name}\n")
+            fout.write(f"\nimages:\n")
+
+            for image in images:
+                fout.write(f"- {image.name}\n")
+
+            fout.write(f"\nbinaries:\n")
+
+            binaries = self.get_installed_binaries()
+            binaries = [x.absolute() for x in binaries]
+            binaries = sorted(binaries)
+
+            for binary in binaries:
+                bininst = BinaryReader(binary)
+                fout.write(f"- {binary.name} from {bininst.get_image()}\n")
+
+
+class YamlEnv:
+    def __init__(self, filename):
+
+        self.name = None
+        self.binaries = []
+        self.images = []
+
+        with open(filename, "r") as fin:
+            for line in fin.readlines():
+                if line.startswith("name:"):
+                    self.name = line.split(":")[1].strip()
+
+                elif line.startswith("-") and " from " in line:
+                    line = line.replace("- ", "").strip()
+                    self.binaries.append(line)
+                elif line.startswith("-") and "from" not in line:
+                    line = line.replace("- ", "").strip()
+                    self.images.append(line)
 
 
 class Images:
@@ -256,7 +301,7 @@ class Environ:
 
     environment_names = property(_get_env_names)
 
-    def delete(self, env_name):
+    def delete(self, env_name, force=False):
 
         if env_name == "base":
             logger.error("Environment 'base' is reserved and cannot not be created or deleted")
@@ -269,14 +314,19 @@ class Environ:
             try:
                 os.rmdir(env_path)
             except OSError:
-                logger.warning(
-                    "Will delete all contents of {}. Although this concerns only aliases you will lose your environement".format(
-                        env_path
+                if not force:
+                    logger.warning(
+                        f"Will delete all contents of {env_path}. Although this concerns only aliases you will lose your environement"
                     )
-                )
-                ret = input("Are you sure you want to proceed ? (N/y)")
-                if ret == "y":
+                else:
+                    logger.warning(f"Deleting environment {env_path} since you used --force")
+
+                if force:
                     shutil.rmtree(env_path)
+                else:
+                    ret = input("Are you sure you want to proceed ? (N/y)")
+                    if ret == "y":
+                        shutil.rmtree(env_path)
 
     def _env_in_path(self, env_name):
         PATH = os.environ["PATH"]
@@ -331,7 +381,7 @@ class Environ:
             if env_name and str(manager.damona_path / "envs" / env_name / "bin") == path:
                 logger.info(f"# Found damona path ({path}), to be removed from your PATH")
                 found = True
-            elif not env_name and f"/damona/envs/" in str(path) and not found:
+            elif not env_name and "/damona/envs/" in str(path) and not found:
                 logger.info(f"# Found a damona path ({path}), to be removed from your PATH")
                 found = True
             else:  # keep track of other paths.
@@ -385,14 +435,56 @@ class Environ:
             except:  # pragma: no cover
                 pass  # if already created, error are caught here
 
+    def create_from_yaml(self, env_name, yaml, force=False):
+        if env_name in self.environment_names:
+            logger.warning(f"{env_name} exists already.")
+            if force is False:
+                logger.critical(f"To recreate, you must delete it using 'damona delete {env_name}'")
+                sys.exit(0)
+            else:
+                logger.warning("You used --force, so overwritting existing environment")
+
+        env_directory = pathlib.Path(manager.damona_path / "envs" / env_name)
+
+        from damona.environ import YamlEnv
+
+        ye = YamlEnv(yaml)
+        # ye.name is not used for now, supposibly, it already exists, so we require a user input
+
+        self.create(env_name, force=force)
+
+        for image in tqdm(ye.images):
+            # local import to avoid circular import
+            from damona.install import RemoteImageInstaller
+
+            # replace all _ with :
+            image = image.rsplit(".", 1)[0].replace("_", ":")
+
+            # and replace : with _ except last one
+            image = image.replace(":", "_", image.count(":") - 1)
+
+            rii = RemoteImageInstaller(image)
+            rii.pull_image(force=True)
+
+        for binary in tqdm(ye.binaries):
+            # local import to avoid circular import
+            from damona.install import BinaryInstaller
+
+            binary, image = binary.split(" from ")
+            binary = binary.strip()
+            image = image.strip()
+            image += ".img"
+            bi = BinaryInstaller([binary], image, env_name)
+            bi.install_binaries()
+
     def create_from_bundle(self, env_name, bundle, force=False):
         if env_name in self.environment_names:
             logger.warning(f"{env_name} exists already.")
             if force is False:
-                logger.critical(f"To recreate, you must delete it using 'damona env --delete {env_name}'")
+                logger.critical(f"To recreate, you must delete it using 'damona delete {env_name}'")
                 sys.exit(0)
             else:
-                logger.warning(f"You used --force, so overwritting existing environment")
+                logger.warning("You used --force, so overwritting existing environment")
 
         # if it does not exsits or force is True
         self.create(env_name, force=force)

@@ -219,7 +219,7 @@ essential and may be altered. However, it cannot be removed or created. You can 
 ------------------------
 All environments are stored in *~/.config/damona/envs/*. You can create a new one as follows::
 
-    damona env --create TEST
+    damona create TEST
 
 There, you have a *bin* directory where binaries are going to be installed.
 
@@ -318,7 +318,7 @@ guide to create a registry yourself).
 In damona, you can have sereral environments in parallel and later activate the
 one you wish to use. Let us create a new one::
 
-    damone env --create test1
+    damone create test1
 
 and check that you now have one more environment::
 
@@ -351,6 +351,14 @@ Changelog
 ========= ========================================================================
 Version   Description
 ========= ========================================================================
+0.9.0     * refactorise the command 'env' by splitting into dedicated subcommands
+            create, delete, rename. add progress bar when downloading container
+          * NEW micromamba image to work as a localimage
+          * NEW sequana_minimal package to hold common tools (bwa, samtools,
+            kraken, etc)
+          * NEW ivarm pangolin, nextclade, subread, mafft packages
+          * UPDATE fastp to 0.23.3, gffread to 0.12.7 (3 times lighter).
+          * UPDATE sequana_tools to use micromamba (30% lighter)
 0.8.4     * fix damona stats command to return unique binaries
           * more recipes and version (e.g. fastqc 0.12.1, graphviz update, etc)
 0.8.3     * create registry specifically for the sandbox (for testing)

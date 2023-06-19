@@ -1,9 +1,15 @@
 gffread:
   doi: 10.5281/zenodo.5708835
   zenodo_id: 5708836
+  binaries: gffread
   releases:
     0.12.1:
       download: https://zenodo.org/record/5708836/files/gffread_0.12.1.img
       md5sum: c0e23ab41fe623ee379df37ffeae3658
       doi: 10.5281/zenodo.5708836
       filesize: 306996766
+    0.12.7:
+      download: https://zenodo.org/record/8037039/files/gffread_0.12.7.img
+      md5sum: 3c30ec0229e378eaaed8aa8ac5d3c930
+      doi: 10.5281/zenodo.8037039
+      filesize: 124751872

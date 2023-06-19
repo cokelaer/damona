@@ -54,10 +54,6 @@ class DamonaInit:
 
     def __init__(self):
         if "DAMONA_PATH" not in os.environ:
-            try:
-                HOME = os.path.expanduser("~")
-            except Exception:  # pragma: no cover
-                HOME = "/home/user/"
             logger.critical(
                 """DAMONA_PATH was not found in your environment.
 
@@ -157,7 +153,7 @@ class Damona:
 
         used_images = set(used_images)
         Nu = len(used_images)
-        No = Ni - Nu
+        #No = Ni - Nu
         # keep print to make sure it is seen
         print(f"{Nu} images is/are used. ")
         orphans = []
@@ -218,7 +214,7 @@ class ImageReader:
         self.filename = pathlib.Path(name)
 
         if self.is_valid_name() is False:
-            logger.error("Invalid image name. Your input image must end in .img or .sif")
+            logger.error("Invalid image name. Your input image must end in .img or .sif ; version must be X.Y.Z")
             sys.exit(1)
 
     def delete(self):
@@ -311,7 +307,7 @@ class BinaryReader:
     ::
 
         >>> from damona.common import BinaryReader
-        >>> br = BinaryReader("~/.config/damona/envs/base/fastqc")
+        >>> br = BinaryReader("~/.config/damona/envs/base/bin/fastqc")
         >>> br.get_image()
         'fastqc:0.11.9'
         >>> br.is_image_available()
@@ -376,7 +372,10 @@ class BinaryReader:
         container = ":".join(container.rsplit("_", 1))
         return container
 
+
 import functools
+
+
 def requires_singularity(func):
     """A decorator to check presence of singularity"""
 

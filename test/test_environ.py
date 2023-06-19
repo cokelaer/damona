@@ -91,7 +91,6 @@ def test_environment():
     env._is_fish_shell()
 
 
-
 def test_create_bundle(tmpdir, monkeypatch):
     # make sure it exists
     runner = CliRunner()
@@ -99,7 +98,7 @@ def test_create_bundle(tmpdir, monkeypatch):
     NAME = "damona__testing__environ__create_bundle"
 
     if NAME not in Environ().environment_names:
-        results = runner.invoke(script.env, ["--create", NAME])
+        results = runner.invoke(script.create, [NAME])
 
     manager = Damona()
     monkeypatch.setenv("DAMONA_ENV", str(manager.damona_path / "envs" / NAME))
@@ -116,7 +115,7 @@ def test_create_bundle(tmpdir, monkeypatch):
 
     # cleanup
     with mock.patch.object(builtins, "input", lambda _: "y"):
-        results = runner.invoke(script.env, ["--delete", NAME])
+        results = runner.invoke(script.delete, [NAME])
 
 
 

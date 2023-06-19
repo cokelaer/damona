@@ -62,8 +62,8 @@ def main(level):
     The default environment is called 'base'. You can create and activate
     a new environment as follows:
 
-    \b 
-        damona env --create TEST
+    \b
+        damona create --name TEST
         damona activate TEST
 
     Once an environment is activated, you can install a Damona-registered image
@@ -85,30 +85,83 @@ def main(level):
     logger.setLevel(level)
 
 
-# =================================================================== env
 @main.command()
-@click.option("--create", type=click.STRING, help="""create a new environment""")
-@click.option("--delete", type=click.STRING, help="""Delete an existing environment""")
-@click.option("--rename", type=click.STRING, help="""Rename an existing environment""")
-@click.option("--new-name", type=click.STRING, default="", help="""The new environment name (use with --rename) only""")
-@click.option("--disk-usage", is_flag=True, help="Prints disk usage of each Damona environments")
-@click.option("--from-bundle", type=click.STRING, help="a bundle file create with 'damona export' command")
+@click.argument("environment", required=True, type=click.STRING)
+@click.option("--from-bundle", type=click.STRING, help="a bundle file create with 'damona export --bundle' command")
+@click.option("--from-yaml", type=click.STRING, help="a yaml file create with 'damona export --yaml' command")
 @click.option(
     "--force",
     is_flag=True,
     help="""When creating an environment with --from-bundle, rewrite binaries and
 images even though the environment exists.""",
 )
+def create(**kwargs):
+    """Create a new environment
+
+    Here we create an environment called TEST:
+
+    \b
+        damona create TEST
+
+    You can then activate it:
+
+    \b
+        damona activate TEST
+
+    You can create an environment from a environment.yaml file that was created with the 'export --yaml' command
+    or manually built using the following syntax:
+
+    \b
+        name: sequana_rnaseq
+    \b
+        images:
+            - sequana_tools_0.14.5.img
+    \b
+        binaries:
+            - bwa
+            - samtools
+            - bamtools
+
+    """
+    envs = Environ()
+    if kwargs["from_bundle"]:
+        envs.create_from_bundle(kwargs["environment"], bundle=kwargs["from_bundle"], force=kwargs["force"])
+    elif kwargs["from_yaml"]:
+        envs.create_from_yaml(kwargs["environment"], yaml=kwargs["from_yaml"], force=kwargs["force"])
+    else:
+        envs.create(kwargs["environment"])
+
+
+@main.command()
+@click.argument("environment", required=True, type=click.STRING)
+@click.option("--force", is_flag=True, help="""When creating an environment with --from-bundle, rewrite binaries and""")
+def delete(**kwargs):
+    """Remove an environment"""
+    env = Environ()
+    env.delete(kwargs["environment"], force=True)
+
+
+@main.command()
+@click.argument("environment", required=True, type=click.STRING)
+@click.option("--new-name", required=True, type=click.STRING, help="""new name of the environments""")
+def rename(**kwargs):
+    """Rename an existing environment"""
+    env = Environment(kwargs["environment"])
+    env.rename(kwargs["new_name"])
+
+
+# =================================================================== env
+@main.command()
 def env(**kwargs):
-    """Create/Delete/Rename environments here.
+    """Delete/Rename environments here.
+
+    To create an environment, use ::
+
+        damona create --name TEST
 
     Print information about current environments::
 
         damona env
-
-    Check the disk usage of each environments::
-
-        damona env --disk-usage
 
     You can also create an environment and install a saved on in it::
 
@@ -119,42 +172,13 @@ def env(**kwargs):
     """
     envs = Environ()
 
-    if kwargs["disk_usage"]:
-        envs = Environ()
-        N = len(envs.images)
-        usage = envs.images.get_disk_usage()
-        click.echo(f"Found {N} images: Images usage: {usage}.Mb")
-    elif kwargs["create"] is None and kwargs["delete"] is None and kwargs["rename"] is None:
-        click.secho(f"There are currently {envs.N} Damona environments:\n", bold=True)
-        if envs.N != 0:
-            for this in envs.environments:
-                name = this.name
-                click.echo(click.style(f"{name}", bold=True) + click.style(f" -  {this}"))
-        current_env = envs.get_current_env_name()
-        click.secho(f"\nYour current env is '{current_env}'.", bold=True)
-    elif kwargs["create"] and kwargs["delete"]:  # mutually exclusive
-        logger.error("you cannot use --delete and --create together")
-        sys.exit(1)
-    elif kwargs["create"] and kwargs["rename"]:  # mutually exclusive
-        logger.error("you cannot use --delete and --rename together")
-        sys.exit(1)
-    elif kwargs["rename"] and kwargs["delete"]:  # mutually exclusive
-        logger.error("you cannot use --delete and --rename together")
-        sys.exyyit(1)
-
-    elif kwargs["delete"]:
-        envs.delete(kwargs["delete"])
-    elif kwargs["create"]:
-        if kwargs["from_bundle"]:
-            envs.create_from_bundle(kwargs["create"], bundle=kwargs["from_bundle"], force=kwargs["force"])
-        else:
-            envs.create(kwargs["create"])
-    elif kwargs["rename"]:
-        if kwargs["new_name"] == "":
-            logger.error("If you use --rename, you must provide a new name with --new-name")
-            sys.exit(1)
-        env = Environment(kwargs["rename"])
-        env.rename(kwargs["new_name"], force=kwargs["force"])
+    click.secho(f"There are currently {envs.N} Damona environments:\n", bold=True)
+    if envs.N != 0:
+        for this in envs.environments:
+            name = this.name
+            click.echo(click.style(f"{name}", bold=True) + click.style(f" -  {this}"))
+    current_env = envs.get_current_env_name()
+    click.secho(f"\nYour current env is '{current_env}'.", bold=True)
 
 
 # =================================================================== activate
@@ -245,9 +269,11 @@ def install(**kwargs):
     You may have images online on a website. To install such images, use
     the --url (see developer guide for details).
 
-    Or wish to use a biocontainers docker file::
+    Or wish to use an existing docker file::
 
         damona install biocontainers/hisat2:v2.0.5-1-deb
+
+    Note (June 2023) biocontainers do not work anymore...
 
     """
     logger.debug(kwargs)
@@ -274,11 +300,9 @@ def install(**kwargs):
     else:
         binaries = None
 
-
-    if kwargs['image'].startswith("biocontainers/"):
-        p = BiocontainersInstaller(kwargs['image'], binaries=binaries)
+    if kwargs["image"].startswith("biocontainers/"):
+        p = BiocontainersInstaller(kwargs["image"], binaries=binaries)
         p.pull_image(force=force_image)
-
         p.install_binaries(force=force_binaries)
 
     elif os.path.exists(image_path) is False:
@@ -324,7 +348,7 @@ def remove(**kwargs):
     """Remove binaries or image from an environment.
 
     You can remove a binary from an environment given its path. It will not be removed
-    if used by an executable if an environment.::
+    if used by an executable in an environment.::
 
         damona remove /home/cokelaer/.config/damona/images/fastqc_0.11.8.img
 
@@ -339,12 +363,12 @@ def remove(**kwargs):
 
         damona remove fastqc
 
-    it removes the binary from the activate environnt only. Then, it the image is now orpha,
-    it is also removed.
+    it removes the binary from the activate environment only. Then, if the image is now an
+    orphan, it is also removed.
 
 
     You can also remove an image (and its binaries) from an environment. Note, however,
-    that the image is not deleted if usde in other environments.
+    that the image is not deleted if used in other environments.
     """
     # First, let us figure out the current or user-defined environment
     envs = Environ()
@@ -439,7 +463,7 @@ def clean(**kwargs):
     if kwargs["remove"]:  # pragma: no cover
         for x in orphans:
             answer = input(f"You are going to delete this image: {x}. Are you sure ? (yes/no)")
-            if answer in [ "yes", 'y']:
+            if answer in ["yes", "y"]:
                 os.remove(os.path.expanduser(x))
                 logger.info(f"Removed {x}")
             else:
@@ -452,8 +476,7 @@ def clean(**kwargs):
 @main.command()
 @click.argument("pattern", required=True, type=click.STRING)
 @click.option("--images-only", is_flag=True, default=False, help="Show images only")
-@click.option("--include-biocontainers", is_flag=True, default=False, 
-    help="include also biocontainers hits")
+@click.option("--include-biocontainers", is_flag=True, default=False, help="include also biocontainers hits")
 @click.option("--binaries-only", is_flag=True, default=False, help="Show binaries only")
 @click.option(
     "--url",
@@ -485,8 +508,8 @@ def search(**kwargs):
 
         damona search fastqc --url damona
 
-    Although not recommended (not curated by Damona), you can also 
-    install any container available on biocontainer. To do som you first 
+    Although not recommended (not curated by Damona), you can also
+    install any container available on biocontainer. To do som you first
     need to know the name and version:
 
         damona search fastqc --include-biocontainers
@@ -517,10 +540,10 @@ def search(**kwargs):
     if kwargs["include_biocontainers"]:
         click.echo("Searching biocontainers:")
         br = BiocontainersRegistry()
-        for k,data in br.data.items():
+        for k, data in br.data.items():
             if pattern in k:
                 click.echo(f" - {k}: ")
-                for version, location in data['releases'].items():
+                for version, location in data["releases"].items():
                     install = f"(damona install biocontainers/{k}:{version})"
                     click.echo(f" -     {version}: {install} ")
             elif pattern == "*":
@@ -552,11 +575,11 @@ def info(**kwargs):
         sys.exit(1)
     else:
         environ = x[0]
-        click.echo(environ)
-        click.echo("Images:")
+        click.echo(f"name: {envname}")
+        click.echo("\nimages:")
         for item in sorted(environ.get_images()):
             click.echo(" - " + pathlib.Path(item).name)
-        click.echo("Binaries:")
+        click.echo("\nbinaries:")
         for item in sorted(environ.get_installed_binaries()):
             click.echo(" - " + pathlib.Path(item).name)
 
@@ -564,20 +587,28 @@ def info(**kwargs):
 # ============================================================  export
 @main.command()
 @click.argument("environment", required=True, type=click.STRING)
-@click.option("--output", default=None, help="name of output file")
+@click.option("--yaml", help="name of output file")
+@click.option("--bundle", default=None, help="name of output file")
 def export(**kwargs):
     """Create a bundle of a given environment.
 
     the following command copies all binaries from an environment and their
     associated images into a tar ball file named after the
-    environment.::
+    environment.
 
-        damona export test1
+    \b
+        damona export TEST --yaml   test_env.yaml
+        damona export TEST --bundle test_bundle.tar
+
+    We do not compress the tar file. The images are already compressed.
 
     This create a bundle named damona_test1.tar. You can then create a new
-    environment starting from this bundle::
+    environment starting from this bundle:
 
-        damona env --create TEST1 --from-bundle damona_test1.tar
+    \b
+        damona env --create TEST1 --from-bundle test_bundle.tar
+        damona env --create TEST1 --from-yaml   test_env.yaml
+
 
     """
     from damona import Environment
@@ -591,8 +622,16 @@ def export(**kwargs):
     # to do so, we'll need an installed.txt file
 
     env = Environment(envname)
-    output = env.create_bundle(output_name=kwargs["output"])
-    logger.info(f"Use this command to create a new environment: \n\n\tdamona env --create test --from-bundle {output}")
+    if kwargs["bundle"]:
+        bundle_file = kwargs["bundle"]
+        output = env.create_bundle(output_name=kwargs["bundle"])
+        logger.info(
+            f"Use this command to create a new environment: \n\n\tdamona create test1 --from-bundle {bundle_file}"
+        )
+    elif kwargs["yaml"]:
+        yaml_file = kwargs["yaml"]
+        env.create_yaml(output_name=yaml_file)
+        logger.info(f"Use this command to create a new environment: \n\n\tdamona create test1 --from-yaml {yaml_file}")
 
 
 # ============================================================  stats
@@ -600,6 +639,7 @@ def export(**kwargs):
 
 @main.command()
 @click.option("--include-biocontainers", is_flag=True, help="include also biocontainers (experimental)")
+@click.option("--include-downloads", is_flag=True, help="include downloads")
 def stats(**kwargs):
     """Get information about Damona images and binaries
 
@@ -607,12 +647,38 @@ def stats(**kwargs):
 
         damona stats
 
+    This will print the actual status of Damona with number of binaries/images.
+    This will also give local information
+
     """
     from damona import admin
 
     admin.stats()
-    if kwargs['include_biocontainers']:
+    if kwargs["include_biocontainers"]:
         admin.stats(True)
+
+    if kwargs["include_downloads"]:
+        click.echo("Detailled summary of downloads for each container:")
+        from damona import admin
+        from damona import zenodo
+
+        all_software = admin.get_software_names()
+        N = 0
+        for software in sorted(all_software):
+            downloads = zenodo.get_stats_software(software)
+            click.echo(f"{software}: {downloads}")
+            try:
+                N += downloads.replace(",", "")
+            except AttributeError:
+                N += downloads
+        click.echo(f"Total: {N}")
+
+    envs = Environ()
+    N = len(envs.images)
+    usage = envs.images.get_disk_usage()
+    click.echo(
+        f"\n--\nLocal installation. In your local environment, we found {N} images. This account for a total of: {usage}.Mb"
+    )
 
 
 # ===================================================================  list
