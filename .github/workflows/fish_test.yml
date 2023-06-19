@@ -63,7 +63,7 @@ jobs:
         which fish
         cat << EOF > test.fish
         #!/usr/bin/fish
-        damona env --create TEST
+        damona create TEST
         damona activate TEST
         damona install hisat2
         damona install fastqc

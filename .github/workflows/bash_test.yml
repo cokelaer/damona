@@ -57,7 +57,7 @@ jobs:
     - name: Test installation hisat2
       run: |
         #source /home/runner/.config/damona/damona.sh
-        damona env --create TEST
+        damona create TEST
         damona activate TEST
         damona install hisat2  # a docker file
         damona install fastqc  # a zenodo/damona file
