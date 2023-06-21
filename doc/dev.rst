@@ -13,9 +13,9 @@ Developers are lucky: they can do more than users. If you type::
     damona --help
 
 you will have the users' commands. However, they are more commands available. 
-They are not shown because they are attended to be used by developers only.
+They are not shown because they are intended for developers only.
 
-The first useful commands for developers is the **build** command::
+The first useful command for developers is the **build** command::
 
     damona build --help
 
@@ -44,7 +44,7 @@ Let us consider an example called SOFTWARE. You must be in the directory of the 
 Case 1: the tool does not exist.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Create a new Singulariry image. Time to upload the resulting (functional !) image::
+Create a new Singularity image. Time to upload the resulting (functional !) image::
 
     damona zenodo-upload SOFTWARE_1.0.0.img --mode zenodo
 
@@ -55,7 +55,7 @@ creates a registry.yaml file with the metadata ready to commit and push. **edit 
 Case 2: the recipe exists already
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Create a new Singulariry image. Time to upload the resulting (functional !) image::
+Create a new Singularity image. Time to upload the resulting (functional !) image::
 
     damona zenodo-upload SOFTWARE_2.0.0.img --mode zenodo
 
@@ -66,7 +66,7 @@ tree structure
 
 Recipes are in the ./recipes directory with one sub-directory per tool or environment.
 Inside a sub directory (e.g, R, conda) you may have several recipes for
-different versions
+different versions.
 
 For example, for **Damona** there is a directory called **Damona**. Inside that
 directory, if there is only one recipes, name it::
@@ -93,7 +93,7 @@ Images names for users will appear as::
      NAME_SUFFIX:x.y.z
 
 
-Note that PKGNAME could be in small or big caps but the final image with be all
+Note that NAME could be in small or big caps but the final image with be all
 lower caps (singularity-hub feature). Consequently, when downloading an image,
 it should be named as pkgname:x.y.z
 
@@ -101,7 +101,7 @@ it should be named as pkgname:x.y.z
 building
 --------
 
-To test the recipes, type::
+To test the recipe, type::
 
     damona build pkgname:x.y.z
 
@@ -166,7 +166,7 @@ The download link can be of three types:
 Where are stored the containers ?
 ----------------------------------
 
-Since Dev 2021, we store containers with a DOI on Zenodo website. Originally, we stored some container here: https://cloud.sylabs.io/library/cokelaer/damona but we extended **Damona** so that it can fetch containers from other places. If you have your own containers, it is quite simple to create a registry and place it anywhere on the web and informa damona that you want to use that registry.
+Since Dev 2021, we store containers with a DOI on Zenodo website. Originally, we stored some container here: https://cloud.sylabs.io/library/cokelaer/damona but we extended **Damona** so that it can fetch containers from other places. If you have your own containers, it is quite simple to create a registry and place it anywhere on the web and inform damona that you want to use that registry.
 
 We have an example on https://biomics.pasteur.fr/salsa/damona
 

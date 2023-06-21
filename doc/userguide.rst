@@ -34,7 +34,7 @@ To get help for the install command, type::
 Environments
 ------------
 
-Damona provide a way to manage environments where Singularity images and binaries are installed.
+Damona provides a way to manage environments where Singularity images and binaries are installed.
 Environments are independent from each other. We decided to go for a very simple design where an environment is nothing
 else than a physical directory with a subdirectory called *bin/* to store the binaries. All images are shared between
 environments to decrease the storage needs.
@@ -47,8 +47,7 @@ If you type::
     damona env
 
 You will get the list of environments available on your system. In theory, if you start from scratch there is only one
-called **base** that cannot be deleted or created. You can use it as a sandbox though where software can be installed or
-removed.
+called **base** that cannot be deleted or created. You can use it as a sandbox though where software can be installed or removed.
 
 Create environments
 ~~~~~~~~~~~~~~~~~~~
@@ -69,7 +68,7 @@ Note the last line telling you that::
 
 Activate/Deactivate environments
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-In order to install new binaries or software package, you must activate an environment. You may activate several but the last one is the active one. Let us activate the TEST environment::
+In order to install new binaries or software packages, you must activate an environment. You may activate several but the last one is the active one. Let us activate the TEST environment::
 
     damona activate TEST
 
@@ -181,7 +180,7 @@ And the *fastqc* command should be available::
 
     fastqc
 
-.. note:: using the activate command above, your PATH has been changed in your current shell. If you open a new shlle,
+.. note:: using the activate command above, your PATH has been changed in your current shell. If you open a new shell,
    you will need to activate the environment again.
 
 To install an image/binary, you can also use an external registry (see developer
@@ -220,7 +219,7 @@ Now, you need to activate the first one::
 
     damona activate test1
 
-and install a tool with a given version in this environement::
+and install a tool with a given version in this environment::
 
     damona install fastqc:0.11.9 
 
