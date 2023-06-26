@@ -327,7 +327,9 @@ class RemoteImageInstaller(ImageInstaller):
         info = self.registry.registry[registry_name]
         logger.info(f"{info}")
 
-        if info.binaries:
+        if self.binaries:
+            pass
+        elif info.binaries:
             self.binaries = info.binaries
         else:
             logger.warning(f"No binaries field found in registry of {registry_name}")
