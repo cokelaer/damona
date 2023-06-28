@@ -1,0 +1,10 @@
+guppy:
+  doi: 10.5281/zenodo.8091508
+  binaries: guppy_barcoder guppy_basecaller_duplex guppy_aligner guppy_basecaller
+  zenodo_id: 8091509
+  releases:
+    6.4.2:
+      download: https://zenodo.org/record/8091509/files/guppy_6.4.2.img
+      md5sum: 9ad617716a0fdb7c5902662aaf433bc7
+      doi: 10.5281/zenodo.8091509
+      filesize: 1260027904
