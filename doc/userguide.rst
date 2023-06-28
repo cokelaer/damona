@@ -232,7 +232,7 @@ And to install it in the *test2* environment::
 You can activate as many environments as you wish. Calling deactivate will only
 deactivate the last activated environment. In works as a Last In First Out mechanism.
 
-Environmental varaibles
+Environmental variables
 ------------------------
 DAMONA_SINGULARITY_OPTIONS
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -248,6 +248,13 @@ The DAMONA_SINGULARITY_OPTIONS can be used to provide any required options to si
 If undefined, it is set to an empty string. Otherwise, you can defined it as follows:
 
     export DAMONA_SINGULARITY_OPTIONS="whatever_you_need"
+
+Note anout display and the -e option.
+
+It is usually good practive to set the -e option to not use the environement where you start the container. However, you may have issue with X11 display. Indeed, -e means do not use any environment variable. Therefore the DISPLAY is unset. If such case, you can use::
+
+    export DAMONA_SINGULARITY_OPTIONS=" -e --env DISPLAY=:1"
+
 
 Example: Binding directories
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

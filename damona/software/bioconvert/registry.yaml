@@ -1,6 +1,6 @@
 bioconvert:
   doi: 10.5281/zenodo.7034821
-  binaries: bioconvert
+  binaries: bioconvert bioconvert_stats bioconvert_init
   zenodo_id: 7034822
   releases:
     0.6.1:
@@ -23,3 +23,8 @@ bioconvert:
       md5sum: 45827ef4d866aac9076b3924d2594776
       doi: 10.5281/zenodo.7704649
       filesize: 1369206784
+    1.1.0:
+      download: https://zenodo.org/record/8078007/files/bioconvert_1.1.0.img
+      md5sum: 03b62d736758d524e051db68b55bc627
+      doi: 10.5281/zenodo.8078007
+      filesize: 1219751936

@@ -153,21 +153,13 @@ def rename(**kwargs):
 # =================================================================== env
 @main.command()
 def env(**kwargs):
-    """Delete/Rename environments here.
-
-    To create an environment, use ::
-
-        damona create --name TEST
+    """List all environemnts with some stats.
 
     Print information about current environments::
 
+    \b
         damona env
 
-    You can also create an environment and install a saved on in it::
-
-    \b
-        damona export test1
-        damona env --create copy_test1 --from-bundle damona_test1.tar
 
     """
     envs = Environ()
@@ -444,32 +436,30 @@ def clean(**kwargs):
     # First we deal with orphans from the binaries directories
     orphans = dmn.find_orphan_binaries()
     if len(orphans) == 0:
-        logger.info("No orphans binary found")
-
-    if kwargs["remove"]:
-        for x in orphans:
-            os.remove(os.path.expanduser(x))
-            logger.info(f"Removed {x}")
-    elif len(orphans) != 0:
-        logger.warning("Please use --remove to confirm that you want to remove the orphans")
+        # nothing to do
+        logger.info("No binary orphan found")
+    else:
+        logger.info(f"Found {len(orphans)} binary orphans.")
+        if kwargs["remove"]:
+            for x in orphans:
+                os.remove(os.path.expanduser(x))
+                logger.info(f"Removed {x}")
+        else:
+            logger.warning("Please use --remove to confirm that you want to remove the orphans")
 
     # Second, we find images that have no more binaries
     orphans = dmn.find_orphan_images()
     if len(orphans) == 0:
         logger.info("No orphan images found")
     else:
-        logger.info(f"Found {len(orphans)} orphans.")
+        logger.info(f"Found {len(orphans)} image orphans.")
 
-    if kwargs["remove"]:  # pragma: no cover
-        for x in orphans:
-            answer = input(f"You are going to delete this image: {x}. Are you sure ? (yes/no)")
-            if answer in ["yes", "y"]:
+        if kwargs["remove"]:  # pragma: no cover
+            for x in orphans:
                 os.remove(os.path.expanduser(x))
                 logger.info(f"Removed {x}")
-            else:
-                logger.info(f"skipped deletion of {x}")
-    else:
-        logger.warning("Please use --remove to confirm that you want to remove the orphans")
+        else:
+            logger.warning("Please use --remove to confirm that you want to remove the orphans")
 
 
 # =================================================================== search
@@ -754,6 +744,7 @@ def zenodo_upload(**kwargs):  # pragma: no cover
     z = Zenodo(mode, token)
     logger.info(f"Uploading to {mode}")
     z._upload(filename)
+
 
 
 # =================================================================== build
