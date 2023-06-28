@@ -113,9 +113,44 @@ This is just an alias to singularity build command::
 Singularity recipes
 --------------------
 
-There is no specific instructions. The simpler the better. Please try to reuse 
-existing dockers, singularity. For example, we have a conda recipes. Try to make the final container
-as small as possible.
+Here are some instructions to help writting recipes.
+
+
+Try to set version instead of latest::
+
+
+    BootStrap: docker
+    From: mambaorg/micromamba:1.4.4
+
+is better than ::
+
+    BootStrap: docker
+    From: mambaorg/micromamba:latest
+
+
+By experience here are some conventions that could be useful. These commands are useful to avoid warnings when running the container ::
+
+    %environment
+        LANG=C.UTF-8
+        LC_ALL=C.UTF-8
+        export LANG LC_ALL
+
+
+
+No need for labels but if you want, you may add a labels section::
+
+    %labels
+        whatever
+
+No need for help section.
+
+
+A useful set of commands is also to add test within the container but this is only tested when building the recipes:
+
+    %test
+      command --help
+
+
 
 
 registry
@@ -202,8 +237,8 @@ this will find the recipes automatically and save the final container in
 **salmon_1.3.0.img**.
 
 
-Upload image on sylabs
-----------------------
+Upload image on sylabs (DEPRECATED)
+-------------------------------------
 
 ::
 
