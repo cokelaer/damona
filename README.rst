@@ -351,6 +351,12 @@ Changelog
 ========= ========================================================================
 Version   Description
 ========= ========================================================================
+0.9.1     * ADD hmmer 3.2.2, 
+          * ADD trinotate 4.0.1
+          * ADD transdecode 5.7.0
+          * ADD trinity 2.15.1
+          * UPDATE bioconvert 1.1.0
+          * update bowtie2 2.5.1
 0.9.0     * refactorise the command 'env' by splitting into dedicated subcommands
             create, delete, rename. add progress bar when downloading container
           * NEW micromamba image to work as a localimage

@@ -50,7 +50,7 @@ def stats(biocontainers=False):
     Ns = len(set([x.split(":")[0] for x in r.get_list()]))
     if biocontainers:
         print("From biocontainers, in theory*, we also have:")
-    print(f"- number of software:  {Ns}")
+    print(f"- number of containers:  {Ns}")
     print(f"- version: {Nv}")
     print(f"- unique binaries: {Nb}")
     data["version"] = Nv
