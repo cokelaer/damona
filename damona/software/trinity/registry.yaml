@@ -1,0 +1,10 @@
+trinity:
+  doi: 10.5281/zenodo.8096026
+  zenodo_id: 8096027
+  binaries: Trinity,TrinityStats.pl,align_and_estimate_abundance.pl,abundance_estimates_to_matrix.pl
+  releases:
+    2.15.1:
+      download: https://zenodo.org/record/8096027/files/trinity_2.15.1.img
+      md5sum: 1c5d12a96dc37de347438d26ed8dccf8
+      doi: 10.5281/zenodo.8096027
+      filesize: 2739605504
