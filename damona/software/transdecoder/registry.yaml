@@ -1,0 +1,10 @@
+trandecoder:
+  doi: 10.5281/zenodo.8092506
+  zenodo_id: 8092507
+  binaries: TransDecoder.wiki,TransDecoder.LongOrfs,TransDecoder.Predict,TransDecoder.lrgTests
+  releases:
+    5.7.0:
+      download: https://zenodo.org/record/8092507/files/trandecoder_5.7.0.img
+      md5sum: 3fd0fd5deb8b567bb1c430d1d771ff3f
+      doi: 10.5281/zenodo.8092507
+      filesize: 1225363456
