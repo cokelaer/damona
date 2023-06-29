@@ -1,17 +1,15 @@
 BootStrap: docker
 From: mambaorg/micromamba:1.4.4
 
-%environment
-  # Define environment variables
 
 %post
     # Create a micromamba environment (based won't work)
     micromamba create -y -n main
 
     # Example of installing bwa inside the environment
-    micromamba install -q -y -n main -c conda-forge -c bioconda hmmer=3.3.2
+    micromamba install -q -y -n main -c conda-forge -c bioconda hmmer=3.3.2 python
 
-    #cleanup 
+    #cleanup
     rm -rf /opt/conda/pkgs/
 
 %environment
