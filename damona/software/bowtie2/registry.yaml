@@ -13,3 +13,8 @@ bowtie2:
       md5sum: 9db75746d96f3b67e599168c9f48fc8b
       doi: 10.5281/zenodo.5765690
       filesize: 72019968
+    2.5.1:
+      download: https://zenodo.org/record/8092297/files/bowtie2_2.5.1.img
+      md5sum: 35eb769d82ff9f64a83aa69fc1b0f55b
+      doi: 10.5281/zenodo.8092297
+      filesize: 71213056

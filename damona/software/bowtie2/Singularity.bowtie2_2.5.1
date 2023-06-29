@@ -4,10 +4,17 @@ From: ubuntu:23.10
 %labels
     Author thomas cokelaer,etienne kornobis
 
+%test
+    python --version > /dev/null
+    bowtie2 --version > /dev/null
+    bash --version > /dev/null
+
 %post
 
     apt-get update --fix-missing
     apt-get install -y wget gcc g++ make zlib1g-dev libtbb-dev perl python3
+
+    ln -sf /usr/bin/python3 /usr/bin/python
 
     cd /usr/local/ \
     && wget -O bowtie.tar.gz  https://github.com/BenLangmead/bowtie2/archive/v2.5.1.tar.gz \
@@ -30,4 +37,4 @@ From: ubuntu:23.10
 %environment
     export LANG=C.UTF-8
     export LC_ALL=C.UTF-8
-
+    export LANG=C
