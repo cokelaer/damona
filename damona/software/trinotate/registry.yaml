@@ -1,0 +1,10 @@
+trinotate:
+  doi: 10.5281/zenodo.8096390
+  zenodo_id: 8096391
+  binaries: Trinotate
+  releases:
+    4.0.1:
+      download: https://zenodo.org/record/8096391/files/trinotate_4.0.1.img
+      md5sum: 349a8ed81c669c1876d4c94effa6d424
+      doi: 10.5281/zenodo.8096391
+      filesize: 1667067904
