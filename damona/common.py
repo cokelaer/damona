@@ -18,6 +18,7 @@ import os
 import sys
 import pathlib
 import re
+import functools
 
 from easydev import md5, cmd_exists
 
@@ -373,7 +374,6 @@ class BinaryReader:
         return container
 
 
-import functools
 
 
 def requires_singularity(func):

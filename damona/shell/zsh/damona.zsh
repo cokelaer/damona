@@ -10,7 +10,7 @@ __damona_find_damona() {
         # if we do so, it will not be set in the shell anymore. So, we must unset it
         # but in a subshell using the ( ) syntax.
 
-        mycmd="$( unset damona; which damona 2>/dev/null )"
+        mycmd="$(unfunction damona; command -v damona 2>/dev/null)"
         my_status="$?"
 
         if [[ $my_status != 0 ]]; then
@@ -176,6 +176,16 @@ __damona_setup() {
 
 }
 
+
+# specificity zsh for the shift function
+# In zsh, the shift command requires the shift count to be less than or equal to the number of 
+# positional parameters ($#). If the shift count exceeds the number of positional parameters, 
+# zsh produces a warning similar to the one you mentioned: "shift count must be <= $#" (where 
+# the line number may vary).
+# This modification redirects the warning message to /dev/null and ensures that zsh does not 
+# produce the warning when the shift count exceeds the number of positional parameters. 
+# The || : at the end ensures that the line does not produce an error if the shift command fails.
+
 damona () {
 
   __damona_setup
@@ -184,16 +194,16 @@ damona () {
         "$DAMONA_EXE_INTERN"
     else
         \local cmd="$1"
-        shift
+        shift 2>/dev/null || :
 
         # for the activate/deactivate special cases, user may provide 
         # --level DEBUG  before the command.
         case "$cmd" in
             --level)
                 \local level="$1"
-                shift
+                shift 2>/dev/null || :
                 \local maincmd="$1"
-                shift
+                shift 2>/dev/null || :
 
                 case "$maincmd" in
                     activate)
@@ -214,7 +224,7 @@ damona () {
                 ;;
             deactivate)
                 \local maincmd="$1"
-                shift
+                shift 2>/dev/null || :
                 case "$maincmd" in 
                     --help)
                         ask_damona="$( "$DAMONA_EXE_INTERN" "deactivate" "--help")"

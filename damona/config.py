@@ -97,8 +97,10 @@ class Config:
         self.read()
 
         # create the shell script once for all
-        created = self.add_shell()
+        created = self.add_bash()
         created = self.add_fish()
+        created = self.add_zsh()
+
         if created:  # pragma: no cover
             logger.critical(
                 "Please start a new shell to benefit from " "the configuration file and activate/deactivate command"
@@ -113,7 +115,7 @@ class Config:
         config.read_file(open(self.config_file))
         self.config = config
 
-    def add_shell(self):  # pragma: no cover  ; this is executed only if config does not exists
+    def add_bash(self):  # pragma: no cover  ; this is executed only if config does not exists
         #  let us add a damona.cfg in it. This will store URLs to look for singularities
         # This is done only once to not overwrite user options
         if os.path.exists(self.user_config_dir / "damona.sh") is False:
@@ -124,6 +126,22 @@ class Config:
             shell_path = pathlib.Path(damona.shell.__path__[0])
             with open(shell_path / "bash" / "damona.sh", "r") as fin:
                 with open(_damona_config_path / "damona.sh", "w") as fout:
+                    fout.write(fin.read())
+            return True
+        else:
+            return False
+
+    def add_zsh(self):  # pragma: no cover  ; this is executed only if config does not exists
+        #  let us add a damona.cfg in it. This will store URLs to look for singularities
+        # This is done only once to not overwrite user options
+        if os.path.exists(self.user_config_dir / "damona.zsh") is False:
+            logger.info("adding a damona.zsh in your DAMONA_PATH")
+            _damona_config_path = self.user_config_dir
+            logger.warning(f"Creating damona.zsh file in {_damona_config_path}. ")
+
+            shell_path = pathlib.Path(damona.shell.__path__[0])
+            with open(shell_path / "zsh" / "damona.zsh", "r") as fin:
+                with open(_damona_config_path / "damona.zsh", "w") as fout:
                     fout.write(fin.read())
             return True
         else:

@@ -1,7 +1,7 @@
 # Copyright (C) 2021 Damona
 #
 #
-# Inspired from the Conda project especially the completion part.
+# Inspired from the Conda project
 #
 
 function __damona_find_damona
@@ -25,6 +25,7 @@ function __damona_find_damona
 end
 
 
+
 function damona
 
 
@@ -32,6 +33,7 @@ function damona
         set DAMONA_EXE_INTERN $DAMONA_EXE
     else
         set -e DAMONA_EXE_INTERN
+        set -e DAMONA_SHELL_INFO
         __damona_find_damona
     end
 

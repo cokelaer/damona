@@ -20,7 +20,7 @@ import colorlog
 try:
     version = pkg_resources.require("damona")[0].version
 except Exception:  # pragma: no cover
-    version = ">=0.6.0"
+    version = ">=0.10.0"
 
 
 # The logger mechanism is here:

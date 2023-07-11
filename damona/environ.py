@@ -346,6 +346,11 @@ class Environ:
             return os.environ["DAMONA_SHELL_INFO"] == "bash"
         return False
 
+    def _is_zsh_shell(self):
+        if "DAMONA_SHELL_INFO" in os.environ:
+            return os.environ["DAMONA_SHELL_INFO"] == "zsh"
+        return False
+
     def activate(self, env_name=None):
         # Do not change the print statement here below. They are used by
         # damona.sh
@@ -362,9 +367,14 @@ class Environ:
         if self._is_fish_shell():
             print(f"    set -gx DAMONA_ENV {env_path};")
             print(f"    set -gx fish_user_paths {env_path}/bin $fish_user_paths")
-        else:
+        elif self._is_bash_shell():
             print(f"   export DAMONA_ENV={env_path};")
             print("    export PATH={}/bin:${{PATH}}".format(env_path))
+        elif self._is_zsh_shell():
+            print(f"   export DAMONA_ENV={env_path};")
+            print("    export PATH={}/bin:${{PATH}}".format(env_path))
+        else:
+            raise NotImplementedError
         logger.info(f"# Added damona path ({env_path}) in your PATH")
 
     def deactivate(self, env_name=None):
