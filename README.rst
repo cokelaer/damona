@@ -23,7 +23,7 @@ DAMONA
 :Python version: Python 3.8, 3.9, 3.10
 :Source: See  `http://github.com/cokelaer/damona <https://github.com/cokelaer/damona/>`__.
 :Issues: Please fill a report on `github <https://github.com/cokelaer/damona/issues>`__
-:Platform: This is currently only available for Linux distribution with bash shell (contributions are welcome to port the tool on MacOSX and other platforms)
+:Platform: This is currently only available for Linux distribution with zsh/fish/bash shells (contributions are welcome to port the tool on other platforms/shells)
 
 Overview
 ========
@@ -39,8 +39,8 @@ In a nutshell, Damona combines the logic of Conda environments with the
 reproducibility of singularity containers. We believe that it could be useful for
 other projects and therefore decided to release it as an independent tool.
 
-As of 30th Dec 2021, **Damona** contains 26 software, 38 releases, 105 binaries.
-As of 12th May 2023, **Damona** contains 54 software, 88 releases, 359 binaries.
+* As of 11st July 2023, **Damona** contains 64 software, 107 releases 400 binaries.
+
 
 Installation
 ============
@@ -49,7 +49,7 @@ If you are in a hurry, just type::
 
     pip install damona --upgrade
 
-You must install `Singularity <https://sylabs.io/docs>`_ to make use of **Damona**. 
+You must install `Singularity <https://sylabs.io/docs>`_ to make use of **Damona**.
 
 If you are familiar with conda, I believe you can do::
 
@@ -61,9 +61,13 @@ Bash users should add this code in their ~/.bashrc file::
 
     source ~/.config/damona/damona.sh
 
-and fishshell users should add the following code in their ~/.config/fish/config.fish file::
+Fish shell users should add the following code in their ~/.config/fish/config.fish file::
 
     source ~/.config/damona/damona.fish
+
+Zsh users should add the following code in their ~/.config/fish/config.fish file::
+
+    source ~/.config/damona/damona.zsh
 
 Open a new shell and you are ready to go. Please see the `Installation in details`_ section for more information.
 
@@ -73,7 +77,7 @@ Quick Start
 **Damona** needs environments to work with.
 First, let us *create* one, which is called TEST::
 
-    damona env --create TEST
+    damona create TEST
 
 Second, we need to *activate* it. Subsequent insallation will happen in this environment::
 
@@ -87,11 +91,11 @@ That's it. Time to test. Type **fastqc**.
 
 To rename this TEST example::
 
-    damona env --rename TEST --new-name prod
+    damona rename TEST --new-name prod
 
 or delete it::
 
-    damona env --delete prod
+    damona delete prod
 
 See more examples hereafter or in the user guide on https://damona.readthedocs.io
 
@@ -190,17 +194,22 @@ The main documentation is obtained using::
 
 where you will see the list of **Damona** commands (may be different with time) (may be::
 
-    activate
-    clean
-    deactivate
-    env
-    export
-    info
-    install
-    list
-    remove
-    search
-    stats
+
+    activate    Activate a damona environment.
+    clean       Remove orphan images and binaries from all environments.
+    create      Create a new environment
+    deactivate  Deactivate the current Damona environment.
+    delete      Remove an environment
+    env         List all environemnts with some stats.
+    export      Create a bundle of a given environment.
+    info        Print information about a given environment.
+    install     Download and install an image and its binaries.
+    list        List all packages that can be installed
+    remove      Remove binaries or image from an environment.
+    rename      Rename an existing environment
+    search      Search for a container or binary.
+    stats       Get information about Damona images and binaries
+
 
 To get help for the *install* command, type::
 
@@ -295,8 +304,7 @@ them) using the **info** command::
 6. Search the registry
 ------------------------
 
-By default, we provide recipes (26 in Dec 2021 ; 38 releases) available in **Damona**. 
-They can be searched for using::
+You can search for a binary using::
 
     damona search PATTERN
 
@@ -336,7 +344,7 @@ then, we install the container::
 This will not download the image again. It will just create a binary in the
 ~/.config/damona/envs/test1/bin directory.
 
-you can combine this new environemnt with the base one::
+you can combine this new environment with the base one::
 
     damona activate base
 
@@ -351,7 +359,8 @@ Changelog
 ========= ========================================================================
 Version   Description
 ========= ========================================================================
-0.9.1     * ADD hmmer 3.2.2, 
+0.10.0    * ADD zsh support
+0.9.1     * ADD hmmer 3.2.2
           * ADD trinotate 4.0.1
           * ADD transdecode 5.7.0
           * ADD trinity 2.15.1
