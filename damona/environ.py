@@ -374,7 +374,8 @@ class Environ:
             print(f"   export DAMONA_ENV={env_path};")
             print("    export PATH={}/bin:${{PATH}}".format(env_path))
         else:
-            raise NotImplementedError
+            _shell_info = os.environ["DAMONA_SHELL_INFO"]
+            raise NotImplementedError(f"shell info found: {_shell_info}")
         logger.info(f"# Added damona path ({env_path}) in your PATH")
 
     def deactivate(self, env_name=None):

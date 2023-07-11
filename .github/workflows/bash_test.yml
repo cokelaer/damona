@@ -8,7 +8,7 @@ on:
         - dev
       paths:
         - '**.py'
-        - '.github/workflows/bash/**'
+        - '.github/workflows/bash_test.yml'
 
 jobs:
   build-linux:
@@ -50,25 +50,30 @@ jobs:
       run: |
         pip install .[testing]
     - name: Init damona in bash
+      shell: bash -l {0}
       run: |
-        bash
-        damona 
-        echo " source ~/.config/damona/damona.sh" >> ~/.bashrc
+        damona
+        # TODO: initiate / source the bashrc and make sure it is availble in next step
     - name: Test installation hisat2
+      shell: bash -l {0}
       run: |
-        #source /home/runner/.config/damona/damona.sh
+        damona
+        cat << EOF > test.bash
+        #!/usr/bin/bash
         damona create TEST
         damona activate TEST
-        damona install hisat2  # a docker file
         damona install fastqc  # a zenodo/damona file
         damona install minimap2  # a zenodo/damona file
         damona deactivate
+        EOF
+        cat test.bash
+        `(bash test.bash)`
       env:
         DAMONA_EXE: /usr/share/miniconda/bin/damona
         DAMONA_PATH: /home/runner/.config/damona
         DAMONA_ENV: /home/runner/.config/damona/envs/TEST
+        DAMONA_SHELL_INFO: "bash"
         DAMONA_SINGULARITY_OPTIONS: ""
-   
 
 
 

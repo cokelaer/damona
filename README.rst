@@ -360,6 +360,7 @@ Changelog
 Version   Description
 ========= ========================================================================
 0.10.0    * ADD zsh support
+          * UPDATA flye 2.9.1
 0.9.1     * ADD hmmer 3.2.2
           * ADD trinotate 4.0.1
           * ADD transdecode 5.7.0

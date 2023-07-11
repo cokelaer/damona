@@ -8,7 +8,7 @@ on:
         - dev
       paths:
         - '**.py'
-        - '.github/workflows/fish/**'
+        - '.github/workflows/fish_test.yml'
 
 
 jobs:
@@ -65,8 +65,8 @@ jobs:
         #!/usr/bin/fish
         damona create TEST
         damona activate TEST
-        damona install hisat2
         damona install fastqc
+        damona install minimap2
         damona deactivate
         EOF
         cat test.fish
