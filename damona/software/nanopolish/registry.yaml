@@ -1,0 +1,10 @@
+nanopolish:
+  doi: 10.5281/zenodo.8173324
+  binaries: nanopolish
+  zenodo_id: 8173325
+  releases:
+    0.14.0:
+      download: https://zenodo.org/record/8173325/files/nanopolish_0.14.0.img
+      md5sum: 9815f59b13b3010646319eba639d2180
+      doi: 10.5281/zenodo.8173325
+      filesize: 346464256
