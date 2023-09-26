@@ -25,6 +25,37 @@ DAMONA
 :Issues: Please fill a report on `github <https://github.com/cokelaer/damona/issues>`__
 :Platform: This is currently only available for Linux distribution with zsh/fish/bash shells (contributions are welcome to port the tool on other platforms/shells)
 
+Quick Start
+===========
+
+First, install Damona using **pip** for Python::
+
+    pip install damona
+
+You need to configure Damona before using it. In a bash shell, type::
+    
+    damona
+
+Add these lines in your .bashrc::
+
+    if [ ! -f  "~/.config/damona/damona.sh" ] ; then
+        source ~/.config/damona/damona.sh
+    fi
+
+**open a new shell** and then use damona::
+
+    damona create TEST
+    damona activate TEST
+    damona install fastqc
+    fastqc
+
+This should install **fastqc** in te newly create Damona environment (TEST). Type::
+
+    fastqc
+
+it should open a window with the **fastqc** interface.
+
+
 Overview
 ========
 
