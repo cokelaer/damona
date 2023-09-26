@@ -1,0 +1,10 @@
+jellyfish:
+  doi: 10.5281/zenodo.8381418
+  binaries: jellyfish
+  zenodo_id: 8381419
+  releases:
+    2.3.0:
+      download: https://zenodo.org/record/8381419/files/jellyfish_2.3.0.img
+      md5sum: b581ab486ac9ae4f4bcc5b0d3076fc1f
+      doi: 10.5281/zenodo.8381419
+      filesize: 95453184
