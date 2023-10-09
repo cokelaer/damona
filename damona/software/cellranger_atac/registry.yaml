@@ -1,0 +1,10 @@
+cellranger_atac:
+  doi: 10.5281/zenodo.8423331
+  zenodo_id: 8423332
+  binaries: cellranger-atac
+  releases:
+    2.1.0:
+      download: https://zenodo.org/record/8423332/files/cellranger_atac_2.1.0.img
+      md5sum: bcfbe398257814f4cf349ca8e3de2705
+      doi: 10.5281/zenodo.8423332
+      filesize: 764268544
