@@ -1,18 +1,22 @@
+
 version: 2
-sphinx:
-    configuration: doc/conf.py
 
+build:
+  os: ubuntu-22.04
+  tools:
+      python: "3.8"
 
-formats: all
+formats:
+    - htmlzip
 
 python:
-    version: 3.7
     install:
-        - requirements: doc/requirements.txt
-        - method: pip
-          path: .
+      - method: pip
+        path: .
 
-# it is either conda or python not both....
-# https://docs.readthedocs.io/en/stable/config-file/v2.html
-#conda:
-#    environment: environment_rtd.yml
+
+sphinx:
+    builder: html
+    configuration: doc/conf.py
+    fail_on_warning: false
+

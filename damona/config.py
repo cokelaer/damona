@@ -115,9 +115,7 @@ class Config:
         config.read_file(open(self.config_file))
         self.config = config
 
-    def add_bash(self):  # pragma: no cover  ; this is executed only if config does not exists
-        #  let us add a damona.cfg in it. This will store URLs to look for singularities
-        # This is done only once to not overwrite user options
+    def add_bash(self):  # pragma: no cover
         if os.path.exists(self.user_config_dir / "damona.sh") is False:
             logger.info("adding a damona.sh in your DAMONA_PATH")
             _damona_config_path = self.user_config_dir
@@ -131,9 +129,7 @@ class Config:
         else:
             return False
 
-    def add_zsh(self):  # pragma: no cover  ; this is executed only if config does not exists
-        #  let us add a damona.cfg in it. This will store URLs to look for singularities
-        # This is done only once to not overwrite user options
+    def add_zsh(self):  # pragma: no cover  
         if os.path.exists(self.user_config_dir / "damona.zsh") is False:
             logger.info("adding a damona.zsh in your DAMONA_PATH")
             _damona_config_path = self.user_config_dir
