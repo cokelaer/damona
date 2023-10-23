@@ -1,6 +1,7 @@
 quast:
   doi: 10.5281/zenodo.5708847
   zenodo_id: 5708848
+  binaries: quast.py
   releases:
     5.0.2:
       download: https://zenodo.org/record/5708848/files/quast_5.0.2.img
