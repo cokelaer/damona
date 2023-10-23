@@ -1,6 +1,7 @@
 medaka:
   doi: 10.5281/zenodo.7846294
   zenodo_id: 7846295
+  binaries: medaka medaka_consensus medaka_counts
   releases:
     1.7.3:
       download: https://zenodo.org/record/7846295/files/medaka_1.7.3.img

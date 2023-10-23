@@ -1,7 +1,7 @@
 cd-hit:
   doi: 10.5281/zenodo.10030642
   zenodo_id: 10030643
-  binaries: cd-hit,cd-hit-454,cd-hit-div.pl,cd-hit-para.pl,cd-hit-2d,cd-hit-clstr_2_blm8.pl,cd-hit-est,cd-hit-2d-para.pl,cd-hit-div,cd-hit-est-2d
+  binaries: cd-hit cd-hit-454 cd-hit-div.pl cd-hit-para.pl cd-hit-2d cd-hit-clstr_2_blm8.pl cd-hit-est cd-hit-2d-para.pl cd-hit-div cd-hit-est-2d
   releases:
     4.8.1:
       download: https://zenodo.org/records/10030643/files/cd-hit_4.8.1.img
