@@ -86,19 +86,18 @@ class Zenodo:  # pragma: no cover
               doi: 10.5281/zenodo.8033026
               filesize: 139108352
 
-    This is create when using::
+    This is created when using::
 
         damona zenodo-upload file.img --mode zenodo
 
-    The zenodo_id is the record on the main page. e.g https://zenodo.org/record/8033026
-    The zenodo_id is also related to the main DOI to be shared in papers.
-    To cite all versions, this is the field zenodo_doi here above (8033026), which is also
-    the latest doi of the latests release. If there is a new release, the zenodo_id is therefore updated.
+    The zenodo_id is the record on the main page. e.g https://zenodo.org/records/8033026
+    To cite all versions, use the main doi (here 10.5281/zenodo.8033025).
+
+    Each release has its own DOI in case you want to cite a specific version.
 
     """
 
     def __init__(self, mode="sandbox.zenodo", token=None, author=None, affiliation=None, orcid=None):
-
         assert mode in ["zenodo", "sandbox.zenodo"]
         self.mode = mode
         self.headers = {"Content-Type": "application/json"}
@@ -157,9 +156,13 @@ class Zenodo:  # pragma: no cover
 
     def _status(self, r, correct_codes):
         self.last_requests.append(r)
+
         if r.status_code not in correct_codes:
             print(f"Status code: {r.status_code}; {r.reason}")
-            print(f"{r.json()}")
+            try:
+                print(f"{r.json()}")
+            except:
+                print("Could not figure out the erorr from json()")
 
     def create_new_deposition(self):  # pragma: no cover
         # expected status is 201
@@ -177,7 +180,7 @@ class Zenodo:  # pragma: no cover
         return r
 
     def get_all_depositions(self):  # pragma: no cover
-        """Return all deposition for the currently authenticated user"""
+        """Return all depositions for the currently authenticated user"""
         url = f"https://{self.mode}.org/api/deposit/depositions"
         r = requests.get(url, params=self.params, json={})
         self._status(r, [200])
@@ -200,7 +203,6 @@ class Zenodo:  # pragma: no cover
         return r
 
     def upload(self, filename, json_deposit):  # pragma: no cover
-
         try:
             bucket_url = json_deposit["links"]["bucket"]
         except:
@@ -213,7 +215,7 @@ class Zenodo:  # pragma: no cover
         with open(filename, "rb") as fp:
             basename = os.path.basename(filename)
             r = requests.put(f"{bucket_url}/{basename}", data=fp, params=self.params)
-            self._status(r, [200])
+            self._status(r, [200, 201])
             return r
 
     def get_metadata(self, software, version):
@@ -255,8 +257,8 @@ analysis.""",
         ID = self.get_id(deposit)
         logger.info(f"Publishing {ID}")
         url = f"https://{self.mode}.org/api/deposit/depositions/{ID}/actions/publish"
-        r = requests.post(url, params=self.params)
-        self._status(r, [202])
+        r = requests.post(url, params=self.params, headers=self.headers)
+        self._status(r, [202, 504])
         return r
 
     def unlock(self, deposit):  # pragma: no cover
@@ -358,7 +360,6 @@ analysis.""",
         return msg
 
     def create_new_version_with_file_and_publish(self, filename, deposit=None):
-
         data = ImageName(filename)
         registry_data = Software(data.name)._data
         try:
@@ -413,6 +414,7 @@ analysis.""",
 
 
 def get_stats_software(software):
+    """Returns number of downloads"""
     from damona.registry import Software
 
     s = Software(software)
@@ -433,13 +435,14 @@ def get_stats_id(ID):
 
     """
     from bs4 import BeautifulSoup
+    import json
 
     r = requests.get(f"https://zenodo.org/record/{ID}")
     bs = BeautifulSoup(r.content, features="html.parser")
 
     try:
-        data = list(bs.find(id="accordion").div.children)[3].span.contents[0]
-        data = int(data.replace(",", ""))
+        data = bs.find(id="recordVersions")
+        data = json.loads(data.attrs["data-record"])["stats"]["all_versions"]["downloads"]
         return data
     except Exception:
         return 1

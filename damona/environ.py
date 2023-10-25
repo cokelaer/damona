@@ -57,7 +57,6 @@ class Environment:
         self._init(name)
 
     def _init(self, name):
-
         self.name = name
         self.path = manager.damona_path / f"envs/{name}/"
 
@@ -194,7 +193,6 @@ class Environment:
         images = [pathlib.Path(x) for x in self.get_images()]
 
         with open(output_name, "w") as fout:
-
             fout.write(f"name: {self.name}\n")
             fout.write(f"\nimages:\n")
 
@@ -214,7 +212,6 @@ class Environment:
 
 class YamlEnv:
     def __init__(self, filename):
-
         self.name = None
         self.binaries = []
         self.images = []
@@ -302,7 +299,6 @@ class Environ:
     environment_names = property(_get_env_names)
 
     def delete(self, env_name, force=False):
-
         if env_name == "base":
             logger.error("Environment 'base' is reserved and cannot not be created or deleted")
             sys.exit(1)

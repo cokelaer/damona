@@ -44,5 +44,3 @@ def download_with_progress(url, filename):
         with path.open("wb") as f:
             shutil.copyfileobj(fout, f)
     return path
-
-

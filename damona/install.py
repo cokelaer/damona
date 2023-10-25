@@ -178,7 +178,6 @@ class LocalImageInstaller(ImageInstaller):
         If they are identical, no need to overwrite the destination.
         """
         if (self.images_directory / self.input_image.shortname).exists():
-
             md5_target = md5(self.images_directory / self.input_image.shortname)
             if md5_target == self.input_image.md5:
                 logger.info("Image with same md5 exists already. No need to copy")
@@ -195,7 +194,6 @@ class LocalImageInstaller(ImageInstaller):
             self.copy()
 
     def copy(self):  # pragma: no cover
-
         logger.info(f"Copying {self.input_image.filename} into {self.images_directory}")
         shutil.copy(self.input_image.filename, self.images_directory)
         with open(self.images_directory / "history.log", "a+") as fout:
@@ -260,7 +258,6 @@ class RemoteImageInstaller(ImageInstaller):
         self.image_installed = False
 
     def is_valid(self):
-
         return True
 
     @requires_singularity
@@ -296,7 +293,6 @@ class RemoteImageInstaller(ImageInstaller):
                 logger.critical("Maybe you meant one of: {}".format(guesses))
                 sys.exit(1)
         else:
-
             soft = Software(self.image_name)
 
             try:
@@ -342,7 +338,6 @@ class RemoteImageInstaller(ImageInstaller):
         # if md5 is already provided, and image exists, nothing to copy
         if info.md5sum:
             if os.path.exists(self.images_directory / output_name):
-
                 md5_target = md5(self.images_directory / output_name)
 
                 if md5_target == info.md5sum:
@@ -371,7 +366,6 @@ class RemoteImageInstaller(ImageInstaller):
             print(cmd)
             subprocess.call(cmd.split())
         else:
-
             if download_name.startswith("https://"):
                 logger.info(f"downloading into {pull_folder} {output_name}")
 

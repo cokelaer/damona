@@ -129,7 +129,7 @@ class Config:
         else:
             return False
 
-    def add_zsh(self):  # pragma: no cover  
+    def add_zsh(self):  # pragma: no cover
         if os.path.exists(self.user_config_dir / "damona.zsh") is False:
             logger.info("adding a damona.zsh in your DAMONA_PATH")
             _damona_config_path = self.user_config_dir

@@ -387,9 +387,13 @@ guide here below.
 Changelog
 =========
 
+From version 0.10 onwards, we will not mention the new software and their versions
+but only changes made to the code itself.
+
 ========= ========================================================================
 Version   Description
 ========= ========================================================================
+0.10.1    * Fix the get_stats_software wrt new  zenodo API
 0.10.0    * ADD zsh support
           * UPDATE flye 2.9.1
           * ADD nanopolish

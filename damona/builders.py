@@ -148,7 +148,6 @@ class BuilderFromSingularityRecipe(Builder):
 
     @requires_singularity
     def build(self, recipe, destination=None, force=False):
-
         if os.path.basename(recipe).startswith("Singularity.") is False:
             logger.error("Recipe must start with Singularity.")
             sys.exit(1)

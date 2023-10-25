@@ -47,7 +47,6 @@ class ImageName:
     """
 
     def __init__(self, name):
-
         self.filename = name
         self.basename = os.path.basename(name)
 
@@ -211,7 +210,6 @@ class RemoteRegistry:
         self._read_registry()
 
     def _read_registry(self):
-
         import urllib.request
 
         response = urllib.request.urlopen(self.url)
@@ -452,13 +450,11 @@ class Registry:
         self._populate(ext_reg.data)
 
     def _biocontainers_discovery(self):
-
         # we read the biocontainers information
         ext_reg = BiocontainersRegistry(self.from_biocontainers)
         self._populate(ext_reg.data)
 
     def _damona_discovery(self):
-
         # read all damona registry and store in expected dictionary structure
         from damona.software import __path__
 

@@ -154,7 +154,7 @@ class Damona:
 
         used_images = set(used_images)
         Nu = len(used_images)
-        #No = Ni - Nu
+        # No = Ni - Nu
         # keep print to make sure it is seen
         print(f"{Nu} images is/are used. ")
         orphans = []
@@ -330,7 +330,6 @@ class BinaryReader:
         self.filename = filename
 
         with self.filename.open("r") as fin:
-
             data = [x for x in fin.readlines() if x.strip().startswith("singularity")]
             data = data[0]
 
@@ -372,8 +371,6 @@ class BinaryReader:
         container = container.replace(".img", "")
         container = ":".join(container.rsplit("_", 1))
         return container
-
-
 
 
 def requires_singularity(func):

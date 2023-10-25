@@ -138,7 +138,7 @@ def create(**kwargs):
 def delete(**kwargs):
     """Remove an environment"""
     env = Environ()
-    env.delete(kwargs["environment"], force=kwargs['force'])
+    env.delete(kwargs["environment"], force=kwargs["force"])
 
 
 @main.command()
@@ -379,7 +379,6 @@ def remove(**kwargs):
     # then, let us figure out what the user wants (remove a binary or image ?) and do it
     name = kwargs["name"]
     if kwargs["name"].endswith(".img"):
-
         # we delete the image if it is an orphan
         p = get_damona_path() / "images" / kwargs["name"]
         if p.exists():
@@ -744,7 +743,6 @@ def zenodo_upload(**kwargs):  # pragma: no cover
     z = Zenodo(mode, token)
     logger.info(f"Uploading to {mode}")
     z._upload(filename)
-
 
 
 # =================================================================== build

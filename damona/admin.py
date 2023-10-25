@@ -66,7 +66,6 @@ There is nothing we can do about that in Damona. Actual number is more around 10
 
 
 def get_software_names():
-
     r = Registry(biocontainers=False)
     return set([x.split(":")[0] for x in r.get_list()])
 
