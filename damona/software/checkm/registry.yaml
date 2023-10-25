@@ -1,0 +1,10 @@
+checkm:
+  doi: 10.5281/zenodo.10040945
+  zenodo_id: 10040946
+  binaries: checkm
+  releases:
+    1.2.2:
+      download: https://zenodo.org/record/10040946/files/checkm_1.2.2.img
+      md5sum: 764a2be5458a14eea1a7e40f2fecc69b
+      doi: 10.5281/zenodo.10040946
+      filesize: 590774272
