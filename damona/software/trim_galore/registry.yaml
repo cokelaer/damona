@@ -1,0 +1,10 @@
+trimgalore:
+  doi: 10.5281/zenodo.10048981
+  binaries: trim_galore
+  zenodo_id: 10048982
+  releases:
+    0.5.0:
+      download: https://zenodo.org/record/10048982/files/trimgalore_0.5.0.img
+      md5sum: 8feda0cef20aed55849f93d913b5671f
+      doi: 10.5281/zenodo.10048982
+      filesize: 243253248
