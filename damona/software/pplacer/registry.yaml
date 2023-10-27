@@ -1,0 +1,10 @@
+pplacer:
+  doi: 10.5281/zenodo.10048992
+  zenodo_id: 10048993
+  binaires: pplacer
+  releases:
+    1.1.0:
+      download: https://zenodo.org/record/10048993/files/pplacer_1.1.0.img
+      md5sum: 06d1f21da825b2eefe3b498667201032
+      doi: 10.5281/zenodo.10048993
+      filesize: 71200768
