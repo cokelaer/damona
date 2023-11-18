@@ -1,0 +1,10 @@
+multiqc:
+  doi: 10.5281/zenodo.10155625
+  binaries: multiqc
+  zenodo_id: 10155626
+  releases:
+    1.17.0:
+      download: https://zenodo.org/record/10155626/files/multiqc_1.17.0.img
+      md5sum: 21645066f1b72b20da949c31974fffa1
+      doi: 10.5281/zenodo.10155626
+      filesize: 180633600
