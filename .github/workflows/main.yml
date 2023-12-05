@@ -56,8 +56,9 @@ jobs:
 
     - name: Install Damona using pip
       run: |
-        pip install .[testing]
-    - name: Test with pytest
+         pip install poetry
+         poetry install --with dev
+    - name: testing
       run: |
         damona create damona__testing__
         pytest --cov-report term --cov=damona

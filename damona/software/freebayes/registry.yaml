@@ -1,0 +1,14 @@
+freebayes:
+  doi: 10.5281/zenodo.10259219
+  zenodo_id: 10259220
+  releases:
+    1.3.7:
+      download: https://zenodo.org/record/10259220/files/freebayes_1.3.7.img
+      md5sum: 63e7667f034116050bf300adb53acbf0
+      doi: 10.5281/zenodo.10259220
+      filesize: 179494912
+    1.2.0:
+      download: https://zenodo.org/record/10259279/files/freebayes_1.2.0.img
+      md5sum: 667bb29636f140670cd8d105d6bf0ea8
+      doi: 10.5281/zenodo.10259279
+      filesize: 238473216
