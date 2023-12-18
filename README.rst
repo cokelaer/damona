@@ -33,7 +33,7 @@ First, install Damona using **pip** for Python::
     pip install damona
 
 You need to configure Damona before using it. In a bash shell, type::
-    
+
     damona
 
 Add these lines in your .bashrc::
@@ -154,7 +154,7 @@ a docker and a singularity image of the tool. On the other side, Singularity can
 entire conda environment. As you can see everything is there to build reproducible tools and
 environment.
 
-Now, what about a software in development that depends on third-party packages ? 
+Now, what about a software in development that depends on third-party packages ?
 You would create a conda environment and starts installing the required packages.
 Quickly, you will install another package that will break your environment due
 to unresolved conlicts; this is not common but it happens. In the worst case
@@ -170,14 +170,14 @@ started to be cumbersome to have containers in different places and update
 script that generate the aliases to those executables.
 
 
-That's where **damona** started: we wanted to combine the conda-like environment 
+That's where **damona** started: we wanted to combine the conda-like environment
 framework to manage our singularity containers more easily.
 
 Although **Damona** was started with the `Sequana projet <https://sequana.readthedocs.io>`_,
 **Damona** may be useful for others developers who wish to have a quick and easy
 solution for their users when they need to install third-party libraries.
 
-Before showing real-case examples, let us install the software itself and 
+Before showing real-case examples, let us install the software itself and
 understand the details.
 
 
@@ -198,7 +198,7 @@ installation (Python 3.X)::
 
     pip install damona --upgrade
 
-Type **damona** to create the Damona tree structure. Images and binaries 
+Type **damona** to create the Damona tree structure. Images and binaries
 will be saved in your home directory within the
 ~/.config/damona directory. There, special files should be available:
 **damona.sh**, **damona.fish**  and **damona.cfg**. Check that those files are present.
@@ -291,14 +291,14 @@ What is going on when you activate an environment called TEST ? Simple: we appen
 ::
 
     damona deactivate TEST
-    damona env 
+    damona env
 
 should remove the TEST environment from your PATH. You may activate several and deactivate them. In such case, the
 environments behave as a Last In First Out principle::
 
     damona activate base
     damona activate TEST
-    damona deactivate 
+    damona deactivate
 
 Removes the last activated environments. While this set of commands is more specific::
 
@@ -320,7 +320,7 @@ installed together with the underlying singularity image.::
 
 Here, the singularity image corresponding to the release 0.11.9 of the **fastqc** software is downloaded. Then, binaries registered in this release are installed (here the **fastqc** binary only).
 
-All images are stored in *~/.config/damona/images* and are shared between environments. 
+All images are stored in *~/.config/damona/images* and are shared between environments.
 
 
 5. Get **info** about installed images and binaries
@@ -393,6 +393,7 @@ but only changes made to the code itself.
 ========= ========================================================================
 Version   Description
 ========= ========================================================================
+0.11.0    * add precommit, update to use pyproject
 0.10.1    * Fix the get_stats_software wrt new  zenodo API
 0.10.0    * ADD zsh support
           * UPDATE flye 2.9.1
@@ -424,47 +425,47 @@ Version   Description
           * add shustring
 0.8.1     * Include ability to interact with biocontainers by allowing retrieval
             of all biocontainers docker images using this syntax:
-            'damona install biocontainers/xx:1.2.3' Note that although 9000 
-            containers are available, in practice, only about 1000 dockers are 
+            'damona install biocontainers/xx:1.2.3' Note that although 9000
+            containers are available, in practice, only about 1000 dockers are
             on dockerhub, which is already nice :-)
-          * 
+          *
 0.8.0     * Fix regression to install a software with its version
-0.7.1     * Implement the fish shell 
+0.7.1     * Implement the fish shell
           * add command "damona list"
-          * rename recipes/ directory into software/ and created a new library/ 
+          * rename recipes/ directory into software/ and created a new library/
             directory for images used as library, that are not installed.
 0.7.0     * Check that singularity is installed
-          * implement the remove command 
+          * implement the remove command
             https://github.com/cokelaer/damona/issues/15
           * more recipes cleanup (https://github.com/cokelaer/damona/issues/12)
           * removed damona recipes (pure python package)
           * cleanup all recipes
           * add zenodo stats (for admin)
-0.6.0     * add ability to upload images on zenodo. No need for external 
+0.6.0     * add ability to upload images on zenodo. No need for external
             repositories.
           * ability to add/delete a software from different images
           * implement --help for the activate/deactivate (non trivial)
           * add --rename option in 'damona env'
           * 'base' environment is now at the same level as other environments
           * better bash script; no need for DAMONA_EXE variable anymore.
-0.5.3     * Fixing config/shell 
+0.5.3     * Fixing config/shell
 0.5.2     * add missing shell package
 0.5.1     * add DAMONA_SINGULARITY_OPTIONS env variable in the binary
           * Fix the way binaries are found in the releases.
           * new recipes: rtools
           * new releases: sequana_tools_0.10.0
-          * Fix shell script to handle DAMONA_EXE variable 
-0.5.0     * Major refactoring. 
+          * Fix shell script to handle DAMONA_EXE variable
+0.5.0     * Major refactoring.
 
-            - Simplification of the registries (dropping notion of exe/set 
+            - Simplification of the registries (dropping notion of exe/set
               class
             - Main script should now be fully functional with functional
-              activation/deactivation. 
-            - New command to build images from local recipes or dockerhub 
+              activation/deactivation.
+            - New command to build images from local recipes or dockerhub
               entries.
-            - Install command can now install local container. 
-            - DAMONA_PATH can be set to install damona images/binaries 
-              anywhere, not just in local home. 
+            - Install command can now install local container.
+            - DAMONA_PATH can be set to install damona images/binaries
+              anywhere, not just in local home.
             - check md5 of images to not download/copy again
 0.4.3     * Implement damona activate/deactivate
 0.4.2     * Fix typo in the creation of aliases for 'set' containers
@@ -483,13 +484,3 @@ Version   Description
 0.1.1     small update to fix RTD, travis, coveralls
 0.1       first release to test feasibility of the project
 ========= ========================================================================
-
-
-
-
-
-
-
-
-
-

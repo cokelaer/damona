@@ -1,9 +1,0 @@
-beautifulsoup4
-colorlog>=3.1.0
-click
-easydev>=0.9.36
-packaging
-spython
-pyyaml
-tqdm
-requests

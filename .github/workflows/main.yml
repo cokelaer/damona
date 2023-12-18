@@ -54,14 +54,14 @@ jobs:
       with:
         python-version: ${{ matrix.python }}
 
-    - name: Install Damona using pip
+    - name: install package itself
       run: |
          pip install poetry
          poetry install --with dev
     - name: testing
       run: |
         damona create damona__testing__
-        pytest --cov-report term --cov=damona
+        poetry run pytest --cov-report term --cov=sequana_pipetools
       env:
         DAMONA_EXE: /usr/share/miniconda/bin/damona
         DAMONA_PATH: /home/runner/.config/damona

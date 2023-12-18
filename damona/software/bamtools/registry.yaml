@@ -4,7 +4,7 @@ bamtools:
   binaries: bamtools
   releases:
     2.5.2:
-      download: https://zenodo.org/record/10053833/files/bamtools_2.5.2.img
-      md5sum: 42e8e29a93d46c347d1551a9af67d90c
-      doi: 10.5281/zenodo.10053833
-      filesize: 91881472
+      download: https://zenodo.org/record/10211475/files/bamtools_2.5.2.img
+      md5sum: fb194b8ae6335eb2e88cb62e0e8aedf7
+      doi: 10.5281/zenodo.10211475
+      filesize: 104361984

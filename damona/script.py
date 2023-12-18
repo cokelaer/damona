@@ -20,19 +20,32 @@
 # If not, see <http://www.gnu.org/licenses/>.                             #
 ###########################################################################
 """.. rubric:: Standalone application dedicated to Damona"""
-import click
-import time
-import sys
-import pathlib
 import os
+import pathlib
+import sys
+import time
+
+import click
+import click_completion
+import rich_click as click
+
+click_completion.init()
 
 
-from damona import version
-from damona import Damona, Environment, Environ
+from damona import Damona, Environ, Environment, version
 from damona.common import BinaryReader, ImageReader, get_damona_path
-from damona.install import RemoteImageInstaller, LocalImageInstaller, BiocontainersInstaller
-from damona.registry import Registry, BiocontainersRegistry
+from damona.install import (
+    BiocontainersInstaller,
+    LocalImageInstaller,
+    RemoteImageInstaller,
+)
+from damona.registry import BiocontainersRegistry, Registry
 
+click.rich_click.USE_MARKDOWN = True
+click.rich_click.SHOW_METAVARS_COLUMN = False
+click.rich_click.APPEND_METAVARS_HELP = True
+click.rich_click.STYLE_ERRORS_SUGGESTION = "magenta italic"
+click.rich_click.SHOW_ARGUMENTS = True
 
 manager = Damona()
 
@@ -62,7 +75,6 @@ def main(level):
     The default environment is called 'base'. You can create and activate
     a new environment as follows:
 
-    \b
         damona create --name TEST
         damona activate TEST
 
@@ -71,7 +83,6 @@ def main(level):
 
         damona install fastqc:0.11.9
 
-    \b
     More information on https://damona.readthedocs.io.
     Please report issues on https://github.com/cokelaer/damona
     Contact: Thomas Cokelaer at pasteur dot fr
@@ -100,23 +111,21 @@ def create(**kwargs):
 
     Here we create an environment called TEST:
 
-    \b
         damona create TEST
 
     You can then activate it:
 
-    \b
         damona activate TEST
 
     You can create an environment from a environment.yaml file that was created with the 'export --yaml' command
     or manually built using the following syntax:
 
-    \b
+
         name: sequana_rnaseq
-    \b
+
         images:
             - sequana_tools_0.14.5.img
-    \b
+
         binaries:
             - bwa
             - samtools
@@ -155,9 +164,8 @@ def rename(**kwargs):
 def env(**kwargs):
     """List all environemnts with some stats.
 
-    Print information about current environments::
+    Print information about current environments:
 
-    \b
         damona env
 
 
@@ -179,11 +187,11 @@ def env(**kwargs):
 def activate(**kwargs):
     """Activate a damona environment.
 
-    The main Damona environment can be activated using::
+    The main Damona environment can be activated using:
 
         damona activate base
 
-    Then, activation of a specific environment is done as ::
+    Then, activation of a specific environment is done as:
 
         damona activate my_favorite_env
 
@@ -200,7 +208,7 @@ def activate(**kwargs):
 def deactivate(**kwargs):
     """Deactivate the current Damona environment.
 
-    deactivate the current environment::
+    deactivate the current environment:
 
         damona deactivate
 
@@ -238,7 +246,7 @@ def install(**kwargs):
     If the version is omitted, the latest version is installed. Therefore, the
     following two commands are equivalent if 0.11.9 is the latest version available::
 
-    \b
+
         damona install fastqc
         damona install fastqc:0.11.9
 
@@ -246,7 +254,7 @@ def install(**kwargs):
     image with a version (e.g. fastqc_0.11.9.img). We assume that name of
     the image is the binary name, however, binaries can be set manually::
 
-    \b
+
         damona install fastqc_0.4.2.img
         damona install test_0.4.2.img --binary fastqc
 
@@ -585,7 +593,7 @@ def export(**kwargs):
     associated images into a tar ball file named after the
     environment.
 
-    \b
+
         damona export TEST --yaml   test_env.yaml
         damona export TEST --bundle test_bundle.tar
 
@@ -594,7 +602,7 @@ def export(**kwargs):
     This create a bundle named damona_test1.tar. You can then create a new
     environment starting from this bundle:
 
-    \b
+
         damona env --create TEST1 --from-bundle test_bundle.tar
         damona env --create TEST1 --from-yaml   test_env.yaml
 
@@ -648,8 +656,7 @@ def stats(**kwargs):
 
     if kwargs["include_downloads"]:
         click.echo("Detailled summary of downloads for each container:")
-        from damona import admin
-        from damona import zenodo
+        from damona import admin, zenodo
 
         all_software = admin.get_software_names()
         N = 0
