@@ -1,0 +1,10 @@
+pblaa:
+  doi: 10.5281/zenodo.10404978
+  zenodo_id: 10404979
+  binaries: laa
+  releases:
+    2.4.2:
+      download: https://zenodo.org/record/10404979/files/pblaa_2.4.2.img
+      md5sum: 2d9c345467e3e1f173c5806c6ac2f1ed
+      doi: 10.5281/zenodo.10404979
+      filesize: 147615744

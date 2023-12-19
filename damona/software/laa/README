@@ -1,0 +1,7 @@
+bin and lib directories are required to build the version 2.4.2.
+These lib and dir directories were built with smrtlink on a centos cluster. 
+Using them within a redhat ubi9 the different standalone provided worked
+
+Get the bin and lib from here:
+
+https://zenodo.org/records/10404929
