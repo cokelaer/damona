@@ -13,3 +13,13 @@ flye:
       md5sum: bd5eccfc03615e49b0b664549f5e2e9d
       doi: 10.5281/zenodo.7733985
       filesize: 205021184
+    2.9.2:
+      download: https://zenodo.org/record/10409319/files/flye_2.9.2.img
+      md5sum: fd57d9af0f1c76f3cf54dcf249af0ad1
+      doi: 10.5281/zenodo.10409319
+      filesize: 285433856
+    2.9.3:
+      download: https://zenodo.org/record/10409326/files/flye_2.9.3.img
+      md5sum: 26dc2bbd63729ffcb5e26b4e217f614c
+      doi: 10.5281/zenodo.10409326
+      filesize: 285425664
