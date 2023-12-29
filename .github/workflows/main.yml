@@ -58,17 +58,24 @@ jobs:
       run: |
          pip install poetry
          poetry install --with dev
-    - name: testing
+    - name: Activate Damona
       run: |
-        damona create damona__testing__
-        poetry run pytest --cov-report term --cov=sequana_pipetools
+        bash
+        poetry run damona  # this creates the bash script
+        echo " source ~/.config/damona/damona.sh" >> ~/.bashrc
+    - name: testing
+      shell: bash -l {0}
+      run: |
+        poetry run damona create damona__testing__
+        poetry run pytest --cov-report term --cov=damona
       env:
-        DAMONA_EXE: /usr/share/miniconda/bin/damona
+        DAMONA_EXE: /opt/hostedtoolcache/Python/3.8.18/x64/bin/damona
         DAMONA_PATH: /home/runner/.config/damona
+        DAMONA_SINGULARITY_OPTIONS: ""
         DAMONA_SHELL_INFO: "bash"
     - name: coveralls
       run: |
-        coveralls --service=github
+        poetry run coveralls --service=github
       env:
         GITHUB_TOKEN: ${{ github.token }}
 

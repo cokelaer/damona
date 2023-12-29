@@ -13,14 +13,21 @@
 #  documentation: http://damona.readthedocs.io
 #
 ##############################################################################
-import pkg_resources
+import importlib.metadata as metadata
 import os
+
 import colorlog
 
-try:
-    version = pkg_resources.require("damona")[0].version
-except Exception:  # pragma: no cover
-    version = ">=0.10.0"
+
+def get_package_version(package_name):
+    try:
+        version = metadata.version(package_name)
+        return version
+    except metadata.PackageNotFoundError:
+        return f"{package_name} not found"
+
+
+version = get_package_version("damona")
 
 
 # The logger mechanism is here:
@@ -46,7 +53,8 @@ from damona.common import DamonaInit
 DamonaInit()
 
 
+from damona.common import Damona
+from damona.environ import Environ, Environment
+
 # The user/developer API
 from damona.registry import Registry
-from damona.environ import Environ, Environment
-from damona.common import Damona
