@@ -1,0 +1,11 @@
+unicycler:
+  doi: 10.5281/zenodo.10469284
+  zenodo_id: 10469285
+  binaries: unicycler
+  releases:
+    0.5.0:
+      download: https://zenodo.org/record/10469285/files/unicycler_0.5.0.img
+      md5sum: a97f6070d3bd49dac3557dd7043bd30a
+      doi: 10.5281/zenodo.10469285
+      filesize: 830676992
+
