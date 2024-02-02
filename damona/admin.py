@@ -17,10 +17,9 @@
 import os
 import sys
 
-from damona import Registry
-from damona import version
-
 import colorlog
+
+from damona import Registry, version
 
 logger = colorlog.getLogger(__name__)
 

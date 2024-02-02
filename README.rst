@@ -28,7 +28,7 @@ DAMONA
 Quick Start
 ===========
 
-First, install Damona using **pip** for Python::
+Assuming Singularity (Apptainer) is installed on your system, install Damona using **pip** for Python::
 
     pip install damona
 
@@ -49,7 +49,7 @@ Add these lines in your .bashrc::
     damona install fastqc
     fastqc
 
-This should install **fastqc** in te newly create Damona environment (TEST). Type::
+This should install **fastqc** in the newly created Damona environment (TEST). Type::
 
     fastqc
 
@@ -70,7 +70,7 @@ In a nutshell, Damona combines the logic of Conda environments with the
 reproducibility of singularity containers. We believe that it could be useful for
 other projects and therefore decided to release it as an independent tool.
 
-* As of 11st July 2023, **Damona** contains 64 software, 107 releases 400 binaries.
+* As of 11st Jna 2024, **Damona** contains 82 software, 128 releases 456 binaries.
 
 
 Installation
@@ -393,6 +393,7 @@ but only changes made to the code itself.
 ========= ========================================================================
 Version   Description
 ========= ========================================================================
+0.11.1    * add pbsim. update hifiasm
 0.11.0    * add precommit, update to use pyproject
 0.10.1    * Fix the get_stats_software wrt new  zenodo API
 0.10.0    * ADD zsh support

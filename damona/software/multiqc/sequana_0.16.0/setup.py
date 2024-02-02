@@ -1,7 +1,7 @@
-import sys
 import os
-from setuptools import setup, find_packages
+import sys
 
+from setuptools import find_packages, setup
 
 _MAJOR = 0
 _MINOR = 16
@@ -47,7 +47,6 @@ packages = [this for this in packages if this not in ["test"]]
 requirements = open("requirements.txt").read().split()
 
 
-
 setup(
     name="sequana",
     version=version,
@@ -83,7 +82,7 @@ setup(
     # packages that will be copied from sequana/ into sequana/
     # Note, however, that e.g. ./pipelines must be added
     zip_safe=False,
-    #ext_modules = ext_modules,
+    # ext_modules = ext_modules,
     entry_points={
         "multiqc.modules.v1": [
             "sequana_pacbio_qc=sequana.multiqc.pacbio_qc:MultiqcModule",

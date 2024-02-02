@@ -12,13 +12,12 @@
 #  website: https://github.com/cokelaer/damona
 #  documentation: http://damona.readthedocs.io
 #
-import pathlib
 import functools
+import pathlib
 import shutil
 
-from tqdm import tqdm
-
 import requests
+from tqdm import tqdm
 
 
 def download_with_progress(url, filename):

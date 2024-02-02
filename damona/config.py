@@ -16,9 +16,8 @@
 import os
 import pathlib
 
-from easydev import CustomConfig
-
 import colorlog
+from easydev import CustomConfig
 
 import damona.shell
 

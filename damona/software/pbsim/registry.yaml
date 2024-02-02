@@ -1,0 +1,9 @@
+pbsim:
+  doi: 10.5281/zenodo.10610347
+  zenodo_id: 10610348
+  releases:
+    3.0.1:
+      download: https://zenodo.org/record/10610348/files/pbsim_3.0.1.img
+      md5sum: d32a640fda93fecc90c3867d26f49458
+      doi: 10.5281/zenodo.10610348
+      filesize: 27959296

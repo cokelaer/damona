@@ -1,14 +1,14 @@
 import builtins
 import subprocess
-from damona import script
-from damona import Config
-from damona import Damona
-from damona import Environ
+
+import mock
 import pytest
 from click.testing import CliRunner
-import mock
+
+from damona import Config, Damona, Environ, script
 
 from . import test_dir
+
 
 def test_damon_builder_docker(tmpdir):
     directory = tmpdir.mkdir("images")
@@ -32,13 +32,14 @@ def test_activate_deactivate_bash(monkeypatch):
     NAME = "damona__testing__deactivate_bash"
     Setup(NAME)
     manager = Damona()
-    monkeypatch.setenv("DAMONA_ENV", str(manager.damona_path / "envs" / NAME ))
+    monkeypatch.setenv("DAMONA_ENV", str(manager.damona_path / "envs" / NAME))
     runner = CliRunner()
     results = runner.invoke(script.activate, [NAME])
     assert results.exit_code == 0
     results = runner.invoke(script.deactivate, [NAME])
     assert results.exit_code == 0
     Teardown(NAME)
+
 
 def test_activate_deactivate_fish(monkeypatch, mocker):
 
@@ -48,7 +49,7 @@ def test_activate_deactivate_fish(monkeypatch, mocker):
     mocker.patch("damona.environ.Environ._is_fish_shell", return_values=True)
 
     manager = Damona()
-    monkeypatch.setenv("DAMONA_ENV", str(manager.damona_path / "envs" /  NAME))
+    monkeypatch.setenv("DAMONA_ENV", str(manager.damona_path / "envs" / NAME))
     runner = CliRunner()
     results = runner.invoke(script.activate, [NAME])
     assert results.exit_code == 0
@@ -61,6 +62,7 @@ def test_damona_clean():
     runner = CliRunner()
     results = runner.invoke(script.clean, [])
     assert results.exit_code == 0
+
 
 def test_damona_info():
     runner = CliRunner()
@@ -88,10 +90,10 @@ def test_damona_create_and_install(monkeypatch):
     Teardown(NAME)
 
 
-
 def test_create():
     runner = CliRunner()
-    results = runner.invoke(script.env, ["--create", "test_create", "--delete" , "test"])
+    results = runner.invoke(script.env, ["--create", "test_create", "--delete", "test"])
+
 
 def test_env():
 
@@ -107,6 +109,7 @@ def test_env():
 
     # delete it
     import mock
+
     with mock.patch.object(builtins, "input", lambda _: "y"):
         results = runner.invoke(script.env, [])
         assert results.exit_code == 0
@@ -114,6 +117,7 @@ def test_env():
     assert results.exit_code == 0
 
     Teardown(NAME)
+
 
 def test_search():
     runner = CliRunner()
@@ -132,10 +136,12 @@ def test_search():
     results = runner.invoke(script.search, ["fastqc", "--url", "damona"])
     assert results.exit_code == 0
 
+
 def test_list():
     runner = CliRunner()
     results = runner.invoke(script.list, [])
     assert results.exit_code == 0
+
 
 def test_stats():
     runner = CliRunner()
@@ -162,20 +168,21 @@ def test_export(monkeypatch, tmpdir):
 
     Teardown(NAME)
 
+
 def test_import_bundle(monkeypatch, tmpdir):
     directory = tmpdir.mkdir("output")
     output = directory / "test.tar"
     manager = Damona()
     runner = CliRunner()
 
-    NAME="damona__testing__import_bundle"
-    NAME2="damona__testing__import_bundle2"
+    NAME = "damona__testing__import_bundle"
+    NAME2 = "damona__testing__import_bundle2"
     Setup(NAME)
 
     monkeypatch.setenv("DAMONA_ENV", str(manager.damona_path / "envs" / NAME))
     results = runner.invoke(script.install, ["fastqc"])
     results = runner.invoke(script.export, [NAME, "--output", output])
-    results = runner.invoke(script.create, [NAME2,"--from-bundle", output])
+    results = runner.invoke(script.create, [NAME2, "--from-bundle", output])
 
     # suppress this temporary environment
     with mock.patch.object(builtins, "input", lambda _: "y"):
@@ -185,6 +192,7 @@ def test_import_bundle(monkeypatch, tmpdir):
     # supress the damona__testing__ temporary environment
     Teardown(NAME)
 
+
 def Teardown(name):
     runner = CliRunner()
     with mock.patch.object(builtins, "input", lambda _: "y"):
@@ -192,13 +200,11 @@ def Teardown(name):
         assert results.exit_code == 0
 
 
-
 def Setup(name):
     runner = CliRunner()
     if name not in Environ().environment_names:
         results = runner.invoke(script.create, [name])
         assert results.exit_code == 0
-
 
 
 def test_install_remove(monkeypatch):
@@ -237,25 +243,24 @@ def test_install_local(monkeypatch):
     NAME = "damona__testing__install_local"
     Setup(NAME)
     manager = Damona()
-    monkeypatch.setenv("DAMONA_ENV", str(manager.damona_path / "envs" / NAME ))
+    monkeypatch.setenv("DAMONA_ENV", str(manager.damona_path / "envs" / NAME))
 
     # This re-installs the image, interfering with the user's local image but should be safe
     runner = CliRunner()
-    results = runner.invoke(script.install, [f"{test_dir}/data/testing_1.0.0.img", 
-        "--binaries", "hello" ])
+    results = runner.invoke(script.install, [f"{test_dir}/data/testing_1.0.0.img", "--binaries", "hello"])
     assert results.exit_code == 0
-    results = runner.invoke(script.install, [f"{test_dir}/data/testing_1.0.0.img", 
-        "--binaries", "hello", "--force" ])
+    results = runner.invoke(script.install, [f"{test_dir}/data/testing_1.0.0.img", "--binaries", "hello", "--force"])
     assert results.exit_code == 0
 
     Teardown(NAME)
+
 
 def test_install_biocontainers(monkeypatch):
 
     NAME = "damona__testing__install_biocontainers"
     Setup(NAME)
     manager = Damona()
-    monkeypatch.setenv("DAMONA_ENV", str(manager.damona_path / "envs" / NAME ))
+    monkeypatch.setenv("DAMONA_ENV", str(manager.damona_path / "envs" / NAME))
 
     # This re-installs the image, interfering with the user's local image but should be safe
     runner = CliRunner()
@@ -263,20 +268,3 @@ def test_install_biocontainers(monkeypatch):
     assert results.exit_code == 0
 
     Teardown(NAME)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

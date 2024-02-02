@@ -4,7 +4,7 @@ User Guide
 
 .. contents:: Table of Contents
 
-Getting help 
+Getting help
 -------------
 
 The Damona standalone is called damona. It has a documentation that should suffice for most users.
@@ -111,7 +111,7 @@ Search for existing software
 
 **Damona** itself contains metadata to download containers and installed software. As explained in the motivation, other
 projects provide thousands of containers but here we provide containers for
-testing and proof of concept. 
+testing and proof of concept.
 
 By default, **Damona** uses recipes, which can be found in the
 https://github.com/damona/damona/recipes directory. In the registry files (see
@@ -197,7 +197,7 @@ You can add aliases in *~/.config/damona/damona.cfg* file.
 Application: set several Environments
 --------------------------------------
 
-In **damona**, environments are stored in *~/.config/damona*. There, you have two sub-directories: 
+In **damona**, environments are stored in *~/.config/damona*. There, you have two sub-directories:
 
 * envs
 * images
@@ -221,7 +221,7 @@ Now, you need to activate the first one::
 
 and install a tool with a given version in this environment::
 
-    damona install fastqc:0.11.9 
+    damona install fastqc:0.11.9
 
 And to install it in the *test2* environment::
 
@@ -265,4 +265,3 @@ a local scratch in /local/scratch, you can tell singularity to look there by
 binding this path into your container::
 
     export DAMONA_SINGULARITY_OPTIONS="-B /local/scratch:/local/scratch"
-

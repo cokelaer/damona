@@ -1,25 +1,20 @@
-
 import builtins
 
-
-from damona.install import LocalImageInstaller
-
-from click.testing import CliRunner
-from damona import Environ
-from damona import script
-from damona import Damona
 import mock
 import pytest
+from click.testing import CliRunner
+
+from damona import Damona, Environ, script
+from damona.install import LocalImageInstaller
 
 from . import test_dir
 
 
-
 def test_cmd():
     from damona.install import CMD
+
     c = CMD(["damona", "install"])
     c.__repr__()
-
 
 
 def test_ImageInstaller(monkeypatch):
@@ -46,7 +41,6 @@ def test_ImageInstaller(monkeypatch):
     results = runner.invoke(script.install, [f"{test_dir}/data", "--binaries", "hello2", "--force"])
     assert results.exit_code == 1
 
-
     Teardown(NAME)
 
 
@@ -55,7 +49,6 @@ def Teardown(NAME):
     with mock.patch.object(builtins, "input", lambda _: "y"):
         results = runner.invoke(script.delete, [NAME])
         assert results.exit_code == 0
-
 
 
 def Setup(NAME):

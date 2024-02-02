@@ -1,7 +1,8 @@
-from damona.common import *
-
 import os
+
 import pytest
+
+from damona.common import *
 
 from . import test_dir
 
@@ -29,7 +30,8 @@ def test_path():
     d.find_orphan_binaries()
     d.get_environments()
     d.find_orphan_images()
-    d.is_image_used('fastqc_0.11.9')
+    d.is_image_used("fastqc_0.11.9")
+
 
 def test_ImageReader():
 
@@ -46,6 +48,3 @@ def test_ImageReader():
     ir.is_orphan()
     ir.is_installed()
     print(ir)
-
-
-

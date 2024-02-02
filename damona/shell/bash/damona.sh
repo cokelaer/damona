@@ -186,7 +186,7 @@ damona () {
         \local cmd="$1"
         shift
 
-        # for the activate/deactivate special cases, user may provide 
+        # for the activate/deactivate special cases, user may provide
         # --level DEBUG  before the command.
         case "$cmd" in
             --level)
@@ -215,7 +215,7 @@ damona () {
             deactivate)
                 \local maincmd="$1"
                 shift
-                case "$maincmd" in 
+                case "$maincmd" in
                     --help)
                         ask_damona="$( "$DAMONA_EXE_INTERN" "deactivate" "--help")"
                         echo "$ask_damona"
@@ -254,5 +254,3 @@ fi
 #        PS1=
 #    fi
 #fi
-
-

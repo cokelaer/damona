@@ -1,14 +1,13 @@
-import os
 import builtins
-import mock
-
-from damona.environ import Environment
-from damona.environ import Environ
-from damona import Damona
-from damona import script
-import damona
-from click.testing import CliRunner
+import os
 import subprocess
+
+import mock
+from click.testing import CliRunner
+
+import damona
+from damona import Damona, script
+from damona.environ import Environ, Environment
 
 
 def test_no_var(monkeypatch):
@@ -105,10 +104,9 @@ def test_create_bundle(tmpdir, monkeypatch):
     cmd = "damona install fastqc --force"
     status = subprocess.call(cmd.split())
 
-
     directory = tmpdir.mkdir("bundle")
     destination = directory / "test"
-    #print(destination)
+    # print(destination)
     e = Environment(NAME)
     e.create_bundle()
     os.remove(f"damona_{NAME}.tar")
@@ -116,10 +114,3 @@ def test_create_bundle(tmpdir, monkeypatch):
     # cleanup
     with mock.patch.object(builtins, "input", lambda _: "y"):
         results = runner.invoke(script.delete, [NAME])
-
-
-
-
-
-
-

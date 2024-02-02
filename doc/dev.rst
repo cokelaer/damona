@@ -12,7 +12,7 @@ Developers are lucky: they can do more than users. If you type::
 
     damona --help
 
-you will have the users' commands. However, they are more commands available. 
+you will have the users' commands. However, they are more commands available.
 They are not shown because they are intended for developers only.
 
 The first useful command for developers is the **build** command::
@@ -37,7 +37,7 @@ Let us consider an example called SOFTWARE. You must be in the directory of the 
 
     cd recipes/SOFTWARE
 
-.. warning:: the following required registered token on Zenodo and will upload 
+.. warning:: the following required registered token on Zenodo and will upload
     images on Zenodo as well ! Consider removing the --mode zenodo to try
     the sandbox version
 
@@ -164,13 +164,13 @@ like
     fastqc:
         0.11.9:
             download: URL1
-            md5sum: 
+            md5sum:
             binaries: fastqc
         0.11.8:
             download: URL
-            md5sum: 
+            md5sum:
             binaries: fastqc
-    
+
 ::
 
     fastqc:
@@ -263,10 +263,3 @@ It looks like::
             md5sum: e680e5ab181e73a8b367693a7bd71098
 
 Here, there is no zenodo link though because it is already on docker.
-
-
-
-
-
-
-

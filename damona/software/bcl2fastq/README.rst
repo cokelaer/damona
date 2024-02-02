@@ -24,6 +24,4 @@ That's it you should have a file called bcl2fastq_2.20.0.img this is your
 container. You can create a binary called **bcl2fastq** and place it so that
 your system sees it. This binary should be executable.
 
-    singularity run PATH_TO_IMAGE.img ${1+"$@"} 
-
-
+    singularity run PATH_TO_IMAGE.img ${1+"$@"}

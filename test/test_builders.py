@@ -2,7 +2,9 @@ import os
 import tempfile
 
 from damona.builders import BuilderFromDocker, BuilderFromSingularityRecipe
+
 from . import test_dir
+
 
 # reach too many requests ??
 def test_docker_alpine(monkeypatch):

@@ -1,9 +1,6 @@
 from damona.utils import download_with_progress
 
 
-
-
-
 def test_download(tmpdir):
 
     directory = tmpdir.mkdir("images")

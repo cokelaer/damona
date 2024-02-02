@@ -4,7 +4,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "damona"
-version = "0.11.0"
+version = "0.11.1"
 description = "A manager of singularity containers and their singularity recipes (NGS applications)"
 authors = ["Thomas Cokelaer <thomas.cokelaer@pasteur.fr>"]
 license = "BSD-3"
@@ -64,3 +64,6 @@ Sphinx = "^7.0"
 sphinx-rtd-theme = "^2.0.0"
 sphinx-click = "^5.1.0"
 
+
+[tool.setuptools.packages.find]
+exclude = ["*img", "*/*img", "*/*/*img"]

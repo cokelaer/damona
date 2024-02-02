@@ -3,7 +3,6 @@ from damona import zenodo
 
 from . import test_dir
 
-
 deposit = {
     "conceptdoi": "10.5072/zenodo.960007",
     "conceptrecid": "960007",
@@ -57,8 +56,6 @@ deposit = {
 }
 
 
-
-
 def test(mocker):
 
     mocker.patch("damona.zenodo.Zenodo.create_new_deposition", return_values={})
@@ -73,12 +70,15 @@ def test(mocker):
 
     z.get_id(deposit)
 
+
 def test_get_stat_id():
     from damona.zenodo import get_stats_id
+
     stats = get_stats_id("5708811")
-    assert stats >0
+    assert stats > 0
 
 
 def test_get_stat_software():
     from damona.zenodo import get_stats_software
+
     stats = get_stats_software("fastqc")

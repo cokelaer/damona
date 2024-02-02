@@ -1,7 +1,9 @@
-from damona.registry import Software, Registry, ImageName
 import glob
 
+from damona.registry import ImageName, Registry, Software
+
 from . import test_dir
+
 
 def test_image_name():
 

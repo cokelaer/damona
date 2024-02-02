@@ -14,18 +14,17 @@
 #
 ##############################################################################
 """Registry and Software manager"""
-import pathlib
 import glob
-import sys
 import os
-import yaml
-from yaml import Loader, CSafeLoader
-import packaging.version
-
-
-from damona.config import Config
+import pathlib
+import sys
 
 import colorlog
+import packaging.version
+import yaml
+from yaml import CSafeLoader, Loader
+
+from damona.config import Config
 
 logger = colorlog.getLogger(__name__)
 

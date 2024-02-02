@@ -1,5 +1,6 @@
-from damona.config import Config, get_damona_commands
 import shutil
+
+from damona.config import Config, get_damona_commands
 
 
 def test_config():

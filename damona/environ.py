@@ -14,17 +14,16 @@
 #
 ##############################################################################
 """Environments manager"""
+import math
 import os
+import pathlib
 import shutil
 import sys
-import pathlib
-import math
 import tarfile
+
 from tqdm import tqdm
 
-from damona.common import Damona
-from damona.common import BinaryReader
-
+from damona.common import BinaryReader, Damona
 
 manager = Damona()
 

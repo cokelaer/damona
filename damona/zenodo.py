@@ -14,15 +14,17 @@
 #
 ##############################################################################
 """Tools to upload/retrieve zenodo deposits"""
-import requests
+import inspect
+import json
 import os
 import sys
-import json
-from configparser import NoSectionError, NoOptionError
+from configparser import NoOptionError, NoSectionError
 
-from damona.registry import ImageName, Software
-from damona import Config
 import colorlog
+import requests
+
+from damona import Config
+from damona.registry import ImageName, Software
 
 logger = colorlog.getLogger(__name__)
 
@@ -155,14 +157,26 @@ class Zenodo:  # pragma: no cover
     params = property(_get_params)
 
     def _status(self, r, correct_codes):
+        try:
+            caller = inspect.stack()[1].function
+        except:
+            caller = ""
+
         self.last_requests.append(r)
 
         if r.status_code not in correct_codes:
-            print(f"Status code: {r.status_code}; {r.reason}")
+            logger.warning(f"Status code: {r.status_code}; {r.reason}")
             try:
-                print(f"{r.json()}")
+                output = f"{r.json()}"
+                logger.warning(output)
             except:
-                print("Could not figure out the erorr from json()")
+                logger.warning("Could not figure out the erorr from json()")
+            finally:
+
+                logger.error(f"unexpected return code {r.status_code}")
+                logger.error(f"Caller: {caller}")
+                logger.error("Know issues:\n - Have you set a token in zenodo and provide the token in damona.cfg ? ")
+                sys.exit(1)
 
     def create_new_deposition(self):  # pragma: no cover
         # expected status is 201
@@ -173,10 +187,10 @@ class Zenodo:  # pragma: no cover
         self._status(r, [201])
 
         try:
-            ID = self.last_requests.json()["id"]
+            ID = self.last_requests[-1].json()["id"]
             logger.info(f"Created a new deposit with ID={ID}")
         except:
-            pass
+            raise
         return r
 
     def get_all_depositions(self):  # pragma: no cover
@@ -203,6 +217,8 @@ class Zenodo:  # pragma: no cover
         return r
 
     def upload(self, filename, json_deposit):  # pragma: no cover
+        logger.info("Uploading file")
+
         try:
             bucket_url = json_deposit["links"]["bucket"]
         except:
@@ -210,7 +226,6 @@ class Zenodo:  # pragma: no cover
 
         jsons = {}
 
-        logger.info("Uploading file")
         # the upload it self may take a while
         with open(filename, "rb") as fp:
             basename = os.path.basename(filename)
@@ -434,8 +449,9 @@ def get_stats_id(ID):
 
 
     """
-    from bs4 import BeautifulSoup
     import json
+
+    from bs4 import BeautifulSoup
 
     r = requests.get(f"https://zenodo.org/record/{ID}")
     bs = BeautifulSoup(r.content, features="html.parser")

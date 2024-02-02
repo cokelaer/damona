@@ -15,24 +15,20 @@
 ##############################################################################
 """Tools to install images/binaries"""
 import os
-import sys
 import pathlib
 import shutil
-import time
 import subprocess
-
+import sys
+import time
 
 from easydev import md5
-
-
 from spython.main import Client
-from damona import Registry
-from damona import Environ
+
+from damona import Environ, Registry
+from damona import version as damona_version
 from damona.common import ImageReader, requires_singularity
 from damona.registry import Software
-from damona import version as damona_version
 from damona.utils import download_with_progress
-
 
 DAMONA_PATH = os.environ["DAMONA_PATH"]
 

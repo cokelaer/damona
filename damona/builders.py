@@ -14,11 +14,11 @@
 #
 ##############################################################################
 """Builder for containers from docker or singularity images"""
+import getpass
 import os
 import subprocess
 import sys
 import tempfile
-import getpass
 
 from damona.common import Damona, requires_singularity
 

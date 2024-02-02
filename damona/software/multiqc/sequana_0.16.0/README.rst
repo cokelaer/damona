@@ -39,7 +39,7 @@ SEQUANA
     For the **genome coverage** tool (sequana_coverage):  Dimitri Desvillechabrol, Christiane Bouchier,
     Sean Kennedy, Thomas Cokelaer. Sequana coverage: detection and characterization of genomic
     variations using running median and mixture models. GigaScience, 7(12), 2018.
-    https://doi.org/10.1093/gigascience/giy110 
+    https://doi.org/10.1093/gigascience/giy110
     Also available on bioRxiv (DOI: http://biorxiv.org/content/early/2016/12/08/092478)
 
     For **Sequanix**: Dimitri Desvillechabrol, Rachel Legendre, Claire Rioualen,
@@ -191,14 +191,14 @@ SEQUANA
             :target: https://pypi.python.org/pypi/sequana-depletion
       - .. image:: https://github.com/sequana/depletion/actions/workflows/main.yml/badge.svg
             :target: https://github.com/sequana/depletion/actions/workflows/main.yml
-      - 
+      -
 
 
 
 
 
-.. list-table:: Pipelines not yet released 
-    :widths: 20 40 20 20 
+.. list-table:: Pipelines not yet released
+    :widths: 20 40 20 20
     :header-rows: 1
 
     * - **name/github**
@@ -242,25 +242,25 @@ Version   Description
 0.16.0    * add mpileup module
           * homogenization enrichment + fixup rnadiff
           * Complete refactoring of sequana coverage module.
-            Allow sequana_coverage to handle small eukaryotes in a more memory 
+            Allow sequana_coverage to handle small eukaryotes in a more memory
             efficient way.
-          * use click for the sequana_taxonomy and sequana_coverage and 
+          * use click for the sequana_taxonomy and sequana_coverage and
             sequana rnadiff command
           * Small fixup on homer, idr and phantom modules (for chipseq pipeline)
 0.15.4    * add plot for rnaseq/rnadiff
 0.15.3    * add sequana.viz.plotly module. use tqdm in bamtools module
-          * KEGG API changed. We update sequana to use headless server and keep 
+          * KEGG API changed. We update sequana to use headless server and keep
             the feature of annotated and colored pathway.
-          * Various improvements on KEGG enrichment including saving pathways, 
+          * Various improvements on KEGG enrichment including saving pathways,
             addition --comparison option in sequana sub-command, plotly plots, etc
-0.15.2    * ribodesigner can now accept an input fasta with no GFF assuming the 
-            fasta already contains the rRNA sequences 
+0.15.2    * ribodesigner can now accept an input fasta with no GFF assuming the
+            fasta already contains the rRNA sequences
           * Fix IEM module when dealing with double indexing
           * Fix anchors in HTML reports (rnadiff module)
           * refactorise compare module to take several rnadiff results as input
           * enrichment improvements (export KEGG and GO as csv files
 0.15.1    * Fix creation of images directory in modules report
-          * add missing test related to gff 
+          * add missing test related to gff
           * Fix #804
 0.15.0    * add logo in reports
           * RNADiff reports can now use shrinkage or not (optional)
@@ -301,4 +301,3 @@ Version   Description
 0.12.5    * refactorisation of VCF tools/modules to use vcfpy instead of pyVCF
 0.12.4    * complete change log before 0.12.4 in the github /doc/Changelog.txt
 ========= ==========================================================================
-

@@ -14,16 +14,14 @@
 #
 ##############################################################################
 """Image and Binary handlers. Provide also a Damona manager"""
+import functools
 import os
-import sys
 import pathlib
 import re
-import functools
-
-from easydev import md5, cmd_exists
-
+import sys
 
 import colorlog
+from easydev import cmd_exists, md5
 
 logger = colorlog.getLogger(__name__)
 

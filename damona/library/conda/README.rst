@@ -26,5 +26,3 @@ Matplotlib backend it AGG
 
 Updated with ubuntu 18.04
 conda environment provides Python 3.7.3
-
-
