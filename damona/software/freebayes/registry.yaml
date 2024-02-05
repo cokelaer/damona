@@ -1,6 +1,7 @@
 freebayes:
   doi: 10.5281/zenodo.10259219
   zenodo_id: 10259220
+  binaries: freebayes vcffirstheader vcfstreamsort vcfuniq parallel freebayes-parallel fasta_generate_regions.py
   releases:
     1.3.7:
       download: https://zenodo.org/record/10259220/files/freebayes_1.3.7.img
