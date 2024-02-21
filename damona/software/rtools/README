@@ -1,0 +1,7 @@
+Singularity.rtools_1.1.0  R 4.0.2 with DeSEQ2
+Singularity.rtools_1.2.0  R 4.1.2 with DESEQ2
+Singularity.rtools_1.3.0  R 4.1.2 with DESEQ2 based on rtools 1.2.0 + limma, vsn, pheatmap, tximeta, pasilla, airway, IHW, tximport, readr, RColorBrewer
+
+
+
+
