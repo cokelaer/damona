@@ -723,18 +723,18 @@ orcid=0000-0001-...
 """,
 )
 @click.option("--mode", default="sandbox.zenodo", help="mode can be either 'zenodo' or 'sandbox.zenodo'")
-def zenodo_upload(**kwargs):  # pragma: no cover
+def upload(**kwargs):  # pragma: no cover
     """Upload a singularity file to Zenodo. FOR DEVELOPERS ONLY
 
     This command is for developers of the DAMONA project only.
 
     The sandbox.zenodo is a sandbox where you can try to upload a new singularity file.::
 
-        damona zenodo-upload file_1.0.0.img --mode sandbox.zenodo
+        damona upload file_1.0.0.img --mode sandbox.zenodo
 
     Once done and happy with the results, you can upload to Zenodo itself once and for all::
 
-        damona zenodo-upload file_2.0.0.img --mode sandbox.zenodo
+        damona upload file_2.0.0.img --mode sandbox.zenodo
 
     If no registry.yaml is found in the local directory, it is created.
     Otherwise, it is updated. The changes are also printed on the stdout.

@@ -393,7 +393,10 @@ but only changes made to the code itself.
 ========= ========================================================================
 Version   Description
 ========= ========================================================================
-0.11.1    * add pbsim. update hifiasm
+0.12.0    * CORE development: rename zenodo-upload subcommand into upload
+          * UPDATE rtools to v1.3.0 to include limma package
+0.11.1    * ADD pbsim.
+          * UPDATE hifiasm
 0.11.0    * add precommit, update to use pyproject
 0.10.1    * Fix the get_stats_software wrt new  zenodo API
 0.10.0    * ADD zsh support
