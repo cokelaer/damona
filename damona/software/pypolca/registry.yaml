@@ -1,0 +1,10 @@
+pypolca:
+  doi: 10.5281/zenodo.10806473
+  zenodo_id: 10806474
+  binaries: pypolca
+  releases:
+    0.3.1:
+      download: https://zenodo.org/record/10806474/files/pypolca_0.3.1.img
+      md5sum: 349baecd96c22351fde0c7324a6cec0f
+      doi: 10.5281/zenodo.10806474
+      filesize: 225759232

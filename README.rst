@@ -19,6 +19,9 @@ DAMONA
 .. image:: https://zenodo.org/badge/282275608.svg
    :target: https://zenodo.org/badge/latestdoi/282275608
 
+.. image:: https://static.pepy.tech/badge/damona
+   :target: https://pepy.tech/project/damona
+
 
 :Python version: Python 3.8, 3.9, 3.10
 :Source: See  `http://github.com/cokelaer/damona <https://github.com/cokelaer/damona/>`__.
@@ -393,6 +396,7 @@ but only changes made to the code itself.
 ========= ========================================================================
 Version   Description
 ========= ========================================================================
+          * ADDED pypolca
 0.12.0    * CORE development: rename zenodo-upload subcommand into upload
           * UPDATE rtools to v1.3.0 to include limma package
 0.11.1    * ADD pbsim.
