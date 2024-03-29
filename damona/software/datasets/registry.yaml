@@ -1,0 +1,10 @@
+datasets:
+  doi: 10.5281/zenodo.10894732
+  zenodo_id: 10894733
+  binaries: datasets
+  releases:
+    16.10.1:
+      download: https://zenodo.org/record/10894733/files/datasets_16.10.1.img
+      md5sum: 473026948cc2739e7172d8a760adeb5b
+      doi: 10.5281/zenodo.10894733
+      filesize: 32739328
