@@ -1,0 +1,10 @@
+sratoolkit:
+  doi: 10.5281/zenodo.10894350
+  zenodo_id: 10894351
+  binaries: abi-dump abi-load  align-info bam-load cache-mgr cg-load dump-ref-fasta fasterq-dump fastq-dump fastq-load helicos-load illumina-dump illumina-load kar kdbmeta latf-load pacbio-load prefetch rcexplain sff-dump sff-load sra-pileup sra-search sra-sort sra-stat srapath srapath-orig.3.1.0 sratools srf-load
+  releases:
+    3.1.0:
+      download: https://zenodo.org/record/10894351/files/sratoolkit_3.1.0.img
+      md5sum: 8be34755760ef14bf517399b5e3b675e
+      doi: 10.5281/zenodo.10894351
+      filesize: 165797888

@@ -13,4 +13,4 @@ kraken:
       md5sum: bc195a921148969c7f9482f9fe25b3cd
       doi: 10.5281/zenodo.5801365
       filesize: 723301918
-      binaries: kraken2 kraken2-build ktImportText 
+      binaries: kraken2 kraken2-build 

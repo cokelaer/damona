@@ -396,7 +396,7 @@ but only changes made to the code itself.
 ========= ========================================================================
 Version   Description
 ========= ========================================================================
-          * ADDED pypolca
+0.12.1    * ADDED pypolca, sratoolkit
 0.12.0    * CORE development: rename zenodo-upload subcommand into upload
           * UPDATE rtools to v1.3.0 to include limma package
 0.11.1    * ADD pbsim.

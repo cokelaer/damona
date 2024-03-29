@@ -555,11 +555,10 @@ def info(**kwargs):
 
     The default environment is called 'base'.::
 
-    \b
-            damona info base
-            damona info test1
+        damona info base
+        damona info test1
 
-        Images abd binaries available are shown
+    Images abd binaries available are shown
     """
     logger.debug(kwargs)
     envname = kwargs["environment"]
@@ -697,27 +696,7 @@ def list(**kwargs):
 @click.option(
     "--token",
     default=None,
-    help="""A valid zenodo (or sandbox zenodo) token.
-You can set the token in your home/.config/damona/damona.cfg that looks
-like
-
-\b
-[general]
-quiet=False
-
-\b
-[urls]
-damona=https://biomics.pasteur.fr/salsa/damona/registry.txt
-\b
-[zenodo]
-token=APmm6p...
-orcid=0000-0001-...
-affiliation=Your Institute
-name=Surname, firstname
-\b
-[sandbox.zenodo]
-token=FFmbAE...
-orcid=0000-0001-...
+    help="""A valid zenodo (or sandbox zenodo) token (see damona zenodo --help for details).
 
 
 """,
@@ -728,16 +707,36 @@ def upload(**kwargs):  # pragma: no cover
 
     This command is for developers of the DAMONA project only.
 
-    The sandbox.zenodo is a sandbox where you can try to upload a new singularity file.::
+    The sandbox.zenodo is a sandbox where you can try to upload a new singularity file:
 
         damona upload file_1.0.0.img --mode sandbox.zenodo
 
-    Once done and happy with the results, you can upload to Zenodo itself once and for all::
+    Once done and happy with the results, you can upload to Zenodo itself once and for all:
 
         damona upload file_2.0.0.img --mode sandbox.zenodo
 
     If no registry.yaml is found in the local directory, it is created.
     Otherwise, it is updated. The changes are also printed on the stdout.
+
+    You can set the token in your home/.config/damona/damona.cfg that looks like
+
+        [general]
+        quiet=False
+
+        [urls]
+        damona=https://biomics.pasteur.fr/salsa/damona/registry.txt
+
+        [zenodo]
+        token=APmm6p...
+        orcid=0000-0001-...
+        affiliation=Your Institute
+        name=Surname, firstname
+
+        [sandbox.zenodo]
+        token=FFmbAE...
+        orcid=0000-0001-...
+        affiliation=Your Institute
+        name=Surname, firstname
 
     """
     from damona.zenodo import Zenodo
