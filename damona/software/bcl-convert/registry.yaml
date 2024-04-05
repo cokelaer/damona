@@ -1,0 +1,10 @@
+bcl-convert:
+  doi: 10.5281/zenodo.10934030
+  zenodo_id: 10934031
+  binaries: bcl-convert
+  releases:
+    4.2.7:
+      download: https://zenodo.org/record/10934031/files/bclconvert_4.2.7.img
+      md5sum: de150decd9e2da819871760972353fec
+      doi: 10.5281/zenodo.10934031
+      filesize: 111316992

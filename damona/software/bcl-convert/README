@@ -1,0 +1,14 @@
+get RPM from Illumina website (no restrictions apparently).
+
+https://s3.amazonaws.com/webdata.illumina.com/downloads/software/bcl-convert/bcl-convert-4.2.7-2.el7.x86_64.rpm
+
+
+bcl-convert wants to be able to write to /var/logs/bcl-convert, so you must bind a user writable directory 
+
+    mkdir logs
+    singularity exec --bind logs:/var/log/bcl-convert bcl-convert.sif bcl-convert --help
+
+or
+
+    singularity exec -wf bcl-convert.sif bcl-convert --help
+
