@@ -1,0 +1,10 @@
+mummer:
+  doi: 10.5281/zenodo.10936493
+  binaries: show-diff nucmer promer run-mummer1 dnadiff run-mummer3 mummer mummerplot
+  zenodo_id: 10936494
+  releases:
+    3.23.0:
+      download: https://zenodo.org/record/10936494/files/mummer_3.23.0.img
+      md5sum: 33ffbc8c2697f856226ee894ee4b6153
+      doi: 10.5281/zenodo.10936494
+      filesize: 152612864
