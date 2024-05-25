@@ -7,3 +7,8 @@ micromamba:
       md5sum: e2296d2ad59759db338dd773c6e3b468
       doi: 10.5281/zenodo.8034807
       filesize: 35971072
+    1.5.8:
+      download: https://zenodo.org/record/11302814/files/micromamba_1.5.8.img
+      md5sum: 6aa21e8ca721023946e9dd42b2fb5cce
+      doi: 10.5281/zenodo.11302814
+      filesize: 34324480
