@@ -1,0 +1,9 @@
+delly:
+  doi: 10.5281/zenodo.11302859
+  zenodo_id: 11302860
+  releases:
+    1.2.6:
+      download: https://zenodo.org/record/11302860/files/delly_1.2.6.img
+      md5sum: d310e9b990c68ac13260904758fa1131
+      doi: 10.5281/zenodo.11302860
+      filesize: 177160192

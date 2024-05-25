@@ -277,11 +277,14 @@ class Software:
             data = self._read_registry()
             #: a :class:`Releases` attribute
             self.releases = self._interpret_registry(data)
-        # directory to be found in damona directory
+        # directory to be found in damona directory (software or libary)
         else:
             from damona import __path__
 
             self.registry_name = pathlib.Path(__path__[0]) / "software" / name / "registry.yaml"
+            if os.path.exists(self.registry_name) is False:
+                self.registry_name = pathlib.Path(__path__[0]) / "library" / name / "registry.yaml"
+
             data = self._read_registry()
             self._data = data
             if len(data):
