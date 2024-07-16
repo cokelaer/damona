@@ -1,0 +1,12 @@
+art latest version from https://www.niehs.nih.gov/research/resources/software/biostatistics/art is 2.5.8 -
+but from conda, there are 3 versions:
+
+- 3.11.14
+- 3.19.15
+- 2016.06.05
+
+
+it appears the conda version 2016.06.05 is 2.5.8
+besides, the 3.11.14 and 3.19.15 are wrongly labelled in conda. They actually correspond to 2.1.8 and 2.3.7
+
+the version 3.11.14 was uploaded to zenodo unfortunately. The version 3.19.15 was named 2.3.7 so that it is correct. As for the 3.11.14 / 2.1.8 we keep the wrong version on zenodo, but the registry is fixed with the correct version.
