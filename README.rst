@@ -396,7 +396,9 @@ but only changes made to the code itself.
 ========= ========================================================================
 Version   Description
 ========= ========================================================================
-0.12.3    * ADDED delly 1.2.6
+0.12.3    * ADDED dustmasker 1.0.0
+          * update art with 2.1.8, 2.3.7, 2.5.8 versions
+          * ADDED delly 1.2.6
           * UPDATED micromamba 1.5.8
 0.12.2    * ADDED datasets
 0.12.1    * ADDED pypolca, sratoolkit
