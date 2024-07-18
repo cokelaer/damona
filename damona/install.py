@@ -329,7 +329,13 @@ class RemoteImageInstaller(ImageInstaller):
 
         # target file is stored in output_name variable
         if output_name is None:
-            output_name = registry_name.replace(":", "_") + ".img"
+            # original code
+            # output_name = registry_name.replace(":", "_") + ".img"
+            # In order to allow a registry to refer to another existing container, 
+            # we need to retrieve the name of the container itself rather than
+            # building one from the registry name
+            output_name = download_name.split("/")[-1]
+
         # here we check whether the image or binaries are already present.
         # if md5 is already provided, and image exists, nothing to copy
         if info.md5sum:
