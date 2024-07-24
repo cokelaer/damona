@@ -4,7 +4,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "damona"
-version = "0.12.3"
+version = "0.12.4"
 description = "A manager of singularity containers and their singularity recipes (NGS applications)"
 authors = ["Thomas Cokelaer <thomas.cokelaer@pasteur.fr>"]
 license = "BSD-3"

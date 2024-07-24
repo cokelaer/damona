@@ -1,0 +1,9 @@
+mosdepth:
+  doi: 10.5281/zenodo.12805459
+  zenodo_id: 12805460
+  releases:
+    0.3.8:
+      download: https://zenodo.org/record/12805460/files/mosdepth_0.3.8.img
+      md5sum: 18d44aeeb8aeec49fe5506988d988eb1
+      doi: 10.5281/zenodo.12805460
+      filesize: 57778176
