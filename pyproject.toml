@@ -26,6 +26,9 @@ classifiers = [
         "Topic :: Scientific/Engineering :: Bio-Informatics",
         "Topic :: Scientific/Engineering :: Information Analysis",
 ]
+exclude =[
+    "damona/*/*/*.img", "damona/*/*/*.tar.gz", "damona/*/*/*rpm"
+]
 
 
 
@@ -65,5 +68,3 @@ sphinx-rtd-theme = "^2.0.0"
 sphinx-click = "^5.1.0"
 
 
-[tool.setuptools.packages.find]
-exclude = ["*img", "*/*img", "*/*/*img"]
