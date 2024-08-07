@@ -31,7 +31,7 @@ DAMONA
 Quick Start
 ===========
 
-Assuming Singularity (Apptainer) is installed on your system, install Damona using **pip** for Python::
+Assuming Apptainer (a.k.a. Singularity) is installed on your system, install Damona using **pip** for Python::
 
     pip install damona
 
@@ -45,14 +45,13 @@ Add these lines in your .bashrc::
         source ~/.config/damona/damona.sh
     fi
 
-**open a new shell** and then use damona::
+**open a new shell** and then use damona. Here we will install a quite common tool called **fastqc**::
 
     damona create TEST
     damona activate TEST
     damona install fastqc
-    fastqc
 
-This should install **fastqc** in the newly created Damona environment (TEST). Type::
+This should install **fastqc** software in the newly created Damona environment (TEST). Type::
 
     fastqc
 
@@ -73,7 +72,7 @@ In a nutshell, Damona combines the logic of Conda environments with the
 reproducibility of singularity containers. We believe that it could be useful for
 other projects and therefore decided to release it as an independent tool.
 
-* As of 11st Jna 2024, **Damona** contains 82 software, 128 releases 456 binaries.
+* As of Aug. 2024, **Damona** contains 87 containers (136 versions), which correspond to 468 unique binaries.
 
 
 Installation
@@ -83,11 +82,15 @@ If you are in a hurry, just type::
 
     pip install damona --upgrade
 
-You must install `Singularity <https://sylabs.io/docs>`_ to make use of **Damona**.
+You must install `Apptainery <https://apptainer.org/docs/admin/main/installation.html>`_ to make use of **Damona**.
 
 If you are familiar with conda, I believe you can do::
 
     conda install singularity
+
+or::
+
+    conda install apptainer
 
 Type **damona** in a shell. This will initiate the tool with a config file in your HOME/.config/damona directory for bash shell and `fish shell <https://fishshell.com/>`_ users.
 
@@ -182,8 +185,6 @@ solution for their users when they need to install third-party libraries.
 
 Before showing real-case examples, let us install the software itself and
 understand the details.
-
-
 
 Installation in details
 =======================
