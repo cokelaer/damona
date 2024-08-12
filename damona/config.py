@@ -55,7 +55,7 @@ class Config:
     Where the urls section can be used to store aliases to external registry. When
     installing software using::
 
-        damona install example --from url damona
+        damona install example --url damona
 
     if the alias damona is in the [urls] section, it is replaced by its real value (https://...)
     the URL must end with the expected registry name **registry.txt**
@@ -65,7 +65,7 @@ class Config:
 
     """
 
-    def __init__(self, name="damona"):
+    def __init__(self, name="damona", urls=[]):
         configuration = CustomConfig(f"{name}", verbose=True)
 
         #  let us add a damona.cfg in it. This will store URLs to look for singularities
