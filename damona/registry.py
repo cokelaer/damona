@@ -436,10 +436,6 @@ class Registry:
                 if name_version not in self.registry:
                     if release.download is None:  # pragma: no cover
                         logger.warning(f"software {software.name} has no download entry. please fill asap")
-                    elif release.download.startswith("damona::"):  # pragma: no cover
-                        from_url = self.config["urls"]["damona"]
-                        release.download = release.download.replace("damona::", from_url)
-                        release.download = release.download.replace("registry.txt", "")
                     self.registry[name_version] = release
                 else:  # pragma: no cover
                     for kk, vv in self.registry.items():

@@ -100,7 +100,7 @@ class BuilderFromDocker(Builder):
                 destination = name + "_" + version + ".img"
             else:
                 logger.error(
-                    "The container has no version using the v: separator (e.g., bowtie2:v1.0.0). No destination was provided either."
+                    "The container has no version using the v: separator (e.g., bowtie2:v1.0.0). No destination was provided either; please use e.g. --destination NAME_X.Y.Z.img where X.Y.Z is te version"
                 )
                 sys.exit(1)
         else:

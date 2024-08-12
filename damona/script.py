@@ -229,6 +229,8 @@ def deactivate(**kwargs):
     "--url",
     help="""download image from a remote URL. The URL must
   contain a registry.txt as explained on https://damona.readthedocs.io""",
+
+
 )
 @click.option(
     "--binaries",
@@ -267,7 +269,12 @@ def install(**kwargs):
     to install images elsewhere.
 
     You may have images online on a website. To install such images, use
-    the --url (see developer guide for details).
+    the --from-url (see developer guide for details). The binary will be named
+    after the name provided. For instance, this command download the image
+    and creates a binary called 'fastqc'. ::
+
+        damona install fastqc --from-url https://biomics.pasteur.fr/salsa/damona/fastqc_0.11.8.img
+
 
     Or wish to use an existing docker file::
 
@@ -280,9 +287,6 @@ def install(**kwargs):
 
     env = Environ()
     cenv = env.get_current_env()
-
-    # url
-    url = kwargs.get("from_url", None)
 
     image_path = pathlib.Path(kwargs["image"]).absolute()
 
@@ -305,12 +309,9 @@ def install(**kwargs):
         p.pull_image(force=force_image)
         p.install_binaries(force=force_binaries)
 
-    elif os.path.exists(image_path) is False:
-        if kwargs["url"]:
-            url = kwargs["url"]
-            logger.info(f"Installing from online registry  (url: {url})")
-        else:
-            logger.info("Installing from Damona registry")
+    elif os.path.exists(image_path) is False or kwargs['url']:
+        url = kwargs["url"]
+        logger.info(f"Installing from given URL")
 
         p = RemoteImageInstaller(kwargs["image"], from_url=kwargs["url"], cmd=sys.argv, binaries=binaries)
 
@@ -666,6 +667,7 @@ def stats(**kwargs):
                 N += downloads.replace(",", "")
             except AttributeError:
                 N += downloads
+
         click.echo(f"Total: {N}")
 
     envs = Environ()
@@ -769,7 +771,7 @@ def build(**kwargs):  # pragma: no cover
 
     \b
         # a local recipes (recipes must have a version)
-         build Singularity.salmon_1.3.0
+        build Singularity.salmon_1.3.0
 
     You may build an image from a singularity recipes to be found in Damona
     itself. In such case, the name and version are enough. Siuch recipes can be
@@ -779,11 +781,16 @@ def build(**kwargs):  # pragma: no cover
 
     You may also build image from a docker image to be found on docker hub:
 
-    \b
         damona build docker://biocontainers/bowtie2:v2.4.1_cv1
+
+    If no version is added, you need to add one using --destination. This will fail:
+
         damona build docker://kapeel/hisat2
 
-    TO be implemented: from singularity hub or sylabs.io
+    so you need to informa damona about the version:
+
+        damona build docker://kapeel/hisat2 --destination hisat2_v2.0.0.img
+
 
     """
     logger.debug(kwargs)

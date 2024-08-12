@@ -232,6 +232,23 @@ And to install it in the *test2* environment::
 You can activate as many environments as you wish. Calling deactivate will only
 deactivate the last activated environment. In works as a Last In First Out mechanism.
 
+
+Install binaries not in the registry
+-------------------------------------
+
+When Damona's develope create a container, the also associate a list of binaries to be installed. This list is provided in a registry file (registry.yaml). 
+
+For example, when installing the *fastqc* container, one binary called *fastqc* is created. Other containers may contain several binaries.
+
+Note, however, that the list of binaries may not be complete. If so, users need to informa damona's developer, who have to change the registry, create a release, publish the release; then users have to be aware of that release, and update damona. This may be time consumming and is not dynamic enough.
+
+If a user knows that a binary is present in a container, but not installed, he can sill install the binary as follows::
+
+    damona install mummer --binaries show-snps
+
+
+
+
 Environmental variables
 ------------------------
 DAMONA_SINGULARITY_OPTIONS

@@ -142,9 +142,9 @@ class LocalImageInstaller(ImageInstaller):
         # can be guessed
         super(LocalImageInstaller, self).__init__()
 
-        if os.path.exists(image_name) and pathlib.Path(image_name).is_dir():
-            logger.error(f"image name must be a singulatity file, not a directory")
-            sys.exit(1)
+        #if os.path.exists(image_name) and pathlib.Path(image_name).is_dir():
+        #    logger.error(f"image name must be a singulatity file, not a directory")
+        #    sys.exit(1)
 
         self.input_image = ImageReader(image_name)
         self.target = pathlib.Path(DAMONA_PATH) / "images" / self.input_image.shortname
@@ -273,6 +273,7 @@ class RemoteImageInstaller(ImageInstaller):
         # let us first retrieve the image and save it in a temporary file.
         # we keep the original name by only replacing the : with underscore so
         # that we can use ImageReader class to help us later on.
+
         if ":" in self.image_name:
             logger.info(f"Looking for {self.image_name}...")
             # e.g. fastqc:0.11.9
@@ -368,14 +369,19 @@ class RemoteImageInstaller(ImageInstaller):
             print(cmd)
             subprocess.call(cmd.split())
         else:
+
             if download_name.startswith("https://"):
                 logger.info(f"downloading into {pull_folder} {output_name}")
 
                 download_with_progress(download_name, filename=str(pull_folder / output_name))
 
+            elif download_name.startswith("docker://"):  # docker has no extension .img/.sig
+                output_name += ".img"
+                output_name = output_name.replace(":v", "_v")
+                Client.pull(str(download_name), name=output_name, pull_folder=pull_folder, force=force)
             else:  # use singularity
                 Client.pull(str(download_name), name=output_name, pull_folder=pull_folder, force=force)
-        logger.info(f"File {self.image_name} uploaded to {pull_folder}")
+        logger.info(f"Downloaded {output_name} into {pull_folder}")
 
         # Read the image, checking everything is correct
 
@@ -406,7 +412,7 @@ class BiocontainersInstaller(ImageInstaller):
     """
 
     Using bioservices.Biocontainers, we can retrieve all tools and versions.
-    We store the list once in a while in damona/biocontainers/registry.yaml
+    We could store the list once in a while in damona/biocontainers/registry.yaml
 
         from bioservices import Biocontainers
         b = Biocontainers()
@@ -414,6 +420,13 @@ class BiocontainersInstaller(ImageInstaller):
         tools = {}
         for name, versions in zip(info['name'], info['versions']):
             tools[name] = [x['meta_version'] for x in versions]
+
+    To find valid hit on biocontainer, one can use::
+
+        damona searh hisat2 --include-biocontainers
+
+    This does not currently work because it searches for a docker that is not working.
+    damona install hisat2
 
     """
 
@@ -461,16 +474,17 @@ class BiocontainersInstaller(ImageInstaller):
         download_name = self.image_name
 
         # now that we have the registry name, we can download the image
-        logger.info("Downloading {}".format(self.image_name))
 
         pull_folder = self.images_directory / "damona_buffer"
         if output_name is None:
             output_name = self.image_name.replace("biocontainers/", "")
             output_name = output_name.replace(":", "_") + ".img"
 
+        logger.info(f"Downloading {self.image_name} into {output_name}")
+
         #
-        Client.pull("docker://" + str(self.image_name), name=output_name, pull_folder=pull_folder, force=force)
-        logger.info(f"File {self.image_name} uploaded to {pull_folder}")
+        Client.pull(f"docker://{self.image_name}", name=output_name, pull_folder=pull_folder, force=force)
+        logger.info(f"File {self.image_name} uploaded to {pull_folder} as {output_name}")
 
         #
         self.input_image = ImageReader(pull_folder / output_name)

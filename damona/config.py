@@ -24,10 +24,6 @@ import damona.shell
 logger = colorlog.getLogger(__name__)
 
 
-# list of URLs where to find registry and their aliases
-urls = {"damona": "https://biomics.pasteur.fr/salsa/damona/registry.txt"}
-
-
 __all__ = ["Config", "get_damona_commands"]
 
 
@@ -43,11 +39,6 @@ class Config:
 
         [general]
         quiet=False
-
-
-        [urls]
-        damona=https://..../registry.txt
-        url1=https://..../registry.txt
 
         [zenodo]
         token=APmm6p....

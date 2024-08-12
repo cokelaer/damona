@@ -434,12 +434,12 @@ def get_stats_software(software):
 
     s = Software(software)
     try:
-        return get_stats_id(s.zenodo_id)
+        return get_stats_id(s.zenodo_id, software)
     except AttributeError:
         return 0
 
 
-def get_stats_id(ID):
+def get_stats_id(ID, name=None):
     """Returns number of downloads
 
 
@@ -447,18 +447,43 @@ def get_stats_id(ID):
     you should provide the ID 7319782
 
 
-
     """
     import json
 
     from bs4 import BeautifulSoup
 
-    r = requests.get(f"https://zenodo.org/record/{ID}")
-    bs = BeautifulSoup(r.content, features="html.parser")
+    if ID == "bioconainers":
+        return 0
+    elif ID is None:
+        print(f"# ID {ID} is unknown for {name}. developers should update registry")
+        return 0
+    else:
 
-    try:
-        data = bs.find(id="recordVersions")
-        data = json.loads(data.attrs["data-record"])["stats"]["all_versions"]["downloads"]
-        return data
-    except Exception:
-        return 1
+        r = requests.get(f"https://zenodo.org/record/{ID}")
+        bs = BeautifulSoup(r.content, features="html.parser")
+
+        # according to damona, there is a limit of 60 requests per minute but also
+        # 2000 requests per hour. Since there are more than 60 software, we expect 
+        # this call to reach the limit. Therefore, we introspect the X-RateLimit
+        # and Number of requests remaining and add a sleep.
+        import time
+        R = int(r.headers['X-RateLimit-Remaining'])
+        L = int(r.headers['X-RateLimit-Limit'])
+        reset = int(r.headers['X-RateLimit-Reset'])
+        T = int(time.time())
+        if int(r.headers['X-RateLimit-Remaining']) < 1:
+
+            delay = reset - int(time.time())
+            logger.warning(f"Warning limit attained. please wait {delay}")
+            time.sleep(delay)
+
+
+        try:
+            data = bs.find(id="recordVersions")
+            data = json.loads(data.attrs["data-record"])["stats"]["all_versions"]["downloads"]
+            return data
+        except Exception as err:
+            print(err)
+            print(ID)
+            print("====")
+            return -1

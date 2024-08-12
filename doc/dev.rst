@@ -19,9 +19,9 @@ The first useful command for developers is the **build** command::
 
     damona build --help
 
-The second is the **zenodo-upload** command::
+The second is the **upload** command::
 
-    damona zenodo-upload --help
+    damona upload --help
 
 
 All images will be posted on Zenodo if Singularity recipe is in Damona
@@ -46,7 +46,7 @@ Case 1: the tool does not exist.
 
 Create a new Singularity image. Time to upload the resulting (functional !) image::
 
-    damona zenodo-upload SOFTWARE_1.0.0.img --mode zenodo
+    damona upload SOFTWARE_1.0.0.img --mode zenodo
 
 This command uploads the image on Zenodo with all correct metadata already pre-filled for you. It also
 creates a registry.yaml file with the metadata ready to commit and push. **edit the registry file to add a binaries section if neeeded**.
@@ -57,7 +57,7 @@ Case 2: the recipe exists already
 
 Create a new Singularity image. Time to upload the resulting (functional !) image::
 
-    damona zenodo-upload SOFTWARE_2.0.0.img --mode zenodo
+    damona upload SOFTWARE_2.0.0.img --mode zenodo
 
 It updates the existing registry.yaml ready to commit and push
 

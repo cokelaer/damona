@@ -3,6 +3,7 @@ sequana_tools:
   binaries:  fastqc bowtie STAR bowtie2 bowtie2-build bowtie-build bwa featureCounts samtools bamtools  gffread dsrc MarkDuplicates spades.py split-paired-reads.py filter-abund.py extract-paired-reads.py snpEff deeptools picard subread sambamba pbunzip2 pbzip2 kraken2 krona ktImportText kraken2-build freebayes minimap2 bedtools interleave-reads.py normalize-by-median.py ccs
   zenodo_id: 5767304
 
+
   releases:
     0.14.3:
       download: https://zenodo.org/record/7102074/files/sequana_tools_0.14.3.img
