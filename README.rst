@@ -398,6 +398,9 @@ but only changes made to the code itself.
 Version   Description
 ========= ========================================================================
 0.13      * Fix insallation of a registered software given a dockerhub link
+          * Fix requests limits on zenodo (for the stats)
+          * remove URLs section in config (will remove this feature)
+          * handle docker:// link properly to pull image from registry
 0.12.3    * ADDED dustmasker 1.0.0
           * update art with 2.1.8, 2.3.7, 2.5.8 versions
           * ADDED mosdepth 0.3.8
