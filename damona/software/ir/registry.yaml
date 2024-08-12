@@ -1,0 +1,10 @@
+ir:
+  doi: 10.5281/zenodo.13305731
+  zenodo_id: 13305732
+  binaries: ir
+  releases:
+    2.8.0:
+      download: https://zenodo.org/record/13305732/files/ir_2.8.0.img
+      md5sum: 0861075cc6478afd8df3922e4d522d6d
+      doi: 10.5281/zenodo.13305732
+      filesize: 39620608
