@@ -65,7 +65,7 @@ class Config:
 
     """
 
-    def __init__(self, name="damona", urls=[]):
+    def __init__(self, name="damona", urls={"damona": "https://biomics.pasteur.fr/salsa/damona/registry.txt"}):
         configuration = CustomConfig(f"{name}", verbose=True)
 
         #  let us add a damona.cfg in it. This will store URLs to look for singularities
