@@ -1,6 +1,6 @@
 mummer:
   doi: 10.5281/zenodo.10936493
-  binaries: show-diff nucmer promer run-mummer1 dnadiff run-mummer3 mummer mummerplot show-snps show-coords delta-filter
+  binaries: show-diff nucmer promer run-mummer1 dnadiff run-mummer3 mummer mummerplot repeat-match show-snps show-coords delta-filter
   zenodo_id: 10936494
   releases:
     3.23.0:
