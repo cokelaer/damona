@@ -1,0 +1,10 @@
+vadr:
+  doi: 10.5281/zenodo.13323320
+  binaries: v-annotate.pl,v-build.pl,fasta-trim-terminal-ambigs.pl
+  zenodo_id: 13323321
+  releases:
+    1.6.4:
+      download: https://zenodo.org/record/13323321/files/vadr_1.6.4.img
+      md5sum: ed748fb3cccbb488b49fe05c18ec2bab
+      doi: 10.5281/zenodo.13323321
+      filesize: 831700992

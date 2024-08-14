@@ -1,0 +1,8 @@
+
+Test the build using:
+
+    singularity exec vadr_1.6.4.img /vadr/testfiles/do-all-tests.sh
+
+
+citation: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC9094095/
+
