@@ -1,0 +1,10 @@
+seaview:
+  doi: 10.5281/zenodo.13276568
+  zenodo_id: 13276569
+  binaries: seaview
+  releases:
+    5.0.5:
+      download: https://zenodo.org/record/13276569/files/seaview_5.0.5.img
+      md5sum: 3653ad631536cc9daf675249fa859b3f
+      doi: 10.5281/zenodo.13276569
+      filesize: 61292544
