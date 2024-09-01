@@ -1,0 +1,10 @@
+repeatmasker:
+  doi: 10.5281/zenodo.13391622
+  zenodo_id: 13391623
+  binaries: segmasker
+  releases:
+    4.0.8:
+      download: https://zenodo.org/record/13391623/files/repeatmasker_4.0.8.img
+      md5sum: eeabbf772362e41ba9bdba249326663e
+      doi: 10.5281/zenodo.13391623
+      filesize: 1770332160
