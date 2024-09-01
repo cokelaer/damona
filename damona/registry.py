@@ -96,10 +96,8 @@ class Releases(dict):
                 self[str(version)] = Release(version, data)
 
     def _get_last_release(self):
-        from packaging import version
-
         # split on - for the special cases 0.11.9-py3
-        return max(list(self.keys()), key=lambda x: version.parse(x.split("-")[0]))
+        return max(list(self.keys()), key=lambda x: packagin.version.parse(x.split("-")[0]))
 
     last_release = property(_get_last_release, doc="return the last version")
 

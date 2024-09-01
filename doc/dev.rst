@@ -150,6 +150,13 @@ A useful set of commands is also to add test within the container but this is on
     %test
       command --help
 
+Singularity recipes from micromamba
+------------------------------------
+
+A classic recipes is the one based on micromamba. We build a micromamba image in ./library/micromamba and can be reused as follow to install any tool from conda::
+
+
+
 
 
 

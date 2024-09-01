@@ -24,6 +24,7 @@ import os
 import pathlib
 import sys
 import time
+import packaging
 
 import click
 import click_completion
@@ -522,18 +523,49 @@ def search(**kwargs):
     else:
         pattern = kwargs["pattern"]
 
+    registry = Registry(from_url=url)
+
+    click.echo()
+
+    recommended = None
+
     if not kwargs["binaries_only"]:
         click.echo(f"Pattern '{pattern}' found in these releases:")
-        modules = Registry(from_url=url).get_list(pattern=pattern)
+        modules = registry.get_list(pattern=pattern)
         for mod in modules:
-            click.echo(f" - {mod}  (damona install {mod})")
+            name, version = mod.split(":")
+            url = registry.registry[mod]._data[name]['releases'][version]['download']
+            size = registry.registry[mod]._data[name]['releases'][version]['filesize']
+            if size > 1e9:
+                size =  round(size/1e9,2)
+                size = f"{size}G"
+            else:
+                size =  round(size/1e6,2)
+                size = f"{size}M"
+            click.echo(f" - {mod} -- {url} -- {size}")
+            if not recommended:
+                recommended = mod
+            else:
+                recommended_version = recommended.split(":")[1]
+                if packaging.version.parse(version) > packaging.version.parse(recommended_version):
+                    recommended = mod
 
+    click.echo()
     if not kwargs["images_only"]:
         click.echo(f"Pattern '{pattern}' found as binaries:")
-        modules = Registry(from_url=url).get_binaries(pattern=pattern)
-        for k in sorted(modules.keys()):
-            v = modules[k]
-            click.echo(f" - {k}: {v} (damona install {k})")
+        modules = registry.get_binaries(pattern=pattern)
+        for mod in sorted(modules.keys()):
+            v = modules[mod]
+            name, version = mod.split(":")
+            url = registry.registry[mod]._data[name]['releases'][version]['download']
+            size = registry.registry[mod]._data[name]['releases'][version]['filesize']
+            if size > 1e9:
+                size =  round(size/1e9,2)
+                size = f"{size}G"
+            else:
+                size =  round(size/1e6,2)
+                size = f"{size}M"
+            click.echo(f" - {mod}: -- {url} -- {size}")
 
     if kwargs["include_biocontainers"]:
         click.echo("Searching biocontainers:")
@@ -546,6 +578,11 @@ def search(**kwargs):
                     click.echo(f" -     {version}: {install} ")
             elif pattern == "*":
                 click.echo(f" - {k}: {v}")
+
+    if recommended:
+        click.echo(f"\n\n \U00002139\U0000FE0F -- Recommended installation (latest version and dedicated container) -- \U00002139\U0000FE0F \n\n    damona install {recommended}")
+
+
 
 
 # ============================================================  export

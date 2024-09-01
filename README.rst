@@ -28,38 +28,8 @@ DAMONA
 :Issues: Please fill a report on `github <https://github.com/cokelaer/damona/issues>`__
 :Platform: This is currently only available for Linux distribution with zsh/fish/bash shells (contributions are welcome to port the tool on other platforms/shells)
 
-Quick Start
-===========
-
-Assuming Apptainer (a.k.a. Singularity) is installed on your system, install Damona using **pip** for Python::
-
-    pip install damona
-
-You need to configure Damona before using it. In a bash shell, type::
-
-    damona
-
-Add these lines in your .bashrc::
-
-    if [ ! -f  "~/.config/damona/damona.sh" ] ; then
-        source ~/.config/damona/damona.sh
-    fi
-
-**open a new shell** and then use damona. Here we will install a quite common tool called **fastqc**::
-
-    damona create TEST
-    damona activate TEST
-    damona install fastqc
-
-This should install **fastqc** software in the newly created Damona environment (TEST). Type::
-
-    fastqc
-
-it should open a window with the **fastqc** interface.
-
-
 Overview
-========
+==========
 
 Damona is a singularity environment manager.
 
@@ -72,31 +42,34 @@ In a nutshell, Damona combines the logic of Conda environments with the
 reproducibility of singularity containers. We believe that it could be useful for
 other projects and therefore decided to release it as an independent tool.
 
-* As of Aug. 2024, **Damona** contains 87 containers (136 versions), which correspond to 468 unique binaries.
-
+* As of Aug. 2024, **Damona** contains 87 containers (136 versions), which corresponds to 468 unique binaries.
 
 Installation
-============
+=============
 
-If you are in a hurry, just type::
-
-    pip install damona --upgrade
-
-You must install `Apptainery <https://apptainer.org/docs/admin/main/installation.html>`_ to make use of **Damona**.
+Since **Damona** relies on **apptainer** (a.k.a. singularity), you must install `Apptainer <https://apptainer.org/docs/admin/main/installation.html>`_ to make use of **Damona**. This is the egg and chicken paradox. To get reproducible container with apptainer, at some point you need to install it. That the first
+of the two software that you will need to install. Instructions
+are on `singularity web site <https://sylabs.io/guides/3.6/user-guide/>`_. 
 
 If you are familiar with conda, I believe you can do::
 
-    conda install singularity
-
-or::
-
     conda install apptainer
 
-Type **damona** in a shell. This will initiate the tool with a config file in your HOME/.config/damona directory for bash shell and `fish shell <https://fishshell.com/>`_ users.
+I personally use the version available on my Fedora/Linux platform. Then install **Damona** using **pip** for Python::
 
-Bash users should add this code in their ~/.bashrc file::
+    pip install damona
 
-    source ~/.config/damona/damona.sh
+The first time, you use **Damona**, you need to type::
+
+    damona
+
+This will initiate the tool with a config file in your HOME/.config/damona directory.
+
+Depending on your shell, you will be instructed to source a shell script. To make it persistent, you will need to update an environment file. For instance, under **bash** shell, add these lines in your .bashrc::
+
+    if [ ! -f  "~/.config/damona/damona.sh" ] ; then
+        source ~/.config/damona/damona.sh
+    fi
 
 Fish shell users should add the following code in their ~/.config/fish/config.fish file::
 
@@ -106,17 +79,18 @@ Zsh users should add the following code in their ~/.config/fish/config.fish file
 
     source ~/.config/damona/damona.zsh
 
-Open a new shell and you are ready to go. Please see the `Installation in details`_ section for more information.
+Then, **open a new shell** and type **damona** again. You should see an help message:
+
+.. image:: _static/cli.png
 
 Quick Start
 ===========
 
-**Damona** needs environments to work with.
-First, let us *create* one, which is called TEST::
+**Damona** needs environments to work with. First, let us *create* one, which is called TEST::
 
     damona create TEST
 
-Second, we need to *activate* it. Subsequent insallation will happen in this environment::
+Second, we need to *activate* it. Subsequent insallation will happen in this environment unless you open a new shell, or deactivate this environment::
 
     damona activate TEST
 
@@ -124,9 +98,9 @@ From there, we can install some binaries/images::
 
     damona install fastqc:0.11.9
 
-That's it. Time to test. Type **fastqc**.
+That's it. Time to test. Type **fastqc**. This should open a graphical interface.
 
-To rename this TEST example::
+To rename this TEST environment, you may use::
 
     damona rename TEST --new-name prod
 
@@ -186,37 +160,8 @@ solution for their users when they need to install third-party libraries.
 Before showing real-case examples, let us install the software itself and
 understand the details.
 
-Installation in details
-=======================
 
-The is the egg and chicken paradox. To get reproducible container with
-singularity, at some point you need to install singularity itself. That the first
-of the two software that you will need to install. Instructions
-are on `singularity web site <https://sylabs.io/guides/3.6/user-guide/>`_. This
-is not obvious to be honest. You need the GO language to be installed as well. I
-personally installed from source and it worked like a charm.
 
-Second, you need **Damona**. This is a pure Python sotfware with only a few
-dependencies. Install it with the **pip** software provided with your Python
-installation (Python 3.X)::
-
-    pip install damona --upgrade
-
-Type **damona** to create the Damona tree structure. Images and binaries
-will be saved in your home directory within the
-~/.config/damona directory. There, special files should be available:
-**damona.sh**, **damona.fish**  and **damona.cfg**. Check that those files are present.
-
-Finally, you need to tell your system where to find damona. For bashrc users,
-please add this line to you bashrc file::
-
-    source ~/.config/damona/damona.sh
-
-open a new shell and type **damona** and you should be ready to go.
-
-For fishshell users, please add this line in **~/.config/fish/config.fish***::
-
-    source ~/.config/damona/damona.fish
 
 Tutorial
 ============
@@ -397,6 +342,9 @@ but only changes made to the code itself.
 ========= ========================================================================
 Version   Description
 ========= ========================================================================
+          * ADDED: ir v2.8.0, vadr v1.6.4, seaview v5.0.5, repeatmasker 4.0.8
+             bandage 0.8.1
+          * CHANGES: damona search with container sizes and recommendation
 0.13      * Fix insallation of a registered software given a dockerhub link
           * Fix requests limits on zenodo (for the stats)
           * remove URLs section in config (will remove this feature)
