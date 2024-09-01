@@ -1,0 +1,10 @@
+bandage:
+  doi: 10.5281/zenodo.13399041
+  binaries: Bandage
+  zenodo_id: 13399042
+  releases:
+    0.8.1:
+      download: https://zenodo.org/record/13399042/files/bandage_0.8.1.img
+      md5sum: 4be050dc620e0ed1d8e3ab0d51f45597
+      doi: 10.5281/zenodo.13399042
+      filesize: 759283712
