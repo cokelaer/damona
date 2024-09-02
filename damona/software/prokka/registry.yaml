@@ -7,6 +7,7 @@ prokka:
       download: https://zenodo.org/record/5708864/files/prokka_1.14.5.img
       md5sum: 20d8aefe076ff10d54b4edbb474ea879
       doi: 10.5281/zenodo.5708864
+      filesize: 1716860446
     # replaced by the other v1.14.6
     #1.14.6:
     #  download: https://zenodo.org/record/7848754/files/prokka_1.14.6.img

@@ -7,4 +7,4 @@ cd-hit:
       download: https://zenodo.org/records/10030643/files/cd-hit_4.8.1.img
       md5sum: 85dcf116246a0218620c75feaba7d8b4
       doi: 10.5281/zenodo.10030643
-      filesize:
+      filesize: 227966976
