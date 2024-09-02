@@ -535,21 +535,28 @@ def search(**kwargs):
         for mod in modules:
             name, version = mod.split(":")
             url = registry.registry[mod]._data[name]['releases'][version]['download']
-            size = registry.registry[mod]._data[name]['releases'][version]['filesize']
-            if size > 1e9:
-                size =  round(size/1e9,2)
-                size = f"{size}G"
-            else:
-                size =  round(size/1e6,2)
-                size = f"{size}M"
+            try:
+                size = registry.registry[mod]._data[name]['releases'][version]['filesize']
+                if size > 1e9:
+                    size =  round(size/1e9,2)
+                    size = f"{size}G"
+                else:
+                    size =  round(size/1e6,2)
+                    size = f"{size}M"
+            except Exception:
+                logger.warning(f"{mod}. could not extract filesize")
+                size = "-1"
+
             click.echo(f" - {mod} -- {url} -- {size}")
             if not recommended:
                 recommended = mod
             else:
                 recommended_version = recommended.split(":")[1]
-                if packaging.version.parse(version) > packaging.version.parse(recommended_version):
-                    recommended = mod
-
+                try:
+                    if packaging.version.parse(version) > packaging.version.parse(recommended_version):
+                        recommended = mod
+                except packaging.version.InvalidVersion:
+                    pass
     click.echo()
     if not kwargs["images_only"]:
         click.echo(f"Pattern '{pattern}' found as binaries:")
@@ -558,13 +565,18 @@ def search(**kwargs):
             v = modules[mod]
             name, version = mod.split(":")
             url = registry.registry[mod]._data[name]['releases'][version]['download']
-            size = registry.registry[mod]._data[name]['releases'][version]['filesize']
-            if size > 1e9:
-                size =  round(size/1e9,2)
-                size = f"{size}G"
-            else:
-                size =  round(size/1e6,2)
-                size = f"{size}M"
+            try:
+                size = registry.registry[mod]._data[name]['releases'][version]['filesize']
+                if size > 1e9:
+                    size =  round(size/1e9,2)
+                    size = f"{size}G"
+                else:
+                    size =  round(size/1e6,2)
+                    size = f"{size}M"
+            except Exception:
+                logger.warning(f"{mod}. could not extract filesize")
+                size = "-1"
+
             click.echo(f" - {mod}: -- {url} -- {size}")
 
     if kwargs["include_biocontainers"]:
@@ -580,7 +592,7 @@ def search(**kwargs):
                 click.echo(f" - {k}: {v}")
 
     if recommended:
-        click.echo(f"\n\n \U00002139\U0000FE0F -- Recommended installation (latest version and dedicated container) -- \U00002139\U0000FE0F \n\n    damona install {recommended}")
+        click.echo(f"\n\n \U00002139\U0000FE0F -- Recommended installation (latest version and dedicated container) -- \U00002139\U0000FE0F \n\n    damona install {recommended}\n")
 
 
 
