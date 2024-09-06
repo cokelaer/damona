@@ -1,0 +1,10 @@
+augustus:
+  doi: 10.5281/zenodo.13711281
+  binaries: augustus
+  zenodo_id: 13711282
+  releases:
+    3.5.0:
+      download: https://zenodo.org/record/13711282/files/augustus_3.5.0.img
+      md5sum: f04dc480034cbbb102180c97f081d1b5
+      doi: 10.5281/zenodo.13711282
+      filesize: 348143616
