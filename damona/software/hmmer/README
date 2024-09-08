@@ -1,0 +1,15 @@
+First version of 3.3.2 is here:
+
+         download: https://zenodo.org/record/8091834/files/hmmer_3.3.2.img
+         md5sum: 27b31f8b06cce0ca1e3de2f63e41cc46
+         doi: 10.5281/zenodo.8091834
+         filesize: 112222208
+
+and was replaced by a smaller version:
+
+      download: https://zenodo.org/record/13717178/files/hmmer_3.3.2.img
+      md5sum: 278b15aaf3f90e78dd72e3037827b958
+      doi: 10.5281/zenodo.13717178
+      filesize: 35192832
+
+

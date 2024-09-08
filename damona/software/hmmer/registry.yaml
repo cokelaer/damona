@@ -3,8 +3,13 @@ hmmer:
   zenodo_id: 8091834
   binaries: hmmalign hmmbuild hmmconvert hmmemit hmmfetch hmmlogo hmmpgmd hmmpgmd_shard  hmmpress hmmscan  hmmsearch hmmsim  hmmstat
   releases:
+    2.3.2:
+      download: https://zenodo.org/record/13717049/files/hmmer_2.3.2.img
+      md5sum: 7020adc838eab2d27a994f9b7c506f92
+      doi: 10.5281/zenodo.13717049
+      filesize: 31944704
     3.3.2:
-      download: https://zenodo.org/record/8091834/files/hmmer_3.3.2.img
-      md5sum: 27b31f8b06cce0ca1e3de2f63e41cc46
-      doi: 10.5281/zenodo.8091834
-      filesize: 112222208
+      download: https://zenodo.org/record/13717178/files/hmmer_3.3.2.img
+      md5sum: 278b15aaf3f90e78dd72e3037827b958
+      doi: 10.5281/zenodo.13717178
+      filesize: 35192832
