@@ -1,7 +1,7 @@
 prokka:
   doi: 10.5281/zenodo.5708863
   zenodo_id: 5708864
-  binaries: prokka prodigal
+  binaries: prokka prodigal barrnap
   releases:
     1.14.5:
       download: https://zenodo.org/record/5708864/files/prokka_1.14.5.img
