@@ -1,0 +1,9 @@
+miniasm:
+  doi: 10.5281/zenodo.13550866
+  zenodo_id: 13550867
+  releases:
+    0.3.0:
+      download: https://zenodo.org/record/13550867/files/miniasm_0.3.0.img
+      md5sum: 7bc1a9f0c3a399747a93d81a686c5c3c
+      doi: 10.5281/zenodo.13550867
+      filesize: 27189248
