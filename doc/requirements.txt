@@ -1,4 +1,4 @@
 sphinx_click
 sphinx>=3
 sphinx_rtd_theme
-
+sphinx_copybutton
