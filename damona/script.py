@@ -25,6 +25,7 @@ import pathlib
 import sys
 import time
 import packaging
+import subprocess
 
 import click
 import click_completion
@@ -747,12 +748,11 @@ def list(**kwargs):
 @click.option(
     "--token",
     default=None,
-    help="""A valid zenodo (or sandbox zenodo) token (see damona zenodo --help for details).
-
-
-""",
+    help="""A valid zenodo (or sandbox zenodo) token (see damona zenodo --help for details).""",
 )
 @click.option("--mode", default="sandbox.zenodo", help="mode can be either 'zenodo' or 'sandbox.zenodo'")
+@click.option("--no-check", default=False, help="Damona is driven by the Sequana project. Presence of bash and python are usually required by Sequana pipelines (Snakemake) so we make them compulsary. If developers do not need them, the --no-check option may be used. "
+)
 def upload(**kwargs):  # pragma: no cover
     """Upload a singularity file to Zenodo. FOR DEVELOPERS ONLY
 
@@ -792,9 +792,25 @@ def upload(**kwargs):  # pragma: no cover
     """
     from damona.zenodo import Zenodo
 
+    # some aliases
     token = kwargs["token"]
     mode = kwargs["mode"]
     filename = kwargs["filename"]
+
+    # check that python and bash are available in the container.
+    status = subprocess.run(f"singularity exec {filename} python --version".split(),
+        stdout=subprocess.PIPE)
+    if status.returncode:
+        click.echo("Damona ERROR: could not find **python** command in the container", 
+            err=True)
+        sys.exit(1)
+
+    status = subprocess.run(f"singularity exec {filename} bash --version".split(),
+        stdout=subprocess.PIPE)
+    if status.returncode:
+        click.echo("Damona ERROR: could not find **bash** command in the container", 
+            err=True)
+        sys.exit(1)
 
     #
     z = Zenodo(mode, token)
