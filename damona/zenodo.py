@@ -20,6 +20,7 @@ import os
 import sys
 from configparser import NoOptionError, NoSectionError
 
+from tqdm import tqdm
 import colorlog
 import requests
 
@@ -30,6 +31,26 @@ logger = colorlog.getLogger(__name__)
 
 
 logger.setLevel("INFO")
+
+
+class ProgressFileWrapper: #pragma: no cover
+    # a tqdm wrapper
+    def __init__(self, file, total_size):
+        self.file = file
+        self.total_size = total_size
+        self.progress_bar = tqdm(total=total_size, unit='B', unit_scale=True, desc='Uploading')
+
+    def read(self, size=-1):
+        data = self.file.read(size)
+        self.progress_bar.update(len(data))
+        return data
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *args):
+        self.progress_bar.close()
+
 
 
 class Zenodo:  # pragma: no cover
@@ -226,10 +247,20 @@ class Zenodo:  # pragma: no cover
 
         jsons = {}
 
+        # Determine the total size of the file
+        total_size = os.path.getsize(filename)
+
         # the upload it self may take a while
         with open(filename, "rb") as fp:
+            # Wrap the file with the ProgressFileWrapper
+            wrapped_file = ProgressFileWrapper(fp, total_size)
+
             basename = os.path.basename(filename)
-            r = requests.put(f"{bucket_url}/{basename}", data=fp, params=self.params)
+            #r = requests.put(f"{bucket_url}/{basename}", data=fp, params=self.params)
+
+            r = requests.put(f"{bucket_url}/{basename}", data=wrapped_file, 
+                params=self.params)
+
             self._status(r, [200, 201])
             return r
 
@@ -286,7 +317,7 @@ analysis.""",
 
     def create_new_deposit_version(self, deposit):  # pragma: no cover
         # expected status 201
-        logger.info("Creating a new version. Please wait")
+        logger.info(f"Creating a new version for record {deposit}. Please wait")
         ID = self.get_id(deposit)
         url = f"https://{self.mode}.org/api/deposit/depositions/{ID}/actions/newversion"
         r = requests.post(url, params=self.params)
@@ -320,12 +351,16 @@ analysis.""",
         data = ImageName(filename)
         software = Software(data.name)
 
-        if software.name:
+        # sandbox has no registry in general, so no name, therefore we create
+        # a new deposit.
+        if software.name and self.mode != "sandbox.zenodo":
+            logger.info("Software known, adding new version.")
             msg = self.create_new_version_with_file_and_publish(filename)
             print(msg)
             with open(self.registry_name, "a+") as fout:
                 fout.write(msg)
         else:
+            logger.info("Software not known, adding new deposit.")
             msg = self.create_new_deposit_with_file_and_publish(filename)
             print(msg)
             with open(self.registry_name, "w") as fout:
