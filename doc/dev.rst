@@ -156,7 +156,30 @@ Singularity recipes from micromamba
 A classic recipes is the one based on micromamba. We build a micromamba image in ./library/micromamba and can be reused as follow to install any tool from conda::
 
 
+    Bootstrap: localimage
+    From: micromamba_1.5.8.img
 
+    %post
+        apt -y update && apt -y upgrade
+
+        # export the PATH here so that pip is found later on
+        export PATH=$PATH:/opt/conda/envs/main/bin/
+        # an alias
+        export OPTS=" -q -c conda-forge -c bioconda -n main -y "
+
+        micromamba install $OPTS python="3.9"
+        micromamba install $OPTS "art==3.19.15"
+
+        # cleanup
+        micromamba clean --packages -y
+        micromamba clean --all -y
+        rm -rf /opt/condas/pkg
+
+    %environment
+        export PATH=$PATH:/opt/conda/envs/main/bin/
+
+    %runscript
+        art_illumina "$@"
 
 
 

@@ -1,0 +1,25 @@
+--- rnammer	2008-09-09 12:43:33.000000000 +0200
++++ .mo/rnammer	2024-09-06 23:20:36.831747206 +0200
+@@ -32,7 +32,7 @@
+ ## PROGRAM CONFIGURATION BEGIN
+ 
+ # the path of the program
+-my $INSTALL_PATH = "/usr/cbs/bio/src/rnammer-1.2";
++my $INSTALL_PATH = "/rnammer/";
+ 
+ # The library in which HMMs can be found
+ my $HMM_LIBRARY = "$INSTALL_PATH/lib";
+@@ -47,10 +47,10 @@
+ my $HMMSEARCH_BINARY;
+ my $PERL;
+ if ( $uname eq "Linux" ) {
+-	$HMMSEARCH_BINARY = "/usr/cbs/bio/bin/linux64/hmmsearch";
++	$HMMSEARCH_BINARY = "/usr/local/bin/hmmsearch";
+ 	$PERL = "/usr/bin/perl";
+ } elsif ( $uname eq "IRIX64" ) {
+-	$HMMSEARCH_BINARY = "/usr/cbs/bio/bin/irix64/hmmsearch";
++	$HMMSEARCH_BINARY = "/usr/local/bin/hmmsearch";
+ 	$PERL = "/usr/sbin/perl";
+ } else {
+ 	die "unknown platform\n";
+

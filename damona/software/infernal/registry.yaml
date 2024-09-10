@@ -1,0 +1,10 @@
+infernal:
+  doi: 10.5281/zenodo.13739623
+  binaries: cmalign cmcalibrate cmemit cmpress cmsearch cmbuild cmconvert cmfetch cmscan cmstat
+  zenodo_id: 13739624
+  releases:
+    1.1.5:
+      download: https://zenodo.org/record/13739624/files/infernal_1.1.5.img
+      md5sum: 8ea5433eda70a9d3fc7bd0006f69ccf8
+      doi: 10.5281/zenodo.13739624
+      filesize: 124108800

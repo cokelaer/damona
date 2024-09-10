@@ -21,24 +21,16 @@ sys.path.insert(0, os.path.abspath("sphinxext"))
 pkg_name = "damona"
 
 # This is for ReadTheDoc
-# import matplotlib
-# matplotlib.use('Agg')
 
 import pkg_resources
 
 version = pkg_resources.require(pkg_name)[0].version
 
-# import matplotlib
-# import matplotlib.sphinxext
-
 release = version
 author = "Thomas Cokelaer"
 title = "Damona"
-copyright = author + ", 2020"
+copyright = author + ", 2020-2024"
 project = "Damona"
-
-import easydev
-from easydev import get_path_sphinx_themes
 
 # -- General configuration -----------------------------------------------------
 
@@ -50,22 +42,15 @@ from easydev import get_path_sphinx_themes
 
 extensions = [
     "sphinx.ext.autodoc",
-    (
-        "sphinx.ext.imgmath"  # only available for sphinx >= 1.4
-        if sphinx.version_info[:2] >= (1, 4)
-        else "sphinx.ext.pngmath"
-    ),
+    "sphinx.ext.imgmath",
     "sphinx.ext.coverage",
     "sphinx.ext.doctest",
     "sphinx.ext.intersphinx",
     "sphinx.ext.todo",
     "sphinx.ext.ifconfig",
     "sphinx.ext.viewcode",
-    # "numpydoc.numpydoc",
-    # "sphinx_click",
-    #'matplotlib.sphinxext.plot_directive',
     "sphinx.ext.autosummary",
-    #'sphinx.ext.graphviz',
+    "sphinx_copybutton",
 ]
 # note that the numpy directives is buggy. Example: class and init are not recognised as two entities for the autoclass_content=both here below
 
@@ -158,24 +143,6 @@ smartquotes = False
 numpydoc_show_class_members = False
 
 
-# solution from nilearn
-# def touch_example_backreferences(app, what, name, obj, options, lines):
-#    # generate empty examples files, so that we don't get
-#    # inclusion errors if there are no examples for a class / module
-#    examples_path = os.path.join(app.srcdir, "modules", "generated",
-#                                 "%s.examples" % name)
-#    if not os.path.exists(examples_path):
-#        # touch file
-#        open(examples_path, 'w').close()
-
-
-# Add the 'copybutton' javascript, to hide/show the prompt in code
-# examples
-# def setup(app):
-#    app.add_js_file('copybutton.js')
-#    app.connect('autodoc-process-docstring', touch_example_backreferences)
-
-
 # -- Options for HTML output ---------------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  Major themes that come with
@@ -183,11 +150,10 @@ numpydoc_show_class_members = False
 on_rtd = os.environ.get("READTHEDOCS", None) == "True"
 if not on_rtd:
     import sphinx_rtd_theme
-
-    html_theme = "sphinx_rtd_theme"
+    html_theme = "bizstyle"
     html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 else:
-    html_theme = "default"
+    html_theme = "sphinx_rtd_theme"
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -195,7 +161,6 @@ else:
 # the user theme contains the otpions 'homepage', which is populated here
 # html_theme_options = {'homepage': init_sphinx.url}
 # Add any paths that contain custom themes here, relative to this directory.
-# html_theme_path = [get_path_sphinx_themes()]
 
 
 # The name for this set of Sphinx documents.  If None, it defaults to

@@ -21,6 +21,8 @@ import sys
 from configparser import NoOptionError, NoSectionError
 
 from tqdm import tqdm
+from tqdm.utils import CallbackIOWrapper
+
 import colorlog
 import requests
 
@@ -31,26 +33,6 @@ logger = colorlog.getLogger(__name__)
 
 
 logger.setLevel("INFO")
-
-
-class ProgressFileWrapper: #pragma: no cover
-    # a tqdm wrapper
-    def __init__(self, file, total_size):
-        self.file = file
-        self.total_size = total_size
-        self.progress_bar = tqdm(total=total_size, unit='B', unit_scale=True, desc='Uploading')
-
-    def read(self, size=-1):
-        data = self.file.read(size)
-        self.progress_bar.update(len(data))
-        return data
-
-    def __enter__(self):
-        return self
-
-    def __exit__(self, *args):
-        self.progress_bar.close()
-
 
 
 class Zenodo:  # pragma: no cover
@@ -250,16 +232,15 @@ class Zenodo:  # pragma: no cover
         # Determine the total size of the file
         total_size = os.path.getsize(filename)
 
+
         # the upload it self may take a while
         with open(filename, "rb") as fp:
-            # Wrap the file with the ProgressFileWrapper
-            wrapped_file = ProgressFileWrapper(fp, total_size)
-
             basename = os.path.basename(filename)
-            #r = requests.put(f"{bucket_url}/{basename}", data=fp, params=self.params)
 
-            r = requests.put(f"{bucket_url}/{basename}", data=wrapped_file, 
-                params=self.params)
+            with tqdm(total=total_size, unit="B", unit_scale=True, unit_divisor=1024) as t:
+                wrapped_file = CallbackIOWrapper(t.update, fp, "read")
+                r = requests.put(f"{bucket_url}/{basename}", data=wrapped_file, params=self.params)
+
 
             self._status(r, [200, 201])
             return r
@@ -338,8 +319,6 @@ analysis.""",
                 return data
 
     def _get_registry(self):
-        print(self.mode)
-
         if self.mode == "zenodo":
             return "registry.yaml"
         elif self.mode == "sandbox.zenodo":
