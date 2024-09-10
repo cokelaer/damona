@@ -1,0 +1,10 @@
+rnammer:
+  doi: 10.5281/zenodo.13732797
+  zenodo_id: 13732798
+  binaries: rnammer
+  releases:
+    1.2.0:
+      download: https://zenodo.org/record/13732798/files/rnammer_1.2.0.img
+      md5sum: 2be607eb7b78b3f718411c97333a2ced
+      doi: 10.5281/zenodo.13732798
+      filesize: 40415232
