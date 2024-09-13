@@ -7,7 +7,7 @@
 .. include:: ../README.rst
 
 User guide and reference
-###########################
+========================
 
 
 .. toctree::

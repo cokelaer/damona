@@ -71,16 +71,19 @@ def check_for_updates(package_name, current_version):
 
     # Fetch the latest version from PyPI
     url = f"https://pypi.org/pypi/{package_name}/json"
-    with urllib.request.urlopen(url) as response:
-        data = json.load(response)
-        latest_version = data["info"]["version"]
+    try:
+        with urllib.request.urlopen(url) as response:
+            data = json.load(response)
+            latest_version = data["info"]["version"]
 
-    # Compare versions and notify the user
-    if version.parse(latest_version) > version.parse(current_version):
-        logger.warning(f"\u26a0\ufe0f A new version ({latest_version}) of {package_name} is available! You have
-{current_version}. Use 'pip install damona --upgrade'")
-    else:
-        logger.info(f"\u2705 You are using the latest version of {package_name} ({current_version}).")
+        # Compare versions and notify the user
+        if version.parse(latest_version) > version.parse(current_version):
+            logger.warning(f"\u26a0\ufe0f A new version ({latest_version}) of {package_name} is available! You have {current_version}. Use 'pip install damona --upgrade'")
+        else:
+            logger.info(f"\u2705 You are using the latest version of {package_name} ({current_version}).")
+    except urllib.error.URLError:
+        # no network
+        pass
 check_for_updates("damona", version)
 
 
