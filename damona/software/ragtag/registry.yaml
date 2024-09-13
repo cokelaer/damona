@@ -1,0 +1,10 @@
+ragtag:
+  doi: 10.5281/zenodo.13759600
+  zenodo_id: 13759601
+  binaries: ragtag.py ragtag_agp2fa.py ragtag_correct.py ragtag_paf2delta.py ragtag_scaffold.py ragtag_agpcheck.py ragtag_create_links.py ragtag_patch.py ragtag_splitasm.py ragtag_asmstats.py ragtag_delta2paf.py ragtag.py ragtag_stats.py ragtag_break_query.py ragtag_merge.py ragtag_rename.py ragtag_update_gff.py
+  releases:
+    2.1.0:
+      download: https://zenodo.org/record/13759601/files/ragtag_2.1.0.img
+      md5sum: a4b9825b45e158b5ee7402e98056b59f
+      doi: 10.5281/zenodo.13759601
+      filesize: 198115328
