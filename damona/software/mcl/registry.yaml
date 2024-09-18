@@ -1,0 +1,10 @@
+mcl:
+  doi: 10.5281/zenodo.13787536
+  binaries: mcl
+  zenodo_id: 13787537
+  releases:
+    22.282.0:
+      download: https://zenodo.org/record/13787537/files/mcl_22.282.0.img
+      md5sum: b1289eb7c334fdb47dd0615c285d2a1e
+      doi: 10.5281/zenodo.13787537
+      filesize: 62525440

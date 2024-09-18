@@ -1,0 +1,10 @@
+orthofinder:
+  doi: 10.5281/zenodo.13787523
+  binaries: orthofinder diamond mmseqs
+  zenodo_id: 13787524
+  releases:
+    2.5.5:
+      download: https://zenodo.org/record/13787524/files/orthofinder_2.5.5.img
+      md5sum: 24b9b603bd5d8a6633682657c6016f96
+      doi: 10.5281/zenodo.13787524
+      filesize: 495833088
