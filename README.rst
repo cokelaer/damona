@@ -342,8 +342,8 @@ but only changes made to the code itself.
 ========= ========================================================================
 Version   Description
 ========= ========================================================================
-0.14.1    * ADDED: ragtag 2.1.0
-          * MEssage if version is outdated
+0.14.1    * ADDED: ragtag 2.1.0, orthofinder 2.5.5, mcl , liftoff 1.6.3
+          * Message if version is outdated
 0.14      * ADDED: ir v2.8.0, vadr v1.6.4, seaview v5.0.5, repeatmasker 4.0.8
             bandage 0.8.1, rnammer 1.2, miniasm 0.3.0, hmmer 2.3.2 and 3.3.2
             infernal 1.1.5

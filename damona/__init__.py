@@ -60,10 +60,10 @@ from damona.registry import Registry
 
 
 
-def check_for_updates(package_name, current_version):
+def check_for_updates(package_name, current_version, timeout=2):
     # local import
 
-    import urllib.request
+    import requests
     import json
     from packaging import version
 
@@ -71,19 +71,27 @@ def check_for_updates(package_name, current_version):
 
     # Fetch the latest version from PyPI
     url = f"https://pypi.org/pypi/{package_name}/json"
+
     try:
-        with urllib.request.urlopen(url) as response:
-            data = json.load(response)
-            latest_version = data["info"]["version"]
+        response = requests.get(url, timeout=timeout)
+        response.raise_for_status()  # Raise an error for bad status codes (e.g. 404)
+        data = response.json()
+        latest_version = data["info"]["version"]
 
         # Compare versions and notify the user
         if version.parse(latest_version) > version.parse(current_version):
             logger.warning(f"\u26a0\ufe0f A new version ({latest_version}) of {package_name} is available! You have {current_version}. Use 'pip install damona --upgrade'")
         else:
             logger.info(f"\u2705 You are using the latest version of {package_name} ({current_version}).")
-    except urllib.error.URLError:
-        # no network
-        pass
+    except requests.ConnectionError:
+        logger.warning("No internet connection. Unable to check for updates.")
+    except requests.Timeout:
+        logger.warning("The request to check for updates timed out.")
+    except requests.RequestException as e:
+        logger.error(f"An error occurred: {e} while checking for updates")
+
+
+
 check_for_updates("damona", version)
 
 

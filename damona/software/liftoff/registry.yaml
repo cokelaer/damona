@@ -1,0 +1,10 @@
+liftoff:
+  doi: 10.5281/zenodo.13789900
+  binaries: liftoff
+  zenodo_id: 13789901
+  releases:
+    1.6.3:
+      download: https://zenodo.org/record/13789901/files/liftoff_1.6.3.img
+      md5sum: 0d74ac9c47ab15fb05135a65ad65282d
+      doi: 10.5281/zenodo.13789901
+      filesize: 188694528
