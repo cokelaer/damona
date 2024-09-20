@@ -1,0 +1,10 @@
+dsrc:
+  doi: 10.5281/zenodo.13821312
+  binaries: dsrc
+  zenodo_id: 13821313
+  releases:
+    2.0.2:
+      download: https://zenodo.org/record/13821313/files/dsrc_2.0.2.img
+      md5sum: 93510a5783a1f4be9f35a574954f6f92
+      doi: 10.5281/zenodo.13821313
+      filesize: 60305408
