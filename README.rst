@@ -342,6 +342,7 @@ but only changes made to the code itself.
 ========= ========================================================================
 Version   Description
 ========= ========================================================================
+0.14.2    * ADDED: AdapterRemoval, bbmap 39.01, dsrc 2.0.2
 0.14.1    * ADDED: ragtag 2.1.0, orthofinder 2.5.5, mcl , liftoff 1.6.3
           * Message if version is outdated
 0.14      * ADDED: ir v2.8.0, vadr v1.6.4, seaview v5.0.5, repeatmasker 4.0.8

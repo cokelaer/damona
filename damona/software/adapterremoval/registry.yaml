@@ -1,0 +1,10 @@
+adapterremoval:
+  doi: 10.5281/zenodo.13809682
+  binaries: AdapterRemoval
+  zenodo_id: 13809683
+  releases:
+    2.3.3:
+      download: https://zenodo.org/record/13809683/files/adapterremoval_2.3.3.img
+      md5sum: aa155ed242bc6cede4b79ec5b080eaa5
+      doi: 10.5281/zenodo.13809683
+      filesize: 47804416
