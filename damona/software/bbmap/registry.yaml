@@ -1,0 +1,10 @@
+bbmap:
+  doi: 10.5281/zenodo.13810656
+  binaries: bbmap.sh
+  zenodo_id: 13810658
+  releases:
+    39.1.0:
+      download: https://zenodo.org/record/13810658/files/bbmap_39.1.0.img
+      md5sum: 3e6c469061a2d45f273b0c24a05140b9
+      doi: 10.5281/zenodo.13810658
+      filesize: 234233856
