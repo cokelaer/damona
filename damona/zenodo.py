@@ -45,7 +45,6 @@ class Zenodo:  # pragma: no cover
     You can retrieve an existing deposit (read-only) given its ID::
 
         deposit = z.get_deposition(959590)
-            oeturn "registry.yaml"
 
     Or start with a new one::
 
@@ -392,10 +391,12 @@ analysis.""",
         data = ImageName(filename)
         registry_data = Software(data.name)._data
         try:
+            import pdb
+            pdb.set_trace()
             zenodo_id = registry_data[data.name]["zenodo_id"]
         except KeyError:
             logger.critical(
-                f"Could not find {data.name} in the registry. Filename must have the same name as those to ne found in the recipes."
+                f"Could not find {data.name} in the registry. Filename must have the same name as those to be found in the recipes."
             )
             sys.exit(1)
 

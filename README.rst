@@ -5,7 +5,6 @@ DAMONA
 .. image:: https://badge.fury.io/py/damona.svg
     :target: https://pypi.python.org/pypi/damona
 
-
 .. image:: https://github.com/cokelaer/damona/actions/workflows/main.yml/badge.svg
    :target: https://github.com/cokelaer/damona/actions/workflows/main.yml
 
@@ -23,6 +22,14 @@ DAMONA
    :target: https://pepy.tech/project/damona
 
 
+.. image:: https://img.shields.io/badge/python-3.8%20%7C%203.9%20%7C3.10-blue.svg
+    :target: https://pypi.python.org/pypi/sequana
+    :alt: Python 3.8 | 3.9 | 3.10 | 3.11 
+
+.. image:: https://img.shields.io/github/issues/cokelaer/damona.svg
+    :target: https://github.com/cokelaer/damona/issues
+    :alt: GitHub Issues
+
 :Python version: Python 3.8, 3.9, 3.10
 :Source: See  `http://github.com/cokelaer/damona <https://github.com/cokelaer/damona/>`__.
 :Issues: Please fill a report on `github <https://github.com/cokelaer/damona/issues>`__
@@ -31,12 +38,23 @@ DAMONA
 Overview
 ==========
 
-Damona is a singularity environment manager.
+.. raw:: html
+
+    <div style="display: flex; align-items: center; justify-content: space-between;">
+        <div style="flex: 1; padding-right: 10px;">
+            <p>Damona is a singularity environment manager.
 
 Damona started as a small collections of singularity recipes to help installing third-party tools for
 `Sequana NGS pipelines <https://sequana.readthedocs.io>`_.
 
 Damona is now used in production to create reproducible environments where singularity images and their associated binaries are installed altogether.
+</p>
+        </div>
+        <div style="flex: 1; text-align: right;">
+            <img src="https://raw.githubusercontent.com/cokelaer/damona/refs/heads/main/doc/damona_logo.png"  alt="Image on the right" style="max-width: 100%; height: auto;">
+        </div>
+    </div>
+
 
 In a nutshell, Damona combines the logic of Conda environments with the
 reproducibility of singularity containers. We believe that it could be useful for
@@ -81,7 +99,7 @@ Zsh users should add the following code in their ~/.config/fish/config.fish file
 
 Then, **open a new shell** and type **damona** again. You should see an help message:
 
-.. image:: _static/cli.png
+.. image::  https://raw.githubusercontent.com/cokelaer/damona/refs/heads/main/doc/_static/cli.png
 
 Quick Start
 ===========
@@ -332,6 +350,17 @@ If you are interested to know more, please see the User Guide and Developer
 guide here below.
 
 
+Contributors
+============
+
+Maintaining Sequana would not have been possible without users and contributors.
+Each contribution has been an encouragement to pursue this project. Thanks to all:
+
+.. image:: https://contrib.rocks/image?repo=cokelaer/damona
+    :target: https://github.com/cokelaer/damona/graphs/contributors
+
+
+
 
 Changelog
 =========
@@ -342,7 +371,7 @@ but only changes made to the code itself.
 ========= ========================================================================
 Version   Description
 ========= ========================================================================
-0.14.2    * ADDED: AdapterRemoval, bbmap 39.01, dsrc 2.0.2
+0.14.2    * ADDED: AdapterRemoval, bbmap 39.01, dsrc 2.0.2, lima 2.9.0
 0.14.1    * ADDED: ragtag 2.1.0, orthofinder 2.5.5, mcl , liftoff 1.6.3
           * Message if version is outdated
 0.14      * ADDED: ir v2.8.0, vadr v1.6.4, seaview v5.0.5, repeatmasker 4.0.8

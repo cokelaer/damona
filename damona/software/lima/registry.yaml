@@ -1,0 +1,9 @@
+lima:
+  doi: 10.5281/zenodo.13902163
+  zenodo_id: 13902164
+  releases:
+    2.9.0:
+      download: https://zenodo.org/record/13902164/files/lima_2.9.0.img
+      md5sum: 9236a1f1d89d011a7a7dc4da13352109
+      doi: 10.5281/zenodo.13902164
+      filesize: 50524160
