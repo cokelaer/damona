@@ -44,11 +44,11 @@ Overview
         <div style="flex: 1; padding-right: 10px;">
             <p>Damona is a singularity environment manager.
 
-Damona started as a small collections of singularity recipes to help installing third-party tools for
-`Sequana NGS pipelines <https://sequana.readthedocs.io>`_.
+    Damona started as a small collections of singularity recipes to help installing third-party tools for
+    `Sequana NGS pipelines <https://sequana.readthedocs.io>`_.
 
-Damona is now used in production to create reproducible environments where singularity images and their associated binaries are installed altogether.
-</p>
+    Damona is now used in production to create reproducible environments where singularity images and their associated binaries are installed altogether.
+    </p>
         </div>
         <div style="flex: 1; text-align: right;">
             <img src="https://raw.githubusercontent.com/cokelaer/damona/refs/heads/main/doc/damona_logo.png"  alt="Image on the right" style="max-width: 100%; height: auto;">
