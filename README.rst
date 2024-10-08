@@ -40,17 +40,17 @@ Overview
 
 .. raw:: html
 
-    <div style="display: flex; align-items: center; justify-content: space-between;">
-        <div style="flex: 1; padding-right: 10px;">
+    <div style="overflow: hidden;">
+        <div style="float: left; width: 48%; padding-right: 2%;">
             <p>Damona is a singularity environment manager.
 
     Damona started as a small collections of singularity recipes to help installing third-party tools for
-    `Sequana NGS pipelines <https://sequana.readthedocs.io>`_.
+    <a href="https://sequana.readthedocs.io"> Sequana NGS pipelines</a>
 
     Damona is now used in production to create reproducible environments where singularity images and their associated binaries are installed altogether.
     </p>
         </div>
-        <div style="flex: 1; text-align: right;">
+        <div style="float: right; width: 48%;">
             <img src="https://raw.githubusercontent.com/cokelaer/damona/refs/heads/main/doc/damona_logo.png"  alt="Image on the right" style="max-width: 100%; height: auto;">
         </div>
     </div>
