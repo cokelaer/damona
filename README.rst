@@ -38,22 +38,22 @@ DAMONA
 Overview
 ==========
 
-.. raw:: html
 
-    <div style="overflow: hidden;">
-        <div style="float: left; width: 48%; padding-right: 2%;">
-            <p>Damona is a singularity environment manager.
+.. image:: https://raw.githubusercontent.com/cokelaer/damona/refs/heads/main/doc/damona_logo.png
+   :target: https://raw.githubusercontent.com/cokelaer/damona/refs/heads/main/doc/damona_logo.png
+   :align: right
+   :alt: logo
+   :width: 300px
 
-    Damona started as a small collections of singularity recipes to help installing third-party tools for
-    <a href="https://sequana.readthedocs.io"> Sequana NGS pipelines</a>
 
-    Damona is now used in production to create reproducible environments where singularity images and their associated binaries are installed altogether.
-    </p>
-        </div>
-        <div style="float: right; width: 48%;">
-            <img src="https://raw.githubusercontent.com/cokelaer/damona/refs/heads/main/doc/damona_logo.png"  alt="Image on the right" style="max-width: 100%; height: auto;">
-        </div>
-    </div>
+Damona is a singularity environment manager.
+
+Damona started as a small collections of singularity recipes to help installing third-party tools for
+`Sequana NGS pipelines <https://sequana.readthedocs.io>`_.  
+
+
+Damona is now used in production to create reproducible environments where singularity images and their associated binaries are installed altogether.
+
 
 
 In a nutshell, Damona combines the logic of Conda environments with the
@@ -61,6 +61,7 @@ reproducibility of singularity containers. We believe that it could be useful fo
 other projects and therefore decided to release it as an independent tool.
 
 * As of Aug. 2024, **Damona** contains 87 containers (136 versions), which corresponds to 468 unique binaries.
+* As of Oct. 2024, **Damona** contains 104 containers (155 versions), which corresponds to 514 unique binaries.
 
 Installation
 =============
@@ -190,7 +191,7 @@ The main documentation is obtained using::
 
     damona --help
 
-where you will see the list of **Damona** commands (may be different with time) (may be::
+where you will see the list of **Damona** commands (may be different with time)::
 
 
     activate    Activate a damona environment.
@@ -371,7 +372,8 @@ but only changes made to the code itself.
 ========= ========================================================================
 Version   Description
 ========= ========================================================================
-0.14.2    * ADDED: AdapterRemoval, bbmap 39.01, dsrc 2.0.2, lima 2.9.0
+0.14.2    * ADDED: AdapterRemoval, bbmap 39.01, dsrc 2.0.2, lima 2.9.0, 
+            necat 0.0.1
 0.14.1    * ADDED: ragtag 2.1.0, orthofinder 2.5.5, mcl , liftoff 1.6.3
           * Message if version is outdated
 0.14      * ADDED: ir v2.8.0, vadr v1.6.4, seaview v5.0.5, repeatmasker 4.0.8

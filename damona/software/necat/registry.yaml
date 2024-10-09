@@ -1,0 +1,10 @@
+necat:
+  doi: 10.5281/zenodo.13907088
+  binaries: necat.pl
+  zenodo_id: 13907089
+  releases:
+    0.0.1:
+      download: https://zenodo.org/record/13907089/files/necat_0.0.1.img
+      md5sum: 0f5f911b6282493785f64fc77a2829f9
+      doi: 10.5281/zenodo.13907089
+      filesize: 78471168
