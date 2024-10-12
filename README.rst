@@ -372,6 +372,7 @@ but only changes made to the code itself.
 ========= ========================================================================
 Version   Description
 ========= ========================================================================
+0.14.3    * ADDED: bcftools 1.16, khmer 2.1.1
 0.14.2    * ADDED: AdapterRemoval, bbmap 39.01, dsrc 2.0.2, lima 2.9.0, 
             necat 0.0.1
 0.14.1    * ADDED: ragtag 2.1.0, orthofinder 2.5.5, mcl , liftoff 1.6.3
