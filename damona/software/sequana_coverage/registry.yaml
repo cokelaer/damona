@@ -1,0 +1,10 @@
+sequana_coverage:
+  doi: 10.5281/zenodo.13946413
+  binaries: sequana_coverage
+  zenodo_id: 13946414
+  releases:
+    0.18.0:
+      download: https://zenodo.org/record/13946414/files/sequana_coverage_0.18.0.img
+      md5sum: a94b2f309fdc5f49bfc4ea46f56bae71
+      doi: 10.5281/zenodo.13946414
+      filesize: 788762624
