@@ -1,0 +1,10 @@
+pecat:
+  doi: 10.5281/zenodo.13942766
+  binaries: pecat.pl
+  zenodo_id: 13942767
+  releases:
+    0.0.3:
+      download: https://zenodo.org/record/13942767/files/pecat_0.0.3.img
+      md5sum: 3ddec2b2052a9039cacaeffa5c17ea1b
+      doi: 10.5281/zenodo.13942767
+      filesize: 668454912
