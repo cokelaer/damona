@@ -1,0 +1,10 @@
+tRNAscan_SE:
+  doi: 10.5281/zenodo.13924258
+  binaries: tRNAscan-SE
+  zenodo_id: 13924259
+  releases:
+    2.0.12:
+      download: https://zenodo.org/record/13924259/files/tRNAscan_SE_2.0.12.img
+      md5sum: c4fea70159294fcf986c131a08cbe3f2
+      doi: 10.5281/zenodo.13924259
+      filesize: 132579328
