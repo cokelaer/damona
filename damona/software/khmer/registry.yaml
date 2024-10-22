@@ -1,6 +1,6 @@
 khmer:
   doi: 10.5281/zenodo.13924242
-  binaries: extract-partitions.py    load-into-counting.py abundance-dist-single.py  fastq-to-fasta.py make-initial-stoptags.py abundance-dist.py  readstats.py     filter-abund-single.py   merge-partitions.py readstats.pyc annotate-partitions.py sample-reads-randomly.py filter-abund.py normalize-by-median.py count-median.py filter-stoptags.py     partition-graph.py	smtpd.py do-partition.py split-paired-reads.py    find-knots.py    trim-low-abund.py extract-long-sequences.py   interleave-reads.py   unique-kmers.py extract-paired-reads.py     load-graph.py
+  binaries: extract-partitions.py load-into-counting.py abundance-dist-single.py  fastq-to-fasta.py make-initial-stoptags.py abundance-dist.py  readstats.py     filter-abund-single.py   merge-partitions.py readstats.pyc annotate-partitions.py sample-reads-randomly.py filter-abund.py normalize-by-median.py count-median.py filter-stoptags.py partition-graph.py do-partition.py split-paired-reads.py find-knots.py trim-low-abund.py extract-long-sequences.py   interleave-reads.py   unique-kmers.py extract-paired-reads.py load-graph.py
   zenodo_id: 13924243
   releases:
     2.1.1:
