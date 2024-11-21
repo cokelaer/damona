@@ -1,0 +1,9 @@
+mauve:
+  doi: 10.5281/zenodo.14193974
+  zenodo_id: 14193975
+  releases:
+    2.4.0:
+      download: https://zenodo.org/record/14194586/files/mauve_2.4.0.img
+      md5sum: ee7053f5bd7dd7618f269ab9f9d5429b
+      doi: 10.5281/zenodo.14194586
+      filesize: 211656704
