@@ -391,8 +391,6 @@ analysis.""",
         data = ImageName(filename)
         registry_data = Software(data.name)._data
         try:
-            import pdb
-            pdb.set_trace()
             zenodo_id = registry_data[data.name]["zenodo_id"]
         except KeyError:
             logger.critical(
