@@ -1,0 +1,10 @@
+pilon:
+  doi: 10.5281/zenodo.14216430
+  binaries: pilon
+  zenodo_id: 14216431
+  releases:
+    1.24.0:
+      download: https://zenodo.org/record/14216431/files/pilon_1.24.0.img
+      md5sum: 6c22220ea6ebd975892111094bfdf0e9
+      doi: 10.5281/zenodo.14216431
+      filesize: 173187072
