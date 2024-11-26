@@ -13,3 +13,9 @@ quast:
       md5sum: 3c26537555724347341f93e86b7f5c28
       doi: 10.5281/zenodo.7848771
       filesize: 300236800
+    5.3.0:
+      download: https://zenodo.org/record/14223782/files/quast_5.3.0.img
+      binaries: quast-lg.py
+      md5sum: aa1f4c3442647673df71ca37ccf60123
+      doi: 10.5281/zenodo.14223782
+      filesize: 422801408
