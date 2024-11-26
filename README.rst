@@ -372,6 +372,10 @@ but only changes made to the code itself.
 ========= ========================================================================
 Version   Description
 ========= ======================================================================== 
+0.14.4    * UPDATE quast 5.3
+          * ADDED RNAfold 2.7.0
+          * ADDED pilon 1.24
+          * ADDED Mauve 2.4.0
 0.14.3    * ADDED pecat 0.0.3, necat 0.0.1, sequana_coverage 0.18
           * ADDED: bcftools 1.16, khmer 2.1.1  tRNAscan_SE 2.0.12 
 0.14.2    * ADDED: AdapterRemoval, bbmap 39.01, dsrc 2.0.2, lima 2.9.0, 

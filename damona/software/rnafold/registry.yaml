@@ -1,0 +1,10 @@
+RNAfold:
+  doi: 10.5281/zenodo.14223661
+  binaries: RNA2Dfold RNALfold RNAaliduplex RNAcofold RNAdistance RNAduplex RNAfold RNAheat RNAlocmin RNApaln RNApdist RNAplfold RNpvmin RNAsubopt RNALalifold RNAPKplex RNAalifold RNAconsensus RNAdos RNAeval RNAforester RNAinverse RNAmultifold RNAparconv RNAplex RNAplot RNAsnoop RNAup
+  zenodo_id: 14223662
+  releases:
+    2.7.0:
+      download: https://zenodo.org/record/14223662/files/RNAfold_2.7.0.img
+      md5sum: 9d26d739b474a0547394c07c60a0ebc7
+      doi: 10.5281/zenodo.14223662
+      filesize: 166219776
