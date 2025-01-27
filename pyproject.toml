@@ -2,11 +2,11 @@
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
-[tool.poetry]
+[project]
 name = "damona"
-version = "0.14.4"
+version = "0.14.5"
 description = "A manager of singularity containers and their singularity recipes (NGS applications)"
-authors = ["Thomas Cokelaer <thomas.cokelaer@pasteur.fr>"]
+authors = [{name="Thomas Cokelaer", email="thomas.cokelaer@pasteur.fr"}]
 license = "BSD-3"
 repository = "https://github.com/cokelaer/damona"
 readme = "README.rst"
@@ -31,23 +31,24 @@ exclude =[
 ]
 
 
+requires-python = ">=3.8,<4.0"
+dependencies = [
+    "beautifulsoup4 (>=4.12.3,<5.0.0)",
+    "click (>=8.1.8,<9.0.0)",
+    "colorlog (>=6.9.0,<7.0.0)",
+    "easydev (>=0.13.3,<0.14.0)",
+    "packaging (>=24.2,<25.0)",
+    "spython (>=0.3.14,<0.4.0)",
+    "pyyaml (>=6.0.2,<7.0.0)",
+    "tqdm (>=4.67.1,<5.0.0)",
+    "requests (>=2.32.3,<3.0.0)",
+    "click-completion (>=0.5.2,<0.6.0)",
+    "rich-click (>=1.8.5,<2.0.0)"
 
-[tool.poetry.dependencies]
-python = "^3.8"
-beautifulsoup4 = "^4.12.2"
-click = "^8.1.7"
-colorlog = "^6.8.0"
-easydev = "^0.12.1"
-packaging = ">=23.2"
-spython = "^0.3.13"
-PyYAML = "^6.0.1"
-tqdm = "^4.66.1"
-requests = "^2.28.1"
-click-completion = "^0.5.2"
-rich-click = "^1.7.2"
 
+]
 
-[tool.poetry.scripts]
+[project.scripts]
 damona = "damona.script:main"
 
 

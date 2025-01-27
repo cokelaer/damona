@@ -22,9 +22,9 @@ DAMONA
    :target: https://pepy.tech/project/damona
 
 
-.. image:: https://img.shields.io/badge/python-3.8%20%7C%203.9%20%7C3.10-blue.svg
-    :target: https://pypi.python.org/pypi/sequana
-    :alt: Python 3.8 | 3.9 | 3.10 | 3.11 
+.. image:: https://img.shields.io/badge/python-3.9%20%7C%203.10%20%7C3.11%20%7C3.12-blue.svg
+    :target: https://pypi.python.org/pypi/damona
+    :alt: Python 3.9 | 3.9 | 3.10 | 3.11 | 3.12
 
 .. image:: https://img.shields.io/github/issues/cokelaer/damona.svg
     :target: https://github.com/cokelaer/damona/issues
@@ -49,7 +49,7 @@ Overview
 Damona is a singularity environment manager.
 
 Damona started as a small collections of singularity recipes to help installing third-party tools for
-`Sequana NGS pipelines <https://sequana.readthedocs.io>`_.  
+`Sequana NGS pipelines <https://sequana.readthedocs.io>`_.
 
 
 Damona is now used in production to create reproducible environments where singularity images and their associated binaries are installed altogether.
@@ -62,13 +62,14 @@ other projects and therefore decided to release it as an independent tool.
 
 * As of Aug. 2024, **Damona** contains 87 containers (136 versions), which corresponds to 468 unique binaries.
 * As of Oct. 2024, **Damona** contains 104 containers (155 versions), which corresponds to 514 unique binaries.
+* As of Jan. 2024, **Damona** contains 117 containers (169 versions), which corresponds to 575 unique binaries.
 
 Installation
 =============
 
 Since **Damona** relies on **apptainer** (a.k.a. singularity), you must install `Apptainer <https://apptainer.org/docs/admin/main/installation.html>`_ to make use of **Damona**. This is the egg and chicken paradox. To get reproducible container with apptainer, at some point you need to install it. That the first
 of the two software that you will need to install. Instructions
-are on `singularity web site <https://sylabs.io/guides/3.6/user-guide/>`_. 
+are on `singularity web site <https://sylabs.io/guides/3.6/user-guide/>`_.
 
 If you are familiar with conda, I believe you can do::
 
@@ -371,16 +372,17 @@ but only changes made to the code itself.
 
 ========= ========================================================================
 Version   Description
-========= ======================================================================== 
-            ADDED chromap 0.2.7, qc3c 0.5.0 and pairtools 1.1.2
+========= ========================================================================
+0.15.0    * update pyproject to use poetry2.0 and drop py3.8 support for py3.12
+          * ADDED wget, chromap 0.2.7, qc3c 0.5.0 and pairtools 1.1.2
 0.14.5    * ADDED wget 1.25.4
 0.14.4    * UPDATE quast 5.3
           * ADDED RNAfold 2.7.0
           * ADDED pilon 1.24
           * ADDED Mauve 2.4.0
 0.14.3    * ADDED pecat 0.0.3, necat 0.0.1, sequana_coverage 0.18
-          * ADDED: bcftools 1.16, khmer 2.1.1  tRNAscan_SE 2.0.12 
-0.14.2    * ADDED: AdapterRemoval, bbmap 39.01, dsrc 2.0.2, lima 2.9.0, 
+          * ADDED: bcftools 1.16, khmer 2.1.1  tRNAscan_SE 2.0.12
+0.14.2    * ADDED: AdapterRemoval, bbmap 39.01, dsrc 2.0.2, lima 2.9.0,
             necat 0.0.1
 0.14.1    * ADDED: ragtag 2.1.0, orthofinder 2.5.5, mcl , liftoff 1.6.3
           * Message if version is outdated
