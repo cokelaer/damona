@@ -1,0 +1,10 @@
+pairtools:
+  doi: 10.5281/zenodo.14746698
+  zenodo_id: 14746699
+  binaries: pairtools
+  releases:
+    1.1.2:
+      download: https://zenodo.org/record/14746699/files/pairtools_1.1.2.img
+      md5sum: 97425b301e2060c6e7d4a59b4561d20a
+      doi: 10.5281/zenodo.14746699
+      filesize: 228876288
