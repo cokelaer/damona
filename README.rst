@@ -372,6 +372,8 @@ but only changes made to the code itself.
 ========= ========================================================================
 Version   Description
 ========= ======================================================================== 
+            ADDED chromap 0.2.7, qc3c 0.5.0 and pairtools 1.1.2
+0.14.5    * ADDED wget 1.25.4
 0.14.4    * UPDATE quast 5.3
           * ADDED RNAfold 2.7.0
           * ADDED pilon 1.24

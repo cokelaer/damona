@@ -801,9 +801,13 @@ def upload(**kwargs):  # pragma: no cover
     status = subprocess.run(f"singularity exec {filename} python --version".split(),
         stdout=subprocess.PIPE)
     if status.returncode:
-        click.echo("Damona ERROR: could not find **python** command in the container", 
-            err=True)
-        sys.exit(1)
+        click.echo("Damona Warning: could not find **python** command in the container")
+        proceed = click.prompt("Do you want to proceed ?")
+        if proceed:
+            click.echo("Uploading without Python found in the container.")
+        else:
+            click.echo("Exiting...")
+            sys.exit(1)
 
     status = subprocess.run(f"singularity exec {filename} bash --version".split(),
         stdout=subprocess.PIPE)

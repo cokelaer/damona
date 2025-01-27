@@ -27,7 +27,7 @@ classifiers = [
         "Topic :: Scientific/Engineering :: Information Analysis",
 ]
 exclude =[
-    "damona/*/*/*.img", "damona/*/*/*.tar.gz", "damona/*/*/*rpm"
+    "damona/*/*/*.img", "damona/*/*/*.tar.gz", "damona/*/*/*rpm",
 ]
 
 
