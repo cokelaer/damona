@@ -1,0 +1,10 @@
+qc3c:
+  doi: 10.5281/zenodo.14746666
+  zenodo_id: 14746667
+  binaries: qc3C
+  releases:
+    0.5.0:
+      download: https://zenodo.org/record/14746667/files/qc3c_0.5.0.img
+      md5sum: b41c2c087970a02c43a8cfa541b9f881
+      doi: 10.5281/zenodo.14746667
+      filesize: 298835968
