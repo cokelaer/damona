@@ -1,0 +1,10 @@
+wget:
+  doi: 10.5281/zenodo.14415566
+  binaries: wget
+  zenodo_id: 14415567
+  releases:
+    1.24.5:
+      download: https://zenodo.org/record/14415567/files/wget_1.24.5.img
+      md5sum: ecf982c6c5b9554050c6f7d85fa66138
+      doi: 10.5281/zenodo.14415567
+      filesize: 5545984
