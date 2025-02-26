@@ -13,3 +13,9 @@ freebayes:
       md5sum: 667bb29636f140670cd8d105d6bf0ea8
       doi: 10.5281/zenodo.10259279
       filesize: 238473216
+    1.3.9:
+      download: https://zenodo.org/record/14930911/files/freebayes_1.3.9.img
+      md5sum: e2dd4d83971fc8fe9909a8e3f5f59d26
+      doi: 10.5281/zenodo.14930911
+      binaries: freebayes vcffirstheader vcfstreamsort vcfuniq parallel freebayes-parallel fasta_generate_regions.py vcfinfo2qual vcfcombine vcfsort 
+      filesize: 193593344
