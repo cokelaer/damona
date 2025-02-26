@@ -1,0 +1,10 @@
+meme:
+  doi: 10.5281/zenodo.14931137
+  binaries: ame dreme fimo glam2scan mast meme momo sea streme tomtom centrimodust glam2 gomo mcast meme-chip purge spamo tgene xstreme
+  zenodo_id: 14931138
+  releases:
+    5.5.3:
+      download: https://zenodo.org/record/14931138/files/meme_5.5.3.img
+      md5sum: d70cf730bc06bc7bd47fc676f3dfac5e
+      doi: 10.5281/zenodo.14931138
+      filesize: 623738880
