@@ -373,6 +373,7 @@ but only changes made to the code itself.
 ========= ========================================================================
 Version   Description
 ========= ========================================================================
+0.14.6    * update freebayes to 1.3.9
 0.14.5    * update pyproject to use poetry2.0 and drop py3.8 support for py3.12
           * ADDED wget 1.25.4, chromap 0.2.7, qc3c 0.5.0 and pairtools 1.1.2
 0.14.4    * UPDATE quast 5.3
