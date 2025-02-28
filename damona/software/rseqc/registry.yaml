@@ -1,0 +1,10 @@
+rseqc:
+  doi: 10.5281/zenodo.14944678
+  binaries: inner_distance.py read_GC.py geneBody_coverage.py geneBody_coverage2.py clipping_profile.py read_duplication.py junction_annotation.py junction_saturation.py infer_experiment.py 
+  zenodo_id: 14944679
+  releases:
+    5.0.4:
+      download: https://zenodo.org/record/14944679/files/rseqc_5.0.4.img
+      md5sum: 981b9c7be0de6324554963235c05b86d
+      doi: 10.5281/zenodo.14944679
+      filesize: 425709568
