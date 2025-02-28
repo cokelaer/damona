@@ -31,7 +31,23 @@ jobs:
 
     - uses: actions/checkout@v2
     - uses: docker-practice/actions-setup-docker@master
-    - uses: fish-actions/install-fish@master
+    - name: Install fish shell
+      run: |
+        if [ "$RUNNER_OS" == "Linux" ]; then
+          sudo apt-add-repository --yes --no-update ppa:fish-shell/release-3
+          sudo apt-get update -qq
+          sudo apt-get install --yes fish
+        elif [ "$RUNNER_OS" == "macOS" ]; then
+          brew install fish
+        else
+          echo "$RUNNER_OS not supported"
+          exit 1
+        fi
+      retries: 3
+      timeout-minutes: 5
+
+
+
     - name: Test docker
       run: |
           set -x
