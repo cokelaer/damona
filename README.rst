@@ -373,6 +373,8 @@ but only changes made to the code itself.
 ========= ========================================================================
 Version   Description
 ========= ========================================================================
+0.14.7    * ADDED rseqc 5.0.4
+          * UPDATED sequana_tools 0.19.1
 0.14.6    * UPDATED freebayes to 1.3.9
           * ADDED meme suite 5.5.3
 0.14.5    * UPDATED pyproject to use poetry2.0 and drop py3.8 support for py3.12

@@ -108,7 +108,7 @@ class Release:
     This class populates information found in the release section of a
     registry.
 
-    A regitry looks like::
+    A registry looks like::
 
         fastqc:
             binaries: # this is the main_binaries

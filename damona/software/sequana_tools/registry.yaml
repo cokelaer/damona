@@ -3,7 +3,6 @@ sequana_tools:
   binaries:  fastqc bowtie STAR bowtie2 bowtie2-build bowtie-build bwa featureCounts samtools bamtools  gffread dsrc MarkDuplicates spades.py split-paired-reads.py filter-abund.py extract-paired-reads.py snpEff deeptools picard subread sambamba pbunzip2 pbzip2 kraken2 krona ktImportText kraken2-build freebayes minimap2 bedtools interleave-reads.py normalize-by-median.py ccs
   zenodo_id: 5767304
 
-
   releases:
     0.14.3:
       download: https://zenodo.org/record/7102074/files/sequana_tools_0.14.3.img
@@ -71,3 +70,10 @@ sequana_tools:
       doi: 10.5281/zenodo.7963917
       filesize: 2007072768
       binaries:  bcftools falco fastp kraken2-inspect mafft vcfutils.pl bamCoverage rnaseqc salmon inner_distance.py read_GC.py geneBody_coverage.py geneBody_coverage2.py clipping_profile.py read_duplication.py junction_annotation.py junction_saturation.py infer_experiment.py bam_stat.py dot genomeCoverageBed plotFingerprint intersectBed shustring hmmalign hmmconvert hmmfetch hmmpgmd hmmpress hmmsearch hmmstat hmmbuild hmmemit hmmlogo hmmpgmd_shard hmmscan hmmsim trinotate_report_summary.pl kallisto Build_Trinotate_Boilerplate_SQLite_db.pl Trinity seqkit seqtk sequana sequana_taxonomy sortBed
+    0.19.1:
+      download: https://zenodo.org/record/14945560/files/sequana_tools_0.19.1.img
+      md5sum: f39c0462e14eb642f6f82fa64101660e
+      doi: 10.5281/zenodo.14945560
+      binaries:  bcftools fastp kraken2-inspect mafft vcfutils.pl bamCoverage rnaseqc salmon dot genomeCoverageBed plotFingerprint intersectBed shustring hmmalign hmmconvert hmmfetch hmmpgmd hmmpress hmmsearch hmmstat hmmbuild hmmemit hmmlogo hmmpgmd_shard hmmscan hmmsim trinotate_report_summary.pl kallisto seqkit seqtk sequana sequana_taxonomy sortBed
+      exclude_binaries: ccs bowtie2 fastqc bowtie2-build
+      filesize: 1810407424
