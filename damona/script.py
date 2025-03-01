@@ -22,13 +22,14 @@
 """.. rubric:: Standalone application dedicated to Damona"""
 import os
 import pathlib
+import subprocess
 import sys
 import time
-import packaging
-import subprocess
 
 import click
 import click_completion
+import packaging
+import requests
 import rich_click as click
 
 click_completion.init()
@@ -49,7 +50,7 @@ click.rich_click.APPEND_METAVARS_HELP = True
 click.rich_click.STYLE_ERRORS_SUGGESTION = "magenta italic"
 click.rich_click.SHOW_ARGUMENTS = True
 
-manager = Damona()
+# manager = Damona()
 
 
 __all__ = ["main", "build"]
@@ -231,8 +232,6 @@ def deactivate(**kwargs):
     "--url",
     help="""download image from a remote URL. The URL must
   contain a registry.txt as explained on https://damona.readthedocs.io""",
-
-
 )
 @click.option(
     "--binaries",
@@ -258,7 +257,6 @@ def install(**kwargs):
     image with a version (e.g. fastqc_0.11.9.img). We assume that name of
     the image is the binary name, however, binaries can be set manually::
 
-
         damona install fastqc_0.4.2.img
         damona install test_0.4.2.img --binary fastqc
 
@@ -276,7 +274,6 @@ def install(**kwargs):
     and creates a binary called 'fastqc'. ::
 
         damona install fastqc --from-url https://biomics.pasteur.fr/salsa/damona/fastqc_0.11.8.img
-
 
     Or wish to use an existing docker file::
 
@@ -311,7 +308,7 @@ def install(**kwargs):
         p.pull_image(force=force_image)
         p.install_binaries(force=force_binaries)
 
-    elif os.path.exists(image_path) is False or kwargs['url']:
+    elif os.path.exists(image_path) is False or kwargs["url"]:
         url = kwargs["url"]
         logger.info(f"Installing from given URL")
 
@@ -481,7 +478,7 @@ def clean(**kwargs):
 @click.option(
     "--url",
     help="""Set the online registry file to search for a
-given container. See damona.readthedocs.io for in formation on how to write this
+given container. See damona.readthedocs.io for information on how to write this
 file . Example is available on https://biomics.pasteur.fr/salsa/damona/registry.txt""",
 )
 def search(**kwargs):
@@ -516,15 +513,30 @@ def search(**kwargs):
 
 
     """
-
-    url = kwargs.get("url", None)
+    url = kwargs.get("url")
+    if url is None:
+        url = "https://raw.githubusercontent.com/cokelaer/damona/refs/heads/main/damona/software/registry.yaml"
 
     if kwargs["pattern"] == "*":
         pattern = None
     else:
         pattern = kwargs["pattern"]
 
-    registry = Registry(from_url=url)
+    print(url)
+
+    def url_exists(url):
+        try:
+            response = requests.head(url, allow_redirects=True, timeout=5)
+            return response.status_code == 200
+        except requests.RequestException:
+            return False
+
+    if url_exists(url):
+        logger.info("accessing online registry")
+        registry = Registry(from_url=url)
+    else:
+        logger.info("accessing local registry")
+        registry = Registry(from_url=None)
 
     click.echo()
 
@@ -535,14 +547,14 @@ def search(**kwargs):
         modules = registry.get_list(pattern=pattern)
         for mod in modules:
             name, version = mod.split(":")
-            url = registry.registry[mod]._data[name]['releases'][version]['download']
+            url = registry.registry[mod]._data[name]["releases"][version]["download"]
             try:
-                size = registry.registry[mod]._data[name]['releases'][version]['filesize']
+                size = registry.registry[mod]._data[name]["releases"][version]["filesize"]
                 if size > 1e9:
-                    size =  round(size/1e9,2)
+                    size = round(size / 1e9, 2)
                     size = f"{size}G"
                 else:
-                    size =  round(size/1e6,2)
+                    size = round(size / 1e6, 2)
                     size = f"{size}M"
             except Exception:
                 logger.warning(f"{mod}. could not extract filesize")
@@ -565,14 +577,14 @@ def search(**kwargs):
         for mod in sorted(modules.keys()):
             v = modules[mod]
             name, version = mod.split(":")
-            url = registry.registry[mod]._data[name]['releases'][version]['download']
+            url = registry.registry[mod]._data[name]["releases"][version]["download"]
             try:
-                size = registry.registry[mod]._data[name]['releases'][version]['filesize']
+                size = registry.registry[mod]._data[name]["releases"][version]["filesize"]
                 if size > 1e9:
-                    size =  round(size/1e9,2)
+                    size = round(size / 1e9, 2)
                     size = f"{size}G"
                 else:
-                    size =  round(size/1e6,2)
+                    size = round(size / 1e6, 2)
                     size = f"{size}M"
             except Exception:
                 logger.warning(f"{mod}. could not extract filesize")
@@ -593,9 +605,9 @@ def search(**kwargs):
                 click.echo(f" - {k}: {v}")
 
     if recommended:
-        click.echo(f"\n\n \U00002139\U0000FE0F -- Recommended installation (latest version and dedicated container) -- \U00002139\U0000FE0F \n\n    damona install {recommended}\n")
-
-
+        click.echo(
+            f"\n\n \U00002139\U0000FE0F -- Recommended installation (latest version and dedicated container) -- \U00002139\U0000FE0F \n\n    damona install {recommended}\n"
+        )
 
 
 # ============================================================  export
@@ -751,7 +763,10 @@ def list(**kwargs):
     help="""A valid zenodo (or sandbox zenodo) token (see damona zenodo --help for details).""",
 )
 @click.option("--mode", default="sandbox.zenodo", help="mode can be either 'zenodo' or 'sandbox.zenodo'")
-@click.option("--no-check", default=False, help="Damona is driven by the Sequana project. Presence of bash and python are usually required by Sequana pipelines (Snakemake) so we make them compulsary. If developers do not need them, the --no-check option may be used. "
+@click.option(
+    "--no-check",
+    default=False,
+    help="Damona is driven by the Sequana project. Presence of bash and python are usually required by Sequana pipelines (Snakemake) so we make them compulsary. If developers do not need them, the --no-check option may be used. ",
 )
 def upload(**kwargs):  # pragma: no cover
     """Upload a singularity file to Zenodo. FOR DEVELOPERS ONLY
@@ -798,8 +813,7 @@ def upload(**kwargs):  # pragma: no cover
     filename = kwargs["filename"]
 
     # check that python and bash are available in the container.
-    status = subprocess.run(f"singularity exec {filename} python --version".split(),
-        stdout=subprocess.PIPE)
+    status = subprocess.run(f"singularity exec {filename} python --version".split(), stdout=subprocess.PIPE)
     if status.returncode:
         click.echo("Damona Warning: could not find **python** command in the container")
         proceed = click.prompt("Do you want to proceed ?")
@@ -809,11 +823,9 @@ def upload(**kwargs):  # pragma: no cover
             click.echo("Exiting...")
             sys.exit(1)
 
-    status = subprocess.run(f"singularity exec {filename} bash --version".split(),
-        stdout=subprocess.PIPE)
+    status = subprocess.run(f"singularity exec {filename} bash --version".split(), stdout=subprocess.PIPE)
     if status.returncode:
-        click.echo("Damona ERROR: could not find **bash** command in the container", 
-            err=True)
+        click.echo("Damona ERROR: could not find **bash** command in the container", err=True)
         sys.exit(1)
 
     #

@@ -30,4 +30,10 @@ repos:
     hooks:
       - id: isort
         args: ["--profile", "black"] # solves conflicts between black and isort
-
+-   repo: local
+    hooks:
+      - id: concat-registry
+        name: Concatenate registry.yaml files
+        entry: .pre-commit-hooks/concat_registry.py
+        language: system
+        pass_filenames: false
