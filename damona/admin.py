@@ -14,10 +14,13 @@
 #
 ##############################################################################
 """Provide some stats for admin"""
+import builtins
 import os
+import re
 import sys
 
 import colorlog
+import tqdm
 
 from damona import Registry, version
 
@@ -76,17 +79,17 @@ def build_biocontainers_registry(output="biocontainers.yml", force=False, limit=
         from bioservices import Biocontainers
     except (ModuleNotFoundError, ImportError) as err:
         logger.error(
-            "This function is for admin only. You may use but you mut install bioservices first (pip install bioservices). "
+            "This function is for admin only. You may use but you must install bioservices first (pip install bioservices). "
         )
         return
 
+    logger.info("Scanning biocontainers web service")
     b = Biocontainers()
+
     info = b.get_tools(limit=limit)
     if len(info) > limit:
         logger.warning(f"Looks like you reached the limit of {limit} tool. Use limit argument to get more")
     tools = {}
-    for name, versions in zip(info["name"], info["versions"]):
-        tools[name] = [x["meta_version"] for x in versions]
 
     # Create the registry
     if os.path.exists(output) and not force:
@@ -94,8 +97,27 @@ def build_biocontainers_registry(output="biocontainers.yml", force=False, limit=
         sys.exit(1)
 
     with open(output, "w") as fout:
-        for name, versions in tools.items():
+        for _, tool in tqdm.tqdm(info.iterrows()):
+            name = tool["name"]
             fout.write(f"{name}:\n  releases:\n")
-            for version in versions:
-                fout.write(f"    {version}:\n")
-                fout.write(f"      download: docker://biocontainers/{name}:{version}\n")
+
+            versions = b.get_versions_one_tool(name)
+            for _, version in versions.iterrows():
+                docker_images = [image for image in version.images if image["image_type"] == "Docker"]
+                # Function to extract the trailing version
+                import re
+
+                def extract_version(image_name):
+                    match = re.search(r"--py\d+_(\d+)$", image_name)
+                    return int(match.group(1)) if match else -1  # Default to -1 if not found
+
+                # Select the Docker image with the highest trailing version
+                try:
+                    most_recent_docker = builtins.max(docker_images, key=lambda img: extract_version(img["image_name"]))
+
+                    # you may have several versions
+                    image_name = most_recent_docker["image_name"]
+                    fout.write(f"    {version.meta_version}:\n")
+                    fout.write(f"      download: docker://{image_name}\n")
+                except:
+                    print(f"Passed {name}:{version} no docker.")

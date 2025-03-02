@@ -133,7 +133,7 @@ def test_search():
     results = runner.invoke(script.search, ["fastqc", "--binaries-only"])
     assert results.exit_code == 0
 
-    results = runner.invoke(script.search, ["fastqc", "--url", "damona"])
+    results = runner.invoke(script.search, ["fastqc", "--registry", "damona"])
     assert results.exit_code == 0
 
 
@@ -232,7 +232,7 @@ def test_install_remove_from_url(monkeypatch):
     monkeypatch.setenv("DAMONA_ENV", str(manager.damona_path / "envs" / NAME))
 
     # This re-installs the image, interfering with the user's local image but should be safe
-    results = runner.invoke(script.install, ["fastqc", "--url", "damona", "--force"])
+    results = runner.invoke(script.install, ["fastqc", "--registry", "damona", "--force"])
     assert results.exit_code == 0
 
     Teardown(NAME)
@@ -264,7 +264,7 @@ def test_install_biocontainers(monkeypatch):
 
     # This re-installs the image, interfering with the user's local image but should be safe
     runner = CliRunner()
-    results = runner.invoke(script.install, [f"biocontainers/hisat2:v2.1.0-2-deb_cv1"])
+    results = runner.invoke(script.install, [f"biocontainers/hisat2:2.2.1"])
     assert results.exit_code == 0
 
     Teardown(NAME)

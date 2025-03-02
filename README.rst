@@ -24,13 +24,13 @@ DAMONA
 
 .. image:: https://img.shields.io/badge/python-3.9%20%7C%203.10%20%7C3.11%20%7C3.12-blue.svg
     :target: https://pypi.python.org/pypi/damona
-    :alt: Python 3.9 | 3.9 | 3.10 | 3.11 | 3.12
+    :alt: Python 3.9 | 3.10 | 3.11 | 3.12
 
 .. image:: https://img.shields.io/github/issues/cokelaer/damona.svg
     :target: https://github.com/cokelaer/damona/issues
     :alt: GitHub Issues
 
-:Python version: Python 3.8, 3.9, 3.10
+:Python version: Python  3.9, 3.10, 3.11, 3.12
 :Source: See  `http://github.com/cokelaer/damona <https://github.com/cokelaer/damona/>`__.
 :Issues: Please fill a report on `github <https://github.com/cokelaer/damona/issues>`__
 :Platform: This is currently only available for Linux distribution with zsh/fish/bash shells (contributions are welcome to port the tool on other platforms/shells)
@@ -373,6 +373,9 @@ but only changes made to the code itself.
 ========= ========================================================================
 Version   Description
 ========= ========================================================================
+0.15.0    * biocontainers integrated
+          * Fix #35 to have a common registry online. no need to update damona
+            anymore.
 0.14.7    * ADDED rseqc 5.0.4
           * UPDATED sequana_tools 0.19.1
 0.14.6    * UPDATED freebayes to 1.3.9

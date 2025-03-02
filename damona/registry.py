@@ -151,10 +151,13 @@ class Release:
             logger.error(f"Incorrect formatted registry for {self._name}" + str(err))
             sys.exit(1)
 
-        if "md5sum" not in kwargs:
-            logger.debug(f"Missing md5sum entry in {self._name}. Please consider adding one ")
-        if "filesize" not in kwargs:
-            logger.debug(f"Missing filesize entry in {self._name}. Please consider adding one ")
+        if "origin" in data[self._name] and data[self._name]["origin"] == "biocontainer":
+            pass
+        else:
+            if "md5sum" not in kwargs:
+                logger.debug(f"Missing md5sum entry in {self._name}. Please consider adding one ")
+            if "filesize" not in kwargs:
+                logger.debug(f"Missing filesize entry in {self._name}. Please consider adding one ")
 
         self.md5sum = kwargs.get("md5sum", None)
         self.filesize = kwargs.get("filesize", None)
@@ -234,6 +237,9 @@ class BiocontainersRegistry:
         with open(self.filename, "r") as fin:
             rawdata = fin.read()
             self.data = yaml.load(rawdata, Loader=CSafeLoader)
+        # add a tag to indicate the origin
+        for k, v in self.data.items():
+            self.data[k]["origin"] = "biocontainer"
 
 
 class Software:
@@ -377,7 +383,7 @@ class Registry:
                 from_url = self.config["urls"][from_url]
             else:  # pragma: no cover
                 assert from_url.startswith("http")
-                assert from_url.endswith("registry.txt")
+                assert from_url.endswith("registry.txt") or from_url.endswith("registry.yaml")
 
         self.from_biocontainers = biocontainers
         self.from_url = from_url
@@ -451,7 +457,7 @@ class Registry:
         self._populate(ext_reg.data)
 
     def _damona_discovery(self):
-        # read all damona registry and store in expected dictionary structure
+        # read damona registry stored in expected dictionary structure
         from damona.software import __path__
 
         _registry_files = glob.glob(__path__[0] + "/*/registry.yaml")

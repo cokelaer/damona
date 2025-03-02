@@ -35,6 +35,8 @@ import rich_click as click
 click_completion.init()
 
 
+URL = "https://raw.githubusercontent.com/cokelaer/damona/refs/heads/main/damona/software/registry.yaml"
+
 from damona import Damona, Environ, Environment, version
 from damona.common import BinaryReader, ImageReader, get_damona_path
 from damona.install import (
@@ -51,6 +53,12 @@ click.rich_click.STYLE_ERRORS_SUGGESTION = "magenta italic"
 click.rich_click.SHOW_ARGUMENTS = True
 
 # manager = Damona()
+def url_exists(url):
+    try:
+        response = requests.head(url, allow_redirects=True, timeout=5)
+        return response.status_code == 200
+    except requests.RequestException:
+        return False
 
 
 __all__ = ["main", "build"]
@@ -229,6 +237,11 @@ def deactivate(**kwargs):
 @click.option("--force", is_flag=True, help="Replaces images and binaries.")
 @click.option("--force-binaries", is_flag=True, help="Replace binaries.")
 @click.option(
+    "--registry",
+    default=URL,
+    help="""The online registry file to search for containers. You can set your own registy following this example.""",
+)
+@click.option(
     "--url",
     help="""download image from a remote URL. The URL must
   contain a registry.txt as explained on https://damona.readthedocs.io""",
@@ -248,7 +261,6 @@ def install(**kwargs):
 
     If the version is omitted, the latest version is installed. Therefore, the
     following two commands are equivalent if 0.11.9 is the latest version available::
-
 
         damona install fastqc
         damona install fastqc:0.11.9
@@ -307,9 +319,9 @@ def install(**kwargs):
         p = BiocontainersInstaller(kwargs["image"], binaries=binaries)
         p.pull_image(force=force_image)
         p.install_binaries(force=force_binaries)
-
     elif os.path.exists(image_path) is False or kwargs["url"]:
         url = kwargs["url"]
+
         logger.info(f"Installing from given URL")
 
         p = RemoteImageInstaller(kwargs["image"], from_url=kwargs["url"], cmd=sys.argv, binaries=binaries)
@@ -474,12 +486,13 @@ def clean(**kwargs):
 @click.argument("pattern", required=True, type=click.STRING)
 @click.option("--images-only", is_flag=True, default=False, help="Show images only")
 @click.option("--include-biocontainers", is_flag=True, default=False, help="include also biocontainers hits")
+@click.option("--local-search-only", is_flag=True, default=False, help="if provided, URL is ignored")
 @click.option("--binaries-only", is_flag=True, default=False, help="Show binaries only")
 @click.option(
-    "--url",
-    help="""Set the online registry file to search for a
-given container. See damona.readthedocs.io for information on how to write this
-file . Example is available on https://biomics.pasteur.fr/salsa/damona/registry.txt""",
+    "--registry",
+    default=URL,
+    show_default=True,
+    help="""The online registry file to search for containers. You can set your own registy following this example.""",
 )
 def search(**kwargs):
     """Search for a container or binary.
@@ -496,46 +509,39 @@ def search(**kwargs):
 
         damona search '"*"'
 
-    One can also search in an online registry::
+    Damona searches within the official github directory so that you are
+    always up-to-date.
 
-        damona search fastqc --url https://biomics.pasteur.fr/salsa/damona/registry.txt
+    You may also define your own registry online. To do so, edit the
+    ~/.config/damona/damona.cfg file add add a key/value e.g.
 
-    You may define aliases to URLs in your ~/.config/damona/damona.cfg file to
-    make it easier::
+        [urls]
+        alias=https://biomics.pasteur.fr/salsa/damona/registry.txt
 
-        damona search fastqc --url damona
+    to make it easier::
+
+        damona search fastqc --url alias
 
     Although not recommended (not curated by Damona), you can also
-    install any container available on biocontainer. To do som you first
-    need to know the name and version:
+    install any container available on biocontainer. To do so, you first
+    need to know the name and version and then:
 
         damona search fastqc --include-biocontainers
 
 
     """
     url = kwargs.get("url")
-    if url is None:
-        url = "https://raw.githubusercontent.com/cokelaer/damona/refs/heads/main/damona/software/registry.yaml"
 
     if kwargs["pattern"] == "*":
         pattern = None
     else:
         pattern = kwargs["pattern"]
 
-    print(url)
-
-    def url_exists(url):
-        try:
-            response = requests.head(url, allow_redirects=True, timeout=5)
-            return response.status_code == 200
-        except requests.RequestException:
-            return False
-
     if url_exists(url):
-        logger.info("accessing online registry")
+        logger.info("Searching online registry")
         registry = Registry(from_url=url)
     else:
-        logger.info("accessing local registry")
+        logger.info("Searching local registry")
         registry = Registry(from_url=None)
 
     click.echo()
@@ -595,14 +601,16 @@ def search(**kwargs):
     if kwargs["include_biocontainers"]:
         click.echo("Searching biocontainers:")
         br = BiocontainersRegistry()
-        for k, data in br.data.items():
-            if pattern in k:
-                click.echo(f" - {k}: ")
+        for name, data in br.data.items():
+            if pattern in name:
+                click.echo(f"Pattern '{name}' Found in these releases:")
                 for version, location in data["releases"].items():
-                    install = f"(damona install biocontainers/{k}:{version})"
-                    click.echo(f" -     {version}: {install} ")
+                    download = f"{location['download']})"
+                    download = download.replace("docker://quay.io/", "").split("--")[0]
+                    install = f"(damona install {download})"
+                    click.echo(f" - {name}:{version}: {install} ")
             elif pattern == "*":
-                click.echo(f" - {k}: {v}")
+                click.echo(f" - {name}: {v}")
 
     if recommended:
         click.echo(

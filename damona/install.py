@@ -142,7 +142,7 @@ class LocalImageInstaller(ImageInstaller):
         # can be guessed
         super(LocalImageInstaller, self).__init__()
 
-        #if os.path.exists(image_name) and pathlib.Path(image_name).is_dir():
+        # if os.path.exists(image_name) and pathlib.Path(image_name).is_dir():
         #    logger.error(f"image name must be a singulatity file, not a directory")
         #    sys.exit(1)
 
@@ -332,7 +332,7 @@ class RemoteImageInstaller(ImageInstaller):
         if output_name is None:
             # original code
             # output_name = registry_name.replace(":", "_") + ".img"
-            # In order to allow a registry to refer to another existing container, 
+            # In order to allow a registry to refer to another existing container,
             # we need to retrieve the name of the container itself rather than
             # building one from the registry name
             output_name = download_name.split("/")[-1]
@@ -423,10 +423,9 @@ class BiocontainersInstaller(ImageInstaller):
 
     To find valid hit on biocontainer, one can use::
 
-        damona searh hisat2 --include-biocontainers
+        damona search hisat2 --include-biocontainers
 
-    This does not currently work because it searches for a docker that is not working.
-    damona install hisat2
+        damona install hisat2
 
     """
 
@@ -450,13 +449,14 @@ class BiocontainersInstaller(ImageInstaller):
 
         self.registry = Registry(biocontainers=True)
 
-        if suffix not in self.registry.registry:
+        if f"{name}:{self.version}" not in self.registry.registry:
             logger.error(
                 f"{name} not found in the biocontainers registry. Use damona search PATTERN --include-biocontainers"
             )
             sys.exit(1)
 
         self.image_name = image_name
+        self.url = self.registry.registry[suffix].download
         self.images_directory = pathlib.Path(DAMONA_PATH) / "images"
 
         self.cmd = cmd
@@ -483,7 +483,7 @@ class BiocontainersInstaller(ImageInstaller):
         logger.info(f"Downloading {self.image_name} into {output_name}")
 
         #
-        Client.pull(f"docker://{self.image_name}", name=output_name, pull_folder=pull_folder, force=force)
+        Client.pull(self.url, name=output_name, pull_folder=pull_folder, force=force)
         logger.info(f"File {self.image_name} uploaded to {pull_folder} as {output_name}")
 
         #
