@@ -15,6 +15,7 @@
 ##############################################################################
 import importlib.metadata as metadata
 import os
+import sys
 
 import colorlog
 
@@ -59,16 +60,15 @@ from damona.environ import Environ, Environment
 from damona.registry import Registry
 
 
-
 def check_for_updates(package_name, current_version, timeout=2):
     # local import
 
-    import requests
     import json
+
+    import requests
     from packaging import version
 
     # Get the current version of the installed package
-
     # Fetch the latest version from PyPI
     url = f"https://pypi.org/pypi/{package_name}/json"
 
@@ -80,7 +80,9 @@ def check_for_updates(package_name, current_version, timeout=2):
 
         # Compare versions and notify the user
         if version.parse(latest_version) > version.parse(current_version):
-            logger.warning(f"\u26a0\ufe0f A new version ({latest_version}) of {package_name} is available! You have {current_version}. Use 'pip install damona --upgrade'")
+            logger.warning(
+                f"\u26a0\ufe0f A new version ({latest_version}) of {package_name} is available! You have {current_version}. Use 'pip install damona --upgrade'"
+            )
         else:
             logger.info(f"\u2705 You are using the latest version of {package_name} ({current_version}).")
     except requests.ConnectionError:
@@ -91,8 +93,13 @@ def check_for_updates(package_name, current_version, timeout=2):
         logger.error(f"An error occurred: {e} while checking for updates")
 
 
-
 check_for_updates("damona", version)
 
 
+from loguru import logger
 
+# Remove default handler
+logger.remove()
+
+# Configure loguru with color output and file logging
+logger.add(sys.stderr, level="INFO", format="<green>{time}</green> | <level>{level}</level> | <cyan>{message}</cyan>")

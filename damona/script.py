@@ -20,6 +20,7 @@
 # If not, see <http://www.gnu.org/licenses/>.                             #
 ###########################################################################
 """.. rubric:: Standalone application dedicated to Damona"""
+import functools
 import os
 import pathlib
 import subprocess
@@ -65,20 +66,34 @@ __all__ = ["main", "build"]
 
 from damona import logger
 
-logger.level = 10
-
-
 CONTEXT_SETTINGS = dict(help_option_names=["-h", "--help"])
 
 
+def common_logger(func):
+    @click.option(
+        "--logger",
+        default="INFO",
+        type=click.Choice(["INFO", "DEBUG", "WARNING", "CRITICAL", "ERROR"]),
+        help="""Set level information to DEBUG, INFO, WARNING, CRITICAL, ERROR. Use e.g., 'damona --level INFO command'""",
+    )
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        from damona import logger
+
+        logger.remove()
+        logger.add(
+            sys.stderr,
+            level=kwargs.get("logger", "INFO"),
+            format="<green>{time}</green> | <level>{level}</level> | <cyan>{message}</cyan>",
+        )
+        return func(*args, **kwargs)
+
+    return wrapper
+
+
 @click.group(context_settings=CONTEXT_SETTINGS)
-@click.option(
-    "--level",
-    default="INFO",
-    help="""Set level information to DEBUG, INFO, WARNING, CRITICAL, ERROR. Use e.g., "damona --level INFO command" """,
-)
 @click.version_option(version=version)
-def main(level):
+def main():
     """Damona is an environment manager for singularity containers.
 
     It is to singularity container what conda is to packaging.
@@ -104,7 +119,7 @@ def main(level):
     # this function cannot print anything because the damona
     # activate command prints bash commands read by damona.sh
     ######################## !!!!!!!!!!!! ####################
-    logger.setLevel(level)
+    pass
 
 
 @main.command()
@@ -117,6 +132,7 @@ def main(level):
     help="""When creating an environment with --from-bundle, rewrite binaries and
 images even though the environment exists.""",
 )
+@common_logger
 def create(**kwargs):
     """Create a new environment
 
@@ -155,6 +171,7 @@ def create(**kwargs):
 @main.command()
 @click.argument("environment", required=True, type=click.STRING)
 @click.option("--force", is_flag=True, help="""When creating an environment with --from-bundle, rewrite binaries and""")
+@common_logger
 def delete(**kwargs):
     """Remove an environment"""
     env = Environ()
@@ -172,6 +189,7 @@ def rename(**kwargs):
 
 # =================================================================== env
 @main.command()
+@common_logger
 def env(**kwargs):
     """List all environemnts with some stats.
 
@@ -216,6 +234,7 @@ def activate(**kwargs):
 # =================================================================== deactivate
 @main.command()
 @click.argument("name", required=False, type=click.STRING, default=None)
+@common_logger
 def deactivate(**kwargs):
     """Deactivate the current Damona environment.
 
@@ -252,6 +271,7 @@ def deactivate(**kwargs):
     help="""If not provided, we assume this is an executable singulatrity and its name is the binary name
     """,
 )
+@common_logger
 def install(**kwargs):
     """Download and install an image and its binaries.
 
@@ -356,6 +376,7 @@ def install(**kwargs):
 @click.argument("name", required=True, type=click.STRING)
 @click.option("--environment", type=click.STRING, default=None)
 # @click.option("--force", is_flag=True, help="force the removal of binaries or images")
+@common_logger
 def remove(**kwargs):
     """Remove binaries or image from an environment.
 
@@ -437,6 +458,7 @@ def remove(**kwargs):
 # =================================================================== clean
 @main.command()
 @click.option("--remove", is_flag=True, help="remove the binary and image orphans in all environments ")
+@common_logger
 def clean(**kwargs):
     """Remove orphan images and binaries from all environments.
 
@@ -494,6 +516,7 @@ def clean(**kwargs):
     show_default=True,
     help="""The online registry file to search for containers. You can set your own registy following this example.""",
 )
+@common_logger
 def search(**kwargs):
     """Search for a container or binary.
 
@@ -607,6 +630,7 @@ def search(**kwargs):
                 for version, location in data["releases"].items():
                     download = f"{location['download']})"
                     download = download.replace("docker://quay.io/", "").split("--")[0]
+                    download = download.replace("docker://", "").split("--")[0]
                     install = f"(damona install {download})"
                     click.echo(f" - {name}:{version}: {install} ")
             elif pattern == "*":
@@ -621,6 +645,7 @@ def search(**kwargs):
 # ============================================================  export
 @main.command()
 @click.argument("environment", required=True, type=click.STRING)
+@common_logger
 def info(**kwargs):
     """Print information about a given environment.
 
@@ -656,6 +681,7 @@ def info(**kwargs):
 @click.argument("environment", required=True, type=click.STRING)
 @click.option("--yaml", help="name of output file")
 @click.option("--bundle", default=None, help="name of output file")
+@common_logger
 def export(**kwargs):
     """Create a bundle of a given environment.
 
@@ -707,6 +733,7 @@ def export(**kwargs):
 @main.command()
 @click.option("--include-biocontainers", is_flag=True, help="include also biocontainers (experimental)")
 @click.option("--include-downloads", is_flag=True, help="include downloads")
+@common_logger
 def stats(**kwargs):
     """Get information about Damona images and binaries
 
@@ -752,6 +779,7 @@ def stats(**kwargs):
 
 
 @main.command()
+@common_logger
 def list(**kwargs):
     """List all packages that can be installed"""
     r = Registry()
@@ -776,6 +804,7 @@ def list(**kwargs):
     default=False,
     help="Damona is driven by the Sequana project. Presence of bash and python are usually required by Sequana pipelines (Snakemake) so we make them compulsary. If developers do not need them, the --no-check option may be used. ",
 )
+@common_logger
 def upload(**kwargs):  # pragma: no cover
     """Upload a singularity file to Zenodo. FOR DEVELOPERS ONLY
 
@@ -847,6 +876,7 @@ def upload(**kwargs):  # pragma: no cover
 @click.argument("filename", required=True, type=click.STRING)
 @click.option("--destination", default=None, help="Not implemented yet")
 @click.option("--force", is_flag=True, help="add --force option")
+@common_logger
 def build(**kwargs):  # pragma: no cover
     """Build a container from dockerhub, singularity file or damona recipes.
 
