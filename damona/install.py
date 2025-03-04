@@ -365,7 +365,7 @@ class RemoteImageInstaller(ImageInstaller):
             cmd = f"singularity pull --dir {pull_folder} "
             if force:
                 cmd += " --force "
-            cmd += f"{self.from_url}/{download_name}"
+            cmd += f"{download_name}"
             print(cmd)
             subprocess.call(cmd.split())
         else:

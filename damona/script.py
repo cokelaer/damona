@@ -255,15 +255,11 @@ def deactivate(**kwargs):
 @click.option("--force-image", is_flag=True, help="Replaces existing image.")
 @click.option("--force", is_flag=True, help="Replaces images and binaries.")
 @click.option("--force-binaries", is_flag=True, help="Replace binaries.")
+@click.option("--local-registry-only", is_flag=True, default=False, help="if provided, URL is ignored")
 @click.option(
     "--registry",
     default=URL,
     help="""The online registry file to search for containers. You can set your own registy following this example.""",
-)
-@click.option(
-    "--url",
-    help="""download image from a remote URL. The URL must
-  contain a registry.txt as explained on https://damona.readthedocs.io""",
 )
 @click.option(
     "--binaries",
@@ -339,12 +335,16 @@ def install(**kwargs):
         p = BiocontainersInstaller(kwargs["image"], binaries=binaries)
         p.pull_image(force=force_image)
         p.install_binaries(force=force_binaries)
-    elif os.path.exists(image_path) is False or kwargs["url"]:
-        url = kwargs["url"]
-
-        logger.info(f"Installing from given URL")
-
-        p = RemoteImageInstaller(kwargs["image"], from_url=kwargs["url"], cmd=sys.argv, binaries=binaries)
+    elif os.path.exists(image_path) is False or kwargs["registry"]:
+        url = kwargs["registry"]
+        if url_exists(url) and kwargs["local_registry_only"] is False:
+            logger.info(f"Installing from online registry ({url})")
+            registry = Registry(from_url=url)
+            p = RemoteImageInstaller(kwargs["image"], from_url=kwargs["registry"], cmd=sys.argv, binaries=binaries)
+        else:
+            logger.info("Installing from local registry")
+            registry = Registry(from_url=None)
+            p = RemoteImageInstaller(kwargs["image"], from_url=None, cmd=sys.argv, binaries=binaries)
 
         if p.is_valid():
             p.pull_image(force=force_image)
@@ -508,7 +508,7 @@ def clean(**kwargs):
 @click.argument("pattern", required=True, type=click.STRING)
 @click.option("--images-only", is_flag=True, default=False, help="Show images only")
 @click.option("--include-biocontainers", is_flag=True, default=False, help="include also biocontainers hits")
-@click.option("--local-search-only", is_flag=True, default=False, help="if provided, URL is ignored")
+@click.option("--local-registry-only", is_flag=True, default=False, help="if provided, URL is ignored")
 @click.option("--binaries-only", is_flag=True, default=False, help="Show binaries only")
 @click.option(
     "--registry",
@@ -560,7 +560,7 @@ def search(**kwargs):
     else:
         pattern = kwargs["pattern"]
 
-    if url_exists(url):
+    if url_exists(url) and kwargs["local_registry_only"] is False:
         logger.info(f"Searching online registry ({url})")
         registry = Registry(from_url=url)
     else:
