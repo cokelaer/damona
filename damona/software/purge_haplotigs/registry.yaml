@@ -1,0 +1,10 @@
+purge_haplotigs:
+  doi: 10.5281/zenodo.14967449
+  binaries: purge_haplotigs
+  zenodo_id: 14967450
+  releases:
+    1.1.3:
+      download: https://zenodo.org/record/14967450/files/purge_haplotigs_1.1.3.img
+      md5sum: ea973cae3f075bc8f7f9c02b1f0fbe01
+      doi: 10.5281/zenodo.14967450
+      filesize: 169545728
