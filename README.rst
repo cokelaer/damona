@@ -374,6 +374,7 @@ but only changes made to the code itself.
 Version   Description
 ========= ========================================================================
 0.15.2    * ADDED: purge_haplotigs
+          * FIXED: access to online registry (Default behaviour)
 0.15.1    * using loguru (tentative). Update to have real 0.15.X version
             0.15.0 is unfortunately is not uploading on pypi....
 0.15.0    * biocontainers integrated

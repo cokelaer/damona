@@ -553,7 +553,7 @@ def search(**kwargs):
 
 
     """
-    url = kwargs.get("url")
+    url = kwargs.get("registry")
 
     if kwargs["pattern"] == "*":
         pattern = None
@@ -561,7 +561,7 @@ def search(**kwargs):
         pattern = kwargs["pattern"]
 
     if url_exists(url):
-        logger.info("Searching online registry")
+        logger.info(f"Searching online registry ({url})")
         registry = Registry(from_url=url)
     else:
         logger.info("Searching local registry")
