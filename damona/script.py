@@ -335,7 +335,7 @@ def install(**kwargs):
         p = BiocontainersInstaller(kwargs["image"], binaries=binaries)
         p.pull_image(force=force_image)
         p.install_binaries(force=force_binaries)
-    elif os.path.exists(image_path) is False or kwargs["registry"]:
+    elif os.path.exists(image_path) is False:
         url = kwargs["registry"]
         if url_exists(url) and kwargs["local_registry_only"] is False:
             logger.info(f"Installing from online registry ({url})")
