@@ -1,0 +1,10 @@
+lastz:
+  doi: 10.5281/zenodo.15579820
+  zenodo_id: 15579821
+  binaries: lastz
+  releases:
+    1.04.52:
+      download: https://zenodo.org/record/15579821/files/lastz_1.04.52.img
+      md5sum: ca846d009c3d36c8e915a31fba54d82f
+      doi: 10.5281/zenodo.15579821
+      filesize: 235806720
