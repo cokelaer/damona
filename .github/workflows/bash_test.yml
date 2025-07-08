@@ -16,7 +16,7 @@ jobs:
     strategy:
       max-parallel: 5
       matrix:
-        python: [3.9]
+        python: [3.11]
       fail-fast: false
 
     steps:
@@ -67,7 +67,7 @@ jobs:
         damona deactivate
         EOF
         cat test.bash
-        `(bash test.bash)`
+        bash test.bash
       env:
         DAMONA_EXE: /usr/share/miniconda/bin/damona
         DAMONA_PATH: /home/runner/.config/damona
