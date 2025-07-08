@@ -1,0 +1,10 @@
+triplexator:
+  doi: 10.5281/zenodo.15814032
+  binaries: triplexator
+  zenodo_id: 15814033
+  releases:
+    1.3.2:
+      download: https://zenodo.org/record/15814033/files/triplexator_1.3.2.img
+      md5sum: ffbc2bbb97211afb43b3e63547609758
+      doi: 10.5281/zenodo.15814033
+      filesize: 340795392

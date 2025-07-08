@@ -1,0 +1,10 @@
+gfa:
+  doi: 10.5281/zenodo.15835476
+  binaries: gfa
+  zenodo_id: 15835477
+  releases:
+    2.0.0:
+      download: https://zenodo.org/record/15835477/files/gfa_2.0.0.img
+      md5sum: cebe0fbc1aeeb60f4a2c4a3fe01f0e96
+      doi: 10.5281/zenodo.15835477
+      filesize: 4485120

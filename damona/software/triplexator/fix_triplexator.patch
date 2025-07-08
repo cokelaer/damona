@@ -1,0 +1,51 @@
+diff --git a/src/find_index_qgrams.h b/src/find_index_qgrams.h
+index 2a5d59c..8c662c6 100644
+--- a/src/find_index_qgrams.h
++++ b/src/find_index_qgrams.h
+@@ -488,7 +488,7 @@ namespace SEQAN_NAMESPACE_MAIN
+ 		finder.curHit = begin(finder.hits, Rooted());
+ 		finder.endHit = end(finder.hits, Rooted());
+ 		
+-		return !empty(finder.hits);
++		return !seqan::empty(finder.hits);
+ 	}
+ 	
+ 	//////////////////////////////////////////////////////////////////////////////
+diff --git a/src/seqan/index/repeat_base.h b/src/seqan/index/repeat_base.h
+index 29210de..855b47a 100644
+--- a/src/seqan/index/repeat_base.h
++++ b/src/seqan/index/repeat_base.h
+@@ -123,7 +123,7 @@ namespace seqan {
+ 	struct RepeatLess_ : public ::std::binary_function<TPos, TPos, bool>
+ 	{
+ 		// key less
+-		inline bool operator() (TPos const &a, TPos const &b) {
++		inline bool operator() (TPos const &a, TPos const &b) const {
+ 			return posLess(a, b);
+ 		}
+ 	};
+diff --git a/src/triplexator.cpp b/src/triplexator.cpp
+index a3738cb..fa3ecf8 100644
+--- a/src/triplexator.cpp
++++ b/src/triplexator.cpp
+@@ -917,8 +917,8 @@ namespace SEQAN_NAMESPACE_MAIN
+ 			appendValue(duplexNames, id, Generous());
+ 			
+ 			read(file, duplexString, Fasta());			// read Fasta sequence
+-			ttsnoToFileMap.insert(::std::make_pair<unsigned,::std::pair< ::std::string,unsigned> >(seqNo,::std::make_pair< ::std::string,unsigned>(filename,seqNoWithinFile)));
+-			
++            ttsnoToFileMap.insert(std::make_pair(seqNo, std::make_pair(filename, seqNoWithinFile)));
++
+ 			if (options._debugLevel > 1 )
+ 				options.logFileHandle << _getTimeStamp() << "   ... Finished reading next duplex sequence" << ::std::endl;
+ 
+@@ -1040,7 +1040,8 @@ namespace SEQAN_NAMESPACE_MAIN
+ 			readShortID(file, id, Fasta());			// read Fasta id up to first whitespace
+ 			appendValue(duplexNames, id, Generous());
+ 			read(file, duplexString, Fasta());		// read Fasta sequence
+-			ttsnoToFileMap.insert(::std::make_pair<unsigned,::std::pair< ::std::string,unsigned> >(seqNo,::std::make_pair< ::std::string,unsigned>(filename,seqNoWithinFile)));
++            ttsnoToFileMap.insert(std::make_pair(seqNo, std::make_pair(filename, seqNoWithinFile)));
++
+ 			appendValue(duplexSet, duplexString);	
+ 			
+ 			if (options._debugLevel > 1 )
