@@ -216,14 +216,8 @@ like
 The download link can be of three types:
 
 1. a valid URL
-2. an image on the damona website. For instance with ucsc recipes, we stored it on the damona URL, which is::
+2. an image stored on docker e.g. "docker://biocontainers/hisat2:v2.1.0-2-deb_cv1"
 
-       download: damona::ucsc_0.1.0.img
-
-   it will look for the damona URL. This is an alias to https://biomics.pasteur.fr/salsa/damona/ucsc_0.1.0.img
-3. an image stored on syslab.io::
-
-   library://cokelaer/damona/conda:4.7.12
 
 
 
@@ -231,9 +225,12 @@ The download link can be of three types:
 Where are stored the containers ?
 ----------------------------------
 
-Since Dev 2021, we store containers with a DOI on Zenodo website. Originally, we stored some container here: https://cloud.sylabs.io/library/cokelaer/damona but we extended **Damona** so that it can fetch containers from other places. If you have your own containers, it is quite simple to create a registry and place it anywhere on the web and inform damona that you want to use that registry.
+Since Dev 2021, we store containers with a DOI on Zenodo website. Originally, we stored some container here: https://cloud.sylabs.io/library/cokelaer/damona but we extended **Damona** so that it can fetch containers from other places. If you have your own containers, it is quite simple to create a registry and place it anywhere on the web and inform damona that you want to use that registry. **damona** works with its own online registry on github.
 
-We have an example on https://biomics.pasteur.fr/salsa/damona
+If you do not want to use the online registry (always up-to-date), or do not have internet connection, you can use::
+
+    damona search fastqc --local-registry-only
+    damona install fastqc --local-registry-only
 
 
 
@@ -266,15 +263,6 @@ found in damona::
 this will find the recipes automatically and save the final container in
 **salmon_1.3.0.img**.
 
-
-Upload image on sylabs (DEPRECATED)
--------------------------------------
-
-::
-
-    singularity build salmon.img Singularity.salmon_1.3.0
-    singularity sign salmon.img
-	singularity push salmon.img library://cokelaer/damona/salmon:1.3.0
 
 What about reusing a docker image
 ----------------------------------

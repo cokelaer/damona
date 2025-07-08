@@ -515,6 +515,18 @@ freebayes:
       binaries: freebayes vcffirstheader vcfstreamsort vcfuniq parallel freebayes-parallel fasta_generate_regions.py vcfinfo2qual vcfcombine vcfsort 
       filesize: 193593344
 
+# damona/software/gfa/registry.yaml
+gfa:
+  doi: 10.5281/zenodo.15835476
+  binaries: gfa
+  zenodo_id: 15835477
+  releases:
+    2.0.0:
+      download: https://zenodo.org/record/15835477/files/gfa_2.0.0.img
+      md5sum: cebe0fbc1aeeb60f4a2c4a3fe01f0e96
+      doi: 10.5281/zenodo.15835477
+      filesize: 4485120
+
 # damona/software/gffread/registry.yaml
 gffread:
   doi: 10.5281/zenodo.5708835
@@ -745,6 +757,18 @@ pblaa:
       md5sum: 2d9c345467e3e1f173c5806c6ac2f1ed
       doi: 10.5281/zenodo.10404979
       filesize: 147615744
+
+# damona/software/lastz/registry.yaml
+lastz:
+  doi: 10.5281/zenodo.15579820
+  zenodo_id: 15579821
+  binaries: lastz
+  releases:
+    1.04.52:
+      download: https://zenodo.org/record/15579821/files/lastz_1.04.52.img
+      md5sum: ca846d009c3d36c8e915a31fba54d82f
+      doi: 10.5281/zenodo.15579821
+      filesize: 235806720
 
 # damona/software/liftoff/registry.yaml
 liftoff:
@@ -1456,22 +1480,6 @@ sequana_minimal:
       doi: 10.5281/zenodo.8037162
       filesize: 331116544
 
-# damona/software/sequana_perl_tools/registry.yaml
-sequana_perl_tools:
-    releases:
-        0.1.0:
-            download: damona::sequana_perl_tools_0.1.0.img
-            binaries: homer annotatePeaks.pl
-            md5sum: 4ec432e6b7b9cc10c9b45fd5ab15e344
-            sha256: cb90c307503792146c4b513c3c7d9fbd3ee9ef5e571914429c15398afe81d7ea
-        0.2.0:
-            download: damona::sequana_perl_tools_0.2.0.img
-            # prokka uses hmmscan, aragorn and may others but are found by
-            # prokka inside the singularity. Not the parallel executable that
-            # must be provied explecitly
-            binaries: homer annotatePeaks.pl prokka hmmscan aragorn parallel
-            md5sum: 2642e92bc16c49ca8bf1b1a744bd195d
-
 # damona/software/sequana_ribofinder/registry.yaml
 sequana_ribofinder:
   doi: 10.5281/zenodo.7348114
@@ -1684,6 +1692,18 @@ trinotate:
       md5sum: 349a8ed81c669c1876d4c94effa6d424
       doi: 10.5281/zenodo.8096391
       filesize: 1667067904
+
+# damona/software/triplexator/registry.yaml
+triplexator:
+  doi: 10.5281/zenodo.15814032
+  binaries: triplexator
+  zenodo_id: 15814033
+  releases:
+    1.3.2:
+      download: https://zenodo.org/record/15814033/files/triplexator_1.3.2.img
+      md5sum: ffbc2bbb97211afb43b3e63547609758
+      doi: 10.5281/zenodo.15814033
+      filesize: 340795392
 
 # damona/software/ucsc/registry.yaml
 ucsc:

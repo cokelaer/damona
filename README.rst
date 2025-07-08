@@ -367,12 +367,16 @@ Each contribution has been an encouragement to pursue this project. Thanks to al
 Changelog
 =========
 
-From version 0.10 onwards, we will not mention the new software and their versions
-but only changes made to the code itself.
+From version 0.16 onwards, we will not mention the new software and their versions
+but only changes made to the code itself. Entire list of software is available using
+the command::
+
+    damona list
 
 ========= ========================================================================
 Version   Description
 ========= ========================================================================
+0.16.0
 0.15.2    * ADDED: purge_haplotigs
           * FIXED: access to online registry (Default behaviour)
 0.15.1    * using loguru (tentative). Update to have real 0.15.X version
@@ -452,7 +456,6 @@ Version   Description
             'damona install biocontainers/xx:1.2.3' Note that although 9000
             containers are available, in practice, only about 1000 dockers are
             on dockerhub, which is already nice :-)
-          *
 0.8.0     * Fix regression to install a software with its version
 0.7.1     * Implement the fish shell
           * add command "damona list"
