@@ -11,7 +11,7 @@ From: python:3.11-slim
 
 %post
 
-    apt-get update
+    apt-get update && apt-get install -y procps
 
     # force the version in case there is a pin on sequana
     pip install  multiqc==1.27
