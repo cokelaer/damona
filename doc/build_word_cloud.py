@@ -16,7 +16,7 @@ def fetch_biotools_metadata(tool_name):
     if response.status_code == 200:
         return response.json()
     else:
-        print(f"Error fetching {tool_name}: {response.status_code}")
+        # print(f"Error fetching {tool_name}: {response.status_code}")
         return None
 
 
@@ -49,11 +49,33 @@ def generate_tag_cloud(keywords):
 
 
 reg = damona.registry.Registry()
-tools = set([y for x in reg.registry.values() for y in x.binaries])
-all_keywords = []
 
-for tool in tqdm(tools):
+# look at all binaries and tools' names
+# First tools only
+all_keywords = []
+found = 0
+tools = set([y for x in reg.registry.values() for y in x.binaries])
+tools = set([x.split(":")[0] for x in reg.get_list()])
+print(f"Introspecting {len(tools)} tools on bio.tools")
+for tool in tqdm(list(tools)):
     data = fetch_biotools_metadata(tool)
-    all_keywords += extract_keywords(data)
+    if data:
+        all_keywords += extract_keywords(data)
+        found += 1
 generate_tag_cloud(all_keywords)
-savefig("wordcloud.png")
+print(f"Scanned {len(tools)}; found {found}")
+savefig("wordcloud_tools.png")
+
+# then binaries only
+all_keywords = []
+found = 0
+tools = set([y for x in reg.registry.values() for y in x.binaries])
+print(f"Introspecting {len(tools)} binaries on bio.tools")
+for tool in tqdm(list(tools)):
+    data = fetch_biotools_metadata(tool)
+    if data:
+        all_keywords += extract_keywords(data)
+        found += 1
+generate_tag_cloud(all_keywords)
+print(f"Scanned {len(tools)}; found {found}")
+savefig("wordcloud_binaries.png")

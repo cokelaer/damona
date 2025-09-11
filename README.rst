@@ -355,13 +355,11 @@ guide here below.
 Contributors
 ============
 
-Maintaining Sequana would not have been possible without users and contributors.
+Maintaining Damona would not have been possible without users and contributors.
 Each contribution has been an encouragement to pursue this project. Thanks to all:
 
 .. image:: https://contrib.rocks/image?repo=cokelaer/damona
     :target: https://github.com/cokelaer/damona/graphs/contributors
-
-
 
 
 Changelog
@@ -376,7 +374,7 @@ the command::
 ========= ========================================================================
 Version   Description
 ========= ========================================================================
-0.16.0
+0.16.0    * update precommit to create global registry automatically
 0.15.2    * ADDED: purge_haplotigs
           * FIXED: access to online registry (Default behaviour)
 0.15.1    * using loguru (tentative). Update to have real 0.15.X version
