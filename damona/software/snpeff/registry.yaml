@@ -11,7 +11,8 @@ snpeff:
       download: https://zenodo.org/record/7963301/files/snpeff_5.1.0.img
       md5sum: 07e7f28061801fc3ede5745817449f38
       doi: 10.5281/zenodo.7963301
-      filesize: 279199744    5.2.0:
+      filesize: 279199744
+    5.2.0:
       download: https://zenodo.org/record/17098202/files/snpeff_5.2.0.img
       md5sum: da6b6fd6414c97f6c97935ef469a12e2
       doi: 10.5281/zenodo.17098202
