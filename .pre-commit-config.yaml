@@ -37,3 +37,14 @@ repos:
         entry: .pre-commit-hooks/concat_registry.py
         language: system
         pass_filenames: false
+-   repo: local
+    hooks:
+      - id: update_registry
+        name: Update global registry
+        entry: damona/software/update_global_registry.py
+        language: system
+        pass_filenames: false
+        stages: [commit]
+        require_serial: true
+        always_run: true
+

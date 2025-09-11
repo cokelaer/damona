@@ -236,7 +236,7 @@ deactivate the last activated environment. In works as a Last In First Out mecha
 Install binaries not in the registry
 -------------------------------------
 
-When Damona's develope create a container, the also associate a list of binaries to be installed. This list is provided in a registry file (registry.yaml). 
+When Damona's develope create a container, the also associate a list of binaries to be installed. This list is provided in a registry file (registry.yaml).
 
 For example, when installing the *fastqc* container, one binary called *fastqc* is created. Other containers may contain several binaries.
 

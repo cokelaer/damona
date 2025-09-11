@@ -1,27 +1,4 @@
-# damona/software/CNVrd2/registry.yaml
-rnadiff:
-  doi: 10.5281/zenodo.5708855
-  zenodo_id: 5708856
-  releases:
-    1.7.1:
-      download: https://zenodo.org/record/5708856/files/rnadiff_1.7.1.img
-      md5sum: 0e4e1a59e10215b41541d19393b92ff4
-      doi: 10.5281/zenodo.5708856
-      filesize: 976704855
-
-# damona/software/adapterremoval/registry.yaml
-adapterremoval:
-  doi: 10.5281/zenodo.13809682
-  binaries: AdapterRemoval
-  zenodo_id: 13809683
-  releases:
-    2.3.3:
-      download: https://zenodo.org/record/13809683/files/adapterremoval_2.3.3.img
-      md5sum: aa155ed242bc6cede4b79ec5b080eaa5
-      doi: 10.5281/zenodo.13809683
-      filesize: 47804416
-
-# damona/software/art/registry.yaml
+# art/registry.yaml
 art:
   binaries: art_454 art_SOLiD art_illumina art_profiler_454 art_profiler_illumina
   doi: 10.5281/zenodo.5708819
@@ -43,19 +20,7 @@ art:
       doi: 10.5281/zenodo.12748620
       filesize: 123232256
 
-# damona/software/augustus/registry.yaml
-augustus:
-  doi: 10.5281/zenodo.13711281
-  binaries: augustus
-  zenodo_id: 13711282
-  releases:
-    3.5.0:
-      download: https://zenodo.org/record/13711282/files/augustus_3.5.0.img
-      md5sum: f04dc480034cbbb102180c97f081d1b5
-      doi: 10.5281/zenodo.13711282
-      filesize: 348143616
-
-# damona/software/bamtools/registry.yaml
+# bamtools/registry.yaml
 bamtools:
   doi: 10.5281/zenodo.7345681
   zenodo_id: 7345682
@@ -67,31 +32,7 @@ bamtools:
       doi: 10.5281/zenodo.10211475
       filesize: 104361984
 
-# damona/software/bandage/registry.yaml
-bandage:
-  doi: 10.5281/zenodo.13399041
-  binaries: Bandage
-  zenodo_id: 13399042
-  releases:
-    0.8.1:
-      download: https://zenodo.org/record/13399042/files/bandage_0.8.1.img
-      md5sum: 4be050dc620e0ed1d8e3ab0d51f45597
-      doi: 10.5281/zenodo.13399042
-      filesize: 759283712
-
-# damona/software/bbmap/registry.yaml
-bbmap:
-  doi: 10.5281/zenodo.13810656
-  binaries: bbmap.sh
-  zenodo_id: 13810658
-  releases:
-    39.1.0:
-      download: https://zenodo.org/record/13810658/files/bbmap_39.1.0.img
-      md5sum: 3e6c469061a2d45f273b0c24a05140b9
-      doi: 10.5281/zenodo.13810658
-      filesize: 234233856
-
-# damona/software/bbtools/registry.yaml
+# bbtools/registry.yaml
 bbtools:
   doi: 10.5281/zenodo.5812101
   binaries: crosscontaminate.sh kmerposition.sh runhmm.sh a_sample_mt.sh cutgff.sh kmutate.sh samtoroc.sh addadapters.sh cutprimers.sh seal.sh addssu.sh decontaminate.sh lilypad.sh sendsketch.sh adjusthomopolymers.sh dedupe.sh loadreads.sh shred.sh alltoall.sh dedupe2.sh loglog.sh shrinkaccession.sh analyzeaccession.sh dedupebymapping.sh makechimeras.sh shuffle.sh analyzegenes.sh demuxbyname.sh makecontaminatedgenomes.sh shuffle2.sh analyzesketchresults.sh diskbench.sh makepolymers.sh sketch.sh applyvariants.sh estherfilter.sh mapPacBio.sh sketchblacklist.sh bbcms.sh explodetree.sh matrixtocolumns.sh sketchblacklist2.sh bbcountunique.sh fetchproks.sh mergeOTUs.sh sortbyname.sh bbduk.sh filterassemblysummary.sh mergebarcodes.sh splitbytaxa.sh bbest.sh filterbarcodes.sh mergepgm.sh splitnextera.sh bbfakereads.sh filterbycoverage.sh mergeribo.sh splitribo.sh filterbyname.sh mergesam.sh splitsam.sh bbmap.sh filterbysequence.sh mergesketch.sh splitsam4way.sh bbmapskimmer.sh filterbytaxa.sh mergesorted.sh splitsam6way.sh bbmask.sh filterbytile.sh msa.sh stats.sh bbmerge-auto.sh filterlines.sh mutate.sh statswrapper.sh bbmerge.sh filterqc.sh muxbyname.sh streamsam.sh bbnorm.sh filtersam.sh partition.sh subsketch.sh bbrealign.sh filtersilva.sh phylip2fasta.sh summarizecontam.sh bbrename.sh filtersubs.sh pileup.sh summarizecoverage.sh bbsketch.sh filtervcf.sh plotflowcell.sh summarizecrossblock.sh bbsplit.sh fixgaps.sh plotgc.sh summarizemerge.sh bbsplitpairs.sh fungalrelease.sh postfilter.sh summarizequast.sh bbstats.sh fuse.sh printtime.sh summarizescafstats.sh  bbversion.sh gbff2gff.sh processfrag.sh summarizeseal.sh bbwrap.sh getreads.sh processhi-c.sh summarizesketch.sh gi2ancestors.sh processspeed.sh synthmda.sh bloomfilter.sh gi2taxid.sh randomgenome.sh tadpipe.sh gitable.sh randomreads.sh tadpole.sh calcmem.sh grademerge.sh readlength.sh tadwrapper.sh calctruequality.sh gradesam.sh readqc.sh taxonomy.sh callgenes.sh icecreamfinder.sh reducesilva.sh taxserver.sh callpeaks.sh icecreamgrader.sh reformat.sh taxsize.sh callvariants.sh icecreammaker.sh reformatpb.sh taxtree.sh callvariants2.sh idmatrix.sh removebadbarcodes.sh testfilesystem.sh clumpify.sh idtree.sh removecatdogmousehuman.sh testformat.sh commonkmers.sh invertkey.sh removehuman.sh testformat2.sh comparegff.sh kapastats.sh removehuman2.sh tetramerfreq.sh comparesketch.sh kcompress.sh removemicrobes.sh textfile.sh comparessu.sh keepbestcopy.sh removesmartbell.sh translate6frames.sh comparevcf.sh khist.sh rename.sh unicode2ascii.sh consect.sh kmercountexact.sh renameimg.sh unzip.sh consensus.sh kmercountmulti.sh repair.sh vcf2gff.sh countbarcodes.sh kmercoverage.sh replaceheaders.sh webcheck.sh countgc.sh kmerfilterset.sh representative.sh  countsharedlines.sh kmerlimit.sh rqcfilter.sh  crossblock.sh kmerlimit2.sh rqcfilter2.sh
@@ -103,19 +44,7 @@ bbtools:
       doi: 10.5281/zenodo.5812102
       filesize: 69083136
 
-# damona/software/bcftools/registry.yaml
-bctools:
-  doi: 10.5281/zenodo.13924197
-  binaries: bcftools
-  zenodo_id: 13924198
-  releases:
-    1.16.0:
-      download: https://zenodo.org/record/13924198/files/bctools_1.16.0.img
-      md5sum: 92f7e66b4970da1dfbaf422066f57b0c
-      doi: 10.5281/zenodo.13924198
-      filesize: 83877888
-
-# damona/software/bcl-convert/registry.yaml
+# bcl-convert/registry.yaml
 bcl-convert:
   doi: 10.5281/zenodo.10934030
   zenodo_id: 10934031
@@ -127,7 +56,7 @@ bcl-convert:
       doi: 10.5281/zenodo.10934031
       filesize: 111316992
 
-# damona/software/bcl2fastq/registry.yaml
+# bcl2fastq/registry.yaml
 bcl2fastq:
   doi: 10.5281/zenodo.13304100
   binaries: bcl2fastq
@@ -139,7 +68,7 @@ bcl2fastq:
       doi: 10.5281/zenodo.13304101
       filesize: 76828672
 
-# damona/software/bedtools/registry.yaml
+# bedtools/registry.yaml
 bedtools:
   doi: 10.5281/zenodo.7346773
   zenodo_id: 7346774
@@ -152,7 +81,7 @@ bedtools:
       filesize: 20262912
 
 
-# damona/software/bioconvert/registry.yaml
+# bioconvert/registry.yaml
 bioconvert:
   doi: 10.5281/zenodo.7034821
   binaries: bioconvert bioconvert_stats bioconvert_init
@@ -184,7 +113,7 @@ bioconvert:
       doi: 10.5281/zenodo.8078007
       filesize: 1219751936
 
-# damona/software/blast/registry.yaml
+# blast/registry.yaml
 blast:
   doi: 10.5281/zenodo.7848523
   zenodo_id: 7848524
@@ -196,7 +125,7 @@ blast:
       doi: 10.5281/zenodo.7848524
       filesize: 93806592
 
-# damona/software/bowtie/registry.yaml
+# bowtie/registry.yaml
 bowtie:
   doi: 10.5281/zenodo.5810334
   binaries: bowtie bowtie-inspect-l bowtie-inspect-s bowtie-align-l bowtie-align-s bowtie-build bowtie-build-l bowtie-build-s bowtie-inspect
@@ -208,7 +137,7 @@ bowtie:
       doi: 10.5281/zenodo.5810335
       filesize: 59883520
 
-# damona/software/bowtie2/registry.yaml
+# bowtie2/registry.yaml
 bowtie2:
   binaries: bowtie2 bowtie2-build bowtie2-inspect bowtie2-align-l bowtie2-build-l bowtie2-inspect-l bowtie2-align-s  bowtie2-build-s  bowtie2-inspect-s
   doi: 10.5281/zenodo.5765688
@@ -230,7 +159,7 @@ bowtie2:
       doi: 10.5281/zenodo.8092297
       filesize: 71213056
 
-# damona/software/busco/registry.yaml
+# busco/registry.yaml
 busco:
   doi: 10.5281/zenodo.7794877
   binaries: busco
@@ -242,7 +171,7 @@ busco:
       doi: 10.5281/zenodo.7794877
       filesize: 546848768
 
-# damona/software/bwa/registry.yaml
+# bwa/registry.yaml
 bwa:
   doi: 10.5281/zenodo.7736676
   zenodo_id: 7736677
@@ -253,7 +182,7 @@ bwa:
       doi: 10.5281/zenodo.7970243
       filesize: 9392128
 
-# damona/software/canu/registry.yaml
+# canu/registry.yaml
 canu:
   doi: 10.5281/zenodo.5765677
   zenodo_id: 5765678
@@ -275,7 +204,7 @@ canu:
       doi: 10.5281/zenodo.7866415
       filesize: 363024384
 
-# damona/software/ccs/registry.yaml
+# ccs/registry.yaml
 ccs:
   doi: 10.5281/zenodo.7817324
   zenodo_id: 7817325
@@ -287,7 +216,7 @@ ccs:
       doi: 10.5281/zenodo.7817325
       filesize: 11993088
 
-# damona/software/cd-hit/registry.yaml
+# cd-hit/registry.yaml
 cd-hit:
   doi: 10.5281/zenodo.10030642
   zenodo_id: 10030643
@@ -299,7 +228,7 @@ cd-hit:
       doi: 10.5281/zenodo.10030643
       filesize: 227966976
 
-# damona/software/cellranger_atac/registry.yaml
+# cellranger_atac/registry.yaml
 cellranger_atac:
   doi: 10.5281/zenodo.8423331
   zenodo_id: 8423332
@@ -311,7 +240,7 @@ cellranger_atac:
       doi: 10.5281/zenodo.8423332
       filesize: 764268544
 
-# damona/software/checkm/registry.yaml
+# checkm/registry.yaml
 checkm:
   doi: 10.5281/zenodo.10040945
   zenodo_id: 10040946
@@ -323,19 +252,7 @@ checkm:
       doi: 10.5281/zenodo.10040946
       filesize: 590774272
 
-# damona/software/chromap/registry.yaml
-chromap:
-  doi: 10.5281/zenodo.14721865
-  binaries: chromap
-  zenodo_id: 14721866
-  releases:
-    0.2.7:
-      download: https://zenodo.org/record/14721866/files/chromap_0.2.7.img
-      md5sum: d2f36536d62060d6e7cc96c932f8d06e
-      doi: 10.5281/zenodo.14721866
-      filesize: 58576896
-
-# damona/software/circlator/registry.yaml
+# circlator/registry.yaml
 circlator:
   doi: 10.5281/zenodo.7821904
   zenodo_id: 7821905
@@ -346,7 +263,7 @@ circlator:
       doi: 10.5281/zenodo.7821905
       filesize: 376016896
 
-# damona/software/datasets/registry.yaml
+# datasets/registry.yaml
 datasets:
   doi: 10.5281/zenodo.10894732
   zenodo_id: 10894733
@@ -358,54 +275,7 @@ datasets:
       doi: 10.5281/zenodo.10894733
       filesize: 32739328
 
-# damona/software/deeptools/registry.yaml
-deeptools:
-  doi: 10.5281/zenodo.13946521
-  binaries: deeptools
-  zenodo_id: 13946522
-  releases:
-    3.5.5:
-      download: https://zenodo.org/record/13946522/files/deeptools_3.5.5.img
-      md5sum: ba1991995f21f095c72ba8bc963912d9
-      doi: 10.5281/zenodo.13946522
-      filesize: 275537920
-
-# damona/software/delly/registry.yaml
-delly:
-  doi: 10.5281/zenodo.11302859
-  zenodo_id: 11302860
-  releases:
-    1.2.6:
-      download: https://zenodo.org/record/11302860/files/delly_1.2.6.img
-      md5sum: d310e9b990c68ac13260904758fa1131
-      doi: 10.5281/zenodo.11302860
-      filesize: 177160192
-
-# damona/software/dsrc/registry.yaml
-dsrc:
-  doi: 10.5281/zenodo.13821312
-  binaries: dsrc
-  zenodo_id: 13821313
-  releases:
-    2.0.2:
-      download: https://zenodo.org/record/13821313/files/dsrc_2.0.2.img
-      md5sum: 93510a5783a1f4be9f35a574954f6f92
-      doi: 10.5281/zenodo.13821313
-      filesize: 60305408
-
-# damona/software/dustmasker/registry.yaml
-dustmasker:
-  doi: 10.5281/zenodo.5801359
-  zenodo_id: 5801360
-  releases:
-    1.0.0:
-      download: https://zenodo.org/record/5801365/files/kraken_2.0.9.img
-      md5sum: bc195a921148969c7f9482f9fe25b3cd
-      doi: 10.5281/zenodo.5801365
-      filesize: 723301918
-      binaries: dustmasker
-
-# damona/software/falco/registry.yaml
+# falco/registry.yaml
 falco:
     binaries: falco
     doi: 10.5281/zenodo.5675782
@@ -422,7 +292,7 @@ falco:
         doi: 10.5281/zenodo.7014954
         filesize: 110555136
 
-# damona/software/fastp/registry.yaml
+# fastp/registry.yaml
 fastp:
   doi: 10.5281/zenodo.7319782
   zenodo_id: 7319782
@@ -438,8 +308,12 @@ fastp:
       md5sum: b62cf75e5ef33aed1e009c46bc1e9634
       doi: 10.5281/zenodo.8036563
       filesize: 73183232
-
-# damona/software/fastqc/registry.yaml
+    1.0.1:
+      download: https://zenodo.org/record/17097941/files/fastp_1.0.1.img
+      md5sum: 246f374e9ee1b1e714589fba1c8b063d
+      doi: 10.5281/zenodo.17097941
+      filesize: 86388736
+# fastqc/registry.yaml
 fastqc:
   doi: 10.5281/zenodo.5708809
   zenodo_id: 5708810
@@ -465,7 +339,7 @@ fastqc:
       doi: 10.5281/zenodo.7923780
       filesize: 138809344
 
-# damona/software/flye/registry.yaml
+# flye/registry.yaml
 flye:
   doi: 10.5281/zenodo.5730046
   zenodo_id: 5730047
@@ -492,7 +366,7 @@ flye:
       doi: 10.5281/zenodo.10409326
       filesize: 285425664
 
-# damona/software/freebayes/registry.yaml
+# freebayes/registry.yaml
 freebayes:
   doi: 10.5281/zenodo.10259219
   zenodo_id: 10259220
@@ -515,19 +389,7 @@ freebayes:
       binaries: freebayes vcffirstheader vcfstreamsort vcfuniq parallel freebayes-parallel fasta_generate_regions.py vcfinfo2qual vcfcombine vcfsort 
       filesize: 193593344
 
-# damona/software/gfa/registry.yaml
-gfa:
-  doi: 10.5281/zenodo.15835476
-  binaries: gfa
-  zenodo_id: 15835477
-  releases:
-    2.0.0:
-      download: https://zenodo.org/record/15835477/files/gfa_2.0.0.img
-      md5sum: cebe0fbc1aeeb60f4a2c4a3fe01f0e96
-      doi: 10.5281/zenodo.15835477
-      filesize: 4485120
-
-# damona/software/gffread/registry.yaml
+# gffread/registry.yaml
 gffread:
   doi: 10.5281/zenodo.5708835
   zenodo_id: 5708836
@@ -544,7 +406,7 @@ gffread:
       doi: 10.5281/zenodo.8037039
       filesize: 124751872
 
-# damona/software/graphviz/registry.yaml
+# graphviz/registry.yaml
 graphviz:
   binaries: dot circo
   doi: 10.5281/zenodo.5767506
@@ -565,7 +427,7 @@ graphviz:
       md5sum: 1b7aa4e4113298e2e012123ace797651
       doi: 10.5281/zenodo.7928262
       filesize: 19898368
-# damona/software/guppy/registry.yaml
+# guppy/registry.yaml
 guppy:
   doi: 10.5281/zenodo.8091508
   binaries: guppy_barcoder guppy_basecaller_duplex guppy_aligner guppy_basecaller
@@ -577,7 +439,7 @@ guppy:
       doi: 10.5281/zenodo.8091509
       filesize: 1260027904
 
-# damona/software/gzip/registry.yaml
+# gzip/registry.yaml
 gzip:
   doi: 10.5281/zenodo.7034359
   binaries: gzip gunzip
@@ -589,7 +451,7 @@ gzip:
       doi: 10.5281/zenodo.7034360
       filesize: 3522560
 
-# damona/software/hifiasm/registry.yaml
+# hifiasm/registry.yaml
 hifiasm:
   doi: 10.5281/zenodo.7737423
   zenodo_id: 7737424
@@ -604,8 +466,12 @@ hifiasm:
       md5sum: 982353703b0e6f4c5c1e77d2dd62b5dc
       doi: 10.5281/zenodo.10610397
       filesize: 15409152
-
-# damona/software/hisat2/registry.yaml
+    0.24.0:
+      download: https://zenodo.org/record/17098270/files/hifiasm_0.24.0.img
+      md5sum: 1ebc1fdf3037e38cd6370d11b7f0a489
+      doi: 10.5281/zenodo.17098270
+      filesize: 16142336
+# hisat2/registry.yaml
 hisat2:
     releases:
       2.1.0:
@@ -615,7 +481,7 @@ hisat2:
         filesize:
 
 
-# damona/software/hmmer/registry.yaml
+# hmmer/registry.yaml
 hmmer:
   doi: 10.5281/zenodo.8091833
   zenodo_id: 8091834
@@ -632,7 +498,7 @@ hmmer:
       doi: 10.5281/zenodo.13717178
       filesize: 35192832
 
-# damona/software/homer/registry.yaml
+# homer/registry.yaml
 homer:
   doi: 10.5281/zenodo.7305500
   zenodo_id: 7305501
@@ -644,7 +510,7 @@ homer:
       doi: 10.5281/zenodo.7305501
       filesize: 486887424
 
-# damona/software/idr/registry.yaml
+# idr/registry.yaml
 idr:
   doi: 10.5281/zenodo.7305442
   zenodo_id: 7305443
@@ -656,7 +522,7 @@ idr:
       doi: 10.5281/zenodo.7305443
       filesize: 582025216
 
-# damona/software/igvtools/registry.yaml
+# igvtools/registry.yaml
 igvtools:
   binaries: igv igvtools
   doi: 10.5281/zenodo.7022634
@@ -668,31 +534,7 @@ igvtools:
       doi: 10.5281/zenodo.7022635
       filesize: 126578688
 
-# damona/software/infernal/registry.yaml
-infernal:
-  doi: 10.5281/zenodo.13739623
-  binaries: cmalign cmcalibrate cmemit cmpress cmsearch cmbuild cmconvert cmfetch cmscan cmstat
-  zenodo_id: 13739624
-  releases:
-    1.1.5:
-      download: https://zenodo.org/record/13739624/files/infernal_1.1.5.img
-      md5sum: 8ea5433eda70a9d3fc7bd0006f69ccf8
-      doi: 10.5281/zenodo.13739624
-      filesize: 124108800
-
-# damona/software/ir/registry.yaml
-ir:
-  doi: 10.5281/zenodo.13305731
-  zenodo_id: 13305732
-  binaries: ir
-  releases:
-    2.8.0:
-      download: https://zenodo.org/record/13305732/files/ir_2.8.0.img
-      md5sum: 0861075cc6478afd8df3922e4d522d6d
-      doi: 10.5281/zenodo.13305732
-      filesize: 39620608
-
-# damona/software/ivar/registry.yaml
+# ivar/registry.yaml
 ivar:
   doi: 10.5281/zenodo.8033025
   zenodo_id: 8033026
@@ -704,7 +546,7 @@ ivar:
       doi: 10.5281/zenodo.8033026
       filesize: 139108352
 
-# damona/software/jellyfish/registry.yaml
+# jellyfish/registry.yaml
 jellyfish:
   doi: 10.5281/zenodo.8381418
   binaries: jellyfish
@@ -716,19 +558,7 @@ jellyfish:
       doi: 10.5281/zenodo.8381419
       filesize: 95453184
 
-# damona/software/khmer/registry.yaml
-khmer:
-  doi: 10.5281/zenodo.13924242
-  binaries: extract-partitions.py load-into-counting.py abundance-dist-single.py  fastq-to-fasta.py make-initial-stoptags.py abundance-dist.py  readstats.py     filter-abund-single.py   merge-partitions.py readstats.pyc annotate-partitions.py sample-reads-randomly.py filter-abund.py normalize-by-median.py count-median.py filter-stoptags.py partition-graph.py do-partition.py split-paired-reads.py find-knots.py trim-low-abund.py extract-long-sequences.py   interleave-reads.py   unique-kmers.py extract-paired-reads.py load-graph.py
-  zenodo_id: 13924243
-  releases:
-    2.1.1:
-      download: https://zenodo.org/record/13924243/files/khmer_2.1.1.img
-      md5sum: 89fbb75b2c9ce80ebfb527e989e66c41
-      doi: 10.5281/zenodo.13924243
-      filesize: 76582912
-
-# damona/software/kraken/registry.yaml
+# kraken/registry.yaml
 kraken:
   doi: 10.5281/zenodo.5801359
   zenodo_id: 5801360
@@ -746,7 +576,7 @@ kraken:
       filesize: 723301918
       binaries: kraken2 kraken2-build 
 
-# damona/software/laa/registry.yaml
+# laa/registry.yaml
 pblaa:
   doi: 10.5281/zenodo.10404978
   zenodo_id: 10404979
@@ -758,42 +588,7 @@ pblaa:
       doi: 10.5281/zenodo.10404979
       filesize: 147615744
 
-# damona/software/lastz/registry.yaml
-lastz:
-  doi: 10.5281/zenodo.15579820
-  zenodo_id: 15579821
-  binaries: lastz
-  releases:
-    1.04.52:
-      download: https://zenodo.org/record/15579821/files/lastz_1.04.52.img
-      md5sum: ca846d009c3d36c8e915a31fba54d82f
-      doi: 10.5281/zenodo.15579821
-      filesize: 235806720
-
-# damona/software/liftoff/registry.yaml
-liftoff:
-  doi: 10.5281/zenodo.13789900
-  binaries: liftoff
-  zenodo_id: 13789901
-  releases:
-    1.6.3:
-      download: https://zenodo.org/record/13789901/files/liftoff_1.6.3.img
-      md5sum: 0d74ac9c47ab15fb05135a65ad65282d
-      doi: 10.5281/zenodo.13789901
-      filesize: 188694528
-
-# damona/software/lima/registry.yaml
-lima:
-  doi: 10.5281/zenodo.13902163
-  zenodo_id: 13902164
-  releases:
-    2.9.0:
-      download: https://zenodo.org/record/13902164/files/lima_2.9.0.img
-      md5sum: 9236a1f1d89d011a7a7dc4da13352109
-      doi: 10.5281/zenodo.13902164
-      filesize: 50524160
-
-# damona/software/mafft/registry.yaml
+# mafft/registry.yaml
 mafft:
   doi: 10.5281/zenodo.8037104
   zenodo_id: 8037105
@@ -805,30 +600,7 @@ mafft:
       doi: 10.5281/zenodo.8037105
       filesize: 123727872
 
-# damona/software/mauve/registry.yaml
-mauve:
-  doi: 10.5281/zenodo.14193974
-  zenodo_id: 14193975
-  releases:
-    2.4.0:
-      download: https://zenodo.org/record/14194586/files/mauve_2.4.0.img
-      md5sum: ee7053f5bd7dd7618f269ab9f9d5429b
-      doi: 10.5281/zenodo.14194586
-      filesize: 211656704
-
-# damona/software/mcl/registry.yaml
-mcl:
-  doi: 10.5281/zenodo.13787536
-  binaries: mcl
-  zenodo_id: 13787537
-  releases:
-    22.282.0:
-      download: https://zenodo.org/record/13787537/files/mcl_22.282.0.img
-      md5sum: b1289eb7c334fdb47dd0615c285d2a1e
-      doi: 10.5281/zenodo.13787537
-      filesize: 62525440
-
-# damona/software/medaka/registry.yaml
+# medaka/registry.yaml
 medaka:
   doi: 10.5281/zenodo.7846294
   zenodo_id: 7846295
@@ -840,30 +612,7 @@ medaka:
       doi: 10.5281/zenodo.7846295
       filesize: 3330183168
 
-# damona/software/meme/registry.yaml
-meme:
-  doi: 10.5281/zenodo.14931137
-  binaries: ame dreme fimo glam2scan mast meme momo sea streme tomtom centrimodust glam2 gomo mcast meme-chip purge spamo tgene xstreme
-  zenodo_id: 14931138
-  releases:
-    5.5.3:
-      download: https://zenodo.org/record/14931138/files/meme_5.5.3.img
-      md5sum: d70cf730bc06bc7bd47fc676f3dfac5e
-      doi: 10.5281/zenodo.14931138
-      filesize: 623738880
-
-# damona/software/miniasm/registry.yaml
-miniasm:
-  doi: 10.5281/zenodo.13550866
-  zenodo_id: 13550867
-  releases:
-    0.3.0:
-      download: https://zenodo.org/record/13550867/files/miniasm_0.3.0.img
-      md5sum: 7bc1a9f0c3a399747a93d81a686c5c3c
-      doi: 10.5281/zenodo.13550867
-      filesize: 27189248
-
-# damona/software/minimap2/registry.yaml
+# minimap2/registry.yaml
 minimap2:
   doi: 10.5281/zenodo.5799480
   zenodo_id: 5799481
@@ -885,18 +634,7 @@ minimap2:
       doi: 10.5281/zenodo.7817800
       filesize: 7053312
 
-# damona/software/mosdepth/registry.yaml
-mosdepth:
-  doi: 10.5281/zenodo.12805459
-  zenodo_id: 12805460
-  releases:
-    0.3.8:
-      download: https://zenodo.org/record/12805460/files/mosdepth_0.3.8.img
-      md5sum: 18d44aeeb8aeec49fe5506988d988eb1
-      doi: 10.5281/zenodo.12805460
-      filesize: 57778176
-
-# damona/software/multiqc/registry.yaml
+# multiqc/registry.yaml
 multiqc:
   doi: 10.5281/zenodo.10205069
   zenodo_id: 10205070
@@ -907,7 +645,7 @@ multiqc:
       doi: 10.5281/zenodo.10205070
       filesize: 180817920
 
-# damona/software/mummer/registry.yaml
+# mummer/registry.yaml
 mummer:
   doi: 10.5281/zenodo.10936493
   binaries: show-diff nucmer promer run-mummer1 dnadiff run-mummer3 mummer mummerplot repeat-match show-snps show-coords delta-filter
@@ -919,7 +657,7 @@ mummer:
       doi: 10.5281/zenodo.10936494
       filesize: 152612864
 
-# damona/software/nanopolish/registry.yaml
+# nanopolish/registry.yaml
 nanopolish:
   doi: 10.5281/zenodo.8173324
   binaries: nanopolish
@@ -931,19 +669,7 @@ nanopolish:
       doi: 10.5281/zenodo.8196027
       filesize: 348581888
 
-# damona/software/necat/registry.yaml
-necat:
-  doi: 10.5281/zenodo.13907088
-  binaries: necat.pl
-  zenodo_id: 13907089
-  releases:
-    0.0.1:
-      download: https://zenodo.org/record/13907089/files/necat_0.0.1.img
-      md5sum: 0f5f911b6282493785f64fc77a2829f9
-      doi: 10.5281/zenodo.13907089
-      filesize: 78471168
-
-# damona/software/nextclade/registry.yaml
+# nextclade/registry.yaml
 nextclade:
   doi: 10.5281/zenodo.8033045
   zenodo_id: 8033046
@@ -955,31 +681,7 @@ nextclade:
       doi: 10.5281/zenodo.8033046
       filesize: 156852224
 
-# damona/software/orthofinder/registry.yaml
-orthofinder:
-  doi: 10.5281/zenodo.13787523
-  binaries: orthofinder diamond mmseqs
-  zenodo_id: 13787524
-  releases:
-    2.5.5:
-      download: https://zenodo.org/record/13787524/files/orthofinder_2.5.5.img
-      md5sum: 24b9b603bd5d8a6633682657c6016f96
-      doi: 10.5281/zenodo.13787524
-      filesize: 495833088
-
-# damona/software/pairtools/registry.yaml
-pairtools:
-  doi: 10.5281/zenodo.14746698
-  zenodo_id: 14746699
-  binaries: pairtools
-  releases:
-    1.1.2:
-      download: https://zenodo.org/record/14746699/files/pairtools_1.1.2.img
-      md5sum: 97425b301e2060c6e7d4a59b4561d20a
-      doi: 10.5281/zenodo.14746699
-      filesize: 228876288
-
-# damona/software/pangolin/registry.yaml
+# pangolin/registry.yaml
 pangolin:
   doi: 10.5281/zenodo.8034796
   zenodo_id: 8034797
@@ -991,7 +693,7 @@ pangolin:
       doi: 10.5281/zenodo.8034797
       filesize: 443596800
 
-# damona/software/pbbam/registry.yaml
+# pbbam/registry.yaml
 pbbam:
   doi: 10.5281/zenodo.7814653
   zenodo_id: 7814654
@@ -1008,7 +710,7 @@ pbbam:
       doi: 10.5281/zenodo.7817189
       filesize: 213422080
 
-# damona/software/pbsim/registry.yaml
+# pbsim/registry.yaml
 pbsim:
   doi: 10.5281/zenodo.10610347
   zenodo_id: 10610348
@@ -1019,19 +721,7 @@ pbsim:
       doi: 10.5281/zenodo.10610348
       filesize: 27959296
 
-# damona/software/pecat/registry.yaml
-pecat:
-  doi: 10.5281/zenodo.13942766
-  binaries: pecat.pl
-  zenodo_id: 13942767
-  releases:
-    0.0.3:
-      download: https://zenodo.org/record/13942767/files/pecat_0.0.3.img
-      md5sum: 3ddec2b2052a9039cacaeffa5c17ea1b
-      doi: 10.5281/zenodo.13942767
-      filesize: 668454912
-
-# damona/software/phantompeakqualtools/registry.yaml
+# phantompeakqualtools/registry.yaml
 phantompeakqualtools:
   doi: 10.5281/zenodo.5799573
   zenodo_id: 5799574
@@ -1048,7 +738,7 @@ phantompeakqualtools:
       doi: 10.5281/zenodo.7301453
       filesize: 787251200
 
-# damona/software/pigz/registry.yaml
+# pigz/registry.yaml
 pigz:
   doi: 10.5281/zenodo.7034375
   binaries: pigz unpigz
@@ -1060,19 +750,7 @@ pigz:
       doi: 10.5281/zenodo.7346805
       filesize: 4644864
 
-# damona/software/pilon/registry.yaml
-pilon:
-  doi: 10.5281/zenodo.14216430
-  binaries: pilon
-  zenodo_id: 14216431
-  releases:
-    1.24.0:
-      download: https://zenodo.org/record/14216431/files/pilon_1.24.0.img
-      md5sum: 6c22220ea6ebd975892111094bfdf0e9
-      doi: 10.5281/zenodo.14216431
-      filesize: 173187072
-
-# damona/software/polypolish/registry.yaml
+# polypolish/registry.yaml
 polypolish:
   doi: 10.5281/zenodo.7704078
   zenodo_id: 7704079
@@ -1089,7 +767,7 @@ polypolish:
       doi: 10.5281/zenodo.13732628
       filesize: 76800000
 
-# damona/software/pplacer/registry.yaml
+# pplacer/registry.yaml
 pplacer:
   doi: 10.5281/zenodo.10048992
   zenodo_id: 10048993
@@ -1101,7 +779,7 @@ pplacer:
       doi: 10.5281/zenodo.10048993
       filesize: 71200768
 
-# damona/software/prokka/registry.yaml
+# prokka/registry.yaml
 prokka:
   doi: 10.5281/zenodo.5708863
   zenodo_id: 5708864
@@ -1124,19 +802,7 @@ prokka:
       doi: 10.5281/zenodo.7946774
       filesize: 597954560
 
-# damona/software/purge_haplotigs/registry.yaml
-purge_haplotigs:
-  doi: 10.5281/zenodo.14967449
-  binaries: purge_haplotigs
-  zenodo_id: 14967450
-  releases:
-    1.1.3:
-      download: https://zenodo.org/record/14967450/files/purge_haplotigs_1.1.3.img
-      md5sum: ea973cae3f075bc8f7f9c02b1f0fbe01
-      doi: 10.5281/zenodo.14967450
-      filesize: 169545728
-
-# damona/software/pycoqc/registry.yaml
+# pycoqc/registry.yaml
 pycoqc:
   doi: 10.5281/zenodo.7746268
   zenodo_id: 7746269
@@ -1148,7 +814,7 @@ pycoqc:
       doi: 10.5281/zenodo.7746269
       filesize: 247431168
 
-# damona/software/pypolca/registry.yaml
+# pypolca/registry.yaml
 pypolca:
   doi: 10.5281/zenodo.10806473
   zenodo_id: 10806474
@@ -1160,19 +826,7 @@ pypolca:
       doi: 10.5281/zenodo.10806474
       filesize: 225759232
 
-# damona/software/qc3c/registry.yaml
-qc3c:
-  doi: 10.5281/zenodo.14746666
-  zenodo_id: 14746667
-  binaries: qc3C
-  releases:
-    0.5.0:
-      download: https://zenodo.org/record/14746667/files/qc3c_0.5.0.img
-      md5sum: b41c2c087970a02c43a8cfa541b9f881
-      doi: 10.5281/zenodo.14746667
-      filesize: 298835968
-
-# damona/software/quast/registry.yaml
+# quast/registry.yaml
 quast:
   doi: 10.5281/zenodo.5708847
   zenodo_id: 5708848
@@ -1195,19 +849,7 @@ quast:
       doi: 10.5281/zenodo.14223782
       filesize: 422801408
 
-# damona/software/ragtag/registry.yaml
-ragtag:
-  doi: 10.5281/zenodo.13759600
-  zenodo_id: 13759601
-  binaries: ragtag.py ragtag_agp2fa.py ragtag_correct.py ragtag_paf2delta.py ragtag_scaffold.py ragtag_agpcheck.py ragtag_create_links.py ragtag_patch.py ragtag_splitasm.py ragtag_asmstats.py ragtag_delta2paf.py ragtag.py ragtag_stats.py ragtag_break_query.py ragtag_merge.py ragtag_rename.py ragtag_update_gff.py
-  releases:
-    2.1.0:
-      download: https://zenodo.org/record/13759601/files/ragtag_2.1.0.img
-      md5sum: a4b9825b45e158b5ee7402e98056b59f
-      doi: 10.5281/zenodo.13759601
-      filesize: 198115328
-
-# damona/software/raxml/registry.yaml
+# raxml/registry.yaml
 raxml:
   doi: 10.5281/zenodo.7968243
   binaries: raxmlHPC raxmlHPC-PTHREADS raxmlHPC-PTHREADS-SSE3 raxmlHPC-AVX2 raxmlHPC-PTHREADS-AVX2  raxmlHPC-SSE3
@@ -1219,19 +861,7 @@ raxml:
       doi: 10.5281/zenodo.7968244
       filesize: 60207104
 
-# damona/software/repeatmasker/registry.yaml
-repeatmasker:
-  doi: 10.5281/zenodo.13391622
-  zenodo_id: 13391623
-  binaries: segmasker RepeatMasker
-  releases:
-    4.0.8:
-      download: https://zenodo.org/record/13391623/files/repeatmasker_4.0.8.img
-      md5sum: eeabbf772362e41ba9bdba249326663e
-      doi: 10.5281/zenodo.13391623
-      filesize: 1770332160
-
-# damona/software/rnadiff/registry.yaml
+# rnadiff/registry.yaml
 rnadiff:
   doi: 10.5281/zenodo.5708855
   zenodo_id: 5708856
@@ -1242,31 +872,7 @@ rnadiff:
       doi: 10.5281/zenodo.5708856
       filesize: 976704855
 
-# damona/software/rnafold/registry.yaml
-RNAfold:
-  doi: 10.5281/zenodo.14223661
-  binaries: RNA2Dfold RNALfold RNAaliduplex RNAcofold RNAdistance RNAduplex RNAfold RNAheat RNAlocmin RNApaln RNApdist RNAplfold RNpvmin RNAsubopt RNALalifold RNAPKplex RNAalifold RNAconsensus RNAdos RNAeval RNAforester RNAinverse RNAmultifold RNAparconv RNAplex RNAplot RNAsnoop RNAup
-  zenodo_id: 14223662
-  releases:
-    2.7.0:
-      download: https://zenodo.org/record/14223662/files/RNAfold_2.7.0.img
-      md5sum: 9d26d739b474a0547394c07c60a0ebc7
-      doi: 10.5281/zenodo.14223662
-      filesize: 166219776
-
-# damona/software/rnammer/registry.yaml
-rnammer:
-  doi: 10.5281/zenodo.13732797
-  zenodo_id: 13732798
-  binaries: rnammer
-  releases:
-    1.2.0:
-      download: https://zenodo.org/record/13732798/files/rnammer_1.2.0.img
-      md5sum: 2be607eb7b78b3f718411c97333a2ced
-      doi: 10.5281/zenodo.13732798
-      filesize: 40415232
-
-# damona/software/rnaseqc/registry.yaml
+# rnaseqc/registry.yaml
 rnaseqc:
   doi: 10.5281/zenodo.5799563
   zenodo_id: 5799564
@@ -1277,19 +883,7 @@ rnaseqc:
       doi: 10.5281/zenodo.5799564
       filesize: 364236800
 
-# damona/software/rseqc/registry.yaml
-rseqc:
-  doi: 10.5281/zenodo.14944678
-  binaries: inner_distance.py read_GC.py geneBody_coverage.py geneBody_coverage2.py clipping_profile.py read_duplication.py junction_annotation.py junction_saturation.py infer_experiment.py 
-  zenodo_id: 14944679
-  releases:
-    5.0.4:
-      download: https://zenodo.org/record/14944679/files/rseqc_5.0.4.img
-      md5sum: 981b9c7be0de6324554963235c05b86d
-      doi: 10.5281/zenodo.14944679
-      filesize: 425709568
-
-# damona/software/rtools/registry.yaml
+# rtools/registry.yaml
 rtools:
   binaries: R Rscript
   doi: 10.5281/zenodo.5801841
@@ -1316,7 +910,7 @@ rtools:
       doi: 10.5281/zenodo.10687085
       filesize: 643481600
 
-# damona/software/salmon/registry.yaml
+# salmon/registry.yaml
 salmon:
   binaries: salmon
   doi: 10.5281/zenodo.5708842
@@ -1328,7 +922,7 @@ salmon:
       doi: 10.5281/zenodo.5708843
       filesize: 336496158
 
-# damona/software/samtools/registry.yaml
+# samtools/registry.yaml
 samtools:
   doi: 10.5281/zenodo.7215277
   binaries: samtools
@@ -1345,7 +939,7 @@ samtools:
       doi: 10.5281/zenodo.7437898
       filesize: 74977280
 
-# damona/software/samtools_minimap2/registry.yaml
+# samtools_minimap2/registry.yaml
 samtools_1.17_minimap2:
   doi: 10.5281/zenodo.7987998
   zenodo_id: 7987999
@@ -1356,7 +950,7 @@ samtools_1.17_minimap2:
       doi: 10.5281/zenodo.7987999
       filesize: 117575680
 
-# damona/software/seacr/registry.yaml
+# seacr/registry.yaml
 seacr:
   doi: 10.5281/zenodo.8420793
   zenodo_id: 8420794
@@ -1368,19 +962,7 @@ seacr:
       doi: 10.5281/zenodo.8420794
       filesize: 393396224
 
-# damona/software/seaview/registry.yaml
-seaview:
-  doi: 10.5281/zenodo.13276568
-  zenodo_id: 13276569
-  binaries: seaview
-  releases:
-    5.0.5:
-      download: https://zenodo.org/record/13276569/files/seaview_5.0.5.img
-      md5sum: 3653ad631536cc9daf675249fa859b3f
-      doi: 10.5281/zenodo.13276569
-      filesize: 61292544
-
-# damona/software/seqkit/registry.yaml
+# seqkit/registry.yaml
 seqkit:
   doi: 10.5281/zenodo.6313000
   zenodo_id: 6313001
@@ -1396,7 +978,7 @@ seqkit:
       doi: 10.5281/zenodo.7821924
       filesize: 22155264
 
-# damona/software/seqtk/registry.yaml
+# seqtk/registry.yaml
 seqtk:
   doi: 10.5281/zenodo.5729950
   zenodo_id: 5729951
@@ -1407,7 +989,7 @@ seqtk:
       doi: 10.5281/zenodo.5729951
       filesize: 89464832
 
-# damona/software/sequana/registry.yaml
+# sequana/registry.yaml
 sequana:
   doi: 10.5281/zenodo.5799538
   binaries: sequana sequana_coverage sequana_taxonomy
@@ -1443,20 +1025,12 @@ sequana:
       md5sum: ad974738e030f5009a3f83deac26421e
       doi: 10.5281/zenodo.10460105
       filesize: 1252130816
-
-# damona/software/sequana_coverage/registry.yaml
-sequana_coverage:
-  doi: 10.5281/zenodo.13946413
-  binaries: sequana_coverage
-  zenodo_id: 13946414
-  releases:
     0.18.0:
-      download: https://zenodo.org/record/13946414/files/sequana_coverage_0.18.0.img
-      md5sum: a94b2f309fdc5f49bfc4ea46f56bae71
-      doi: 10.5281/zenodo.13946414
-      filesize: 788762624
-
-# damona/software/sequana_denovo/registry.yaml
+      download: https://zenodo.org/record/16118560/files/sequana_0.18.0.img
+      md5sum: 4b009eadf43d9c5f4aab5a8d4a551dc2
+      doi: 10.5281/zenodo.16118560
+      filesize: 1380343808
+# sequana_denovo/registry.yaml
 sequana_denovo:
   doi: 10.5281/zenodo.7335175
   binaries: prokka quast.py blastn blastp busco spades unicycler
@@ -1468,7 +1042,7 @@ sequana_denovo:
       doi: 10.5281/zenodo.7335176
       filesize: 1761562624
 
-# damona/software/sequana_minimal/registry.yaml
+# sequana_minimal/registry.yaml
 sequana_minimal:
   doi: 10.5281/zenodo.8037161
   zenodo_id: 8037162
@@ -1480,7 +1054,7 @@ sequana_minimal:
       doi: 10.5281/zenodo.8037162
       filesize: 331116544
 
-# damona/software/sequana_ribofinder/registry.yaml
+# sequana_ribofinder/registry.yaml
 sequana_ribofinder:
   doi: 10.5281/zenodo.7348114
   zenodo_id: 7348115
@@ -1491,7 +1065,7 @@ sequana_ribofinder:
       doi: 10.5281/zenodo.7348115
       filesize: 143413248
 
-# damona/software/sequana_tools/registry.yaml
+# sequana_tools/registry.yaml
 sequana_tools:
   doi: 10.5281/zenodo.5767303
   binaries:  fastqc bowtie STAR bowtie2 bowtie2-build bowtie-build bwa featureCounts samtools bamtools  gffread dsrc MarkDuplicates spades.py split-paired-reads.py filter-abund.py extract-paired-reads.py snpEff deeptools picard subread sambamba pbunzip2 pbzip2 kraken2 krona ktImportText kraken2-build freebayes minimap2 bedtools interleave-reads.py normalize-by-median.py ccs
@@ -1572,7 +1146,7 @@ sequana_tools:
       exclude_binaries: ccs bowtie2 fastqc bowtie2-build
       filesize: 1810407424
 
-# damona/software/shustring/registry.yaml
+# shustring/registry.yaml
 shustring:
   doi: 10.5281/zenodo.7660519
   zenodo_id: 7660520
@@ -1584,7 +1158,7 @@ shustring:
       doi: 10.5281/zenodo.7660520
       filesize: 56365056
 
-# damona/software/snpeff/registry.yaml
+# snpeff/registry.yaml
 snpeff:
   doi: 10.5281/zenodo.7962843
   zenodo_id: 7962844
@@ -1598,8 +1172,12 @@ snpeff:
       download: https://zenodo.org/record/7963301/files/snpeff_5.1.0.img
       md5sum: 07e7f28061801fc3ede5745817449f38
       doi: 10.5281/zenodo.7963301
-      filesize: 279199744
-# damona/software/sratoolkit/registry.yaml
+      filesize: 279199744    5.2.0:
+      download: https://zenodo.org/record/17098202/files/snpeff_5.2.0.img
+      md5sum: da6b6fd6414c97f6c97935ef469a12e2
+      doi: 10.5281/zenodo.17098202
+      filesize: 308109312
+# sratoolkit/registry.yaml
 sratoolkit:
   doi: 10.5281/zenodo.10894350
   zenodo_id: 10894351
@@ -1611,7 +1189,7 @@ sratoolkit:
       doi: 10.5281/zenodo.10894351
       filesize: 165797888
 
-# damona/software/subread/registry.yaml
+# subread/registry.yaml
 subread:
   doi: 10.5281/zenodo.8037098
   zenodo_id: 8037099
@@ -1623,19 +1201,7 @@ subread:
       doi: 10.5281/zenodo.8037099
       filesize: 152403968
 
-# damona/software/tRNAscan_SE/registry.yaml
-tRNAscan_SE:
-  doi: 10.5281/zenodo.13924258
-  binaries: tRNAscan-SE
-  zenodo_id: 13924259
-  releases:
-    2.0.12:
-      download: https://zenodo.org/record/13924259/files/tRNAscan_SE_2.0.12.img
-      md5sum: c4fea70159294fcf986c131a08cbe3f2
-      doi: 10.5281/zenodo.13924259
-      filesize: 132579328
-
-# damona/software/transdecoder/registry.yaml
+# transdecoder/registry.yaml
 trandecoder:
   doi: 10.5281/zenodo.8092506
   zenodo_id: 8092507
@@ -1647,7 +1213,7 @@ trandecoder:
       doi: 10.5281/zenodo.8092507
       filesize: 1225363456
 
-# damona/software/trf/registry.yaml
+# trf/registry.yaml
 trf:
   doi: 10.5281/zenodo.4675773
   zenodi_id: 5675773
@@ -1657,7 +1223,7 @@ trf:
       md5sum: c03c87155a05e30911647c621d49bacd
       filesize: 182703447
 
-# damona/software/trim_galore/registry.yaml
+# trim_galore/registry.yaml
 trimgalore:
   doi: 10.5281/zenodo.10048981
   binaries: trim_galore
@@ -1669,7 +1235,7 @@ trimgalore:
       doi: 10.5281/zenodo.10048982
       filesize: 243253248
 
-# damona/software/trinity/registry.yaml
+# trinity/registry.yaml
 trinity:
   doi: 10.5281/zenodo.8096026
   zenodo_id: 8096027
@@ -1681,7 +1247,7 @@ trinity:
       doi: 10.5281/zenodo.8096027
       filesize: 2739605504
 
-# damona/software/trinotate/registry.yaml
+# trinotate/registry.yaml
 trinotate:
   doi: 10.5281/zenodo.8096390
   zenodo_id: 8096391
@@ -1693,19 +1259,7 @@ trinotate:
       doi: 10.5281/zenodo.8096391
       filesize: 1667067904
 
-# damona/software/triplexator/registry.yaml
-triplexator:
-  doi: 10.5281/zenodo.15814032
-  binaries: triplexator
-  zenodo_id: 15814033
-  releases:
-    1.3.2:
-      download: https://zenodo.org/record/15814033/files/triplexator_1.3.2.img
-      md5sum: ffbc2bbb97211afb43b3e63547609758
-      doi: 10.5281/zenodo.15814033
-      filesize: 340795392
-
-# damona/software/ucsc/registry.yaml
+# ucsc/registry.yaml
 ucsc:
   doi: 10.5281/zenodo.10011489
   binaries: bedGraphToBigWig bedCoverage bedToBigBed bedIntersect
@@ -1717,7 +1271,7 @@ ucsc:
       doi: 10.5281/zenodo.10011490
       filesize: 148918272
 
-# damona/software/unicycler/registry.yaml
+# unicycler/registry.yaml
 unicycler:
   doi: 10.5281/zenodo.10469284
   zenodo_id: 10469285
@@ -1730,19 +1284,7 @@ unicycler:
       filesize: 830676992
 
 
-# damona/software/vadr/registry.yaml
-vadr:
-  doi: 10.5281/zenodo.13323320
-  binaries: v-annotate.pl,v-build.pl,fasta-trim-terminal-ambigs.pl
-  zenodo_id: 13323321
-  releases:
-    1.6.4:
-      download: https://zenodo.org/record/13323321/files/vadr_1.6.4.img
-      md5sum: ed748fb3cccbb488b49fe05c18ec2bab
-      doi: 10.5281/zenodo.13323321
-      filesize: 831700992
-
-# damona/software/vt/registry.yaml
+# vt/registry.yaml
 vt:
   doi: 10.5281/zenodo.7969803
   binaries: vt
@@ -1754,7 +1296,338 @@ vt:
       doi: 10.5281/zenodo.7969804
       filesize: 192376832
 
-# damona/software/wget/registry.yaml
+# delly/registry.yaml
+delly:
+  doi: 10.5281/zenodo.11302859
+  zenodo_id: 11302860
+  releases:
+    1.2.6:
+      download: https://zenodo.org/record/11302860/files/delly_1.2.6.img
+      md5sum: d310e9b990c68ac13260904758fa1131
+      doi: 10.5281/zenodo.11302860
+      filesize: 177160192
+
+# repeatmasker/registry.yaml
+repeatmasker:
+  doi: 10.5281/zenodo.13391622
+  zenodo_id: 13391623
+  binaries: segmasker RepeatMasker
+  releases:
+    4.0.8:
+      download: https://zenodo.org/record/13391623/files/repeatmasker_4.0.8.img
+      md5sum: eeabbf772362e41ba9bdba249326663e
+      doi: 10.5281/zenodo.13391623
+      filesize: 1770332160
+
+# dustmasker/registry.yaml
+dustmasker:
+  doi: 10.5281/zenodo.5801359
+  zenodo_id: 5801360
+  releases:
+    1.0.0:
+      download: https://zenodo.org/record/5801365/files/kraken_2.0.9.img
+      md5sum: bc195a921148969c7f9482f9fe25b3cd
+      doi: 10.5281/zenodo.5801365
+      filesize: 723301918
+      binaries: dustmasker
+
+# mosdepth/registry.yaml
+mosdepth:
+  doi: 10.5281/zenodo.12805459
+  zenodo_id: 12805460
+  releases:
+    0.3.8:
+      download: https://zenodo.org/record/12805460/files/mosdepth_0.3.8.img
+      md5sum: 18d44aeeb8aeec49fe5506988d988eb1
+      doi: 10.5281/zenodo.12805460
+      filesize: 57778176
+
+# seaview/registry.yaml
+seaview:
+  doi: 10.5281/zenodo.13276568
+  zenodo_id: 13276569
+  binaries: seaview
+  releases:
+    5.0.5:
+      download: https://zenodo.org/record/13276569/files/seaview_5.0.5.img
+      md5sum: 3653ad631536cc9daf675249fa859b3f
+      doi: 10.5281/zenodo.13276569
+      filesize: 61292544
+
+# ir/registry.yaml
+ir:
+  doi: 10.5281/zenodo.13305731
+  zenodo_id: 13305732
+  binaries: ir
+  releases:
+    2.8.0:
+      download: https://zenodo.org/record/13305732/files/ir_2.8.0.img
+      md5sum: 0861075cc6478afd8df3922e4d522d6d
+      doi: 10.5281/zenodo.13305732
+      filesize: 39620608
+
+# vadr/registry.yaml
+vadr:
+  doi: 10.5281/zenodo.13323320
+  binaries: v-annotate.pl,v-build.pl,fasta-trim-terminal-ambigs.pl
+  zenodo_id: 13323321
+  releases:
+    1.6.4:
+      download: https://zenodo.org/record/13323321/files/vadr_1.6.4.img
+      md5sum: ed748fb3cccbb488b49fe05c18ec2bab
+      doi: 10.5281/zenodo.13323321
+      filesize: 831700992
+
+# bandage/registry.yaml
+bandage:
+  doi: 10.5281/zenodo.13399041
+  binaries: Bandage
+  zenodo_id: 13399042
+  releases:
+    0.8.1:
+      download: https://zenodo.org/record/13399042/files/bandage_0.8.1.img
+      md5sum: 4be050dc620e0ed1d8e3ab0d51f45597
+      doi: 10.5281/zenodo.13399042
+      filesize: 759283712
+
+# augustus/registry.yaml
+augustus:
+  doi: 10.5281/zenodo.13711281
+  binaries: augustus
+  zenodo_id: 13711282
+  releases:
+    3.5.0:
+      download: https://zenodo.org/record/13711282/files/augustus_3.5.0.img
+      md5sum: f04dc480034cbbb102180c97f081d1b5
+      doi: 10.5281/zenodo.13711282
+      filesize: 348143616
+
+# rnammer/registry.yaml
+rnammer:
+  doi: 10.5281/zenodo.13732797
+  zenodo_id: 13732798
+  binaries: rnammer
+  releases:
+    1.2.0:
+      download: https://zenodo.org/record/13732798/files/rnammer_1.2.0.img
+      md5sum: 2be607eb7b78b3f718411c97333a2ced
+      doi: 10.5281/zenodo.13732798
+      filesize: 40415232
+
+# miniasm/registry.yaml
+miniasm:
+  doi: 10.5281/zenodo.13550866
+  zenodo_id: 13550867
+  releases:
+    0.3.0:
+      download: https://zenodo.org/record/13550867/files/miniasm_0.3.0.img
+      md5sum: 7bc1a9f0c3a399747a93d81a686c5c3c
+      doi: 10.5281/zenodo.13550867
+      filesize: 27189248
+
+# infernal/registry.yaml
+infernal:
+  doi: 10.5281/zenodo.13739623
+  binaries: cmalign cmcalibrate cmemit cmpress cmsearch cmbuild cmconvert cmfetch cmscan cmstat
+  zenodo_id: 13739624
+  releases:
+    1.1.5:
+      download: https://zenodo.org/record/13739624/files/infernal_1.1.5.img
+      md5sum: 8ea5433eda70a9d3fc7bd0006f69ccf8
+      doi: 10.5281/zenodo.13739624
+      filesize: 124108800
+
+# ragtag/registry.yaml
+ragtag:
+  doi: 10.5281/zenodo.13759600
+  zenodo_id: 13759601
+  binaries: ragtag.py ragtag_agp2fa.py ragtag_correct.py ragtag_paf2delta.py ragtag_scaffold.py ragtag_agpcheck.py ragtag_create_links.py ragtag_patch.py ragtag_splitasm.py ragtag_asmstats.py ragtag_delta2paf.py ragtag.py ragtag_stats.py ragtag_break_query.py ragtag_merge.py ragtag_rename.py ragtag_update_gff.py
+  releases:
+    2.1.0:
+      download: https://zenodo.org/record/13759601/files/ragtag_2.1.0.img
+      md5sum: a4b9825b45e158b5ee7402e98056b59f
+      doi: 10.5281/zenodo.13759601
+      filesize: 198115328
+
+# orthofinder/registry.yaml
+orthofinder:
+  doi: 10.5281/zenodo.13787523
+  binaries: orthofinder diamond mmseqs
+  zenodo_id: 13787524
+  releases:
+    2.5.5:
+      download: https://zenodo.org/record/13787524/files/orthofinder_2.5.5.img
+      md5sum: 24b9b603bd5d8a6633682657c6016f96
+      doi: 10.5281/zenodo.13787524
+      filesize: 495833088
+
+# liftoff/registry.yaml
+liftoff:
+  doi: 10.5281/zenodo.13789900
+  binaries: liftoff
+  zenodo_id: 13789901
+  releases:
+    1.6.3:
+      download: https://zenodo.org/record/13789901/files/liftoff_1.6.3.img
+      md5sum: 0d74ac9c47ab15fb05135a65ad65282d
+      doi: 10.5281/zenodo.13789901
+      filesize: 188694528
+
+# mcl/registry.yaml
+mcl:
+  doi: 10.5281/zenodo.13787536
+  binaries: mcl
+  zenodo_id: 13787537
+  releases:
+    22.282.0:
+      download: https://zenodo.org/record/13787537/files/mcl_22.282.0.img
+      md5sum: b1289eb7c334fdb47dd0615c285d2a1e
+      doi: 10.5281/zenodo.13787537
+      filesize: 62525440
+
+# adapterremoval/registry.yaml
+adapterremoval:
+  doi: 10.5281/zenodo.13809682
+  binaries: AdapterRemoval
+  zenodo_id: 13809683
+  releases:
+    2.3.3:
+      download: https://zenodo.org/record/13809683/files/adapterremoval_2.3.3.img
+      md5sum: aa155ed242bc6cede4b79ec5b080eaa5
+      doi: 10.5281/zenodo.13809683
+      filesize: 47804416
+
+# bbmap/registry.yaml
+bbmap:
+  doi: 10.5281/zenodo.13810656
+  binaries: bbmap.sh
+  zenodo_id: 13810658
+  releases:
+    39.1.0:
+      download: https://zenodo.org/record/13810658/files/bbmap_39.1.0.img
+      md5sum: 3e6c469061a2d45f273b0c24a05140b9
+      doi: 10.5281/zenodo.13810658
+      filesize: 234233856
+
+# dsrc/registry.yaml
+dsrc:
+  doi: 10.5281/zenodo.13821312
+  binaries: dsrc
+  zenodo_id: 13821313
+  releases:
+    2.0.2:
+      download: https://zenodo.org/record/13821313/files/dsrc_2.0.2.img
+      md5sum: 93510a5783a1f4be9f35a574954f6f92
+      doi: 10.5281/zenodo.13821313
+      filesize: 60305408
+
+# tRNAscan_SE/registry.yaml
+tRNAscan_SE:
+  doi: 10.5281/zenodo.13924258
+  binaries: tRNAscan-SE
+  zenodo_id: 13924259
+  releases:
+    2.0.12:
+      download: https://zenodo.org/record/13924259/files/tRNAscan_SE_2.0.12.img
+      md5sum: c4fea70159294fcf986c131a08cbe3f2
+      doi: 10.5281/zenodo.13924259
+      filesize: 132579328
+
+# lima/registry.yaml
+lima:
+  doi: 10.5281/zenodo.13902163
+  zenodo_id: 13902164
+  releases:
+    2.9.0:
+      download: https://zenodo.org/record/13902164/files/lima_2.9.0.img
+      md5sum: 9236a1f1d89d011a7a7dc4da13352109
+      doi: 10.5281/zenodo.13902164
+      filesize: 50524160
+
+# necat/registry.yaml
+necat:
+  doi: 10.5281/zenodo.13907088
+  binaries: necat.pl
+  zenodo_id: 13907089
+  releases:
+    0.0.1:
+      download: https://zenodo.org/record/13907089/files/necat_0.0.1.img
+      md5sum: 0f5f911b6282493785f64fc77a2829f9
+      doi: 10.5281/zenodo.13907089
+      filesize: 78471168
+
+# khmer/registry.yaml
+khmer:
+  doi: 10.5281/zenodo.13924242
+  binaries: extract-partitions.py load-into-counting.py abundance-dist-single.py  fastq-to-fasta.py make-initial-stoptags.py abundance-dist.py  readstats.py     filter-abund-single.py   merge-partitions.py readstats.pyc annotate-partitions.py sample-reads-randomly.py filter-abund.py normalize-by-median.py count-median.py filter-stoptags.py partition-graph.py do-partition.py split-paired-reads.py find-knots.py trim-low-abund.py extract-long-sequences.py   interleave-reads.py   unique-kmers.py extract-paired-reads.py load-graph.py
+  zenodo_id: 13924243
+  releases:
+    2.1.1:
+      download: https://zenodo.org/record/13924243/files/khmer_2.1.1.img
+      md5sum: 89fbb75b2c9ce80ebfb527e989e66c41
+      doi: 10.5281/zenodo.13924243
+      filesize: 76582912
+
+# pecat/registry.yaml
+pecat:
+  doi: 10.5281/zenodo.13942766
+  binaries: pecat.pl
+  zenodo_id: 13942767
+  releases:
+    0.0.3:
+      download: https://zenodo.org/record/13942767/files/pecat_0.0.3.img
+      md5sum: 3ddec2b2052a9039cacaeffa5c17ea1b
+      doi: 10.5281/zenodo.13942767
+      filesize: 668454912
+
+# sequana_coverage/registry.yaml
+sequana_coverage:
+  doi: 10.5281/zenodo.13946413
+  binaries: sequana_coverage
+  zenodo_id: 13946414
+  releases:
+    0.18.0:
+      download: https://zenodo.org/record/13946414/files/sequana_coverage_0.18.0.img
+      md5sum: a94b2f309fdc5f49bfc4ea46f56bae71
+      doi: 10.5281/zenodo.13946414
+      filesize: 788762624
+
+# rnafold/registry.yaml
+RNAfold:
+  doi: 10.5281/zenodo.14223661
+  binaries: RNA2Dfold RNALfold RNAaliduplex RNAcofold RNAdistance RNAduplex RNAfold RNAheat RNAlocmin RNApaln RNApdist RNAplfold RNpvmin RNAsubopt RNALalifold RNAPKplex RNAalifold RNAconsensus RNAdos RNAeval RNAforester RNAinverse RNAmultifold RNAparconv RNAplex RNAplot RNAsnoop RNAup
+  zenodo_id: 14223662
+  releases:
+    2.7.0:
+      download: https://zenodo.org/record/14223662/files/RNAfold_2.7.0.img
+      md5sum: 9d26d739b474a0547394c07c60a0ebc7
+      doi: 10.5281/zenodo.14223662
+      filesize: 166219776
+
+# mauve/registry.yaml
+mauve:
+  doi: 10.5281/zenodo.14193974
+  zenodo_id: 14193975
+  releases:
+    2.4.0:
+      download: https://zenodo.org/record/14194586/files/mauve_2.4.0.img
+      md5sum: ee7053f5bd7dd7618f269ab9f9d5429b
+      doi: 10.5281/zenodo.14194586
+      filesize: 211656704
+
+# pilon/registry.yaml
+pilon:
+  doi: 10.5281/zenodo.14216430
+  binaries: pilon
+  zenodo_id: 14216431
+  releases:
+    1.24.0:
+      download: https://zenodo.org/record/14216431/files/pilon_1.24.0.img
+      md5sum: 6c22220ea6ebd975892111094bfdf0e9
+      doi: 10.5281/zenodo.14216431
+      filesize: 173187072
+
+# wget/registry.yaml
 wget:
   doi: 10.5281/zenodo.14415566
   binaries: wget
@@ -1765,4 +1638,124 @@ wget:
       md5sum: ecf982c6c5b9554050c6f7d85fa66138
       doi: 10.5281/zenodo.14415567
       filesize: 5545984
+
+# chromap/registry.yaml
+chromap:
+  doi: 10.5281/zenodo.14721865
+  binaries: chromap
+  zenodo_id: 14721866
+  releases:
+    0.2.7:
+      download: https://zenodo.org/record/14721866/files/chromap_0.2.7.img
+      md5sum: d2f36536d62060d6e7cc96c932f8d06e
+      doi: 10.5281/zenodo.14721866
+      filesize: 58576896
+
+# pairtools/registry.yaml
+pairtools:
+  doi: 10.5281/zenodo.14746698
+  zenodo_id: 14746699
+  binaries: pairtools
+  releases:
+    1.1.2:
+      download: https://zenodo.org/record/14746699/files/pairtools_1.1.2.img
+      md5sum: 97425b301e2060c6e7d4a59b4561d20a
+      doi: 10.5281/zenodo.14746699
+      filesize: 228876288
+
+# qc3c/registry.yaml
+qc3c:
+  doi: 10.5281/zenodo.14746666
+  zenodo_id: 14746667
+  binaries: qc3C
+  releases:
+    0.5.0:
+      download: https://zenodo.org/record/14746667/files/qc3c_0.5.0.img
+      md5sum: b41c2c087970a02c43a8cfa541b9f881
+      doi: 10.5281/zenodo.14746667
+      filesize: 298835968
+
+# meme/registry.yaml
+meme:
+  doi: 10.5281/zenodo.14931137
+  binaries: ame dreme fimo glam2scan mast meme momo sea streme tomtom centrimodust glam2 gomo mcast meme-chip purge spamo tgene xstreme
+  zenodo_id: 14931138
+  releases:
+    5.5.3:
+      download: https://zenodo.org/record/14931138/files/meme_5.5.3.img
+      md5sum: d70cf730bc06bc7bd47fc676f3dfac5e
+      doi: 10.5281/zenodo.14931138
+      filesize: 623738880
+
+# rseqc/registry.yaml
+rseqc:
+  doi: 10.5281/zenodo.14944678
+  binaries: inner_distance.py read_GC.py geneBody_coverage.py geneBody_coverage2.py clipping_profile.py read_duplication.py junction_annotation.py junction_saturation.py infer_experiment.py 
+  zenodo_id: 14944679
+  releases:
+    5.0.4:
+      download: https://zenodo.org/record/14944679/files/rseqc_5.0.4.img
+      md5sum: 981b9c7be0de6324554963235c05b86d
+      doi: 10.5281/zenodo.14944679
+      filesize: 425709568
+
+# bcftools/registry.yaml
+bctools:
+  doi: 10.5281/zenodo.13924197
+  binaries: bcftools
+  zenodo_id: 13924198
+  releases:
+    1.16.0:
+      download: https://zenodo.org/record/13924198/files/bctools_1.16.0.img
+      md5sum: 92f7e66b4970da1dfbaf422066f57b0c
+      doi: 10.5281/zenodo.13924198
+      filesize: 83877888
+
+# purge_haplotigs/registry.yaml
+purge_haplotigs:
+  doi: 10.5281/zenodo.14967449
+  binaries: purge_haplotigs
+  zenodo_id: 14967450
+  releases:
+    1.1.3:
+      download: https://zenodo.org/record/14967450/files/purge_haplotigs_1.1.3.img
+      md5sum: ea973cae3f075bc8f7f9c02b1f0fbe01
+      doi: 10.5281/zenodo.14967450
+      filesize: 169545728
+
+# lastz/registry.yaml
+lastz:
+  doi: 10.5281/zenodo.15579820
+  zenodo_id: 15579821
+  binaries: lastz
+  releases:
+    1.04.52:
+      download: https://zenodo.org/record/15579821/files/lastz_1.04.52.img
+      md5sum: ca846d009c3d36c8e915a31fba54d82f
+      doi: 10.5281/zenodo.15579821
+      filesize: 235806720
+
+# triplexator/registry.yaml
+triplexator:
+  doi: 10.5281/zenodo.15814032
+  binaries: triplexator
+  zenodo_id: 15814033
+  releases:
+    1.3.2:
+      download: https://zenodo.org/record/15814033/files/triplexator_1.3.2.img
+      md5sum: ffbc2bbb97211afb43b3e63547609758
+      doi: 10.5281/zenodo.15814033
+      filesize: 340795392
+
+# gfa/registry.yaml
+gfa:
+  doi: 10.5281/zenodo.15835476
+  binaries: gfa
+  zenodo_id: 15835477
+  releases:
+    2.0.0:
+      download: https://zenodo.org/record/15835477/files/gfa_2.0.0.img
+      md5sum: cebe0fbc1aeeb60f4a2c4a3fe01f0e96
+      doi: 10.5281/zenodo.15835477
+      filesize: 4485120
 

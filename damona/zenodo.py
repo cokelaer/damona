@@ -20,11 +20,10 @@ import os
 import sys
 from configparser import NoOptionError, NoSectionError
 
-from tqdm import tqdm
-from tqdm.utils import CallbackIOWrapper
-
 import colorlog
 import requests
+from tqdm import tqdm
+from tqdm.utils import CallbackIOWrapper
 
 from damona import Config
 from damona.registry import ImageName, Software
@@ -231,7 +230,6 @@ class Zenodo:  # pragma: no cover
         # Determine the total size of the file
         total_size = os.path.getsize(filename)
 
-
         # the upload it self may take a while
         with open(filename, "rb") as fp:
             basename = os.path.basename(filename)
@@ -239,7 +237,6 @@ class Zenodo:  # pragma: no cover
             with tqdm(total=total_size, unit="B", unit_scale=True, unit_divisor=1024) as t:
                 wrapped_file = CallbackIOWrapper(t.update, fp, "read")
                 r = requests.put(f"{bucket_url}/{basename}", data=wrapped_file, params=self.params)
-
 
             self._status(r, [200, 201])
             return r
@@ -476,20 +473,20 @@ def get_stats_id(ID, name=None):
         bs = BeautifulSoup(r.content, features="html.parser")
 
         # according to damona, there is a limit of 60 requests per minute but also
-        # 2000 requests per hour. Since there are more than 60 software, we expect 
+        # 2000 requests per hour. Since there are more than 60 software, we expect
         # this call to reach the limit. Therefore, we introspect the X-RateLimit
         # and Number of requests remaining and add a sleep.
         import time
-        R = int(r.headers['X-RateLimit-Remaining'])
-        L = int(r.headers['X-RateLimit-Limit'])
-        reset = int(r.headers['X-RateLimit-Reset'])
+
+        R = int(r.headers["X-RateLimit-Remaining"])
+        L = int(r.headers["X-RateLimit-Limit"])
+        reset = int(r.headers["X-RateLimit-Reset"])
         T = int(time.time())
-        if int(r.headers['X-RateLimit-Remaining']) < 1:
+        if int(r.headers["X-RateLimit-Remaining"]) < 1:
 
             delay = reset - int(time.time())
             logger.warning(f"Warning limit attained. please wait {delay}")
             time.sleep(delay)
-
 
         try:
             data = bs.find(id="recordVersions")

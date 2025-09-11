@@ -281,3 +281,18 @@ It looks like::
             md5sum: e680e5ab181e73a8b367693a7bd71098
 
 Here, there is no zenodo link though because it is already on docker.
+
+
+
+Creating a README automatically
+-------------------------------
+
+In damona's code there is a file called build_readme.py ; it can be used to parse the registry.yaml and create a
+standard README.md that can be added in the software sub directory, or can be used to update the current one;
+
+
+Global registry
+---------------
+
+If you add a container and update an individual registry, you should update the global registry  as well.
+That way a user with an old version of damona can still use the newest containers.

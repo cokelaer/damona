@@ -3,8 +3,8 @@
 #
 # vadr-install.sh
 # A shell script for downloading and installing VADR and its dependencies.
-# 
-# usage: 
+#
+# usage:
 # to download and build files:
 # vadr-install.sh <"linux" or "macosx-silicon" or "macosx-intel">
 #
@@ -13,14 +13,14 @@
 #
 # or to only build files (after running in 'download' mode):
 # vadr-install.sh <"linux" or "macosx-silicon" or "macosx-intel"> download
-# 
+#
 # for example:
 # vadr-install.sh linux
-# 
+#
 # or
 # vadr-install.sh macosx-silicon download
 # vadr-install.sh macosx-silicon build
-# 
+#
 # The following line will make the script fail if any commands fail
 set -e
 
@@ -82,7 +82,7 @@ fi
 if [ "$1" = "macosx-intel" ]; then
     INPUTSYSTEM="macosx-intel";
 fi
-if [ "$INPUTSYSTEM" = "?" ]; then 
+if [ "$INPUTSYSTEM" = "?" ]; then
     echo "Usage:"
     echo "To download and build:"
     echo "  $0 <\"linux\" or \"macosx-silicon\" or \"macosx-intel\">"
@@ -104,7 +104,7 @@ if [ "$#" -eq 2 ]; then
     if [ "$2" = "build" ]; then
         DOWNLOADORBUILD="build";
     fi
-    if [ "$DOWNLOADORBUILD" = "both" ]; then 
+    if [ "$DOWNLOADORBUILD" = "both" ]; then
         echo "Usage:"
         echo "To download and build:"
         echo "  $0 <\"linux\" or \"macosx-silicon\" or \"macosx-intel\">"
@@ -120,22 +120,22 @@ if [ "$#" -eq 2 ]; then
 fi
 
 ########################################################
-if [ "$DOWNLOADORBUILD" = "both" ]; then 
+if [ "$DOWNLOADORBUILD" = "both" ]; then
     echo "------------------------------------------------------------"
     echo "DOWNLOADING AND BUILDING VADR $VERSION"
     echo "------------------------------------------------------------"
 fi
-if [ "$DOWNLOADORBUILD" = "download" ]; then 
+if [ "$DOWNLOADORBUILD" = "download" ]; then
     echo "------------------------------------------------------------"
     echo "DOWNLOADING VADR $VERSION"
     echo "------------------------------------------------------------"
 fi
-if [ "$DOWNLOADORBUILD" = "build" ]; then 
+if [ "$DOWNLOADORBUILD" = "build" ]; then
     echo "------------------------------------------------------------"
     echo "BUILDING VADR $VERSION"
     echo "------------------------------------------------------------"
 fi
-if [ "$DOWNLOADORBUILD" != "download" ]; then 
+if [ "$DOWNLOADORBUILD" != "download" ]; then
     echo ""
     echo "************************************************************"
     echo "IMPORTANT: BEFORE YOU WILL BE ABLE TO RUN VADR SCRIPTS,"
@@ -164,9 +164,9 @@ if [ "$DOWNLOADORBUILD" != "build" ]; then
     #rm -rf .git
     #cd ..
     # ----------------------------------------------------------------------------
- 
+
     # sequip and Bio-Easel
-    for m in sequip Bio-Easel; do 
+    for m in sequip Bio-Easel; do
         echo "Downloading $m ... "
         curl -k -L -o $m-$VVERSION.zip https://github.com/nawrockie/$m/archive/$VVERSION.zip; unzip $m-$VVERSION.zip; mv $m-$VVERSION $m; rm $m-$VVERSION.zip
     done
@@ -189,7 +189,7 @@ if [ "$DOWNLOADORBUILD" != "build" ]; then
     if [ "$INPUTSYSTEM" = "linux" ]; then
         patch fasta/make/Makefile.linux vadr/fasta-mods/vadr-fasta-Makefile.linux.patch
         cp fasta/make/Makefile.linux fasta/make/Makefile.vadr_install
-    else 
+    else
         patch fasta/make/Makefile.os_x86_64 vadr/fasta-mods/vadr-fasta-Makefile.os_x86_64.patch
         cp fasta/make/Makefile.os_x86_64 fasta/make/Makefile.vadr_install
     fi
@@ -201,12 +201,12 @@ if [ "$DOWNLOADORBUILD" != "build" ]; then
     echo "Downloading minimap2 version $MM2VERSIONGIT src distribution"
     curl -k -L -o $MM2VERSIONGIT.zip https://github.com/lh3/minimap2/archive/$MM2VERSIONGIT.zip; unzip $MM2VERSIONGIT.zip; mv minimap2-$MM2VERSIONGITNOV minimap2; rm $MM2VERSIONGIT.zip
     echo "------------------------------------------------------------"
-    
+
     # download blast binaries
     if [ "$INPUTSYSTEM" = "linux" ]; then
         echo "Downloading BLAST version $BVERSION for Linux"
         curl -k -L -o blast.tar.gz https://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/$BVERSION/ncbi-blast-$BVERSION+-x64-linux.tar.gz
-    else 
+    else
         echo "Downloading BLAST version $BVERSION for Mac/OSX"
         curl -k -L -o blast.tar.gz https://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/$BVERSION/ncbi-blast-$BVERSION+-x64-macosx.tar.gz
     fi
@@ -216,7 +216,7 @@ if [ "$DOWNLOADORBUILD" != "build" ]; then
     echo "------------------------------------------------------------"
 
     # download vadr models, calici and flavi model sets only
-    for v in calici flavi; do 
+    for v in calici flavi; do
         echo "Downloading VADR ${v}viridae models ($MVERSION) ... "
         curl -k -L -o vadr-models-$v.tar.gz https://ftp.ncbi.nlm.nih.gov/pub/nawrocki/vadr-models/${v}viridae/$MVERSION/vadr-models-$v-$MVERSION.tar.gz
         tar xfz vadr-models-$v.tar.gz
@@ -265,7 +265,7 @@ if [ "$DOWNLOADORBUILD" != "download" ]; then
     cd ..
     echo "Finished building Bio-Easel."
     echo "------------------------------------------------------------"
-    
+
     # Build infernal:
     if [ ! -d infernal-$IVERSION ]; then
         echo ""
@@ -343,7 +343,7 @@ if [ "$DOWNLOADORBUILD" != "download" ]; then
     cd ../../
     echo "Finished building minimap2."
     echo "------------------------------------------------------------"
-    
+
     ###############################################
     # Message about setting environment variables
     ###############################################

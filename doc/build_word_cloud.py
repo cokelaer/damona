@@ -1,7 +1,11 @@
 import matplotlib.pyplot as plt
 import pylab
 import requests
+from pylab import savefig
+from tqdm import tqdm
 from wordcloud import WordCloud
+
+import damona
 
 
 def fetch_biotools_metadata(tool_name):
@@ -41,12 +45,8 @@ def generate_tag_cloud(keywords):
     plt.figure(figsize=(10, 5))
     plt.imshow(wordcloud, interpolation="bilinear")
     plt.axis("off")
-    plt.show()
+    # plt.show()
 
-
-from tqdm import tqdm
-
-import damona
 
 reg = damona.registry.Registry()
 tools = set([y for x in reg.registry.values() for y in x.binaries])

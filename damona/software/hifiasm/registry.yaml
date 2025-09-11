@@ -12,3 +12,8 @@ hifiasm:
       md5sum: 982353703b0e6f4c5c1e77d2dd62b5dc
       doi: 10.5281/zenodo.10610397
       filesize: 15409152
+    0.24.0:
+      download: https://zenodo.org/record/17098270/files/hifiasm_0.24.0.img
+      md5sum: 1ebc1fdf3037e38cd6370d11b7f0a489
+      doi: 10.5281/zenodo.17098270
+      filesize: 16142336

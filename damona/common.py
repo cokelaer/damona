@@ -213,7 +213,9 @@ class ImageReader:
         self.filename = pathlib.Path(name)
 
         if self.is_valid_name() is False:
-            logger.error(f"Invalid image name ({self.shortname}). Your input image must end in .img or .sif ; version must be X.Y.Z")
+            logger.error(
+                f"Invalid image name ({self.shortname}). Your input image must end in .img or .sif ; version must be X.Y.Z"
+            )
             sys.exit(1)
 
     def delete(self):
