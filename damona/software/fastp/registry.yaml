@@ -13,3 +13,8 @@ fastp:
       md5sum: b62cf75e5ef33aed1e009c46bc1e9634
       doi: 10.5281/zenodo.8036563
       filesize: 73183232
+    1.0.1:
+      download: https://zenodo.org/record/17097941/files/fastp_1.0.1.img
+      md5sum: 246f374e9ee1b1e714589fba1c8b063d
+      doi: 10.5281/zenodo.17097941
+      filesize: 86388736
