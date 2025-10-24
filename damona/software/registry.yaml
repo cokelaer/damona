@@ -1516,7 +1516,7 @@ adapterremoval:
 # bbmap/registry.yaml
 bbmap:
   doi: 10.5281/zenodo.13810656
-  binaries: bbmap.sh
+  binaries: bbmap.sh reformat.sh adadapters.sh bbmerge.sh bbduk.sh bbsplit.sh
   zenodo_id: 13810658
   releases:
     39.1.0:
