@@ -12,3 +12,8 @@ seqkit:
       md5sum: 3aa7fb67002bc249d9c5852ec7f2eff9
       doi: 10.5281/zenodo.7821924
       filesize: 22155264
+    2.10.1:
+      download: https://zenodo.org/record/17437796/files/seqkit_2.10.1.img
+      md5sum: bad0bc27e7f7a549963d7055e37c16da
+      doi: 10.5281/zenodo.17437796
+      filesize: 23359488
