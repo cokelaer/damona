@@ -2,7 +2,7 @@ Difference from version to version.
 
 Some versions are missing because we tend to match to the current sequana version.
 
-
+0.19.3. new version. make sure sequana_coverage works
 0.19.1 revamp. restart from micromamba. removed igvtools, rnaseqc, trinity, transdecoder that have their own container. bowtie2 fails  
 0.15.1. same as 0.14.5 but with sequana 0.15.1 and snpEff 5.1d
 0.14.5: same as 0.14.3 but with sequana 0.14.5
