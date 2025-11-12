@@ -1160,10 +1160,12 @@ sequana_tools:
       exclude_binaries: ccs bowtie2 fastqc bowtie2-build
       filesize: 1810407424
     0.19.3:
+      binaries:  bcftools fastp kraken2-inspect mafft vcfutils.pl bamCoverage rnaseqc salmon dot genomeCoverageBed plotFingerprint intersectBed shustring hmmalign hmmconvert hmmfetch hmmpgmd hmmpress hmmsearch hmmstat hmmbuild hmmemit hmmlogo hmmpgmd_shard hmmscan hmmsim trinotate_report_summary.pl kallisto seqkit seqtk sequana sequana_taxonomy sortBed
       download: https://zenodo.org/record/17535070/files/sequana_tools_0.19.3.img
       md5sum: ba16985905ac685e3754194968a8c7cf
       doi: 10.5281/zenodo.17535070
       filesize: 1831784448
+
 # shustring/registry.yaml
 shustring:
   doi: 10.5281/zenodo.7660519
