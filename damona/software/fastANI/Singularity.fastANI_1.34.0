@@ -1,0 +1,35 @@
+Bootstrap: docker
+From: debian:bookworm-slim
+
+%labels
+    Author Thomas Cokelaer
+    Version v1.34
+    Description "FastANI container without tests"
+
+%post
+    set -eux
+
+    apt-get update && apt-get install -y  wget unzip libboost-all-dev libgsl-dev zlib1g-dev
+
+    wget https://github.com/ParBLiSS/FastANI/releases/download/v1.34/fastANI-linux64-v1.34.zip
+    unzip fastANI-linux64-v1.34.zip
+    mv fastANI /usr/local/bin
+
+    apt-get purge -y wget unzip
+    apt-get autoremove -y
+    apt-get clean
+    rm -rf /var/lib/apt/lists/*
+
+%environment
+    export PATH=/usr/local/bin:$PATH
+
+%help
+    FastANI — compute whole-genome ANI quickly.
+
+
+
+
+
+
+
+

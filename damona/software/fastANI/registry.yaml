@@ -1,0 +1,10 @@
+fastANI:
+  doi: 10.5281/zenodo.17594735
+  zenodo_id: 17594736
+  binaries: fastANI
+  releases:
+    1.34.0:
+      download: https://zenodo.org/record/17594736/files/fastANI_1.34.0.img
+      md5sum: a3f9d7217162e57d32b457bc177cb622
+      doi: 10.5281/zenodo.17594736
+      filesize: 251166720
