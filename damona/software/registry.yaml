@@ -1722,16 +1722,16 @@ rseqc:
       filesize: 425709568
 
 # bcftools/registry.yaml
-bctools:
-  doi: 10.5281/zenodo.13924197
+bcftools:
+  doi: 10.5281/zenodo.17590416
   binaries: bcftools
-  zenodo_id: 13924198
+  zenodo_id: 17590417
   releases:
     1.16.0:
-      download: https://zenodo.org/record/13924198/files/bctools_1.16.0.img
-      md5sum: 92f7e66b4970da1dfbaf422066f57b0c
-      doi: 10.5281/zenodo.13924198
-      filesize: 83877888
+      download: https://zenodo.org/record/17590417/files/bcftools_1.16.0.img
+      md5sum: a541018c356616f4a0a52512f0c88f6e
+      doi: 10.5281/zenodo.17590417
+      filesize: 54697984
 
 # purge_haplotigs/registry.yaml
 purge_haplotigs:
