@@ -80,6 +80,13 @@
   - **Size:** 1726.54 MB
   - **Binaries:** 33 available
 
+- **Version 0.19.3**
+  - [Download](https://zenodo.org/record/17535070/files/sequana_tools_0.19.3.img)
+  - **MD5:** `ba16985905ac685e3754194968a8c7cf`
+  - **DOI:** [10.5281/zenodo.17535070](https://doi.org/10.5281/zenodo.17535070)
+  - **Size:** 1746.93 MB
+  - **Binaries:** 33 available
+
 ## Binaries (34 total)
 
 ```fastqc bowtie STAR bowtie2 bowtie2-build bowtie-build bwa featureCounts samtools bamtools gffread dsrc MarkDuplicates spades.py split-paired-reads.py filter-abund.py extract-paired-reads.py snpEff deeptools picard subread sambamba pbunzip2 pbzip2 kraken2 krona ktImportText kraken2-build freebayes minimap2 bedtools interleave-reads.py normalize-by-median.py ccs```

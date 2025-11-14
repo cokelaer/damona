@@ -17,6 +17,13 @@
   - **Size:** 21.13 MB
   - **Binaries:** 0 available
 
+- **Version 2.10.1**
+  - [Download](https://zenodo.org/record/17437796/files/seqkit_2.10.1.img)
+  - **MD5:** `bad0bc27e7f7a549963d7055e37c16da`
+  - **DOI:** [10.5281/zenodo.17437796](https://doi.org/10.5281/zenodo.17437796)
+  - **Size:** 22.28 MB
+  - **Binaries:** 0 available
+
 ## Binaries (0 total)
 
 ``````

@@ -10,6 +10,6 @@
   - **Size:** 223.38 MB
   - **Binaries:** 0 available
 
-## Binaries (1 total)
+## Binaries (6 total)
 
-```bbmap.sh```
+```bbmap.sh reformat.sh adadapters.sh bbmerge.sh bbduk.sh bbsplit.sh```

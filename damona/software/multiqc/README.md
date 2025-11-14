@@ -17,6 +17,13 @@
   - **Size:** 357.23 MB
   - **Binaries:** 0 available
 
+- **Version 1.27.0-zenodo1**
+  - [Download](https://zenodo.org/record/17100751/files/multiqc_1.27.0-zenodo1.img)
+  - **MD5:** `833947b7df267d6ccd9510088989fc4c`
+  - **DOI:** [10.5281/zenodo.17100751](https://doi.org/10.5281/zenodo.17100751)
+  - **Size:** 321.89 MB
+  - **Binaries:** 0 available
+
 ## Binaries (0 total)
 
 ``````
