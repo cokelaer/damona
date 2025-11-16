@@ -46,23 +46,39 @@ Overview
    :width: 300px
 
 
-Damona is a singularity environment manager.
+Damona is a lightweight package manager for Apptainer/Singularity images.
 
-Damona started as a small collections of singularity recipes to help installing third-party tools for
-`Sequana NGS pipelines <https://sequana.readthedocs.io>`_.
+It lets you install bioinformatics tools as isolated containers, manage versions, and run them as if they were installed locally — without dependency conflicts.
+
+Damona aims to provide:
+
+- Reproducibility
+- Version controls of tools
+- User-level installation (no root required)
+- Ease of use compared to handling containers manually
+
+.. note::  As of Jan. 2024, **Damona** contains 117 containers (169 versions), which corresponds to 575 unique binaries.
+
+Key Features
+============
+
+Simple software installation::
+
+    damona install bwa
 
 
-Damona is now used in production to create reproducible environments where singularity images and their associated binaries are installed altogether.
+✔ Automatic shim creation: tools run as normal commands
 
+✔ Multiple versions of the same tool
 
+✔ Central repository + local registries
 
-In a nutshell, Damona combines the logic of Conda environments with the
-reproducibility of singularity containers. We believe that it could be useful for
-other projects and therefore decided to release it as an independent tool.
+✔ Container isolation, avoiding dependency conflicts
 
-* As of Aug. 2024, **Damona** contains 87 containers (136 versions), which corresponds to 468 unique binaries.
-* As of Oct. 2024, **Damona** contains 104 containers (155 versions), which corresponds to 514 unique binaries.
-* As of Jan. 2024, **Damona** contains 117 containers (169 versions), which corresponds to 575 unique binaries.
+✔ Works on HPCs, clusters, cloud, laptops
+
+✔ Compatible with Apptainer/Singularity backends
+
 
 Installation
 =============
@@ -83,7 +99,7 @@ The first time, you use **Damona**, you need to type::
 
     damona
 
-This will initiate the tool with a config file in your HOME/.config/damona directory.
+This command creates a config file in your HOME/.config/damona directory.
 
 Depending on your shell, you will be instructed to source a shell script. To make it persistent, you will need to update an environment file. For instance, under **bash** shell, add these lines in your .bashrc::
 
@@ -177,18 +193,11 @@ Although **Damona** was started with the `Sequana projet <https://sequana.readth
 **Damona** may be useful for others developers who wish to have a quick and easy
 solution for their users when they need to install third-party libraries.
 
-Before showing real-case examples, let us install the software itself and
-understand the details.
 
+Commands (Full CLI Reference)
+=============================
 
-
-
-Tutorial
-============
-
-The **Damona** standalone is called **damona**. It has a documentation that should suffice for most users.
-
-The main documentation is obtained using::
+The **Damona** standalone is called **damona**. It has a documentation that should suffice for most users, which can be obtained using::
 
     damona --help
 

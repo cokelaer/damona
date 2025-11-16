@@ -1,5 +1,12 @@
 Difference from version to version.
 
+
+From sequana 0.19.4, we version the container based on the date rather than sequana version.
+
+25.11.15: uses sequana 0.19.5
+
+
+
 Some versions are missing because we tend to match to the current sequana version.
 
 0.19.3. new version. make sure sequana_coverage works
@@ -12,3 +19,7 @@ Some versions are missing because we tend to match to the current sequana versio
 0.12.0 add shustring in recipes and  fix bam_stats.py to bam_stat.py in registry
 0.10.0 depends on conda 4.9.2  +falco -cufflinks(not available for py3.7)
 0.9.0 depends on conda 4.7
+
+
+to test:
+- sequana_taxonomy --help /ktImportText PyQt5

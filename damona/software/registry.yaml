@@ -1165,6 +1165,12 @@ sequana_tools:
       md5sum: ba16985905ac685e3754194968a8c7cf
       doi: 10.5281/zenodo.17535070
       filesize: 1831784448
+    25.11.15:
+      binaries:  bcftools fastp kraken2-inspect mafft vcfutils.pl bamCoverage rnaseqc salmon dot genomeCoverageBed plotFingerprint intersectBed shustring hmmalign hmmconvert hmmfetch hmmpgmd hmmpress hmmsearch hmmstat hmmbuild hmmemit hmmlogo hmmpgmd_shard hmmscan hmmsim trinotate_report_summary.pl kallisto seqkit seqtk sequana sequana_taxonomy sortBed
+      download: https://zenodo.org/record/17625030/files/sequana_tools_25.11.15.img
+      md5sum: efb85a609bae778b5824739f607abd90
+      doi: 10.5281/zenodo.17625030
+      filesize: 1858498560
 
 # shustring/registry.yaml
 shustring:

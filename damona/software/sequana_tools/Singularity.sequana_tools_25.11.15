@@ -1,0 +1,80 @@
+Bootstrap: docker
+From: mambaorg/micromamba:git-9a50bbf-amazon2023
+
+%labels
+    Author thomas cokelaer
+
+%post
+
+    export DEBIAN_FRONTEND=noninteractive
+    dnf -y update
+    dnf -y install graphviz
+
+    # export the PATH here so that pip is found later on
+    export PATH=$PATH:/opt/conda/envs/main/bin/
+    export PERL5LIB=/opt/conda/envs/main/lib/5.26.2/
+    export LANG=C   # prevents perl for raising warnings
+
+    # an alias
+    export OPTS=" -q -c conda-forge -c bioconda -n main -y "
+
+    # micromamba
+    micromamba create -y -n main
+    export PATH=$PATH:/usr/local/micromamba/bin
+    # with py3.11, datrie fails
+    micromamba install $OPTS python="3.10"
+
+    # misc
+    micromamba install $OPTS pigz pbzip2 dsrc gzip
+
+    # easy-to-install software. not all of them are required by sequana but handy
+    # to have them.
+    # Note, however, that those ones are used within wrappers alongside sequana, or
+    # are required by sequana
+    # - cd-hit freebayes, dot, kraken2; snpeff, mosdepth, shustring
+    # - samtools bwa
+    micromamba install $OPTS cd-hit fastp bcftools deeptools samtools
+    micromamba install $OPTS bamtools freebayes sambamba bedtools bowtie bowtie2 star
+    micromamba install $OPTS bwa subread salmon kallisto shustring mosdepth
+
+    micromamba install $OPTS picard gffread khmer spades
+
+    micromamba install $OPTS krona kraken2
+    micromamba install $OPTS minimap2 mafft vt tabix sra-tools
+
+    micromamba install $OPTS "snpeff==5.1d"
+    micromamba install $OPTS datrie
+
+    # for datrie
+    export CFLAGS="-Wno-error=incompatible-pointer-types"
+    export CXXFLAGS="-Wno-error=incompatible-pointer-types"
+
+    # just install sequana
+    pip install sequana==0.19.5
+
+    # cleanup
+    micromamba clean --packages -y
+    micromamba clean --all -y
+    rm -rf /opt/conda/pkgs
+    rm -rf /opt/conda/envs/main/share/doc
+    mkdir -p /tmp/matplotlib
+    chmod 777 /tmp/matplotlib
+
+    mkdir -p /tmp/cache/fontconfig
+    chmod -R 777 /tmp/cache
+
+
+%environment
+    export PATH=$PATH:/opt/conda/envs/main/bin/
+
+    # make sure agg is used
+    export MPLBACKEND=Agg
+    export MPLCONFIGDIR=/tmp/matplotlib
+
+    # get rid of a warning
+    export XDG_CACHE_HOME=/tmp/cache
+    export FONTCONFIG_PATH=/etc/fonts
+    export FONTCONFIG_FILE=/etc/fonts/fonts.conf
+
+%runscript
+    PYTHONNOUSERSITE=1 exec ${1+"$@"}
