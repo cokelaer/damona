@@ -279,7 +279,11 @@ datasets:
       md5sum: a4b643ecb194891801fcff2aee9338e8
       doi: 10.5281/zenodo.18314264
       filesize: 31662080
-
+    18.17.0:
+      download: https://zenodo.org/record/18700508/files/datasets_18.17.0.img
+      md5sum: 3eff5d21bb0d70483c1afc03f3f54d71
+      doi: 10.5281/zenodo.18700508
+      filesize: 31686656
 # falco/registry.yaml
 falco:
     binaries: falco
