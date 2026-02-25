@@ -18,3 +18,8 @@ datasets:
       md5sum: 3eff5d21bb0d70483c1afc03f3f54d71
       doi: 10.5281/zenodo.18700508
       filesize: 31686656
+    18.18.0:
+      download: https://zenodo.org/record/18772363/files/datasets_18.18.0.img
+      md5sum: 9ba8489277172740505a428f8b10b8dc
+      doi: 10.5281/zenodo.18772363
+      filesize: 31682560
