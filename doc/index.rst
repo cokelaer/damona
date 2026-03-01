@@ -1,6 +1,6 @@
 
 
-:Python version: Python 3.7, 3.8, 3.9
+:Python version: Python 3.9, 3.10, 3.11, 3.12
 :Source: See  `http://github.com/damona/damona <https://github.com/damona/damona/>`__.
 :Issues: Please fill a report on `github <https://github.com/damona/damona/issues>`__
 
