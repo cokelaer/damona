@@ -111,7 +111,7 @@ Fish shell users should add the following code in their ~/.config/fish/config.fi
 
     source ~/.config/damona/damona.fish
 
-Zsh users should add the following code in their ~/.config/fish/config.fish file::
+Zsh users should add the following code in their ~/.zshrc file::
 
     source ~/.config/damona/damona.zsh
 
@@ -126,7 +126,7 @@ Quick Start
 
     damona create TEST
 
-Second, we need to *activate* it. Subsequent insallation will happen in this environment unless you open a new shell, or deactivate this environment::
+Second, we need to *activate* it. Subsequent installation will happen in this environment unless you open a new shell, or deactivate this environment::
 
     damona activate TEST
 
@@ -173,7 +173,7 @@ environment.
 Now, what about a software in development that depends on third-party packages ?
 You would create a conda environment and starts installing the required packages.
 Quickly, you will install another package that will break your environment due
-to unresolved conlicts; this is not common but it happens. In the worst case
+to unresolved conflicts; this is not common but it happens. In the worst case
 scenario, the environment is broken. In facilities where users depends on you,
 it can be quite stresful and time-consuming to maintain several such
 environments. This is why we have moved little by little to a very light conda
@@ -335,7 +335,7 @@ guide to create a registry yourself).
 In damona, you can have sereral environments in parallel and later activate the
 one you wish to use. Let us create a new one::
 
-    damone create test1
+    damona create test1
 
 and check that you now have one more environment::
 
