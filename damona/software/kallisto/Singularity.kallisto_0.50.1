@@ -1,0 +1,27 @@
+Bootstrap: docker
+From: alpine:3.18
+
+
+%labels
+    Author thomas cokelaer
+
+%post
+
+    apk update
+    apk upgrade
+    apk add wget bash
+
+    export KALLISTO_VERSION=0.50.1
+    wget https://github.com/pachterlab/kallisto/releases/download/v${KALLISTO_VERSION}/kallisto_linux-v${KALLISTO_VERSION}.tar.gz
+    tar xzf kallisto_linux-v${KALLISTO_VERSION}.tar.gz
+    cp kallisto/kallisto /usr/local/bin/
+
+    rm -rf kallisto kallisto_linux-v${KALLISTO_VERSION}.tar.gz
+
+    apk del wget
+
+%environment
+    export PATH=/usr/local/bin:$PATH
+
+%runscript
+    exec kallisto "$@"

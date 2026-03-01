@@ -1,0 +1,10 @@
+spades:
+  doi: 10.5281/zenodo.TBD
+  binaries: spades.py metaspades.py plasmidspades.py rnaspades.py truspades.py
+  zenodo_id: TBD
+  releases:
+    3.15.5:
+      download: https://zenodo.org/record/TBD/files/spades_3.15.5.img
+      md5sum: TBD
+      doi: 10.5281/zenodo.TBD
+      filesize: TBD

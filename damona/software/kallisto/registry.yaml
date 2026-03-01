@@ -1,0 +1,10 @@
+kallisto:
+  doi: 10.5281/zenodo.TBD
+  binaries: kallisto
+  zenodo_id: TBD
+  releases:
+    0.50.1:
+      download: https://zenodo.org/record/TBD/files/kallisto_0.50.1.img
+      md5sum: TBD
+      doi: 10.5281/zenodo.TBD
+      filesize: TBD
