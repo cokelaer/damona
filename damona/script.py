@@ -32,6 +32,10 @@ import click_completion
 import packaging
 import requests
 import rich_click as click
+from rich.console import Console
+from rich.panel import Panel
+from rich.table import Table
+from rich.text import Text
 
 click_completion.init()
 
@@ -47,9 +51,9 @@ from damona.install import (
 )
 from damona.registry import BiocontainersRegistry, Registry
 
-click.rich_click.USE_MARKDOWN = True
-click.rich_click.SHOW_METAVARS_COLUMN = False
-click.rich_click.APPEND_METAVARS_HELP = True
+click.rich_click.TEXT_MARKUP = "markdown"
+click.rich_click.OPTIONS_TABLE_COLUMN_TYPES = ["required", "opt_short", "opt_long", "help"]
+click.rich_click.OPTIONS_TABLE_HELP_SECTIONS = ["help", "deprecated", "envvar", "default", "required", "metavar"]
 click.rich_click.STYLE_ERRORS_SUGGESTION = "magenta italic"
 click.rich_click.SHOW_ARGUMENTS = True
 
@@ -200,14 +204,22 @@ def env(**kwargs):
 
     """
     envs = Environ()
+    console = Console()
 
-    click.secho(f"There are currently {envs.N} Damona environments:\n", bold=True)
+    table = Table(show_header=True, header_style="bold cyan", box=None, pad_edge=False)
+    table.add_column("Environment", style="bold", min_width=20)
+    table.add_column("Info")
+
+    current_env = envs.get_current_env_name()
     if envs.N != 0:
         for this in envs.environments:
             name = this.name
-            click.echo(click.style(f"{name}", bold=True) + click.style(f" -  {this}"))
-    current_env = envs.get_current_env_name()
-    click.secho(f"\nYour current env is '{current_env}'.", bold=True)
+            marker = " ✓" if name == current_env else ""
+            table.add_row(name + marker, str(this))
+
+    console.print(f"\nThere are currently [bold]{envs.N}[/bold] Damona environment(s):\n")
+    console.print(table)
+    console.print(f"\nYour current env is [bold green]'{current_env}'[/bold green].\n")
 
 
 # =================================================================== activate
@@ -567,29 +579,29 @@ def search(**kwargs):
         logger.info("Searching local registry")
         registry = Registry(from_url=None)
 
-    click.echo()
-
+    console = Console()
     recommended = None
 
     if not kwargs["binaries_only"]:
-        click.echo(f"Pattern '{pattern}' found in these releases:")
         modules = registry.get_list(pattern=pattern)
+        table = Table(show_header=True, header_style="bold cyan", box=None, pad_edge=False)
+        table.add_column("Release", style="bold", min_width=25)
+        table.add_column("Size", justify="right", min_width=8)
+        table.add_column("URL")
         for mod in modules:
             name, version = mod.split(":")
-            url = registry.registry[mod]._data[name]["releases"][version]["download"]
+            dl_url = registry.registry[mod]._data[name]["releases"][version]["download"]
             try:
                 size = registry.registry[mod]._data[name]["releases"][version]["filesize"]
                 if size > 1e9:
-                    size = round(size / 1e9, 2)
-                    size = f"{size}G"
+                    size_str = f"{round(size / 1e9, 2)}G"
                 else:
-                    size = round(size / 1e6, 2)
-                    size = f"{size}M"
+                    size_str = f"{round(size / 1e6, 2)}M"
             except Exception:
                 logger.warning(f"{mod}. could not extract filesize")
-                size = "-1"
+                size_str = "-1"
 
-            click.echo(f" - {mod} -- {url} -- {size}")
+            table.add_row(mod, size_str, dl_url)
             if not recommended:
                 recommended = mod
             else:
@@ -599,46 +611,56 @@ def search(**kwargs):
                         recommended = mod
                 except packaging.version.InvalidVersion:
                     pass
-    click.echo()
+
+        console.print(f"\nPattern '[bold]{pattern}[/bold]' found in these releases:")
+        console.print(table)
+
     if not kwargs["images_only"]:
-        click.echo(f"Pattern '{pattern}' found as binaries:")
         modules = registry.get_binaries(pattern=pattern)
+        table = Table(show_header=True, header_style="bold cyan", box=None, pad_edge=False)
+        table.add_column("Release", style="bold", min_width=25)
+        table.add_column("Binaries")
+        table.add_column("Size", justify="right", min_width=8)
         for mod in sorted(modules.keys()):
             v = modules[mod]
             name, version = mod.split(":")
-            url = registry.registry[mod]._data[name]["releases"][version]["download"]
             try:
                 size = registry.registry[mod]._data[name]["releases"][version]["filesize"]
                 if size > 1e9:
-                    size = round(size / 1e9, 2)
-                    size = f"{size}G"
+                    size_str = f"{round(size / 1e9, 2)}G"
                 else:
-                    size = round(size / 1e6, 2)
-                    size = f"{size}M"
+                    size_str = f"{round(size / 1e6, 2)}M"
             except Exception:
                 logger.warning(f"{mod}. could not extract filesize")
-                size = "-1"
+                size_str = "-1"
 
-            click.echo(f" - {mod}: -- {url} -- {size}")
+            table.add_row(mod, ", ".join(v), size_str)
+
+        console.print(f"\nPattern '[bold]{pattern}[/bold]' found as binaries:")
+        console.print(table)
 
     if kwargs["include_biocontainers"]:
-        click.echo("Searching biocontainers:")
+        console.print("\n[bold]Searching biocontainers:[/bold]")
         br = BiocontainersRegistry()
         for name, data in br.data.items():
             if pattern in name:
-                click.echo(f"Pattern '{name}' Found in these releases:")
+                console.print(f"Pattern '[bold]{name}[/bold]' Found in these releases:")
                 for version, location in data["releases"].items():
                     download = f"{location['download']})"
                     download = download.replace("docker://quay.io/", "").split("--")[0]
                     download = download.replace("docker://", "").split("--")[0]
                     install = f"(damona install {download})"
-                    click.echo(f" - {name}:{version}: {install} ")
-            elif pattern == "*":
-                click.echo(f" - {name}: {v}")
+                    console.print(f" - {name}:{version}: {install} ")
+            elif pattern is None:
+                console.print(f" - {name}")
 
     if recommended:
-        click.echo(
-            f"\n\n \U00002139\U0000FE0F -- Recommended installation (latest version and dedicated container) -- \U00002139\U0000FE0F \n\n    damona install {recommended}\n"
+        console.print(
+            Panel(
+                f"[bold green]damona install {recommended}[/bold green]",
+                title="ℹ️  Recommended installation (latest version and dedicated container)",
+                border_style="green",
+            )
         )
 
 
@@ -667,13 +689,20 @@ def info(**kwargs):
         sys.exit(1)
     else:
         environ = x[0]
-        click.echo(f"name: {envname}")
-        click.echo("\nimages:")
+        console = Console()
+        console.print(f"\n[bold]Environment:[/bold] {envname}\n")
+
+        img_table = Table(show_header=True, header_style="bold cyan", box=None, pad_edge=False)
+        img_table.add_column("Images", style="dim", min_width=30)
         for item in sorted(environ.get_images()):
-            click.echo(" - " + pathlib.Path(item).name)
-        click.echo("\nbinaries:")
+            img_table.add_row(pathlib.Path(item).name)
+        console.print(img_table)
+
+        bin_table = Table(show_header=True, header_style="bold cyan", box=None, pad_edge=False)
+        bin_table.add_column("Binaries", min_width=30)
         for item in sorted(environ.get_installed_binaries()):
-            click.echo(" - " + pathlib.Path(item).name)
+            bin_table.add_row(pathlib.Path(item).name)
+        console.print(bin_table)
 
 
 # ============================================================  export
@@ -745,33 +774,56 @@ def stats(**kwargs):
     This will also give local information
 
     """
+    import contextlib
+    import io
+
     from damona import admin
 
-    admin.stats()
+    console = Console()
+    with contextlib.redirect_stdout(io.StringIO()):
+        data = admin.stats()
     if kwargs["include_biocontainers"]:
-        admin.stats(True)
+        with contextlib.redirect_stdout(io.StringIO()):
+            bc_data = admin.stats(True)
+
+    table = Table(show_header=False, box=None, pad_edge=False)
+    table.add_column("Key", style="bold cyan", min_width=25)
+    table.add_column("Value", justify="right")
+    table.add_row("Containers", str(data["software"]))
+    table.add_row("Versions", str(data["version"]))
+    table.add_row("Unique binaries", str(data["unique_binaries"]))
+    if kwargs["include_biocontainers"]:
+        table.add_row("Biocontainers", str(bc_data.get("software", "N/A")))
+    console.print(Panel(table, title="[bold]Damona Registry Stats[/bold]", border_style="cyan"))
 
     if kwargs["include_downloads"]:
-        click.echo("Detailled summary of downloads for each container:")
+        console.print("\n[bold]Detailed summary of downloads for each container:[/bold]")
         from damona import admin, zenodo
 
+        dl_table = Table(show_header=True, header_style="bold cyan", box=None, pad_edge=False)
+        dl_table.add_column("Software", min_width=25)
+        dl_table.add_column("Downloads", justify="right")
         all_software = admin.get_software_names()
         N = 0
         for software in sorted(all_software):
             downloads = zenodo.get_stats_software(software)
-            click.echo(f"{software}: {downloads}")
+            dl_table.add_row(software, str(downloads))
             try:
-                N += downloads.replace(",", "")
-            except AttributeError:
+                N += int(downloads.replace(",", ""))
+            except (AttributeError, ValueError):
                 N += downloads
-
-        click.echo(f"Total: {N}")
+        console.print(dl_table)
+        console.print(f"[bold]Total:[/bold] {N}")
 
     envs = Environ()
     N = len(envs.images)
     usage = envs.images.get_disk_usage()
-    click.echo(
-        f"\n--\nLocal installation. In your local environment, we found {N} images. This account for a total of: {usage}.Mb"
+    console.print(
+        Panel(
+            f"[bold]{N}[/bold] image(s) installed, using [bold]{usage} Mb[/bold] of disk space.",
+            title="[bold]Local Installation[/bold]",
+            border_style="cyan",
+        )
     )
 
 
@@ -783,8 +835,14 @@ def stats(**kwargs):
 def list(**kwargs):
     """List all packages that can be installed"""
     r = Registry()
-    names = "\n".join(sorted([x for x in r.get_list()]))
-    click.echo(names)
+    console = Console()
+    table = Table(show_header=True, header_style="bold cyan", box=None, pad_edge=False)
+    table.add_column("Name", style="bold", min_width=20)
+    table.add_column("Version", min_width=10)
+    for entry in sorted(r.get_list()):
+        name, version = entry.split(":")
+        table.add_row(name, version)
+    console.print(table)
 
 
 # ============================================================  HIDDEN commands
