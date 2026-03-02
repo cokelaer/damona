@@ -1,0 +1,23 @@
+Bootstrap: docker
+From: python:3.11-slim
+
+
+%labels
+    Author thomas cokelaer
+
+%post
+
+    apt-get update && apt-get install -y gcc
+
+    pip install --no-cache-dir cutadapt==4.6.0
+
+    apt-get remove -y gcc
+    apt-get autoremove -y
+    apt-get clean
+
+%environment
+    export LANG=C.UTF-8
+    export LC_ALL=C.UTF-8
+
+%runscript
+    exec cutadapt "$@"
