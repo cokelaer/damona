@@ -48,6 +48,7 @@ from damona.install import (
     BiocontainersInstaller,
     LocalImageInstaller,
     RemoteImageInstaller,
+    RemoteURLInstaller,
 )
 from damona.registry import BiocontainersRegistry, Registry
 
@@ -279,6 +280,13 @@ def deactivate(**kwargs):
     help="""If not provided, we assume this is an executable singulatrity and its name is the binary name
     """,
 )
+@click.option(
+    "--from-url",
+    default=None,
+    help="""Provide a direct URL to download the image from (e.g. https://example.com/fastqc_0.11.9.img).
+    The binary name is taken from the IMAGE argument; if IMAGE is also a URL, it is inferred from
+    the filename. Use --binaries to override the binary name(s) explicitly.""",
+)
 @common_logger
 def install(**kwargs):
     """Download and install an image and its binaries.
@@ -308,12 +316,16 @@ def install(**kwargs):
     DAMONA_PATH environment variable. Therefore, you can redefine this variable
     to install images elsewhere.
 
-    You may have images online on a website. To install such images, use
-    the --from-url (see developer guide for details). The binary will be named
-    after the name provided. For instance, this command download the image
-    and creates a binary called 'fastqc'. ::
+    You may install an image directly from a URL (without a registry). The binary
+    name is inferred from the filename, or you can supply it explicitly::
 
-        damona install fastqc --from-url https://biomics.pasteur.fr/salsa/damona/fastqc_0.11.8.img
+        damona install https://example.com/fastqc_0.11.9.img
+        damona install https://example.com/fastqc_0.11.9.img --binaries fastqc
+
+    Alternatively, provide a human-readable binary name and pass the URL via
+    --from-url::
+
+        damona install fastqc --from-url https://example.com/fastqc_0.11.9.img
 
     Or wish to use an existing docker file::
 
@@ -347,6 +359,30 @@ def install(**kwargs):
         p = BiocontainersInstaller(kwargs["image"], binaries=binaries)
         p.pull_image(force=force_image)
         p.install_binaries(force=force_binaries)
+    elif kwargs["image"].startswith(("https://", "http://", "docker://")):
+        # Direct URL provided as the image argument
+        p = RemoteURLInstaller(url=kwargs["image"], binaries=binaries, cmd=sys.argv)
+        if p.is_valid():
+            p.pull_image(force=force_image)
+            p.install_binaries(force=force_binaries)
+            with open(cenv / "history.log", "a+") as fout:
+                cmd = " ".join(["damona"] + sys.argv[1:])
+                fout.write(f"\n{time.asctime()}: {cmd}")
+        else:
+            logger.critical("Something wrong with your image/binaries. See message above")
+            sys.exit(1)
+    elif kwargs.get("from_url"):
+        # --from-url option: IMAGE is the binary name, from_url is the image URL
+        p = RemoteURLInstaller(url=kwargs["from_url"], name=kwargs["image"], binaries=binaries, cmd=sys.argv)
+        if p.is_valid():
+            p.pull_image(force=force_image)
+            p.install_binaries(force=force_binaries)
+            with open(cenv / "history.log", "a+") as fout:
+                cmd = " ".join(["damona"] + sys.argv[1:])
+                fout.write(f"\n{time.asctime()}: {cmd}")
+        else:
+            logger.critical("Something wrong with your image/binaries. See message above")
+            sys.exit(1)
     elif os.path.exists(image_path) is False:
         url = kwargs["registry"]
         if url_exists(url) and kwargs["local_registry_only"] is False:
