@@ -38,7 +38,7 @@ import colorlog
 logger = colorlog.getLogger(__name__)
 
 
-__all__ = ["LocalImageInstaller", "RemoteImageInstaller", "BinaryInstaller"]
+__all__ = ["LocalImageInstaller", "RemoteImageInstaller", "RemoteURLInstaller", "BinaryInstaller"]
 
 
 class CMD:
@@ -404,6 +404,94 @@ class RemoteImageInstaller(ImageInstaller):
                     f"to be updated in https://github.com/damona/damona/recipes/{self.image_name}/registry.yaml "
                     "or the donwload was interrupted"
                 )
+
+        self.image_installed = True
+
+
+class RemoteURLInstaller(ImageInstaller):
+    """Install a singularity image from a direct URL (without a registry).
+
+    When no registry is available, you can install an image directly from a URL::
+
+        damona install https://example.com/fastqc_0.11.9.img
+
+    The binary name is inferred from the URL filename. You can also provide
+    a name explicitly or override using ``--binaries``::
+
+        damona install https://example.com/fastqc_0.11.9.img --binaries fastqc
+
+    Alternatively, provide the binary name as the image argument and the URL
+    via the ``--from-url`` option::
+
+        damona install fastqc --from-url https://example.com/fastqc_0.11.9.img
+
+    """
+
+    def __init__(self, url, name=None, binaries=None, cmd=None):
+        """.. rubric:: **Constructor**
+
+        :param str url: Direct URL to the image file (https://, http://, docker://).
+        :param str name: Binary name to use (inferred from URL filename if not provided).
+        :param list binaries: List of binary names (overrides *name* if provided).
+        :param cmd: Internal placeholder to fill the history log with the calling command.
+
+        """
+        super(RemoteURLInstaller, self).__init__()
+
+        self.url = url
+        self.images_directory = pathlib.Path(DAMONA_PATH) / "images"
+        self.cmd = cmd
+        self.image_installed = False
+
+        # Infer the output filename from the URL
+        self.output_name = url.split("/")[-1]
+
+        # Set binaries: explicit list > name argument > inferred from filename
+        if binaries:
+            self.binaries = binaries
+        elif name:
+            self.binaries = [name]
+        else:
+            # Use ImageReader to validate the filename pattern and infer the binary name.
+            # The file need not exist on disk yet; only the filename is inspected.
+            ir = ImageReader(pathlib.Path(self.output_name))
+            self.binaries = [ir.guessed_executable]
+
+    def is_valid(self):
+        return True
+
+    @requires_singularity
+    def pull_image(self, force=False):
+        """Download the image from the direct URL and install it."""
+        self.image_installed = False
+
+        pull_folder = self.images_directory / "damona_buffer"
+        output_name = self.output_name
+
+        logger.info(f"Downloading from {self.url}")
+
+        if self.url.startswith("https://") or self.url.startswith("http://"):
+            download_with_progress(self.url, filename=str(pull_folder / output_name))
+        elif self.url.startswith("docker://"):
+            output_name = output_name + ".img"
+            output_name = output_name.replace(":v", "_v")
+            Client.pull(str(self.url), name=output_name, pull_folder=pull_folder, force=force)
+        else:
+            Client.pull(str(self.url), name=output_name, pull_folder=pull_folder, force=force)
+
+        logger.info(f"Downloaded {output_name} into {pull_folder}")
+
+        self.input_image = ImageReader(pull_folder / output_name)
+        shortname = self.input_image.shortname
+
+        try:
+            logger.info(f"Copying into damona image directory: {self.images_directory}")
+            self.input_image.filename.rename(self.images_directory / shortname)
+            self.input_image.filename = pathlib.Path(self.images_directory / shortname)
+        except FileNotFoundError:
+            logger.warning("File not installed properly. Stopping")
+            self.image_installed = False
+            return
 
         self.image_installed = True
 
