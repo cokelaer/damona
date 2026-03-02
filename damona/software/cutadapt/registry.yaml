@@ -1,0 +1,10 @@
+cutadapt:
+  doi: 10.5281/zenodo.TBD
+  binaries: cutadapt
+  zenodo_id: TBD
+  releases:
+    4.6.0:
+      download: https://zenodo.org/record/TBD/files/cutadapt_4.6.0.img
+      md5sum: TBD
+      doi: 10.5281/zenodo.TBD
+      filesize: TBD

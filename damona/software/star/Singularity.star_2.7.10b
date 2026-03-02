@@ -1,0 +1,29 @@
+Bootstrap: docker
+From: ubuntu:22.04
+
+
+%labels
+    Author thomas cokelaer
+
+%post
+
+    export DEBIAN_FRONTEND=noninteractive
+    apt-get update && apt-get install -y wget
+
+    export STAR_VERSION=2.7.10b
+    wget https://github.com/alexdobin/STAR/releases/download/${STAR_VERSION}/STAR_${STAR_VERSION}.zip
+    apt-get install -y unzip
+    unzip STAR_${STAR_VERSION}.zip
+    cp STAR_${STAR_VERSION}/Linux_x86_64_static/STAR /usr/local/bin/
+
+    rm -rf STAR_${STAR_VERSION}*
+
+    apt-get remove -y wget unzip
+    apt-get autoremove -y
+    apt-get clean
+
+%environment
+    export PATH=/usr/local/bin:$PATH
+
+%runscript
+    exec STAR "$@"

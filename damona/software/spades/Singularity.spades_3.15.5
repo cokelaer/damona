@@ -1,0 +1,28 @@
+Bootstrap: docker
+From: ubuntu:22.04
+
+
+%labels
+    Author thomas cokelaer
+
+%post
+
+    export DEBIAN_FRONTEND=noninteractive
+    apt-get update && apt-get install -y wget python3 python3-pip
+
+    export SPADES_VERSION=3.15.5
+    wget https://github.com/ablab/spades/releases/download/v${SPADES_VERSION}/SPAdes-${SPADES_VERSION}-Linux.tar.gz
+    tar xzf SPAdes-${SPADES_VERSION}-Linux.tar.gz
+    mv SPAdes-${SPADES_VERSION}-Linux /opt/spades
+
+    rm -f SPAdes-${SPADES_VERSION}-Linux.tar.gz
+
+    apt-get remove -y wget
+    apt-get autoremove -y
+    apt-get clean
+
+%environment
+    export PATH=/opt/spades/bin:$PATH
+
+%runscript
+    exec spades.py "$@"

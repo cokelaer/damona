@@ -1,0 +1,10 @@
+deeptools:
+  doi: 10.5281/zenodo.TBD
+  binaries: bamCompare bamCoverage bamFingerprint bigwigCompare bigwigAverage computeGCBias computeMatrix correctGCBias deeptools estimateReadFiltering multiBamSummary multiBigwigSummary plotCorrelation plotCoverage plotEnrichment plotFingerprint plotHeatmap plotPCA plotProfile
+  zenodo_id: TBD
+  releases:
+    3.5.4:
+      download: https://zenodo.org/record/TBD/files/deeptools_3.5.4.img
+      md5sum: TBD
+      doi: 10.5281/zenodo.TBD
+      filesize: TBD

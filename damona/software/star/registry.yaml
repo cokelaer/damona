@@ -1,0 +1,10 @@
+star:
+  doi: 10.5281/zenodo.TBD
+  binaries: STAR
+  zenodo_id: TBD
+  releases:
+    2.7.10b:
+      download: https://zenodo.org/record/TBD/files/star_2.7.10b.img
+      md5sum: TBD
+      doi: 10.5281/zenodo.TBD
+      filesize: TBD
