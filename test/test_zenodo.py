@@ -71,6 +71,38 @@ def test(mocker):
     z.get_id(deposit)
 
 
+def test_multiple_creators():
+    creators = [
+        {"name": "Doe, Jane", "affiliation": "Institut Pasteur", "orcid": "0000-0001-2345-6789"},
+        {"name": "Smith, John", "affiliation": "Some University"},
+    ]
+    z = zenodo.Zenodo("sandbox.zenodo", token="dummy", creators=creators)
+    assert z.creators == creators
+    # Backward-compat attributes reflect the first creator
+    assert z.author == "Doe, Jane"
+    assert z.affiliation == "Institut Pasteur"
+    assert z.orcid == "0000-0001-2345-6789"
+
+    data = z.get_metadata("testsoft", "1.0.0")
+    md_creators = data["metadata"]["creators"]
+    assert len(md_creators) == 2
+    # First creator has orcid; second does not – verify per-creator orcid handling
+    assert md_creators[0] == {"name": "Doe, Jane", "affiliation": "Institut Pasteur", "orcid": "0000-0001-2345-6789"}
+    assert md_creators[1] == {"name": "Smith, John", "affiliation": "Some University"}
+    assert "orcid" in md_creators[0]
+    assert "orcid" not in md_creators[1]
+
+
+def test_single_creator_no_orcid():
+    z = zenodo.Zenodo("sandbox.zenodo", token="dummy", author="Test, Author", affiliation="Some Place")
+    assert z.orcid is None
+    data = z.get_metadata("testsoft", "1.0.0")
+    md_creators = data["metadata"]["creators"]
+    assert len(md_creators) == 1
+    assert md_creators[0] == {"name": "Test, Author", "affiliation": "Some Place"}
+    assert "orcid" not in md_creators[0]
+
+
 def test_get_stat_id():
     from damona.zenodo import get_stats_id
 
