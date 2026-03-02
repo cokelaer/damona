@@ -1,6 +1,7 @@
 cutadapt:
   doi: 10.5281/zenodo.18834061
   zenodo_id: 18834062
+  binaries: cutadapt
   releases:
     4.6.0:
       download: https://zenodo.org/record/18834062/files/cutadapt_4.6.0.img
