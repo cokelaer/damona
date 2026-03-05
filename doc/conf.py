@@ -22,9 +22,9 @@ pkg_name = "damona"
 
 # This is for ReadTheDoc
 
-import pkg_resources
+from importlib.metadata import version as get_version
 
-version = pkg_resources.require(pkg_name)[0].version
+version = get_version(pkg_name)
 
 release = version
 author = "Thomas Cokelaer"
