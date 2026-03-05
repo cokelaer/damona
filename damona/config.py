@@ -13,7 +13,6 @@
 #
 ##############################################################################
 """The Damona configuration"""
-import os
 import pathlib
 
 import colorlog
@@ -105,47 +104,29 @@ class Config:
         config.read_file(open(self.config_file))
         self.config = config
 
-    def add_bash(self):  # pragma: no cover
-        if os.path.exists(self.user_config_dir / "damona.sh") is False:
-            logger.info("adding a damona.sh in your DAMONA_PATH")
-            _damona_config_path = self.user_config_dir
-            logger.warning(f"Creating damona.sh file in {_damona_config_path}. ")
-
-            shell_path = pathlib.Path(damona.shell.__path__[0])
-            with open(shell_path / "bash" / "damona.sh", "r") as fin:
-                with open(_damona_config_path / "damona.sh", "w") as fout:
-                    fout.write(fin.read())
-            return True
+    def _copy_shell_file(self, source, dest):
+        """Copy source shell file to dest, returning True if the file was created or updated."""
+        shell_path = pathlib.Path(damona.shell.__path__[0])
+        new_content = (shell_path / source).read_text()
+        dest_path = self.user_config_dir / dest
+        if dest_path.exists():
+            existing_content = dest_path.read_text()
+            if existing_content == new_content:
+                return False
+            logger.warning(f"Updating {dest} in {self.user_config_dir}.")
         else:
-            return False
+            logger.warning(f"Creating {dest} file in {self.user_config_dir}.")
+        dest_path.write_text(new_content)
+        return True
+
+    def add_bash(self):  # pragma: no cover
+        return self._copy_shell_file("bash/damona.sh", "damona.sh")
 
     def add_zsh(self):  # pragma: no cover
-        if os.path.exists(self.user_config_dir / "damona.zsh") is False:
-            logger.info("adding a damona.zsh in your DAMONA_PATH")
-            _damona_config_path = self.user_config_dir
-            logger.warning(f"Creating damona.zsh file in {_damona_config_path}. ")
-
-            shell_path = pathlib.Path(damona.shell.__path__[0])
-            with open(shell_path / "zsh" / "damona.zsh", "r") as fin:
-                with open(_damona_config_path / "damona.zsh", "w") as fout:
-                    fout.write(fin.read())
-            return True
-        else:
-            return False
+        return self._copy_shell_file("zsh/damona.zsh", "damona.zsh")
 
     def add_fish(self):
-        if os.path.exists(self.user_config_dir / "damona.fish") is False:
-            logger.info("adding a damona.fish in your DAMONA_PATH")
-            _damona_config_path = self.user_config_dir
-            logger.warning(f"Creating damona.fish file in {_damona_config_path}. ")
-
-            shell_path = pathlib.Path(damona.shell.__path__[0])
-            with open(shell_path / "fish" / "damona.fish", "r") as fin:
-                with open(_damona_config_path / "damona.fish", "w") as fout:
-                    fout.write(fin.read())
-            return True
-        else:
-            return False
+        return self._copy_shell_file("fish/damona.fish", "damona.fish")
 
 
 def get_damona_commands():
