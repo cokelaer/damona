@@ -44,6 +44,9 @@ class Config:
         orcid=0000-0001
         name='Cokelaer, Thomas'
         affiliation='Institut Pasteur'
+        name2='Doe, Jane'
+        affiliation2='Some University'
+        orcid2=0000-0002-3456-7890
 
         [sandbox.zenodo]
         token=FFmbAEhQbb...
