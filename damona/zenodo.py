@@ -41,6 +41,29 @@ class Zenodo:  # pragma: no cover
 
         z = Zenodo(mode="sandbox.zenodo")
 
+    Multiple creators can be supplied via the ``creators`` parameter (a list of
+    dicts with ``name``, ``affiliation``, and optionally ``orcid`` keys)::
+
+        z = Zenodo(
+            mode="sandbox.zenodo",
+            creators=[
+                {"name": "Doe, Jane", "affiliation": "Institut Pasteur", "orcid": "0000-0001-2345-6789"},
+                {"name": "Smith, John", "affiliation": "Some University"},
+            ],
+        )
+
+    Alternatively, additional creators can be listed in the ``damona.cfg``
+    configuration file using numbered keys (``name2``/``affiliation2``/``orcid2``,
+    ``name3``/``affiliation3``/``orcid3``, …)::
+
+        [zenodo]
+        token=APmm6p....
+        name='Doe, Jane'
+        affiliation='Institut Pasteur'
+        orcid=0000-0001-2345-6789
+        name2='Smith, John'
+        affiliation2='Some University'
+
     You can retrieve an existing deposit (read-only) given its ID::
 
         deposit = z.get_deposition(959590)
@@ -100,7 +123,7 @@ class Zenodo:  # pragma: no cover
 
     """
 
-    def __init__(self, mode="sandbox.zenodo", token=None, author=None, affiliation=None, orcid=None):
+    def __init__(self, mode="sandbox.zenodo", token=None, author=None, affiliation=None, orcid=None, creators=None):
         assert mode in ["zenodo", "sandbox.zenodo"]
         self.mode = mode
         self.headers = {"Content-Type": "application/json"}
@@ -118,37 +141,78 @@ class Zenodo:  # pragma: no cover
         else:
             self.token = token
 
-        # Do we have an orcid (optional)
-        if orcid is None:
-            try:
-                self.orcid = cfg.config.get(f"{mode}", "orcid")
-                logger.info(f"Found ORCID for {mode} in {cfg.config_file}")
-            except (NoSectionError, NoOptionError):
-                pass
+        if creators is not None:
+            # creators is a list of dicts with keys 'name', 'affiliation', and optionally 'orcid'
+            self.creators = creators
         else:
-            self.orcid = orcid
+            # Build creators list from individual params and config (backward compatible).
+            # Primary creator
+            _orcid = orcid
+            _author = author
+            _affiliation = affiliation
 
-        # Do we have a name ?
-        if author is None:
-            try:
-                self.author = cfg.config.get(f"{mode}", "name").replace("'", "").replace('"', "")
-                logger.info(f"Found Name {self.author} for {mode} in {cfg.config_file}")
-            except (NoSectionError, NoOptionError):
-                pass
+            if _orcid is None:
+                try:
+                    _orcid = cfg.config.get(f"{mode}", "orcid")
+                    logger.info(f"Found ORCID for {mode} in {cfg.config_file}")
+                except (NoSectionError, NoOptionError):
+                    pass
+
+            if _author is None:
+                try:
+                    _author = cfg.config.get(f"{mode}", "name").replace("'", "").replace('"', "")
+                    logger.info(f"Found Name {_author} for {mode} in {cfg.config_file}")
+                except (NoSectionError, NoOptionError):
+                    pass
+
+            if _affiliation is None:
+                try:
+                    _affiliation = cfg.config.get(f"{mode}", "affiliation").replace("'", "").replace('"', "")
+                    logger.info(f"Found Affiliation {_affiliation} for {mode} in {cfg.config_file}")
+                except (NoSectionError, NoOptionError):
+                    pass
+
+            first_creator = {}
+            if _author:
+                first_creator["name"] = _author
+            if _affiliation:
+                first_creator["affiliation"] = _affiliation
+            if _orcid:
+                first_creator["orcid"] = _orcid
+
+            self.creators = [first_creator] if first_creator.get("name") else []
+
+            # Read additional creators from config using numbered keys
+            # (name2/affiliation2/orcid2, name3/affiliation3/orcid3, …)
+            i = 2
+            while True:
+                try:
+                    name_i = cfg.config.get(f"{mode}", f"name{i}").replace("'", "").replace('"', "")
+                    creator_i = {"name": name_i}
+                    try:
+                        creator_i["affiliation"] = cfg.config.get(f"{mode}", f"affiliation{i}").replace("'", "").replace('"', "")
+                    except (NoSectionError, NoOptionError):
+                        pass
+                    try:
+                        creator_i["orcid"] = cfg.config.get(f"{mode}", f"orcid{i}")
+                    except (NoSectionError, NoOptionError):
+                        pass
+                    self.creators.append(creator_i)
+                    i += 1
+                except (NoSectionError, NoOptionError):
+                    break
+
+        # Set backward-compatible single-author attributes from the first creator
+        if self.creators:
+            self.author = self.creators[0].get("name")
+            self.affiliation = self.creators[0].get("affiliation")
+            self.orcid = self.creators[0].get("orcid")
         else:
-            self.author = author
+            self.author = None
+            self.affiliation = None
+            self.orcid = None
 
-        # Do we have an affiliation ?
-        if affiliation is None:
-            try:
-                self.affiliation = cfg.config.get(f"{mode}", "affiliation").replace("'", "").replace('"', "")
-                logger.info(f"Found Affiliation {self.affiliation} for {mode} in {cfg.config_file}")
-            except (NoSectionError, NoOptionError):
-                pass
-        else:
-            self.affiliation = affiliation
-
-        if self.affiliation is None or self.author is None:
+        if not self.creators or not self.author or not self.affiliation:
             logger.error("you must provide an author and affiliation")
             sys.exit(1)
 
@@ -248,6 +312,13 @@ class Zenodo:  # pragma: no cover
         if items[0][0] != "v":
             version = f"v{version}"
 
+        creators = []
+        for c in self.creators:
+            entry = {"name": c["name"], "affiliation": c["affiliation"]}
+            if c.get("orcid"):
+                entry["orcid"] = c["orcid"]
+            creators.append(entry)
+
         data = {
             "metadata": {
                 "title": f"Damona singularity image of {software} software",
@@ -258,13 +329,9 @@ analysis.""",
                 "keywords": ["apptainer", "singularity", "damona", "bioinformatics", "reproducibility", "container"],
                 "version": f"{version}",
                 "communities": [{"identifier": "damona"}],
+                "creators": creators,
             }
         }
-
-        if self.orcid:
-            data["metadata"]["creators"] = [{"orcid": self.orcid, "name": self.author, "affiliation": self.affiliation}]
-        else:
-            data["metadata"]["creators"] = [{"name": self.author, "affiliation": self.affiliation}]
 
         return data
 
