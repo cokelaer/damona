@@ -79,6 +79,7 @@ jobs:
         which fish
         cat << EOF > test.fish
         #!/usr/bin/fish
+        source ~/.config/damona/damona.fish
         damona create TEST
         damona activate TEST
         damona install fastqc

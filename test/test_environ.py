@@ -134,6 +134,47 @@ def test_detect_shell(monkeypatch):
         assert env._is_zsh_shell() is False
 
 
+def test_fish_activate_deactivate_output(monkeypatch, capsys):
+    """Test that fish shell activation/deactivation outputs proper fish commands."""
+    import io
+    from contextlib import redirect_stdout
+
+    manager = Damona()
+    env = Environ()
+    monkeypatch.setenv("DAMONA_ENV", str(manager.damona_path / "envs" / "base"))
+
+    with mock.patch("subprocess.check_output", return_value="fish"):
+        # --- activate ---
+        f = io.StringIO()
+        with redirect_stdout(f):
+            env.activate("base")
+        activate_output = f.getvalue()
+
+        # Must use set -gx (global exported variable), no leading spaces, no semicolons
+        assert "set -gx DAMONA_ENV" in activate_output
+        assert "set -gx fish_user_paths" in activate_output
+        assert "$fish_user_paths" in activate_output
+        # No leading spaces (clean output for source/psub)
+        for line in activate_output.splitlines():
+            assert not line.startswith(" "), f"Unexpected leading space in: {line!r}"
+
+        # --- deactivate with a damona env in PATH and no other damona env ---
+        env_bin = str(manager.damona_path / "envs" / "base" / "bin")
+        monkeypatch.setenv("PATH", f"{env_bin}:/usr/bin:/bin")
+
+        f2 = io.StringIO()
+        with redirect_stdout(f2):
+            env.deactivate()
+        deactivate_output = f2.getvalue()
+
+        # No more damona envs remaining, so DAMONA_ENV must be unset
+        assert "set -e DAMONA_ENV" in deactivate_output
+        # Must remove only the specific path from fish_user_paths (targeted removal)
+        assert f"string match -v -- '{env_bin}'" in deactivate_output
+        # Must NOT use the old destructive approach that wiped all fish_user_paths
+        assert "set -e fish_user_paths" not in deactivate_output
+
+
 def test_create_bundle(tmpdir, monkeypatch):
     # make sure it exists
     runner = CliRunner()

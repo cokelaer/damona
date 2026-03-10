@@ -385,8 +385,8 @@ class Environ:
         env_path = manager.environments_path / env_name
 
         if self._is_fish_shell():
-            print(f"    set -gx DAMONA_ENV {env_path};")
-            print(f"    set -gx fish_user_paths {env_path}/bin $fish_user_paths")
+            print(f"set -gx DAMONA_ENV {env_path}")
+            print(f"set -gx fish_user_paths {env_path}/bin $fish_user_paths")
         elif self._is_bash_shell():
             print(f"   export DAMONA_ENV={env_path};")
             print("    export PATH={}/bin:${{PATH}}".format(env_path))
@@ -413,15 +413,18 @@ class Environ:
         paths = PATH.split(":")
 
         found = False  # this one is the one to deactivate (to ignore)
+        removed_path = None  # track the path being removed from PATH
         newPATH = []
         for path in paths:
             # if deactivate without name, we remove the last one only
             if env_name and str(manager.damona_path / "envs" / env_name / "bin") == path:
                 logger.info(f"# Found damona path ({path}), to be removed from your PATH")
                 found = True
+                removed_path = path
             elif not env_name and "/damona/envs/" in str(path) and not found:
                 logger.info(f"# Found a damona path ({path}), to be removed from your PATH")
                 found = True
+                removed_path = path
             else:  # keep track of other paths.
                 newPATH.append(path)
 
@@ -437,19 +440,20 @@ class Environ:
             first_damona_path = str(first_damona_path.parent)
 
             if self._is_fish_shell():
-                print(f"set DAMONA_ENV {first_damona_path};")
+                print(f"set -gx DAMONA_ENV {first_damona_path}")
             else:
                 print(f"    export DAMONA_ENV={first_damona_path};")
         else:
             if self._is_fish_shell():
-                print("set -e DAMONA_ENV;")
+                print("set -e DAMONA_ENV")
             else:
                 print("    unset DAMONA_ENV")
 
         if self._is_fish_shell():
-            print("set -e fish_user_paths;")
-            for x in damona_paths:
-                print(f"set -gx fish_user_paths {x} $fish_user_paths;")
+            # Remove only the specific deactivated path from fish_user_paths,
+            # preserving any other entries (non-damona paths the user may have).
+            if removed_path:
+                print(f"set -gx fish_user_paths (string match -v -- '{removed_path}' $fish_user_paths)")
         else:
             newPATH = ":".join(newPATH)
             print("export PATH={}".format(newPATH))
