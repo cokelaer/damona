@@ -1819,18 +1819,6 @@ fastANI:
       doi: 10.5281/zenodo.17594736
       filesize: 251166720
 
-# cutadapt/registry.yaml
-cutadapt:
-  doi: 10.5281/zenodo.18834061
-  zenodo_id: 18834062
-  binaries: cutadapt
-  releases:
-    4.6.0:
-      download: https://zenodo.org/record/18834062/files/cutadapt_4.6.0.img
-      md5sum: 1e6dd656c47d3a3690229d3d30e56985
-      doi: 10.5281/zenodo.18834062
-      filesize: 65925120
-
 # wig2bed/registry.yaml
 wig2bed:
   doi: 10.5281/zenodo.18895804
@@ -1842,4 +1830,16 @@ wig2bed:
       md5sum: 21d847b53e68b0957fcaf6236548c657
       doi: 10.5281/zenodo.18895805
       filesize: 59514880
+
+# cutadapt/registry.yaml
+cutadapt:
+  doi: 10.5281/zenodo.18834061
+  zenodo_id: 18834062
+  binaries: cutadapt
+  releases:
+    4.6.0:
+      download: https://zenodo.org/record/18834062/files/cutadapt_4.6.0.img
+      md5sum: 1e6dd656c47d3a3690229d3d30e56985
+      doi: 10.5281/zenodo.18834062
+      filesize: 65925120
 
