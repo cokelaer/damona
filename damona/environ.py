@@ -332,23 +332,35 @@ class Environ:
         return False
 
     def _detect_shell(self):
-        """Detect the current shell from environment variables.
+        """Detect the current shell by inspecting the parent process name.
 
-        Checks DAMONA_SHELL_INFO first (set by the shell function wrappers),
-        then falls back to shell-specific variables (FISH_VERSION, ZSH_VERSION,
-        BASH_VERSION) and finally the SHELL environment variable.
-        Returns the shell name as a string, or an empty string if unknown.
+        Uses 'ps' to read the parent process name, which is reliable when Python
+        is invoked from a shell wrapper function (bash, zsh, or fish).
+        Falls back to the $SHELL environment variable if ps detection fails.
+        Returns the shell name ('bash', 'zsh', or 'fish'), or an empty string
+        if the shell cannot be determined.
         """
-        # shell_info = os.environ.get("DAMONA_SHELL_INFO", "")
-        # if shell_info:
-        #    return shell_info
-
-        import os
         import subprocess
 
-        ppid = os.getppid()
-        shell = subprocess.check_output(["ps", "-p", str(ppid), "-o", "comm="], text=True).strip()
-        return shell
+        try:
+            ppid = os.getppid()
+            shell = subprocess.check_output(["ps", "-p", str(ppid), "-o", "comm="], text=True).strip()
+            # Login shells may appear as "-bash" or "-zsh"
+            if shell.startswith("-"):
+                shell = shell[1:]
+            if shell in ("bash", "zsh", "fish"):
+                return shell
+        except Exception:
+            pass
+
+        # Fallback: parse $SHELL (set by the system/login process)
+        shell_path = os.environ.get("SHELL", "")
+        if shell_path:
+            shell_name = os.path.basename(shell_path)
+            if shell_name in ("bash", "zsh", "fish"):
+                return shell_name
+
+        return ""
 
     def _is_fish_shell(self):
         return self._detect_shell() == "fish"
@@ -382,12 +394,13 @@ class Environ:
             print(f"   export DAMONA_ENV={env_path};")
             print("    export PATH={}/bin:${{PATH}}".format(env_path))
         else:
-            shell_info = os.environ.get("DAMONA_SHELL_INFO", "unknown")
+            shell = self._detect_shell()
             logger.error(
-                f"Could not determine your shell type (detected: {shell_info}). "
+                f"Could not determine your shell type (detected: '{shell}'). "
                 "Please source the damona shell script for your shell. "
-                "For bash/zsh add 'source $(damona --path)/shell/bash/damona.sh' to your ~/.bashrc or ~/.zshrc. "
-                "For fish add 'source (damona --path)/shell/fish/damona.fish' to your ~/.config/fish/config.fish"
+                "For bash add 'source ~/.config/damona/damona.sh' to your ~/.bashrc. "
+                "For zsh add 'source ~/.config/damona/damona.zsh' to your ~/.zshrc. "
+                "For fish add 'source ~/.config/damona/damona.fish' to your ~/.config/fish/config.fish"
             )
             sys.exit(1)
         logger.info(f"# Added damona path ({env_path}) in your PATH")

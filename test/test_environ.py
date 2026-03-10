@@ -93,57 +93,45 @@ def test_environment():
 def test_detect_shell(monkeypatch):
     env = Environ()
 
-    # DAMONA_SHELL_INFO takes priority
-    monkeypatch.setenv("DAMONA_SHELL_INFO", "fish")
-    assert env._detect_shell() == "fish"
-    assert env._is_fish_shell() is True
-    assert env._is_bash_shell() is False
-    assert env._is_zsh_shell() is False
+    # Primary detection: parent process name via subprocess
+    with mock.patch("subprocess.check_output", return_value="fish"):
+        assert env._detect_shell() == "fish"
+        assert env._is_fish_shell() is True
+        assert env._is_bash_shell() is False
+        assert env._is_zsh_shell() is False
 
-    monkeypatch.setenv("DAMONA_SHELL_INFO", "bash")
-    assert env._detect_shell() == "bash"
-    assert env._is_bash_shell() is True
+    with mock.patch("subprocess.check_output", return_value="bash"):
+        assert env._detect_shell() == "bash"
+        assert env._is_bash_shell() is True
 
-    monkeypatch.setenv("DAMONA_SHELL_INFO", "zsh")
-    assert env._detect_shell() == "zsh"
-    assert env._is_zsh_shell() is True
+    with mock.patch("subprocess.check_output", return_value="zsh"):
+        assert env._detect_shell() == "zsh"
+        assert env._is_zsh_shell() is True
 
-    # Without DAMONA_SHELL_INFO, fall back to shell-specific variables
-    monkeypatch.delenv("DAMONA_SHELL_INFO", raising=False)
+    # Login shells may appear as "-zsh" or "-bash"
+    with mock.patch("subprocess.check_output", return_value="-zsh"):
+        assert env._detect_shell() == "zsh"
 
-    monkeypatch.setenv("FISH_VERSION", "3.6.0")
-    monkeypatch.delenv("ZSH_VERSION", raising=False)
-    monkeypatch.delenv("BASH_VERSION", raising=False)
-    assert env._detect_shell() == "fish"
-    assert env._is_fish_shell() is True
+    with mock.patch("subprocess.check_output", return_value="-bash"):
+        assert env._detect_shell() == "bash"
 
-    monkeypatch.delenv("FISH_VERSION", raising=False)
-    monkeypatch.setenv("ZSH_VERSION", "5.9")
-    assert env._detect_shell() == "zsh"
-    assert env._is_zsh_shell() is True
+    # When subprocess fails, fall back to $SHELL
+    with mock.patch("subprocess.check_output", side_effect=Exception("ps not found")):
+        monkeypatch.setenv("SHELL", "/usr/bin/fish")
+        assert env._detect_shell() == "fish"
 
-    monkeypatch.delenv("ZSH_VERSION", raising=False)
-    monkeypatch.setenv("BASH_VERSION", "5.1.0")
-    assert env._detect_shell() == "bash"
-    assert env._is_bash_shell() is True
+        monkeypatch.setenv("SHELL", "/bin/zsh")
+        assert env._detect_shell() == "zsh"
 
-    # Without version variables, fall back to $SHELL
-    monkeypatch.delenv("BASH_VERSION", raising=False)
-    monkeypatch.setenv("SHELL", "/usr/bin/fish")
-    assert env._detect_shell() == "fish"
+        monkeypatch.setenv("SHELL", "/bin/bash")
+        assert env._detect_shell() == "bash"
 
-    monkeypatch.setenv("SHELL", "/bin/zsh")
-    assert env._detect_shell() == "zsh"
-
-    monkeypatch.setenv("SHELL", "/bin/bash")
-    assert env._detect_shell() == "bash"
-
-    # Unknown shell returns empty string
-    monkeypatch.setenv("SHELL", "/bin/sh")
-    assert env._detect_shell() == ""
-    assert env._is_fish_shell() is False
-    assert env._is_bash_shell() is False
-    assert env._is_zsh_shell() is False
+        # Unknown shell returns empty string
+        monkeypatch.setenv("SHELL", "/bin/sh")
+        assert env._detect_shell() == ""
+        assert env._is_fish_shell() is False
+        assert env._is_bash_shell() is False
+        assert env._is_zsh_shell() is False
 
 
 def test_create_bundle(tmpdir, monkeypatch):

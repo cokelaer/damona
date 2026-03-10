@@ -56,12 +56,26 @@ class DamonaInit:
             logger.critical(
                 """DAMONA_PATH was not found in your environment.
 
-Before using Damona, you have to copy/paste the following code in
-your ~/.bashrc file once for all (start a new shell afterwards):
+Before using Damona, you have to source the shell script for your shell once for all
+(start a new shell afterwards).
 
-    if [ ! -f  "~/.config/damona/damona.sh" ] ; then
+For bash, add to your ~/.bashrc:
+
+    if [ -f ~/.config/damona/damona.sh ] ; then
         source ~/.config/damona/damona.sh
     fi
+
+For zsh, add to your ~/.zshrc:
+
+    if [ -f ~/.config/damona/damona.zsh ] ; then
+        source ~/.config/damona/damona.zsh
+    fi
+
+For fish, add to your ~/.config/fish/config.fish:
+
+    if test -f ~/.config/damona/damona.fish
+        source ~/.config/damona/damona.fish
+    end
 
 This will create DAMONA_PATH variable that points to your home/.config/damona/ directory.
 You can redefine the DAMONA_PATH later to point towards another path if needed."""

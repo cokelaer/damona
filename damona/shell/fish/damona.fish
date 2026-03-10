@@ -16,7 +16,6 @@ function __damona_find_damona
 
         set -e damona
         set -gx DAMONA_EXE_INTERN (which damona 2>/dev/null)
-        set -gx DAMONA_SHELL_INFO "fish"
 
         if test -z "$DAMONA_EXE_INTERN"
             return
@@ -33,7 +32,6 @@ function damona
         set DAMONA_EXE_INTERN $DAMONA_EXE
     else
         set -e DAMONA_EXE_INTERN
-        set -e DAMONA_SHELL_INFO
         __damona_find_damona
     end
 
@@ -116,3 +114,10 @@ complete -f -c damona -n '__fish_damona_using_command install' -a '(__fish_damon
 #complete -f -c damona -n '__fish_damona_using_command uninstall' -a '(__fish_damona_packages)'
 #complete -f -c damona -n '__fish_damona_using_command upgrade' -a '(__fish_damona_packages)'
 #complete -f -c damona -n '__fish_damona_using_command update' -a '(__fish_damona_packages)'
+
+# This DAMONA_PATH is used to store images and environments (including
+# binaries). If it is already set by a user, no need to define it, otherwise the
+# default is in the home of the user.
+if not set -q DAMONA_PATH
+    set -gx DAMONA_PATH "$HOME/.config/damona"
+end
