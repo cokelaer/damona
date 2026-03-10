@@ -56,29 +56,25 @@ class DamonaInit:
             logger.critical(
                 """DAMONA_PATH was not found in your environment.
 
-Before using Damona, you have to source the shell script for your shell once for all
-(start a new shell afterwards).
+Damona has automatically added initialization lines to your shell configuration
+files (~/.bashrc, ~/.zshrc, ~/.config/fish/config.fish). Please start a new
+terminal (or source the appropriate file) for the changes to take effect.
 
-For bash, add to your ~/.bashrc:
+If you prefer to add the initialization manually, add the relevant line for
+your shell:
 
-    if [ -f ~/.config/damona/damona.sh ] ; then
-        source ~/.config/damona/damona.sh
-    fi
+For bash (~/.bashrc):
+    source ~/.config/damona/damona.sh
 
-For zsh, add to your ~/.zshrc:
+For zsh (~/.zshrc):
+    source ~/.config/damona/damona.zsh
 
-    if [ -f ~/.config/damona/damona.zsh ] ; then
-        source ~/.config/damona/damona.zsh
-    fi
+For fish (~/.config/fish/config.fish):
+    source ~/.config/damona/damona.fish
 
-For fish, add to your ~/.config/fish/config.fish:
-
-    if test -f ~/.config/damona/damona.fish
-        source ~/.config/damona/damona.fish
-    end
-
-This will create DAMONA_PATH variable that points to your home/.config/damona/ directory.
-You can redefine the DAMONA_PATH later to point towards another path if needed."""
+This will create the DAMONA_PATH variable that points to your
+~/.config/damona/ directory. You can redefine DAMONA_PATH later to point
+towards another path if needed."""
             )
             # This is not an error per se but damona cannot work without DAMONA_PATH
             # Yet, we do not want to raise an error especially for the CI

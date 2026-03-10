@@ -150,11 +150,11 @@ def test_fish_activate_deactivate_output(monkeypatch, capsys):
             env.activate("base")
         activate_output = f.getvalue()
 
-        # Must use set -gx (global exported variable), no leading spaces, no semicolons
+        # Must use set -gx (global exported variable), no leading spaces
         assert "set -gx DAMONA_ENV" in activate_output
-        assert "set -gx fish_user_paths" in activate_output
-        assert "$fish_user_paths" in activate_output
-        # No leading spaces (clean output for source/psub)
+        assert "set -gx PATH" in activate_output
+        assert "$PATH" in activate_output
+        # No leading spaces (clean output for eval)
         for line in activate_output.splitlines():
             assert not line.startswith(" "), f"Unexpected leading space in: {line!r}"
 
@@ -169,10 +169,11 @@ def test_fish_activate_deactivate_output(monkeypatch, capsys):
 
         # No more damona envs remaining, so DAMONA_ENV must be unset
         assert "set -e DAMONA_ENV" in deactivate_output
-        # Must remove only the specific path from fish_user_paths (targeted removal)
+        # Must remove only the specific path from PATH (targeted removal)
         assert f"string match -v -- '{env_bin}'" in deactivate_output
-        # Must NOT use the old destructive approach that wiped all fish_user_paths
-        assert "set -e fish_user_paths" not in deactivate_output
+        assert "$PATH" in deactivate_output
+        # Must NOT use fish_user_paths
+        assert "fish_user_paths" not in deactivate_output
 
 
 def test_create_bundle(tmpdir, monkeypatch):

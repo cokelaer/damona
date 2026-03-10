@@ -386,7 +386,7 @@ class Environ:
 
         if self._is_fish_shell():
             print(f"set -gx DAMONA_ENV {env_path}")
-            print(f"set -gx fish_user_paths {env_path}/bin $fish_user_paths")
+            print(f"set -gx PATH {env_path}/bin $PATH")
         elif self._is_bash_shell():
             print(f"   export DAMONA_ENV={env_path};")
             print("    export PATH={}/bin:${{PATH}}".format(env_path))
@@ -450,10 +450,10 @@ class Environ:
                 print("    unset DAMONA_ENV")
 
         if self._is_fish_shell():
-            # Remove only the specific deactivated path from fish_user_paths,
+            # Remove only the specific deactivated path from PATH,
             # preserving any other entries (non-damona paths the user may have).
             if removed_path:
-                print(f"set -gx fish_user_paths (string match -v -- '{removed_path}' $fish_user_paths)")
+                print(f"set -gx PATH (string match -v -- '{removed_path}' $PATH)")
         else:
             newPATH = ":".join(newPATH)
             print("export PATH={}".format(newPATH))

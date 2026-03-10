@@ -72,8 +72,6 @@ jobs:
     - name: Init damona in bash
       run: |
         damona
-        mkdir -p ~/.config/fish
-        echo "source ~/.config/damona/damona.fish" >> ~/.config/fish/config.fish
     - name: Test installation hisat2
       run: |
         which fish
