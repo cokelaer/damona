@@ -16,7 +16,6 @@ function __damona_find_damona
 
         set -e damona
         set -gx DAMONA_EXE_INTERN (which damona 2>/dev/null)
-        set -gx DAMONA_SHELL_INFO "fish"
 
         if test -z "$DAMONA_EXE_INTERN"
             return
@@ -33,7 +32,6 @@ function damona
         set DAMONA_EXE_INTERN $DAMONA_EXE
     else
         set -e DAMONA_EXE_INTERN
-        set -e DAMONA_SHELL_INFO
         __damona_find_damona
     end
 

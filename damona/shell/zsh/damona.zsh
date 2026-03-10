@@ -21,18 +21,6 @@ __damona_find_damona() {
             echo "$mycmd"
         else
             export DAMONA_EXE_INTERN="$mycmd"
-
-            # The SHELL environment variable typically stores the path to the default
-            # login shell for the user. It is usually set when you start a new session
-            # or login. However, it is not always accurate or updated if you switch
-            # between different shells within the same session.
-            # To determine the current shell in a more reliable way, you can use the ps
-            # command with the -p flag and the process ID of the current shell.
-            # the DAMONA_SHELL_INFO variable is set using the ps command with the process
-            # ID of the current shell ($$). The -o comm= option specifies that only th
-            # command name should be output. The t modifier is used to remove any leading
-            # path components, ensuring that only the shell name is assigned to DAMONA_SHELL_INFO.
-            export DAMONA_SHELL_INFO="$(ps -p $$ -o comm=)"
         fi
     fi
 }
@@ -155,7 +143,6 @@ __damona_setup() {
         #    echo "Searching for damona executable"
         #fi
         unset DAMONA_EXE_INTERN
-        unset DAMONA_SHELL_INFO
         __damona_find_damona
 
     fi
