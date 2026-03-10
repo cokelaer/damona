@@ -339,16 +339,24 @@ class Environ:
         BASH_VERSION) and finally the SHELL environment variable.
         Returns the shell name as a string, or an empty string if unknown.
         """
-        # shell_info = os.environ.get("DAMONA_SHELL_INFO", "")
-        # if shell_info:
-        #    return shell_info
+        shell_info = os.environ.get("DAMONA_SHELL_INFO", "")
+        if shell_info:
+            return shell_info
 
-        import os
-        import subprocess
+        if os.environ.get("FISH_VERSION"):
+            return "fish"
+        if os.environ.get("ZSH_VERSION"):
+            return "zsh"
+        if os.environ.get("BASH_VERSION"):
+            return "bash"
 
-        ppid = os.getppid()
-        shell = subprocess.check_output(["ps", "-p", str(ppid), "-o", "comm="], text=True).strip()
-        return shell
+        shell_path = os.environ.get("SHELL", "")
+        if shell_path:
+            shell_name = os.path.basename(shell_path)
+            if shell_name in ("fish", "zsh", "bash"):
+                return shell_name
+
+        return ""
 
     def _is_fish_shell(self):
         return self._detect_shell() == "fish"
