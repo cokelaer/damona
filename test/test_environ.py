@@ -157,7 +157,7 @@ def test_create_bundle(tmpdir, monkeypatch):
 
     manager = Damona()
     monkeypatch.setenv("DAMONA_ENV", str(manager.damona_path / "envs" / NAME))
-    cmd = "damona install fastqc --force"
+    cmd = "damona install bwa --force"
     status = subprocess.call(cmd.split())
 
     directory = tmpdir.mkdir("bundle")
