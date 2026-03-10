@@ -331,20 +331,40 @@ class Environ:
                 return True
         return False
 
+    def _detect_shell(self):
+        """Detect the current shell from environment variables.
+
+        Checks DAMONA_SHELL_INFO first (set by the shell function wrappers),
+        then falls back to shell-specific variables (FISH_VERSION, ZSH_VERSION,
+        BASH_VERSION) and finally the SHELL environment variable.
+        Returns the shell name as a string, or an empty string if unknown.
+        """
+        shell_info = os.environ.get("DAMONA_SHELL_INFO", "")
+        if shell_info:
+            return shell_info
+        if "FISH_VERSION" in os.environ:
+            return "fish"
+        if "ZSH_VERSION" in os.environ:
+            return "zsh"
+        if "BASH_VERSION" in os.environ:
+            return "bash"
+        shell = os.environ.get("SHELL", "")
+        if "fish" in shell:
+            return "fish"
+        if "zsh" in shell:
+            return "zsh"
+        if "bash" in shell:
+            return "bash"
+        return ""
+
     def _is_fish_shell(self):
-        if "DAMONA_SHELL_INFO" in os.environ:
-            return os.environ["DAMONA_SHELL_INFO"] == "fish"
-        return False
+        return self._detect_shell() == "fish"
 
     def _is_bash_shell(self):
-        if "DAMONA_SHELL_INFO" in os.environ:
-            return os.environ["DAMONA_SHELL_INFO"] == "bash"
-        return False
+        return self._detect_shell() == "bash"
 
     def _is_zsh_shell(self):
-        if "DAMONA_SHELL_INFO" in os.environ:
-            return os.environ["DAMONA_SHELL_INFO"] == "zsh"
-        return False
+        return self._detect_shell() == "zsh"
 
     def activate(self, env_name=None):
         # Do not change the print statement here below. They are used by
@@ -369,8 +389,14 @@ class Environ:
             print(f"   export DAMONA_ENV={env_path};")
             print("    export PATH={}/bin:${{PATH}}".format(env_path))
         else:
-            _shell_info = os.environ["DAMONA_SHELL_INFO"]
-            raise NotImplementedError(f"shell info found: {_shell_info}")
+            shell_info = os.environ.get("DAMONA_SHELL_INFO", "unknown")
+            logger.error(
+                f"Could not determine your shell type (detected: {shell_info}). "
+                "Please source the damona shell script for your shell. "
+                "For bash/zsh add 'source $(damona --path)/shell/bash/damona.sh' to your ~/.bashrc or ~/.zshrc. "
+                "For fish add 'source (damona --path)/shell/fish/damona.fish' to your ~/.config/fish/config.fish"
+            )
+            sys.exit(1)
         logger.info(f"# Added damona path ({env_path}) in your PATH")
 
     def deactivate(self, env_name=None):

@@ -81,10 +81,10 @@ def test_damona_create_and_install(monkeypatch):
     monkeypatch.setenv("DAMONA_ENV", str(manager.damona_path / "envs" / NAME))
 
     runner = CliRunner()
-    results = runner.invoke(script.install, ["fastqc"])
+    results = runner.invoke(script.install, ["bwa"])
     assert results.exit_code == 0
 
-    results = runner.invoke(script.install, ["fastqc", "--force"])
+    results = runner.invoke(script.install, ["bwa", "--force"])
     assert results.exit_code == 0
 
     Teardown(NAME)
@@ -180,7 +180,7 @@ def test_import_bundle(monkeypatch, tmpdir):
     Setup(NAME)
 
     monkeypatch.setenv("DAMONA_ENV", str(manager.damona_path / "envs" / NAME))
-    results = runner.invoke(script.install, ["fastqc"])
+    results = runner.invoke(script.install, ["bwa"])
     results = runner.invoke(script.export, [NAME, "--output", output])
     results = runner.invoke(script.create, [NAME2, "--from-bundle", output])
 
@@ -215,9 +215,9 @@ def test_install_remove(monkeypatch):
     manager = Damona()
     monkeypatch.setenv("DAMONA_ENV", str(manager.damona_path / "envs" / NAME))
 
-    results = runner.invoke(script.install, ["fastqc"])
+    results = runner.invoke(script.install, ["bwa"])
     assert results.exit_code == 0
-    results = runner.invoke(script.remove, ["fastqc"])
+    results = runner.invoke(script.remove, ["bwa"])
     assert results.exit_code == 0
 
     Teardown(NAME)
@@ -232,7 +232,7 @@ def test_install_remove_from_url(monkeypatch):
     monkeypatch.setenv("DAMONA_ENV", str(manager.damona_path / "envs" / NAME))
 
     # This re-installs the image, interfering with the user's local image but should be safe
-    results = runner.invoke(script.install, ["fastqc", "--registry", "damona", "--force"])
+    results = runner.invoke(script.install, ["bwa", "--registry", "damona", "--force"])
     assert results.exit_code == 0
 
     Teardown(NAME)

@@ -90,6 +90,62 @@ def test_environment():
     env._is_fish_shell()
 
 
+def test_detect_shell(monkeypatch):
+    env = Environ()
+
+    # DAMONA_SHELL_INFO takes priority
+    monkeypatch.setenv("DAMONA_SHELL_INFO", "fish")
+    assert env._detect_shell() == "fish"
+    assert env._is_fish_shell() is True
+    assert env._is_bash_shell() is False
+    assert env._is_zsh_shell() is False
+
+    monkeypatch.setenv("DAMONA_SHELL_INFO", "bash")
+    assert env._detect_shell() == "bash"
+    assert env._is_bash_shell() is True
+
+    monkeypatch.setenv("DAMONA_SHELL_INFO", "zsh")
+    assert env._detect_shell() == "zsh"
+    assert env._is_zsh_shell() is True
+
+    # Without DAMONA_SHELL_INFO, fall back to shell-specific variables
+    monkeypatch.delenv("DAMONA_SHELL_INFO", raising=False)
+
+    monkeypatch.setenv("FISH_VERSION", "3.6.0")
+    monkeypatch.delenv("ZSH_VERSION", raising=False)
+    monkeypatch.delenv("BASH_VERSION", raising=False)
+    assert env._detect_shell() == "fish"
+    assert env._is_fish_shell() is True
+
+    monkeypatch.delenv("FISH_VERSION", raising=False)
+    monkeypatch.setenv("ZSH_VERSION", "5.9")
+    assert env._detect_shell() == "zsh"
+    assert env._is_zsh_shell() is True
+
+    monkeypatch.delenv("ZSH_VERSION", raising=False)
+    monkeypatch.setenv("BASH_VERSION", "5.1.0")
+    assert env._detect_shell() == "bash"
+    assert env._is_bash_shell() is True
+
+    # Without version variables, fall back to $SHELL
+    monkeypatch.delenv("BASH_VERSION", raising=False)
+    monkeypatch.setenv("SHELL", "/usr/bin/fish")
+    assert env._detect_shell() == "fish"
+
+    monkeypatch.setenv("SHELL", "/bin/zsh")
+    assert env._detect_shell() == "zsh"
+
+    monkeypatch.setenv("SHELL", "/bin/bash")
+    assert env._detect_shell() == "bash"
+
+    # Unknown shell returns empty string
+    monkeypatch.setenv("SHELL", "/bin/sh")
+    assert env._detect_shell() == ""
+    assert env._is_fish_shell() is False
+    assert env._is_bash_shell() is False
+    assert env._is_zsh_shell() is False
+
+
 def test_create_bundle(tmpdir, monkeypatch):
     # make sure it exists
     runner = CliRunner()
@@ -101,7 +157,7 @@ def test_create_bundle(tmpdir, monkeypatch):
 
     manager = Damona()
     monkeypatch.setenv("DAMONA_ENV", str(manager.damona_path / "envs" / NAME))
-    cmd = "damona install fastqc --force"
+    cmd = "damona install bwa --force"
     status = subprocess.call(cmd.split())
 
     directory = tmpdir.mkdir("bundle")
