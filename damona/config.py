@@ -72,7 +72,8 @@ class Config:
         self.user_config_dir = pathlib.Path(configuration.user_config_dir)
 
         self.config_file = self.user_config_dir / "damona.cfg"
-        if self.config_file.exists() is False:  # pragma: no cover
+        self.user_config_dir.mkdir(parents=True, exist_ok=True)
+        if not self.config_file.exists():
             with open(self.config_file, "w") as fout:
                 fout.write("[general]\n")
                 fout.write("verbose=True\n\n")
@@ -108,7 +109,7 @@ class Config:
         from configparser import ConfigParser
 
         config = ConfigParser()
-        config.read_file(open(self.config_file))
+        config.read(str(self.config_file))
         self.config = config
 
     def _copy_shell_file(self, source, dest):
