@@ -52,14 +52,14 @@ jobs:
     - name: Init damona in bash
       shell: bash -l {0}
       run: |
-        damona
-        # TODO: initiate / source the bashrc and make sure it is availble in next step
+        damona || true  # creates config files; exits 1 on first run to prompt shell restart
     - name: Test installation hisat2
       shell: bash -l {0}
       run: |
-        damona
+        damona || true
         cat << EOF > test.bash
         #!/usr/bin/bash
+        source ~/.config/damona/damona.sh
         damona create TEST
         damona activate TEST
         damona install fastqc  # a zenodo/damona file

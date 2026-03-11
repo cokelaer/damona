@@ -61,9 +61,7 @@ jobs:
          poetry install --with dev
     - name: Activate Damona
       run: |
-        bash
-        poetry run damona  # this creates the bash script
-        echo " source ~/.config/damona/damona.sh" >> ~/.bashrc
+        poetry run damona || true  # creates config files; exits 1 on first run to prompt shell restart
     - name: testing
       shell: bash -l {0}
       run: |
