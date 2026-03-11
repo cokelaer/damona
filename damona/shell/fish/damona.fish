@@ -58,7 +58,7 @@ function damona
         set -e argv[1]
         switch $cmd
             case activate deactivate
-                eval ($DAMONA_EXE_INTERN $cmd $argv)
+                $DAMONA_EXE_INTERN $cmd $argv | source
             case install
                 eval $DAMONA_EXE_INTERN $cmd $argv
             case '*'
