@@ -51,31 +51,28 @@ class DamonaInit:
     are defined in the environment.
     """
 
+    # Shell configuration details: RC file, source line, and manual-add command
+    SHELL_CONFIGS = {
+        "bash": {
+            "rc_file": "~/.bashrc",
+            "source_line": "source ~/.config/damona/damona.sh",
+            "manual_cmd": 'echo "source ~/.config/damona/damona.sh" >> ~/.bashrc',
+        },
+        "zsh": {
+            "rc_file": "~/.zshrc",
+            "source_line": "source ~/.config/damona/damona.zsh",
+            "manual_cmd": 'echo "source ~/.config/damona/damona.zsh" >> ~/.zshrc',
+        },
+        "fish": {
+            "rc_file": "~/.config/fish/config.fish",
+            "source_line": "source ~/.config/damona/damona.fish",
+            "manual_cmd": 'echo "source ~/.config/damona/damona.fish" >> ~/.config/fish/config.fish',
+        },
+    }
+
     def __init__(self):
         if "DAMONA_PATH" not in os.environ:
-            logger.critical(
-                """DAMONA_PATH was not found in your environment.
-
-Damona has automatically added initialization lines to your shell configuration
-files (~/.bashrc, ~/.zshrc, ~/.config/fish/config.fish). Please start a new
-terminal (or source the appropriate file) for the changes to take effect.
-
-If you prefer to add the initialization manually, add the relevant line for
-your shell:
-
-For bash (~/.bashrc):
-    source ~/.config/damona/damona.sh
-
-For zsh (~/.zshrc):
-    source ~/.config/damona/damona.zsh
-
-For fish (~/.config/fish/config.fish):
-    source ~/.config/damona/damona.fish
-
-This will create the DAMONA_PATH variable that points to your
-~/.config/damona/ directory. You can redefine DAMONA_PATH later to point
-towards another path if needed."""
-            )
+            self._report_missing_config()
             # This is not an error per se but damona cannot work without DAMONA_PATH
             # Yet, we do not want to raise an error especially for the CI
             sys.exit(0)
@@ -91,6 +88,78 @@ this variable, please see https://damona.readthedocs.io/en/latest/userguide.html
         os.makedirs(self.damona_path, exist_ok=True)
         os.makedirs(self.damona_path / "envs" / "base" / "bin", exist_ok=True)
         os.makedirs(self.damona_path / "images" / "damona_buffer", exist_ok=True)
+
+    def _get_shell_config_status(self):
+        """Check which shell RC files contain the damona source line.
+
+        Returns a dict mapping shell name to a status dict with keys:
+        - ``rc_file``: expanded path to the RC file
+        - ``source_line``: the expected source line
+        - ``manual_cmd``: command to add the source line manually
+        - ``configured``: True if the source line is present in the RC file
+        """
+        status = {}
+        for shell, info in self.SHELL_CONFIGS.items():
+            rc_path = pathlib.Path(info["rc_file"]).expanduser()
+            configured = rc_path.exists() and info["source_line"] in rc_path.read_text()
+            status[shell] = {
+                "rc_file": rc_path,
+                "source_line": info["source_line"],
+                "manual_cmd": info["manual_cmd"],
+                "configured": configured,
+            }
+        return status
+
+    def _report_missing_config(self):
+        """Log a targeted message when DAMONA_PATH is not set.
+
+        Inspects each supported shell's RC file to determine whether the
+        damona source line is already present and tailors the guidance
+        accordingly.
+        """
+        status = self._get_shell_config_status()
+
+        configured_shells = [s for s, v in status.items() if v["configured"]]
+        unconfigured_shells = [s for s, v in status.items() if not v["configured"]]
+
+        msg = "DAMONA_PATH was not found in your environment.\n\n"
+
+        if configured_shells:
+            # Source lines are present; user just needs to reload the shell
+            shell_list = ", ".join(configured_shells)
+            msg += (
+                f"Damona configuration was found in your {shell_list} shell "
+                "configuration file(s).\n"
+                "Please open a new terminal or source the appropriate file:\n\n"
+            )
+            for shell in configured_shells:
+                msg += f"    source {status[shell]['rc_file']}\n"
+        else:
+            # No RC file has been configured yet
+            msg += (
+                "Damona could not find its initialization line in any of your "
+                "shell configuration files.\n"
+                "Please add the relevant line for your shell:\n\n"
+            )
+
+        if unconfigured_shells:
+            if configured_shells:
+                msg += "\nTo configure damona for additional shells, run:\n\n"
+            else:
+                msg += "To configure damona, run:\n\n"
+            for shell in unconfigured_shells:
+                msg += f"    # {shell}\n    {status[shell]['manual_cmd']}\n\n"
+            msg += (
+                "After adding the line, open a new terminal (or source the file)\n"
+                "for the changes to take effect.\n\n"
+            )
+
+        msg += (
+            "Once configured, DAMONA_PATH will point to ~/.config/damona/.\n"
+            "You can redefine DAMONA_PATH later to use a different location."
+        )
+
+        logger.critical(msg)
 
 
 class Damona:
