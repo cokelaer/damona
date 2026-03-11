@@ -86,11 +86,18 @@ class Config:
         self.read()
 
         # create the shell script once for all
-        created = self.add_bash()
-        created = self.add_fish()
-        created = self.add_zsh()
+        bash_created = self.add_bash()
+        fish_created = self.add_fish()
+        zsh_created = self.add_zsh()
 
-        if created:  # pragma: no cover
+        # Auto-configure shell RC files so users don't need to add source lines manually.
+        # Only do this for the production config (not test configs).
+        if name == "damona":
+            self._init_bash_rc()
+            self._init_fish_rc()
+            self._init_zsh_rc()
+
+        if bash_created or fish_created or zsh_created:  # pragma: no cover
             logger.critical(
                 "Please start a new shell to benefit from " "the configuration file and activate/deactivate command"
             )
@@ -127,6 +134,60 @@ class Config:
 
     def add_fish(self):
         return self._copy_shell_file("fish/damona.fish", "damona.fish")
+
+    def _update_shell_rc(self, rc_file, source_line, init_block, shell_name):
+        """Append init_block to rc_file if source_line is not already present.
+
+        Returns True if the file was modified, False if already configured or
+        if the operation failed.
+        """
+        rc_path = pathlib.Path(rc_file).expanduser()
+        try:
+            rc_path.parent.mkdir(parents=True, exist_ok=True)
+            if rc_path.exists() and source_line in rc_path.read_text():
+                return False
+            with open(rc_path, "a") as fout:
+                fout.write(init_block)
+            logger.warning(
+                f"Added damona {shell_name} initialization to {rc_file}. "
+                "Please start a new terminal for the changes to take effect."
+            )
+            return True
+        except Exception as e:
+            logger.debug(f"Could not update {rc_file}: {e}")
+            return False
+
+    def _init_bash_rc(self):
+        """Add damona bash initialization to ~/.bashrc if not already present."""
+        block = (
+            "\n# Added by Damona\n"
+            "if [ -f ~/.config/damona/damona.sh ] ; then\n"
+            "    source ~/.config/damona/damona.sh\n"
+            "fi\n"
+        )
+        return self._update_shell_rc("~/.bashrc", "source ~/.config/damona/damona.sh", block, "bash")
+
+    def _init_zsh_rc(self):
+        """Add damona zsh initialization to ~/.zshrc if not already present."""
+        block = (
+            "\n# Added by Damona\n"
+            "if [ -f ~/.config/damona/damona.zsh ] ; then\n"
+            "    source ~/.config/damona/damona.zsh\n"
+            "fi\n"
+        )
+        return self._update_shell_rc("~/.zshrc", "source ~/.config/damona/damona.zsh", block, "zsh")
+
+    def _init_fish_rc(self):
+        """Add damona fish initialization to ~/.config/fish/config.fish if not already present."""
+        block = (
+            "\n# Added by Damona\n"
+            "if test -f ~/.config/damona/damona.fish\n"
+            "    source ~/.config/damona/damona.fish\n"
+            "end\n"
+        )
+        return self._update_shell_rc(
+            "~/.config/fish/config.fish", "source ~/.config/damona/damona.fish", block, "fish"
+        )
 
 
 def get_damona_commands():
