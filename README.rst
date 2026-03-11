@@ -348,6 +348,16 @@ the command::
 ========= ========================================================================
 Version   Description
 ========= ========================================================================
+0.17.0    * IMPROVED: rewrite README with clearer value proposition and
+            comparison table
+          * IMPROVED: add docstrings across core modules; Sphinx docs updated
+          * IMPROVED: CLI output now uses rich tables and panels
+          * IMPROVED: auto-update shell config files (bash/zsh/fish) on startup
+          * FIXED: fish shell activation and PATH propagation
+          * FIXED: subprocess-based shell detection replacing env-variable approach
+          * FIXED: first-run exit code no longer causes CI failures
+          * BUILD: remove sudo requirement from singularity build commands
+          * BUILD: add dependency caching to CI workflows
 0.16.0    * update precommit to create global registry automatically
 0.15.2    * ADDED: purge_haplotigs
           * FIXED: access to online registry (Default behaviour)
