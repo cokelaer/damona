@@ -87,7 +87,6 @@ jobs:
         cat test.fish
         fish test.fish
       env:
-        DAMONA_EXE: /home/runner/.local/bin/damona
         DAMONA_PATH: /home/runner/.config/damona
         DAMONA_ENV: /home/runner/.config/damona/envs/TEST
         DAMONA_SINGULARITY_OPTIONS: ""
