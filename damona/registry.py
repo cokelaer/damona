@@ -46,6 +46,13 @@ class ImageName:
     """
 
     def __init__(self, name):
+        """.. rubric:: **Constructor**
+
+        :param str name: Image filename to validate, e.g. ``"fastqc_0.11.9.img"``.
+        :raises NameError: When the filename does not follow the
+            ``NAME_x.y.z.img`` convention.
+        :raises SystemExit: When the version part is not ``X.Y.Z``.
+        """
         self.filename = name
         self.basename = os.path.basename(name)
 
@@ -83,6 +90,12 @@ class Releases(dict):
     """
 
     def __init__(self, data):
+        """.. rubric:: **Constructor**
+
+        :param dict data: A dictionary with a single top-level key (the
+            software name) whose value follows the Damona registry YAML
+            structure.
+        """
         # a collection of releases
         self._name = list(data.keys())[0]
 
@@ -181,6 +194,16 @@ class Release:
     binaries = property(_get_binaries)
 
     def split_binaries(self, binaries):
+        """Split a binaries specification into a plain list.
+
+        Registry YAML files accept binaries as a list or as a
+        whitespace/comma-separated string.  This helper normalises both forms.
+
+        :param binaries: A list or a ``str`` of binary names.
+        :type binaries: list or str
+        :returns: List of binary name strings.
+        :rtype: list
+        """
         if isinstance(binaries, list):
             return binaries
         else:
@@ -220,7 +243,30 @@ class RemoteRegistry:
 
 
 class BiocontainersRegistry:
+    """Registry populated from the bundled Biocontainers YAML file.
+
+    Damona ships a snapshot of the Biocontainers registry at
+    ``damona/biocontainers/registry.yaml``.  This class loads that file (or an
+    alternative one) and exposes its content as the :attr:`data` dictionary so
+    that it can be consumed by :class:`Registry`.
+
+    ::
+
+        from damona.registry import BiocontainersRegistry
+        bc = BiocontainersRegistry()
+        print(list(bc.data.keys())[:5])
+    """
+
     def __init__(self, filename=None):
+        """.. rubric:: **Constructor**
+
+        :param filename: Path to an alternative registry YAML file, ``True``
+            to force loading the built-in file, or ``None`` (default) to use
+            the built-in file.
+        :type filename: str or bool or None
+        :raises ValueError: When *filename* is a string that does not point to
+            an existing file.
+        """
         from damona import __path__
 
         if filename in [True, None]:

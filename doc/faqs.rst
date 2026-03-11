@@ -1,50 +1,49 @@
 FAQs
 ====
 
-A Fatal error: cannot open file occured but the file is visible
-----------------------------------------------------------------
+A Fatal error: cannot open file occurred but the file is visible
+-----------------------------------------------------------------
 
-It could be that your file is on a NFS directories, which is not visible in the
-container.
+This is most likely caused by the file residing on an NFS (network file
+system) mount that is not visible inside the container.
 
-You can fix this by setting the **DAMONA_SINGULARITY_OPTIONS** variable. This
-variable can be set to pass any singularity options to all binaries installed by
-**Damona**.
+Fix it by setting the ``DAMONA_SINGULARITY_OPTIONS`` environment variable to
+bind the NFS mount into the container:
 
-For instance, if you have a NFS mounted directory in /mnt/my_space, you
-can bind it in singularity and therefore DAMONA using (in a bash shell)::
+In a **bash** or **zsh** shell::
 
-    export DAMONA_SINGULARITY_OPTIONS=" -B /mnt/my_space:/mnt/my_space"
+    export DAMONA_SINGULARITY_OPTIONS="-B /mnt/my_space:/mnt/my_space"
 
-or within fishshell::
+In a **fish** shell::
 
     set DAMONA_SINGULARITY_OPTIONS "-B /mnt/my_space:/mnt/my_space"
 
+See the :ref:`DAMONA_SINGULARITY_OPTIONS` section of the user guide for more
+details and additional examples.
 
-Why Damona and not conda/mamba ?
+Why Damona and not conda/mamba?
 --------------------------------
 
-Damona is not meant to replace conda/bioconda that have a great
-community and a large number of packages available. It is a complementary
-tool that is meant to be super-easy and provide reproducible environments
-as a set of singularity images.
+Damona is **not** a replacement for conda/bioconda – it is a complementary
+tool with a different focus:
 
-Conda is great but in practice we faced some difficulties. First,
-as a developper using tens or hundreds of binaries for real-life applications,
-it was not uncommon to break conda environments when installing a new software.
-Also you can now come back to previous versions it was time-consuming for the team.
-The second common problem we had was the ability to share identical environments
-where software were identical between the different developers to ensure reproducible
-environments and analysis for our customers/users.
+- **Reproducibility** – Singularity images are immutable; running the same
+  container on two different machines always produces the same result.
+- **Isolation** – Containers do not share libraries with the host system, so
+  there are no dependency conflicts between tools.
+- **HPC-friendly** – Singularity/Apptainer does not require root privileges
+  and is widely available on computing clusters where Docker is not permitted.
+- **Easy sharing** – A bundle file created with ``damona export`` can be given
+  to a colleague who can recreate the exact same environment with
+  ``damona env --from-bundle``.
 
-That is where Damona started. We could share images where entire environments
-with a set of binaries would be available to all in the exact same way.
+In practice many bioinformatics teams use *both*: conda for exploratory work
+and Damona for the stable, shared analysis pipelines that need to be
+reproducible over time.
 
-As a developper you can then use conda to try a new or complementary software
-while keeping your core software identical between environments.
+Useful related projects
+------------------------
 
+* `StaPH-B Docker images <https://hub.docker.com/u/staphb>`_ – a community
+  effort providing Docker images for public-health bioinformatics tools.
 
-Useful other projects
-----------------------
-
-* https://hub.docker.com/u/staphb

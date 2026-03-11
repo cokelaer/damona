@@ -12,6 +12,8 @@
 #  website: https://github.com/cokelaer/damona
 #  documentation: http://damona.readthedocs.io
 #
+##############################################################################
+"""Utility helpers used across the Damona package."""
 import functools
 import pathlib
 import shutil
@@ -21,11 +23,17 @@ from tqdm import tqdm
 
 
 def download_with_progress(url, filename):
-    """Download image/container from a URL.
+    """Download a file from *url* and save it to *filename* with a progress bar.
 
-    :param filename: where to save the container
+    Uses :mod:`requests` for streaming and :mod:`tqdm` to display download
+    progress.  The parent directory of *filename* is created automatically if
+    it does not exist.
 
-
+    :param str url: The URL to download from.
+    :param str filename: Destination file path (expanded and resolved).
+    :returns: The resolved :class:`pathlib.Path` of the downloaded file.
+    :rtype: pathlib.Path
+    :raises requests.HTTPError: When the server returns a non-200 status code.
     """
     resp = requests.get(url, stream=True, allow_redirects=True)
     if resp.status_code != 200:

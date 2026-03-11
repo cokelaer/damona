@@ -38,7 +38,15 @@ class Builder:
 
     """
 
+    def __init__(self):
+        """.. rubric:: **Constructor**"""
+        pass
+
     def get_temp_file(self):
+        """Return a named temporary file in the Damona config directory.
+
+        :returns: A :class:`tempfile.NamedTemporaryFile` with a ``.img`` suffix.
+        """
         filename = tempfile.NamedTemporaryFile(dir=manager.config_path, suffix=".img")
         return filename
 
@@ -73,6 +81,7 @@ class BuilderFromDocker(Builder):
     """
 
     def __init__(self):
+        """.. rubric:: **Constructor**"""
         super(BuilderFromDocker, self).__init__()
         logger.info("Building a singularity image from docker")
 
@@ -130,11 +139,23 @@ class BuilderFromSingularityRecipe(Builder):
     """
 
     def __init__(self):
+        """.. rubric:: **Constructor**"""
         super(BuilderFromSingularityRecipe, self).__init__()
         logger.info("Building a Singularity image from a Singularity recipe")
 
     @requires_singularity
     def build(self, recipe, destination=None, force=False):
+        """Build a Singularity image from a local recipe file.
+
+        :param str recipe: Path to the Singularity recipe.  The basename must
+            start with ``Singularity.``.
+        :param str destination: Output ``.img`` filename.  If ``None``, derived
+            from the recipe name by removing the ``Singularity.`` prefix.
+        :param bool force: Overwrite an existing destination file without
+            prompting (default ``False``).
+        :raises SystemExit: When the recipe name is invalid, the build fails,
+            or the user declines to overwrite an existing file.
+        """
         if os.path.basename(recipe).startswith("Singularity.") is False:
             logger.error("Recipe must start with Singularity.")
             sys.exit(1)

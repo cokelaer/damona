@@ -42,7 +42,18 @@ __all__ = ["LocalImageInstaller", "RemoteImageInstaller", "BinaryInstaller"]
 
 
 class CMD:
+    """Represent a Damona CLI invocation for history logging.
+
+    Wraps the raw ``sys.argv``-style command list and formats it as a
+    human-readable string to be appended to ``images/history.log``.
+    """
+
     def __init__(self, cmd):
+        """.. rubric:: **Constructor**
+
+        :param list cmd: The command tokens as passed to the process
+            (i.e. ``sys.argv``).
+        """
         self.cmd = cmd
         self.version = damona_version
 
@@ -55,6 +66,13 @@ class CMD:
 
 
 class ImageInstaller:
+    """Abstract base class for Singularity image installers.
+
+    Concrete sub-classes (:class:`LocalImageInstaller`,
+    :class:`RemoteImageInstaller`, :class:`BiocontainersInstaller`) inherit
+    the shared helper methods defined here.
+    """
+
     @requires_singularity
     def _are_binaries_findable(self):
         # TODO add sanity check that stops the installation if a failure occurs
@@ -430,6 +448,17 @@ class BiocontainersInstaller(ImageInstaller):
     """
 
     def __init__(self, image_name, binaries=None, cmd=None):
+        """.. rubric:: **Constructor**
+
+        :param str image_name: The ``NAME:VERSION`` or ``NAME_VERSION`` image
+            specifier.  If the name contains a ``/`` it is treated as a
+            ``biocontainers/NAME:VERSION`` reference.
+        :param list binaries: Optional list of binary names to install.  When
+            ``None`` the binaries defined in the Biocontainers registry are
+            used.
+        :param cmd: Internal place-holder to fill the history log with the
+            calling command (pass ``sys.argv``).
+        """
         super(BiocontainersInstaller, self).__init__()
 
         # get the biocontainers prefix and the name:version suffix

@@ -13,6 +13,21 @@
 #  documentation: http://damona.readthedocs.io
 #
 ##############################################################################
+"""Damona – Singularity-based reproducible environment manager.
+
+Damona provides a command-line tool and Python API for managing collections of
+`Singularity <https://sylabs.io/singularity/>`_ containers as reproducible
+software environments.  It mirrors the *activate / deactivate* workflow of
+conda but relies exclusively on Singularity images so that executables are
+always bit-for-bit identical across machines.
+
+Key public symbols re-exported from sub-modules:
+
+* :class:`~damona.common.Damona` – top-level manager
+* :class:`~damona.environ.Environ` – environment collection manager
+* :class:`~damona.environ.Environment` – single named environment
+* :class:`~damona.registry.Registry` – software registry
+"""
 import importlib.metadata as metadata
 import os
 import sys
@@ -21,6 +36,17 @@ import colorlog
 
 
 def get_package_version(package_name):
+    """Return the installed version string of *package_name*.
+
+    Uses :mod:`importlib.metadata` to look up the distribution version.  If
+    the package is not installed a descriptive placeholder string is returned
+    instead of raising an exception.
+
+    :param str package_name: The distribution name (e.g. ``"damona"``).
+    :returns: Version string such as ``"1.2.3"``, or
+        ``"<package_name> not found"`` when not installed.
+    :rtype: str
+    """
     try:
         version = metadata.version(package_name)
         return version
@@ -61,8 +87,19 @@ from damona.registry import Registry
 
 
 def check_for_updates(package_name, current_version, timeout=2):
-    # local import
+    """Check PyPI for a newer version of *package_name* and warn the user.
 
+    Performs a lightweight HTTP request to the PyPI JSON API.  If a newer
+    version is found a warning is logged; if the versions are equal an info
+    message is logged.  Network errors are caught and logged as warnings so
+    that they never prevent Damona from starting.
+
+    :param str package_name: The distribution name to look up (e.g.
+        ``"damona"``).
+    :param str current_version: The currently installed version string.
+    :param int timeout: Maximum seconds to wait for the PyPI response before
+        giving up (default ``2``).
+    """
     import json
 
     import requests

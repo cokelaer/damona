@@ -7,154 +7,181 @@ Developer guide
 Introduction
 ------------
 
+Damona exposes a few additional commands that are intended for container
+developers and are hidden from the standard ``--help`` output.
 
-Developers are lucky: they can do more than users. If you type::
-
-    damona --help
-
-you will have the users' commands. However, they are more commands available.
-They are not shown because they are intended for developers only.
-
-The first useful command for developers is the **build** command::
+Build a Singularity image::
 
     damona build --help
 
-The second is the **upload** command::
+Upload a finished image to Zenodo::
 
     damona upload --help
 
+.. _dev-config:
 
-All images will be posted on Zenodo if Singularity recipe is in Damona
-----------------------------------------------------------------------
+Configuration file
+------------------
 
-The goal is to have a unique and official DOI for each tool.
-::
+The Damona configuration file lives at ``~/.config/damona/damona.cfg`` and is
+created automatically on first use.  It follows the standard
+:mod:`configparser` INI format.
+
+A typical file looks like::
+
+    [general]
+    verbose=True
+
+    [urls]
+    damona=https://biomics.pasteur.fr/salsa/damona/registry.txt
+
+    [zenodo]
+    token=APmm6p....
+    orcid=0000-0001
+    name='Cokelaer, Thomas'
+    affiliation='Institut Pasteur'
+
+    [sandbox.zenodo]
+    token=FFmbAEhQbb...
+    orcid=0000-0001
+    name='Cokelaer, Thomas'
+    affiliation='Institut Pasteur'
+
+The ``[urls]`` section defines short aliases for external registry URLs.  When
+a user runs::
+
+    damona install example --url damona
+
+the alias ``damona`` is replaced by its full URL.  The URL must end with the
+file name ``registry.txt`` or ``registry.yaml``.
+
+The ``[zenodo]`` sections are only needed for developers who upload images;
+they are not required for normal use.
+
+
+Publishing images on Zenodo
+----------------------------
+
+The goal is to assign a permanent, citable DOI to every container::
 
     git clone git@github.com/your_fork/damona
     cd damona
 
-Let us consider an example called SOFTWARE. You must be in the directory of the SOFTWARE package::
+Consider the example tool **SOFTWARE**.  Navigate to its recipes directory::
 
     cd recipes/SOFTWARE
 
-.. warning:: the following required registered token on Zenodo and will upload
-    images on Zenodo as well ! Consider removing the --mode zenodo to try
-    the sandbox version
+.. warning:: The following commands require a registered Zenodo token and will
+   actually upload data to Zenodo.  Omit ``--mode zenodo`` to use the sandbox
+   first.
 
-Case 1: the tool does not exist.
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+**Case 1 – New tool (no existing Zenodo record):**
 
-Create a new Singularity image. Time to upload the resulting (functional !) image::
+Build the image, then upload::
 
     damona upload SOFTWARE_1.0.0.img --mode zenodo
 
-This command uploads the image on Zenodo with all correct metadata already pre-filled for you. It also
-creates a registry.yaml file with the metadata ready to commit and push. **edit the registry file to add a binaries section if neeeded**.
+Damona uploads the image with pre-filled metadata and creates a
+``registry.yaml`` file ready to commit.  **Edit the file to add a** ``binaries``
+**section if needed**, then commit and push.
 
+**Case 2 – New version of an existing tool:**
 
-Case 2: the recipe exists already
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Create a new Singularity image. Time to upload the resulting (functional !) image::
+::
 
     damona upload SOFTWARE_2.0.0.img --mode zenodo
 
-It updates the existing registry.yaml ready to commit and push
+Damona updates the existing ``registry.yaml`` with the new version entry.
 
-tree structure
---------------
+Repository layout
+------------------
 
-Recipes are in the ./recipes directory with one sub-directory per tool or environment.
-Inside a sub directory (e.g, R, conda) you may have several recipes for
-different versions.
+Recipes are kept in the ``./recipes/`` directory, one sub-directory per tool::
 
-For example, for **Damona** there is a directory called **Damona**. Inside that
-directory, if there is only one recipes, name it::
+    recipes/
+    ├── fastqc/
+    │   ├── Singularity.fastqc_0.11.9
+    │   └── registry.yaml
+    └── salmon/
+        ├── Singularity.salmon_1.3.0
+        └── registry.yaml
 
-   Singularity.damona
+If a tool ships only one recipe, name it::
 
-If you wish to have several recipes for different version, name it::
+    Singularity.toolname
 
-   Singularity.damona_x.y.z
+For multiple versions::
 
-Naming convention
------------------
+    Singularity.toolname_x.y.z
 
-A valid singularity image must have the following name::
+Naming conventions
+------------------
 
-        Singularity.NAME_x.y.z
-        Singularity.NAME_SUFFIX_x.y.z
+A valid Singularity recipe file must follow::
 
-Underscore can be part of the name.
+    Singularity.NAME_x.y.z
+    Singularity.NAME_SUFFIX_x.y.z
 
-Images names for users will appear as::
+The resulting image seen by users will appear as::
 
-     NAME:x.y.z
-     NAME_SUFFIX:x.y.z
+    NAME:x.y.z
+    NAME_SUFFIX:x.y.z
 
+.. note:: Names may be mixed-case in the recipe but Singularity Hub converts
+   them to lowercase.  Always use lowercase when referring to images in
+   commands such as ``damona install pkgname:x.y.z``.
 
-Note that NAME could be in small or big caps but the final image with be all
-lower caps (singularity-hub feature). Consequently, when downloading an image,
-it should be named as pkgname:x.y.z
+Building an image
+------------------
 
+Test a recipe locally::
 
-building
---------
+    damona build Singularity.pkgname_x.y.z
 
-To test the recipe, type::
+This is a thin wrapper around::
 
-    damona build pkgname:x.y.z
+    sudo singularity build pkgname_x.y.z.img Singularity.pkgname_x.y.z
 
-This is just an alias to singularity build command::
+You can also build a registered recipe by name::
 
-    sudo singularity build pkgname.img Singularity.pkgname_x.y.z
+    damona build fastqc:0.11.9
 
+Specify a custom output path::
 
-Singularity recipes
---------------------
+    damona build fastqc:0.11.9 --output-name ~/temp.img
 
-Here are some instructions to help writting recipes.
+Writing Singularity recipes
+----------------------------
 
-
-Try to set version instead of latest::
-
+**Pin the base image version** to avoid silent changes::
 
     BootStrap: docker
-    From: mambaorg/micromamba:1.4.4
+    From: mambaorg/micromamba:1.4.4   # good
 
-is better than ::
+rather than::
 
     BootStrap: docker
-    From: mambaorg/micromamba:latest
+    From: mambaorg/micromamba:latest  # avoid
 
-
-By experience here are some conventions that could be useful. These commands are useful to avoid warnings when running the container ::
+**Recommended** ``%environment`` block to prevent locale warnings::
 
     %environment
         LANG=C.UTF-8
         LC_ALL=C.UTF-8
         export LANG LC_ALL
 
-
-
-No need for labels but if you want, you may add a labels section::
-
-    %labels
-        whatever
-
-No need for help section.
-
-
-A useful set of commands is also to add test within the container but this is only tested when building the recipes:
+Adding a ``%test`` block makes it easy to verify the image after building::
 
     %test
-      command --help
+        command --version
 
-Singularity recipes from micromamba
-------------------------------------
+Labels and help sections are optional.
 
-A classic recipes is the one based on micromamba. We build a micromamba image in ./library/micromamba and can be reused as follow to install any tool from conda::
+Micromamba-based recipes
+-------------------------
 
+The ``library/micromamba`` directory provides a reusable base image.  Use it
+to install conda packages without building from scratch::
 
     Bootstrap: localimage
     From: micromamba_1.5.8.img
@@ -162,15 +189,12 @@ A classic recipes is the one based on micromamba. We build a micromamba image in
     %post
         apt -y update && apt -y upgrade
 
-        # export the PATH here so that pip is found later on
         export PATH=$PATH:/opt/conda/envs/main/bin/
-        # an alias
         export OPTS=" -q -c conda-forge -c bioconda -n main -y "
 
         micromamba install $OPTS python="3.9"
         micromamba install $OPTS "art==3.19.15"
 
-        # cleanup
         micromamba clean --packages -y
         micromamba clean --all -y
         rm -rf /opt/condas/pkg
@@ -181,97 +205,49 @@ A classic recipes is the one based on micromamba. We build a micromamba image in
     %runscript
         art_illumina "$@"
 
+Registry format
+----------------
 
+Each tool requires a ``registry.yaml`` file.  Two equivalent layouts are
+supported:
 
-registry
----------
-
-For each singularity, a registry is required. It contains a yaml file that looks
-like
+*Binaries per-release:*
 
 ::
 
     fastqc:
-        0.11.9:
-            download: URL1
-            md5sum:
+        releases:
+          0.11.9:
+            download: https://example.com/fastqc_0.11.9.img
+            md5sum: abc123...
             binaries: fastqc
-        0.11.8:
-            download: URL
-            md5sum:
+          0.11.8:
+            download: https://example.com/fastqc_0.11.8.img
+            md5sum: def456...
             binaries: fastqc
+
+*Shared binaries (applies to all releases unless overridden):*
 
 ::
 
     fastqc:
         binaries: fastqc
-        0.11.9:
-            download: URL1
-            md5sum:
-        0.11.8:
-            download: URL
-            md5sum:
+        releases:
+          0.11.9:
+            download: https://example.com/fastqc_0.11.9.img
+            md5sum: abc123...
+          0.11.8:
+            download: https://example.com/fastqc_0.11.8.img
+            md5sum: def456...
 
+The ``download`` value can be:
 
-The download link can be of three types:
+1. A direct HTTPS URL to a ``.img`` or ``.sif`` file.
+2. A Docker Hub reference, e.g. ``docker://biocontainers/hisat2:v2.1.0-2-deb_cv1``.
 
-1. a valid URL
-2. an image stored on docker e.g. "docker://biocontainers/hisat2:v2.1.0-2-deb_cv1"
+**Example with a Docker source:**
 
-
-
-
-
-Where are stored the containers ?
-----------------------------------
-
-Since Dev 2021, we store containers with a DOI on Zenodo website. Originally, we stored some container here: https://cloud.sylabs.io/library/cokelaer/damona but we extended **Damona** so that it can fetch containers from other places. If you have your own containers, it is quite simple to create a registry and place it anywhere on the web and inform damona that you want to use that registry. **damona** works with its own online registry on github.
-
-If you do not want to use the online registry (always up-to-date), or do not have internet connection, you can use::
-
-    damona search fastqc --local-registry-only
-    damona install fastqc --local-registry-only
-
-
-
-Build an image locally
-----------------------
-
-Sometimes, the version you are looking for is not available. It is quite easy to
-rebuild the recipes yourself and store it locally.::
-
-    damona build Singularity.recipes
-
-Again, this is just a wrapper around singularity build command. The advantage
-here is that we can use this command to buld a damona recipes::
-
-    damona build fastqc:0.11.9
-
-You can then save the image elsewhere if you want::
-
-    damona build fastqc:0.11.9  --output-name ~/temp.img
-
-This is nothing more than an alias to singularity itself::
-
-     singularity build recipes Singularity.recipes
-
-More interesting is the ability to build a local version of a recipes to be
-found in damona::
-
-    damona build salmon:1.3.0
-
-this will find the recipes automatically and save the final container in
-**salmon_1.3.0.img**.
-
-
-What about reusing a docker image
-----------------------------------
-
-
-You can. See for example the hisat2 image here: https://github.com/cokelaer/damona/tree/master/damona/recipes/hisat2
-
-It looks like::
-
+::
 
     hisat2:
         releases:
@@ -280,22 +256,35 @@ It looks like::
             binaries: hisat2 hisat2-build
             md5sum: e680e5ab181e73a8b367693a7bd71098
 
-Here, there is no zenodo link though because it is already on docker.
+Where are images stored?
+-------------------------
 
+Since December 2021, Damona stores all images with a DOI on
+`Zenodo <https://zenodo.org>`_.  Previously some images were hosted on
+`Sylabs Cloud Library <https://cloud.sylabs.io/library/cokelaer/damona>`_.
 
+You can always use the bundled offline registry (no internet required) by
+passing ``--local-registry-only``::
 
-Creating a README automatically
+    damona search fastqc --local-registry-only
+    damona install fastqc --local-registry-only
+
+Automatic README generation
+-----------------------------
+
+The script ``build_readme.py`` in ``damona/`` parses a ``registry.yaml`` and
+produces a standardised ``README.md``.  Run it from the tool's recipes
+directory to create or update the README::
+
+    cd recipes/fastqc
+    python ../../build_readme.py
+
+Setting up the pre-commit hook
 -------------------------------
 
-In damona's code there is a file called build_readme.py ; it can be used to parse the registry.yaml and create a
-standard README.md that can be added in the software sub directory, or can be used to update the current one;
+The repository uses `pre-commit <https://pre-commit.com/>`_ to keep the global
+registry up-to-date automatically on every commit::
 
-
-Global registry
----------------
-
-If you add a container and update an individual registry, when committing, make sure you have set up the pre-commit.
-
-   pip install pre-commit
-   pre-commit install
-   git commit .
+    pip install pre-commit
+    pre-commit install
+    git commit .

@@ -71,6 +71,11 @@ class Environment:
         return [x for x in binaries]
 
     def __contains__(self, name):
+        """Return ``True`` if a binary named *name* is installed in this environment.
+
+        :param str name: The binary name to look for.
+        :rtype: bool
+        """
         binaries = [x.name for x in self.get_installed_binaries()]
         return name in binaries
 
@@ -186,6 +191,16 @@ class Environment:
         return output_name
 
     def create_yaml(self, output_name=None):
+        """Export the environment as a YAML file.
+
+        The YAML file lists the images and binaries that make up this
+        environment and can later be used to recreate it with
+        :meth:`~damona.environ.Environ.create_from_yaml`.
+
+        :param str output_name: Path of the output file.  Defaults to
+            ``damona_<name>.yaml`` in the current working directory.
+        :returns: Nothing.  The file is written to disk.
+        """
         if output_name is None:
             output_name = f"damona_{self.name}.yaml"
 
@@ -210,7 +225,27 @@ class Environment:
 
 
 class YamlEnv:
+    """Parse a YAML environment file produced by :meth:`Environment.create_yaml`.
+
+    The file is expected to follow the format::
+
+        name: myenv
+
+        images:
+        - fastqc_0.11.9.img
+
+        binaries:
+        - fastqc from fastqc:0.11.9
+
+    After parsing, the instance exposes :attr:`name`, :attr:`images`, and
+    :attr:`binaries` attributes.
+    """
+
     def __init__(self, filename):
+        """.. rubric:: **Constructor**
+
+        :param str filename: Path to the YAML environment file to parse.
+        """
         self.name = None
         self.binaries = []
         self.images = []
@@ -229,10 +264,27 @@ class YamlEnv:
 
 
 class Images:
+    """Collection of all Singularity image files stored in the Damona images directory.
+
+    ::
+
+        from damona.environ import Images
+        imgs = Images()
+        print(len(imgs))
+        for f in imgs.files:
+            print(f)
+    """
+
     def __init__(self):
+        """.. rubric:: **Constructor**
+
+        Initialises the collection by pointing at the global Damona images
+        directory (``$DAMONA_PATH/images``).
+        """
         self.images_dir = manager.images_directory
 
     def __len__(self):
+        """Return the number of ``.img`` files in the images directory."""
         return len(list(self.files))
 
     def _get_images(self):
@@ -241,6 +293,13 @@ class Images:
     files = property(_get_images)
 
     def get_disk_usage(self, frmt="Mb"):
+        """Return the total disk space occupied by all images.
+
+        :param str frmt: ``"Mb"`` (default) returns megabytes (ceiling);
+            any other value returns raw bytes.
+        :returns: Disk usage in the requested unit.
+        :rtype: int
+        """
         env_size = sum(os.path.getsize(f) for f in self.files if os.path.isfile(f))
         if frmt == "Mb":
             return math.ceil(env_size / 1e6)
@@ -249,13 +308,38 @@ class Images:
 
 
 class Environ:
-    """Class to deal with the damona environments"""
+    """Manager for the collection of all Damona environments.
+
+    An *environment* is a directory under ``$DAMONA_PATH/envs/`` that contains
+    a ``bin/`` sub-directory with shell-wrapper scripts (binary aliases).
+
+    ::
+
+        from damona import Environ
+        env = Environ()
+        print(env.environment_names)
+        env.create("myenv")
+        env.activate("myenv")
+    """
 
     def __init__(self):
+        """.. rubric:: **Constructor**
+
+        Sets up access to the shared :class:`Images` collection.
+        """
         self.images = Images()
 
     @staticmethod
     def get_current_env():
+        """Return the path of the currently active Damona environment.
+
+        Reads the ``DAMONA_ENV`` environment variable.  Exits with an error
+        message when no environment is active.
+
+        :returns: Path to the active environment directory.
+        :rtype: pathlib.Path
+        :raises SystemExit: When ``DAMONA_ENV`` is not set.
+        """
         if "DAMONA_ENV" not in os.environ:  # pragma: no cover
             logger.error(
                 "You do not have any environment activated. Please use "
@@ -267,6 +351,14 @@ class Environ:
 
     @staticmethod
     def get_current_env_name(warning=True):
+        """Return the name of the currently active environment, or ``None``.
+
+        :param bool warning: If ``True`` (default) a warning is logged when no
+            environment is active.
+        :returns: The environment name string, or ``None`` when no environment
+            is active.
+        :rtype: str or None
+        """
         if "DAMONA_ENV" not in os.environ:
             if warning:
                 logger.warning(
@@ -298,6 +390,17 @@ class Environ:
     environment_names = property(_get_env_names)
 
     def delete(self, env_name, force=False):
+        """Delete an environment and all of its binary aliases.
+
+        The special **base** environment cannot be deleted.  If the environment
+        directory is not empty the user is asked for confirmation unless
+        *force* is ``True``.
+
+        :param str env_name: Name of the environment to delete.
+        :param bool force: Skip the confirmation prompt and delete immediately
+            (default ``False``).
+        :raises SystemExit: When attempting to delete the *base* environment.
+        """
         if env_name == "base":
             logger.error("Environment 'base' is reserved and cannot not be created or deleted")
             sys.exit(1)
@@ -372,6 +475,17 @@ class Environ:
         return self._detect_shell() == "zsh"
 
     def activate(self, env_name=None):
+        """Print the shell commands needed to activate *env_name*.
+
+        The output is intended to be *eval*-ed by the Damona shell wrapper
+        (``damona.sh`` / ``damona.zsh`` / ``damona.fish``).  The commands
+        export ``DAMONA_ENV`` and prepend the environment's ``bin/`` directory
+        to ``PATH``.
+
+        :param str env_name: Name of the environment to activate.
+        :raises SystemExit: When *env_name* is not a valid environment or the
+            current shell cannot be determined.
+        """
         # Do not change the print statement here below. They are used by
         # damona.sh
         if env_name not in self.environment_names:
@@ -406,6 +520,16 @@ class Environ:
         logger.info(f"# Added damona path ({env_path}) in your PATH")
 
     def deactivate(self, env_name=None):
+        """Print the shell commands needed to deactivate a Damona environment.
+
+        When *env_name* is given, that specific environment is removed from
+        ``PATH``.  When omitted, the most recently activated Damona environment
+        is removed (Last-In-First-Out).  The output is intended to be
+        *eval*-ed by the Damona shell wrapper.
+
+        :param str env_name: Name of the environment to deactivate, or
+            ``None`` to deactivate the most recent one.
+        """
         # we deactivate the latest activated damona environment only.
         # can be called several times. If called too many times,
         # we set the main damona environment (base) as default
@@ -459,6 +583,16 @@ class Environ:
             print("export PATH={}".format(newPATH))
 
     def create(self, env_name, force=False):
+        """Create a new empty environment.
+
+        Creates the directory ``$DAMONA_PATH/envs/<env_name>/bin/``.  The
+        special name **base** is reserved and cannot be created.
+
+        :param str env_name: Name for the new environment.
+        :param bool force: Overwrite if it already exists (default ``False``).
+        :raises SystemExit: When *env_name* is ``"base"`` or when the
+            environment already exists and *force* is ``False``.
+        """
         if env_name == "base":
             logger.critical("base is a reserved name for environment. Cannot be created")
             sys.exit(1)
@@ -478,6 +612,20 @@ class Environ:
                 pass  # if already created, error are caught here
 
     def create_from_yaml(self, env_name, yaml, force=False):
+        """Create and populate an environment from a YAML export file.
+
+        Reads a YAML file previously created by :meth:`Environment.create_yaml`
+        and re-downloads all referenced images before re-creating the binary
+        aliases.
+
+        :param str env_name: Name of the environment to create.
+        :param str yaml: Path to the ``.yaml`` file produced by
+            :meth:`~damona.environ.Environment.create_yaml`.
+        :param bool force: Overwrite an existing environment with the same
+            name (default ``False``).
+        :raises SystemExit: When the environment already exists and *force* is
+            ``False``.
+        """
         if env_name in self.environment_names:
             logger.warning(f"{env_name} exists already.")
             if force is False:
@@ -520,6 +668,19 @@ class Environ:
             bi.install_binaries()
 
     def create_from_bundle(self, env_name, bundle, force=False):
+        """Create and populate an environment from a bundle archive.
+
+        A *bundle* is a ``.tar`` file previously created by
+        :meth:`Environment.create_bundle`.  It contains all binary aliases
+        and the associated Singularity image files.
+
+        :param str env_name: Name of the environment to create.
+        :param str bundle: Path to the ``.tar`` bundle file.
+        :param bool force: Overwrite an existing environment with the same
+            name (default ``False``).
+        :raises SystemExit: When the environment already exists and *force* is
+            ``False``.
+        """
         if env_name in self.environment_names:
             logger.warning(f"{env_name} exists already.")
             if force is False:
