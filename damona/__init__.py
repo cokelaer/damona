@@ -43,7 +43,7 @@ from damona.config import Config
 
 try:
     Config()
-except:  # pragma: no cover
+except Exception:  # pragma: no cover
     logger.warning("Could not create a persistent config file in your home. Unexpected error.")
 
 

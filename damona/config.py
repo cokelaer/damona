@@ -14,6 +14,7 @@
 ##############################################################################
 """The Damona configuration"""
 import pathlib
+import sys
 
 import colorlog
 from easydev import CustomConfig
@@ -98,11 +99,12 @@ class Config:
             self._init_fish_rc()
             self._init_zsh_rc()
 
-        if bash_created or fish_created or zsh_created:  # pragma: no cover
-            logger.critical(
-                "Please start a new shell to benefit from " "the configuration file and activate/deactivate command"
-            )
-            # sys.exit(1)
+            if bash_created or fish_created or zsh_created:  # pragma: no cover
+                logger.critical(
+                    "Please start a new shell to benefit from "
+                    "the configuration file and activate/deactivate command"
+                )
+                sys.exit(1)
 
     def read(self):
         """Reads the config file"""
