@@ -30,13 +30,14 @@ DAMONA
     :target: https://github.com/cokelaer/damona/issues
     :alt: GitHub Issues
 
-:Python version: Python  3.9, 3.10, 3.11, 3.12
-:Source: See  `http://github.com/cokelaer/damona <https://github.com/cokelaer/damona/>`__.
-:Issues: Please fill a report on `github <https://github.com/cokelaer/damona/issues>`__
-:Platform: This is currently only available for Linux distribution with zsh/fish/bash shells (contributions are welcome to port the tool on other platforms/shells)
+:Python version: Python 3.9, 3.10, 3.11, 3.12
+:Source: `https://github.com/cokelaer/damona <https://github.com/cokelaer/damona/>`__
+:Documentation: `https://damona.readthedocs.io <https://damona.readthedocs.io>`__
+:Issues: `https://github.com/cokelaer/damona/issues <https://github.com/cokelaer/damona/issues>`__
+:Platform: Linux with bash, zsh, or fish shell
 
 Overview
-==========
+========
 
 
 .. image:: https://raw.githubusercontent.com/cokelaer/damona/refs/heads/main/doc/damona_logo.png
@@ -46,170 +47,176 @@ Overview
    :width: 300px
 
 
-Damona is a lightweight package manager for Apptainer/Singularity images.
+**Damona** is a conda-style package and environment manager built on top of
+`Apptainer/Singularity <https://apptainer.org>`_ containers. It lets you
+install bioinformatics (and other) tools as isolated containers, manage
+multiple versions side-by-side, and run them **exactly like any other
+command-line tool** — with no dependency conflicts and no root privileges
+required.
 
-It lets you install bioinformatics tools as isolated containers, manage versions, and run them as if they were installed locally — without dependency conflicts.
+Think of Damona as *conda for Singularity images*: the same familiar
+``create / activate / install`` workflow you already know, but with the
+rock-solid isolation and reproducibility that containers provide.
 
-Damona aims to provide:
+.. note::  As of Jan. 2024, **Damona** ships 117 containers (169 versions),
+           providing **575 unique ready-to-use binaries**.
 
-- Reproducibility
-- Version controls of tools
-- User-level installation (no root required)
-- Ease of use compared to handling containers manually
+Why Damona?
+===========
 
-.. note::  As of Jan. 2024, **Damona** contains 117 containers (169 versions), which corresponds to 575 unique binaries.
+Managing scientific software is notoriously painful:
 
-Key Features
-============
+- Conda environments break when incompatible packages are installed together.
+- Raw Singularity/Apptainer requires verbose ``singularity exec`` invocations
+  and manual management of image files.
+- Docker is unavailable or restricted on most HPC clusters.
 
-Simple software installation::
+**Damona solves all three problems at once:**
 
-    damona install bwa
++----------------------------------------------+-------+-------+--------+
+| Feature                                      | Conda | Singu-| Damona |
+|                                              |       | larity|        |
++==============================================+=======+=======+========+
+| Familiar install/activate workflow           | ✔     | ✗     | ✔      |
++----------------------------------------------+-------+-------+--------+
+| Tools callable as plain commands             | ✔     | ✗     | ✔      |
++----------------------------------------------+-------+-------+--------+
+| Full container isolation (no dep. conflicts) | ✗     | ✔     | ✔      |
++----------------------------------------------+-------+-------+--------+
+| No root required                             | ✔     | ✔     | ✔      |
++----------------------------------------------+-------+-------+--------+
+| Works on HPC/clusters without Docker         | ✔     | ✔     | ✔      |
++----------------------------------------------+-------+-------+--------+
+| Multiple tool versions in separate envs      | ✔     | ✗     | ✔      |
++----------------------------------------------+-------+-------+--------+
+| Images shared across environments            | ✗     | ✗     | ✔      |
++----------------------------------------------+-------+-------+--------+
+| Central + custom registries                  | ✔     | ✗     | ✔      |
++----------------------------------------------+-------+-------+--------+
 
+Key strengths at a glance
+--------------------------
 
-✔ Automatic shim creation: tools run as normal commands
-
-✔ Multiple versions of the same tool
-
-✔ Central repository + local registries
-
-✔ Container isolation, avoiding dependency conflicts
-
-✔ Works on HPCs, clusters, cloud, laptops
-
-✔ Compatible with Apptainer/Singularity backends
+* **One command to install** — ``damona install bwa`` downloads the container
+  *and* creates a wrapper script so that ``bwa`` just works in your shell.
+* **Zero dependency conflicts** — every tool runs inside its own container,
+  completely isolated from everything else on the system.
+* **No root, no Docker** — Apptainer/Singularity runs fully unprivileged,
+  making Damona ideal for shared HPC clusters where Docker is not available.
+* **Multiple versions, one system** — need BWA 0.7.17 in one pipeline and
+  BWA 0.7.18 in another? Create two Damona environments and switch instantly.
+* **Images are shared** — re-installing a tool in a second environment reuses
+  the already-downloaded image, saving disk space and time.
+* **Reproducible by design** — pin exact versions in an environment file and
+  export/import it to reproduce results anywhere.
+* **Custom registries** — host your own registry to distribute in-house
+  containers to your team, just like a private conda channel.
 
 
 Installation
-=============
+============
 
-Since **Damona** relies on **apptainer** (a.k.a. singularity), you must install `Apptainer <https://apptainer.org/docs/admin/main/installation.html>`_ to make use of **Damona**. This is the egg and chicken paradox. To get reproducible container with apptainer, at some point you need to install it. That the first
-of the two software that you will need to install. Instructions
-are on `singularity web site <https://sylabs.io/guides/3.6/user-guide/>`_.
+**Step 1 — Install Apptainer**
 
-If you are familiar with conda, I believe you can do::
+Damona is a manager for Apptainer/Singularity images, so Apptainer must be
+present on your system first. Follow the official
+`Apptainer installation guide <https://apptainer.org/docs/admin/main/installation.html>`_,
+or — if you already use conda — install it with::
 
-    conda install apptainer
+    conda install -c conda-forge apptainer
 
-I personally use the version available on my Fedora/Linux platform. Then install **Damona** using **pip** for Python::
+**Step 2 — Install Damona**
+
+::
 
     pip install damona
 
-The first time, you use **Damona**, you need to type::
+**Step 3 — Initialise Damona**
+
+Run ``damona`` once to create the configuration directory and shell helpers::
 
     damona
 
-This command creates a config file in your HOME/.config/damona directory.
+Follow the on-screen instructions. To make the shell integration permanent,
+add **one** of the following lines to your shell start-up file:
 
-Depending on your shell, you will be instructed to source a shell script. To make it persistent, you will need to update an environment file. For instance, under **bash** shell, add these lines in your .bashrc::
+*bash* — add to ``~/.bashrc``::
 
-    if [ ! -f  "~/.config/damona/damona.sh" ] ; then
-        source ~/.config/damona/damona.sh
-    fi
+    source ~/.config/damona/damona.sh
 
-Fish shell users should add the following code in their ~/.config/fish/config.fish file::
-
-    source ~/.config/damona/damona.fish
-
-Zsh users should add the following code in their ~/.zshrc file::
+*zsh* — add to ``~/.zshrc``::
 
     source ~/.config/damona/damona.zsh
 
-Then, **open a new shell** and type **damona** again. You should see an help message:
+*fish* — add to ``~/.config/fish/config.fish``::
+
+    source ~/.config/damona/damona.fish
+
+Then **open a new shell** and run ``damona`` again. You should see the help
+screen:
 
 .. image::  https://raw.githubusercontent.com/cokelaer/damona/refs/heads/main/doc/_static/cli.png
 
 Quick Start
 ===========
 
-**Damona** needs environments to work with. First, let us *create* one, which is called TEST::
+The full workflow takes under a minute:
 
+.. code-block:: bash
+
+    # 1. Create a named environment
     damona create TEST
 
-Second, we need to *activate* it. Subsequent installation will happen in this environment unless you open a new shell, or deactivate this environment::
-
+    # 2. Activate it (installed tools go here)
     damona activate TEST
 
-From there, we can install some binaries/images::
-
+    # 3. Install a tool — container + wrapper created automatically
     damona install fastqc:0.11.9
 
-That's it. Time to test. Type **fastqc**. This should open a graphical interface.
+    # 4. Use it just like any other command
+    fastqc --help
 
-To rename this TEST environment, you may use::
-
+    # 5. Rename or remove the environment when you're done
     damona rename TEST --new-name prod
-
-or delete it::
-
     damona delete prod
 
-See more examples hereafter or in the user guide on https://damona.readthedocs.io
+For more examples see the `User Guide <https://damona.readthedocs.io>`_.
 
 Motivation
 ==========
 
-As stated on their website, `Conda <https:/docs.conda.io/en/latest>`_ is
-an open source **package** management system
-and **environment** management system.
-Conda provides pre-compiled releases of software; they can be installed in
-different local environments that do not interfer with your system. This has
-great advantages for developers. For example, you can install a pre-compiled
-libraries in a minute instead of trying to compile it yourself including all
-dependencies. Different communities have emerged using this
-framework. One of them is `Bioconda <https://bioconda.github.io>`_, which is dedicated to bioinformatics.
+`Conda/Bioconda <https://bioconda.github.io>`_ is excellent for distributing
+pre-compiled scientific software, but dependency conflicts are a real-world
+problem: installing one package can silently break another, and rebuilding
+environments is time-consuming.
 
-Another great tool that emerged in the last years is
-`Singularity <https://sylabs.io/docs>`_. Singularity containers can be used
-to package entire scientific workflows,
-software and libraries, and even data. It is a simple file that can be shared
-between environments and guarantee exectution and reproducibility.
+`Singularity/Apptainer <https://apptainer.org>`_ solves the isolation problem
+perfectly — each image is self-contained and reproducible — but using it
+directly requires verbose ``singularity exec`` commands and manual bookkeeping
+of image files and wrapper scripts.
 
-Originally, Conda provided pre-compiled version of a software. Nowadays, it also provides
-a docker and a singularity image of the tool. On the other side, Singularity can include an
-entire conda environment. As you can see everything is there to build reproducible tools and
-environment.
+**Damona bridges the gap**: it wraps Singularity images in the familiar
+conda-style environment model so that containers are as easy to install,
+activate, and use as conda packages, while retaining full container isolation
+and reproducibility.
 
-Now, what about a software in development that depends on third-party packages ?
-You would create a conda environment and starts installing the required packages.
-Quickly, you will install another package that will break your environment due
-to unresolved conflicts; this is not common but it happens. In the worst case
-scenario, the environment is broken. In facilities where users depends on you,
-it can be quite stresful and time-consuming to maintain several such
-environments. This is why we have moved little by little to a very light conda
-environment where known-to-cause-problem packages have been shipped into
-singularity containers. This means we have to create aliases to those
-singularities. The singularities can be simple executable containers or full
-environment containers with many executables inside. In both cases, one need to
-manage those containers for different users, pipelines, versions etc. This
-started to be cumbersome to have containers in different places and update
-script that generate the aliases to those executables.
-
-
-That's where **damona** started: we wanted to combine the conda-like environment
-framework to manage our singularity containers more easily.
-
-Although **Damona** was started with the `Sequana projet <https://sequana.readthedocs.io>`_,
-**Damona** may be useful for others developers who wish to have a quick and easy
-solution for their users when they need to install third-party libraries.
+Damona was originally developed for the
+`Sequana project <https://sequana.readthedocs.io>`_, but it is completely
+general-purpose and can be used to distribute any Singularity-compatible
+software.
 
 
 Commands (Full CLI Reference)
 =============================
 
-The **Damona** standalone is called **damona**. It has a documentation that should suffice for most users, which can be obtained using::
-
-    damona --help
-
-where you will see the list of **Damona** commands (may be different with time)::
-
+Run ``damona --help`` to see all available commands::
 
     activate    Activate a damona environment.
     clean       Remove orphan images and binaries from all environments.
     create      Create a new environment
     deactivate  Deactivate the current Damona environment.
     delete      Remove an environment
-    env         List all environemnts with some stats.
+    env         List all environments with some stats.
     export      Create a bundle of a given environment.
     info        Print information about a given environment.
     install     Download and install an image and its binaries.
@@ -219,146 +226,104 @@ where you will see the list of **Damona** commands (may be different with time):
     search      Search for a container or binary.
     stats       Get information about Damona images and binaries
 
-
-To get help for the *install* command, type::
+For command-specific help (e.g. ``install``)::
 
     damona install --help
 
 
-1. *list* available environments
---------------------------------
+1. List available environments
+-------------------------------
 
-By default you have an environment called **base**. Unlike the **base** environment found in **conda**, it is not
-essential and may be altered. However, it cannot be removed or created. You can check the list of environments using::
+By default there is one environment called **base**. Unlike conda's **base**,
+it is not essential and may be altered freely (but it cannot be removed or
+re-created). List all environments with::
 
     damona env
 
-2. *create* environments
-------------------------
-All environments are stored in *~/.config/damona/envs/*. You can create a new one as follows::
+2. Create environments
+-----------------------
+
+All environments are stored in *~/.config/damona/envs/*. Create a new one::
 
     damona create TEST
 
-There, you have a *bin* directory where binaries are going to be installed.
-
-You can check that it has been created::
+Verify it was created::
 
     damona env
 
-Note the last line telling you that::
+The last line should confirm that **TEST** is the current environment.
 
-    Your current env is 'TEST'.
-
-3. activate and deactivate environments
+3. Activate and deactivate environments
 ----------------------------------------
 
-In order to install new binaries or software package, you must activate an environment. You may activate several but the last one is the *active* one. Let us activate the *TEST* environment::
+Activating an environment appends its *bin* directory to your ``$PATH``::
 
     damona activate TEST
+    damona env        # confirms TEST is active
 
-Check that it is active using::
-
-    damona env
-
-and look at the last line. It should look like::
-
-    Your current env is 'TEST'.
-
-What is going on when you activate an environment called TEST ? Simple: we append the directory ~/.config/damona/envs/TEST/bin to your PATH where binaries are searched for. This directory is removed when you use the *deactivate* command.
-
-::
+Deactivating removes it from ``$PATH``::
 
     damona deactivate TEST
-    damona env
 
-should remove the TEST environment from your PATH. You may activate several and deactivate them. In such case, the
-environments behave as a Last In First Out principle::
-
-    damona activate base
-    damona activate TEST
-    damona deactivate
-
-Removes the last activated environments. While this set of commands is more specific::
+Multiple environments can be active simultaneously; they follow a
+Last-In-First-Out order when deactivated without a name::
 
     damona activate base
     damona activate TEST
-    damona deactivate base
+    damona deactivate           # removes TEST (last activated)
+    damona deactivate base      # removes base by name
 
-and keep the TEST environment only in your PATH.
+4. Install a tool
+------------------
 
-4. **install** a software
---------------------------
-
-Let us now consider that the TEST environment is active.
-
-Damona provides software that may have several releases. Each software/release comes with binaries that will be
-installed together with the underlying singularity image.::
+With the target environment active, install any available package::
 
     damona install fastqc:0.11.9
 
-Here, the singularity image corresponding to the release 0.11.9 of the **fastqc** software is downloaded. Then, binaries registered in this release are installed (here the **fastqc** binary only).
+Damona downloads the Singularity image, registers it in
+*~/.config/damona/images* (shared by all environments), and creates a
+wrapper script so that ``fastqc`` is available as a plain command.
 
-All images are stored in *~/.config/damona/images* and are shared between environments.
+5. Inspect an environment
+--------------------------
 
-
-5. Get **info** about installed images and binaries
-----------------------------------------------------
-
-You can get the binaries installed in an environment (and the images used by
-them) using the **info** command::
+List the binaries installed in an environment together with the underlying
+images::
 
     damona info TEST
 
-
 6. Search the registry
-------------------------
+-----------------------
 
-You can search for a binary using::
+Search for available packages::
 
     damona search PATTERN
 
-External registry can be set-up. For instance, a damona registry is accessible
-as follows (for demonstration)::
+Search an external registry (e.g. the official Damona registry)::
 
     damona search fastqc --url damona
 
-Where *damona* is an alias defined in the .config/damona/damona.cfg that
-is set to https://biomics.pasteur.fr/drylab/damona/registry.txt
+The ``damona`` URL alias is pre-configured in
+*~/.config/damona/damona.cfg*. You can add your own registry URLs there to
+distribute in-house containers.
 
-You may retrieve images from a website where a registry exists (see the developer
-guide to create a registry yourself).
+7. Combine multiple environments
+----------------------------------
 
-
-7. combine two different environments
---------------------------------------
-
-In damona, you can have sereral environments in parallel and later activate the
-one you wish to use. Let us create a new one::
+Images are shared across environments, so re-using an already-downloaded
+image in a new environment is instant and costs no extra disk space::
 
     damona create test1
-
-and check that you now have one more environment::
-
-    damona env
-
-We want to create an alias to the previously downloaded image of fastqc tool but
-in the *test1* environment. First we activate the newly create environment::
-
     damona activate test1
+    damona install fastqc:0.11.9   # reuses the cached image
 
-then, we install the container::
-
-    damona install fastqc:0.11.9
-
-This will not download the image again. It will just create a binary in the
-~/.config/damona/envs/test1/bin directory.
-
-you can combine this new environment with the base one::
+Activate several environments at once to mix tool sets::
 
     damona activate base
+    damona activate test1
 
-If you are interested to know more, please see the User Guide and Developer
-guide here below.
+For more details see the `User Guide <https://damona.readthedocs.io>`_ and
+the `Developer Guide <https://damona.readthedocs.io>`_.
 
 
 Contributors
