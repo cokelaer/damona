@@ -391,10 +391,7 @@ the command::
 ========= ========================================================================
 Version   Description
 ========= ========================================================================
-0.17.0    * IMPROVED: rewrite README with clearer value proposition and
-            comparison table
-          * IMPROVED: add docstrings across core modules; Sphinx docs updated
-          * IMPROVED: CLI output now uses rich tables and panels
+0.17.0    * IMPROVED: CLI output now uses rich tables and panels
           * IMPROVED: auto-update shell config files (bash/zsh/fish) on startup
           * FIXED: fish shell activation and PATH propagation
           * FIXED: subprocess-based shell detection replacing env-variable approach
@@ -450,20 +447,15 @@ Version   Description
 0.10.1    * Fix the get_stats_software wrt new  zenodo API
 0.10.0    * ADD zsh support
           * UPDATE flye 2.9.1
-          * ADD nanopolish
-          * UPDATE remove nanopolish from sequana_tools binaries
-0.9.1     * ADD hmmer 3.2.2
-          * ADD trinotate 4.0.1
-          * ADD transdecode 5.7.0
-          * ADD trinity 2.15.1
-          * UPDATE bioconvert 1.1.0
-          * update bowtie2 2.5.1
+          * ADD nanopolish and remove nanopolish from sequana_tools binaries
+0.9.1     * ADD hmmer 3.2.2, trinotate 4.0.1, transdecode 5.7.0, trinity 2.15.1
+          * UPDATE bioconvert 1.1.0, bowtie2 2.5.1
 0.9.0     * refactorise the command 'env' by splitting into dedicated subcommands
             create, delete, rename. add progress bar when downloading container
           * NEW micromamba image to work as a localimage
           * NEW sequana_minimal package to hold common tools (bwa, samtools,
             kraken, etc)
-          * NEW ivarm pangolin, nextclade, subread, mafft packages
+          * NEW ivar, pangolin, nextclade, subread, mafft packages
           * UPDATE fastp to 0.23.3, gffread to 0.12.7 (3 times lighter).
           * UPDATE sequana_tools to use micromamba (30% lighter)
 0.8.4     * fix damona stats command to return unique binaries
@@ -508,16 +500,10 @@ Version   Description
           * new releases: sequana_tools_0.10.0
           * Fix shell script to handle DAMONA_EXE variable
 0.5.0     * Major refactoring.
-
-            - Simplification of the registries (dropping notion of exe/set
-              class
-            - Main script should now be fully functional with functional
-              activation/deactivation.
+            - Simplification of the registries
             - New command to build images from local recipes or dockerhub
               entries.
             - Install command can now install local container.
-            - DAMONA_PATH can be set to install damona images/binaries
-              anywhere, not just in local home.
             - check md5 of images to not download/copy again
 0.4.3     * Implement damona activate/deactivate
 0.4.2     * Fix typo in the creation of aliases for 'set' containers
