@@ -66,6 +66,18 @@ class Config:
     """
 
     def __init__(self, name="damona", urls={"damona": "https://biomics.pasteur.fr/salsa/damona/registry.txt"}):
+        """.. rubric:: **Constructor**
+
+        Creates ``~/.config/damona/damona.cfg`` and the shell initialisation
+        scripts the first time it is called; subsequent calls are no-ops for
+        files that already exist and are up-to-date.
+
+        :param str name: Config name used as the sub-directory under the OS
+            config dir (default ``"damona"``).  Override in tests to avoid
+            touching the user's real config.
+        :param dict urls: Mapping of alias → URL to pre-populate the
+            ``[urls]`` section of a freshly created config file.
+        """
         configuration = CustomConfig(f"{name}", verbose=True)
 
         #  let us add a damona.cfg in it. This will store URLs to look for singularities
@@ -130,12 +142,27 @@ class Config:
         return True
 
     def add_bash(self):  # pragma: no cover
+        """Copy the Bash shell init script to the user config directory.
+
+        :returns: ``True`` if the file was created or updated, ``False`` otherwise.
+        :rtype: bool
+        """
         return self._copy_shell_file("bash/damona.sh", "damona.sh")
 
     def add_zsh(self):  # pragma: no cover
+        """Copy the Zsh shell init script to the user config directory.
+
+        :returns: ``True`` if the file was created or updated, ``False`` otherwise.
+        :rtype: bool
+        """
         return self._copy_shell_file("zsh/damona.zsh", "damona.zsh")
 
     def add_fish(self):
+        """Copy the Fish shell init script to the user config directory.
+
+        :returns: ``True`` if the file was created or updated, ``False`` otherwise.
+        :rtype: bool
+        """
         return self._copy_shell_file("fish/damona.fish", "damona.fish")
 
     def _update_shell_rc(self, rc_file, source_line, init_block, shell_name):

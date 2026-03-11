@@ -30,6 +30,14 @@ __all__ = ["Damona", "ImageReader", "BinaryReader", "DamonaInit"]
 
 
 def get_damona_path():
+    """Return the :class:`pathlib.Path` pointed to by the ``DAMONA_PATH`` environment variable.
+
+    Exits the process with an error message when the variable is not set.
+
+    :returns: The Damona root path.
+    :rtype: pathlib.Path
+    :raises SystemExit: When ``DAMONA_PATH`` is not defined.
+    """
     if "DAMONA_PATH" not in os.environ:
         logger.error(
             "DAMONA_PATH not found in your environment. You must define "
@@ -298,6 +306,11 @@ class ImageReader:
             sys.exit(1)
 
     def delete(self):
+        """Delete the image file from disk if it is no longer used by any environment.
+
+        If the image is still referenced by at least one binary alias the
+        deletion is skipped and a warning is logged instead.
+        """
         if self.is_orphan():
             logger.warning(f"deleting {self.filename} since it is not used anymore by any environments")
             self.filename.unlink()
@@ -353,6 +366,14 @@ class ImageReader:
     md5 = property(_get_md5sum, doc="compute and return the md5 of the file")
 
     def is_orphan(self):
+        """Return ``True`` if no environment binary currently points to this image.
+
+        An image is considered an *orphan* when it exists in the images
+        directory but no binary alias in any environment references it.
+
+        :returns: ``True`` when no binary uses this image, ``False`` otherwise.
+        :rtype: bool
+        """
         binaries = Damona().get_all_binaries()
         linked_binaries = []
         for binary in binaries:

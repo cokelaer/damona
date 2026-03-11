@@ -7,278 +7,251 @@ User Guide
 Getting help
 -------------
 
-The Damona standalone is called damona. It has a documentation that should suffice for most users.
-
-The main documentation is obtained using::
+The **Damona** command-line tool is called ``damona``.  Every command exposes
+its own ``--help`` flag::
 
     damona --help
 
-where you will see the list of Damona commands (may be different with time) (may be::
+The list of available commands includes:
 
-    activate
-    clean
-    deactivate
-    env
-    export
-    info
-    install
-    list
-    remove
-    search
-    stats
+.. code-block:: text
 
-To get help for the install command, type::
+    activate      Activate a Damona environment
+    clean         Remove orphan images or binaries
+    deactivate    Deactivate the current environment
+    env           List, create, or delete environments
+    export        Export an environment to a bundle or YAML file
+    info          Display information about an installed image
+    install       Download and install a container image
+    list          List available images in the registry
+    remove        Uninstall a binary or image
+    search        Search the registry for software
+    stats         Display statistics about the local installation
+
+For detailed help on any sub-command, append ``--help``::
 
     damona install --help
 
 Environments
 ------------
 
-Damona provides a way to manage environments where Singularity images and binaries are installed.
-Environments are independent from each other. We decided to go for a very simple design where an environment is nothing
-else than a physical directory with a subdirectory called *bin/* to store the binaries. All images are shared between
-environments to decrease the storage needs.
+An *environment* in Damona is simply a directory under
+``~/.config/damona/envs/`` that contains a ``bin/`` sub-directory.
+When an environment is *activated*, its ``bin/`` path is prepended to your
+``PATH``, making all installed software immediately available.  All
+Singularity images are shared between environments to avoid duplicating large
+files on disk.
 
-list environments
-~~~~~~~~~~~~~~~~~~
+List environments
+~~~~~~~~~~~~~~~~~
 
-If you type::
+Show all environments on the system::
 
     damona env
 
-You will get the list of environments available on your system. In theory, if you start from scratch there is only one
-called **base** that cannot be deleted or created. You can use it as a sandbox though where software can be installed or removed.
+When starting fresh, you will see only the **base** environment.  The **base**
+environment is reserved and cannot be deleted, but you can install software
+into it freely.
 
-Create environments
-~~~~~~~~~~~~~~~~~~~
+Create an environment
+~~~~~~~~~~~~~~~~~~~~~
 
-All environments are stored in ~/.config/damona/envs/. You can create a new one as follows::
+Create a new environment called ``TEST``::
 
     damona env --create TEST
 
-There, you have a bin directory where binaries are going to be installed.
+All environments are created under ``~/.config/damona/envs/``.  After
+creation, run ``damona env`` again to confirm it appears in the list.
 
-You can check that it has been created::
+Activate and deactivate environments
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    damona env
-
-Note the last line telling you that::
-
-    Your current env is 'TEST'.
-
-Activate/Deactivate environments
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-In order to install new binaries or software packages, you must activate an environment. You may activate several but the last one is the active one. Let us activate the TEST environment::
+Activating an environment appends its ``bin/`` directory to your ``PATH``.
+Any software installed in that environment then becomes available directly
+from the command line::
 
     damona activate TEST
 
-Check that it is active using::
+Verify the active environment::
 
     damona env
 
-and look at the last line. It should look like::
+The last line should read::
 
     Your current env is 'TEST'.
 
-
-What is going on when you activate an environment called TEST ? Simple: we append the directory ~/.config/damona/envs/TEST/bin to your PATH where binaries are searched for. This directory is removed when you use the deactivate command.
-::
+Deactivate when you are done::
 
     damona deactivate TEST
-    damona env
 
-should remove the TEST environment from your PATH. You may activate several and deactivate them. In such case, the environments behave as a Last In First Out principle::
-
-    damona activate base
-    damona activate TEST
-    damona deactivate
-
-Removes the last activated environments. While this set of commands is more specific::
+Environments behave as a **Last-In-First-Out** stack: calling ``deactivate``
+without an argument always removes the most recently activated environment::
 
     damona activate base
     damona activate TEST
-    damona deactivate base
+    damona deactivate        # removes TEST, base remains active
 
-and keep the TEST environment only in your PATH.
+To deactivate a specific environment by name::
 
+    damona activate base
+    damona activate TEST
+    damona deactivate base   # removes base, TEST remains active
 
 
 Software and releases
 ---------------------
 
-Search for existing software
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Search for available software
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-**Damona** itself contains metadata to download containers and installed software. As explained in the motivation, other
-projects provide thousands of containers but here we provide containers for
-testing and proof of concept.
-
-By default, **Damona** uses recipes, which can be found in the
-https://github.com/damona/damona/recipes directory. In the registry files (see
-later for details), we define the URL where images can be downloaded. Some are
-on https://cloud.sylabs.io/library/cokelaer collection, which is limited to 10Gb
-and therefore will not provide many containers. Others are on external registry
-and one can define its own registry for its projects.
-
-To get a list of the available containers in **Damona**, type::
+**Damona** ships with a built-in registry of container recipes.  To list all
+available images::
 
    damona search "*" --images-only
 
-You should see the container names and their version. You should also see where
-the file is going to be downloaded from.
+Each result shows the container name, its version, and where the image will be
+downloaded from.
 
-You can search for specific pattern using::
+Search for a specific tool by name::
 
     damona search fastqc
 
-This is not a lot indeed. So, we provide a system where you can look for
-containers elsewhere on internet. For now, there is only one registry available
-on https://biomics.pasteur.fr/salsa/damona (again for demonstration). There, we posted
-some containers and a registry.txt file; if you type::
+**Third-party registries** – Anyone can publish containers on the web and
+provide a ``registry.txt`` index file.  Point Damona at that file to search
+it::
 
     damona search "*" --url https://biomics.pasteur.fr/salsa/damona/registry.txt
 
-you will get a list of the images that are available. Anybody can provide a
-container on any website with a registry.txt and you will be able to access to
-the images.
-
-The latter command can be simplified into ::
+The above URL has a predefined alias called ``damona`` in the default
+configuration, so this shorter form is equivalent::
 
     damona search "*" --url damona
 
-This is possible by defining alias in the configuration file (in
-~/config/damona.cfg as explained in the developer guide)
+You can add your own aliases in ``~/.config/damona/damona.cfg`` (see the
+:ref:`configuration section <dev-config>` in the developer guide).
 
+Download and install a container
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-
-Download and install an image
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-The first thing to do before installing is software is to activate the environment where you wish to install the
-software::
-
-    damona env
-
-tells you which is currently active. Otherwise activate one::
+Before installing, activate the environment where you want the software to
+live::
 
     damona activate TEST
 
-See above for more details.
-
-Given the container name and version, you can now download a container image as follows::
+Then install the desired container.  Specify an exact version with a colon
+separator::
 
     damona install fastqc:0.11.9
 
-If there are several version and you just want the latest, remove the tag::
+To install the latest available version, omit the tag::
 
     damona install fastqc
 
-That's it, you should get the image in your config path ~/.config/damona/images
-directory. In addition, a binary alias is created in ~/.config/damona/bin
+The image is saved to ``~/.config/damona/images/`` and a thin shell-wrapper
+binary is created in the active environment's ``bin/`` directory.  The wrapper
+looks like::
 
-And the *fastqc* command should be available::
+    #!/bin/sh
+    singularity -s exec ${DAMONA_SINGULARITY_OPTIONS} \
+        ${DAMONA_PATH}/images/fastqc_0.11.9.img fastqc ${1+"$@"}
 
-    fastqc
+After installation the command is immediately available::
 
-.. note:: using the activate command above, your PATH has been changed in your current shell. If you open a new shell,
-   you will need to activate the environment again.
+    fastqc --version
 
-To install an image/binary, you can also use an external registry (see developer
-guide to define your own registry)::
+.. note:: The ``PATH`` change made by ``damona activate`` applies to the
+   **current** shell session only.  Open a new terminal and re-activate the
+   environment when needed.
+
+Install from an external registry::
 
     damona install fastqc:0.11.9 --url https://biomics.pasteur.fr/drylab/damona/registry.txt
 
-For this particular website, we have an alias::
+Or use the short alias::
 
     damona install fastqc:0.11.9 --url damona
 
-You can add aliases in *~/.config/damona/damona.cfg* file.
+Working with multiple environments
+------------------------------------
 
-Application: set several Environments
---------------------------------------
+Damona stores everything under ``~/.config/damona/``:
 
-In **damona**, environments are stored in *~/.config/damona*. There, you have two sub-directories:
+* ``envs/`` – one sub-directory per environment, each containing a ``bin/``
+  folder with wrapper scripts
+* ``images/`` – Singularity image files shared across all environments
 
-* envs
-* images
+To test two versions of the same tool side-by-side::
 
-In the *images* directory, we store the singularity containers. In *envs* directory, we store the environments.
-There, a sub-directory **bin/** can be found. That is where we create aliases
-so as to make the container executables.
-
-Now what about having different environments ? It would be nice to handle
-several pipelines in their own environments.
-
-We could quickly test two different versions of a tools and test their impact on an
-analysis.::
-
+    # Create and populate the first environment
     damona env --create test1
-    damona env --create test2
-
-Now, you need to activate the first one::
-
     damona activate test1
-
-and install a tool with a given version in this environment::
-
     damona install fastqc:0.11.9
 
-And to install it in the *test2* environment::
-
+    # Switch to the second environment
     damona deactivate
+    damona env --create test2
     damona activate test2
     damona install fastqc:0.11.8 --url damona
 
-You can activate as many environments as you wish. Calling deactivate will only
-deactivate the last activated environment. In works as a Last In First Out mechanism.
+Both environments now contain their own ``fastqc`` wrapper pointing to the
+appropriate image.  Only **one** copy of each image is stored on disk.
 
+Install binaries not listed in the registry
+--------------------------------------------
 
-Install binaries not in the registry
--------------------------------------
-
-When Damona's develope create a container, the also associate a list of binaries to be installed. This list is provided in a registry file (registry.yaml).
-
-For example, when installing the *fastqc* container, one binary called *fastqc* is created. Other containers may contain several binaries.
-
-Note, however, that the list of binaries may not be complete. If so, users need to informa damona's developer, who have to change the registry, create a release, publish the release; then users have to be aware of that release, and update damona. This may be time consumming and is not dynamic enough.
-
-If a user knows that a binary is present in a container, but not installed, he can sill install the binary as follows::
+When a container developer registers a tool they list the binaries that should
+be installed.  Occasionally a container ships additional executables that are
+not yet in the registry.  If you know the binary name, you can install it
+directly::
 
     damona install mummer --binaries show-snps
 
-
-
+This creates a wrapper for ``show-snps`` using the ``mummer`` container without
+waiting for an official registry update.  If this helps you please consider
+opening an issue or a pull request so the registry can be updated for
+everyone.
 
 Environmental variables
 ------------------------
+
+DAMONA_PATH
+~~~~~~~~~~~
+
+``DAMONA_PATH`` points to the root directory where Damona stores all of its
+data (environments and images).  It is set automatically when you source the
+Damona shell script and defaults to ``~/.config/damona/``.
+
+You can point it at a different location (for example a shared network
+directory on a cluster)::
+
+    export DAMONA_PATH=/shared/damona
+
+.. _DAMONA_SINGULARITY_OPTIONS:
+
 DAMONA_SINGULARITY_OPTIONS
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-All binaries created with **Damona** use this syntax::
+Every wrapper binary created by Damona uses this template::
 
     singularity -s exec ${DAMONA_SINGULARITY_OPTIONS} ${DAMONA_PATH}/images/<IMAGE> <EXE> ${1+"$@"}
 
-where EXE is the name of the executable binary, IMAGE the name of the container.
-Then, you can see two environmental variables.
+``DAMONA_SINGULARITY_OPTIONS`` is passed verbatim to ``singularity exec`` and
+defaults to an empty string.  Use it to forward any Singularity option to all
+binaries at once.
 
-The DAMONA_SINGULARITY_OPTIONS can be used to provide any required options to singularity.
-If undefined, it is set to an empty string. Otherwise, you can defined it as follows:
+**Tip – X11 display issues:**
 
-    export DAMONA_SINGULARITY_OPTIONS="whatever_you_need"
+The ``-e`` flag tells Singularity to start a clean environment, which unsets
+``DISPLAY``.  If graphical tools fail, pass the display through explicitly::
 
-Note anout display and the -e option.
+    export DAMONA_SINGULARITY_OPTIONS="-e --env DISPLAY=:1"
 
-It is usually good practive to set the -e option to not use the environement where you start the container. However, you may have issue with X11 display. Indeed, -e means do not use any environment variable. Therefore the DISPLAY is unset. If such case, you can use::
+**Example – Binding directories:**
 
-    export DAMONA_SINGULARITY_OPTIONS=" -e --env DISPLAY=:1"
-
-
-Example: Binding directories
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-This variable is especially useful would you need to bind a path that is not present in
-standard configuration. For example, on a cluster where your admin system set up
-a local scratch in /local/scratch, you can tell singularity to look there by
-binding this path into your container::
+On HPC clusters a scratch directory such as ``/local/scratch`` may not be
+visible inside the container.  Bind it explicitly::
 
     export DAMONA_SINGULARITY_OPTIONS="-B /local/scratch:/local/scratch"
+
+Multiple options can be combined in the same string.
+
