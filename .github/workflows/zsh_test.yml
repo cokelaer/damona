@@ -26,7 +26,7 @@ jobs:
         sudo rm -rf /usr/share/dotnet
         sudo rm -rf "$AGENT_TOOLSDIRECTORY"
 
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     - uses: docker-practice/actions-setup-docker@master
     - name: Test docker
       run: |
@@ -42,9 +42,10 @@ jobs:
         singularity version
 
     - name: Set up Python 3.X
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python }}
+        cache: 'pip'
 
     - name: Install Damona using pip
       run: |
