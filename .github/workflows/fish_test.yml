@@ -72,7 +72,7 @@ jobs:
         pip install .[testing]
     - name: Init damona in bash
       run: |
-        damona
+        damona || true  # creates config files; exits 1 on first run to prompt shell restart
     - name: Test installation hisat2
       run: |
         which fish
