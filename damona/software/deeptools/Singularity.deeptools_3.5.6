@@ -1,0 +1,30 @@
+Bootstrap: docker
+From: mambaorg/micromamba:1.5.8
+
+%labels
+    Author Damona Team
+    Version v3.5.6
+
+%post
+    apt-get update --fix-missing && apt-get install -y wget
+
+    export PATH=$PATH:/opt/conda/envs/main/bin/
+    export OPTS=" -q -c conda-forge -c bioconda -n main -y "
+
+    micromamba install $OPTS "deeptools==3.5.6"
+
+    micromamba clean --packages -y
+    micromamba clean --all -y
+    rm -rf /opt/conda/pkgs
+
+    apt-get autoremove --purge -y wget
+    apt-get clean
+    rm -rf /var/lib/apt/lists/*
+
+%environment
+    export LC_ALL=C.UTF-8
+    export LANG=C.UTF-8
+    export PATH=$PATH:/opt/conda/envs/main/bin/
+
+%runscript
+    exec bamCoverage "$@"
