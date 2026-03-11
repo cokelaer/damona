@@ -82,6 +82,7 @@ jobs:
         DAMONA_SINGULARITY_OPTIONS: ""
         DAMONA_SHELL_INFO: "bash"
     - name: coveralls
+      continue-on-error: true
       run: |
         poetry run coveralls --service=github
       env:
