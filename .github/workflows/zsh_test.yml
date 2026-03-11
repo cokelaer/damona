@@ -62,7 +62,6 @@ jobs:
         cat test.zsh
         zsh test.zsh
       env:
-        DAMONA_EXE: /home/runner/.local/bin/damona
         DAMONA_PATH: /home/runner/.config/damona
         DAMONA_ENV: /home/runner/.config/damona/envs/TEST
         DAMONA_SINGULARITY_OPTIONS: ""
