@@ -938,9 +938,8 @@ def upload(**kwargs):  # pragma: no cover
 def build(**kwargs):  # pragma: no cover
     """Build a container from dockerhub, singularity file or damona recipes.
 
-    Note that to use this command, you must have sudo permissions.
-    If not, you will need to download existing images. See the "damona install
-    command".
+    If you do not wish to build images yourself, you can download existing
+    images. See the "damona install command".
 
     You can build a singularity image from a local singularity file. Note that
     your Singulary recipes must follow the naming convention
