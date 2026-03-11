@@ -14,7 +14,6 @@
 #
 ##############################################################################
 """Builder for containers from docker or singularity images"""
-import getpass
 import os
 import subprocess
 import sys
@@ -39,18 +38,9 @@ class Builder:
 
     """
 
-    def __init__(self):
-        # just to check that a username is defined before building the image
-        self.username
-
     def get_temp_file(self):
         filename = tempfile.NamedTemporaryFile(dir=manager.config_path, suffix=".img")
         return filename
-
-    def _get_username(self):
-        return getpass.getuser()
-
-    username = property(_get_username, doc="return the username (unix)")
 
     def teardown(self, dest):
         """finalise the build
@@ -123,11 +113,8 @@ class BuilderFromDocker(Builder):
                     sys.exit(1)
 
         # build the image
-        cmd = f"sudo singularity pull --force {destination} docker://{dockerhub_name} "
+        cmd = f"singularity pull --force {destination} docker://{dockerhub_name} "
         logger.info(f"Running : {cmd}")
-        subprocess.call(cmd.split())
-
-        cmd = f"sudo chown {self.username}:{self.username} {destination}"
         subprocess.call(cmd.split())
 
         self.teardown(destination)
@@ -170,14 +157,11 @@ class BuilderFromSingularityRecipe(Builder):
                     sys.exit(1)
 
         # build the image
-        cmd = f"sudo singularity build --force {destination} {recipe} "
+        cmd = f"singularity build --force {destination} {recipe} "
         logger.info(f"Running : {cmd}")
         status = subprocess.call(cmd.split())
         if status != 0:  # pragma: no cover
-            logger.error("An error occured")
+            logger.error("An error occurred")
             sys.exit(1)
-
-        cmd = f"sudo chown {self.username}:{self.username} {destination}"
-        subprocess.call(cmd.split())
 
         self.teardown(destination)
