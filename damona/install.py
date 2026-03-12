@@ -243,6 +243,13 @@ class RemoteImageInstaller(ImageInstaller):
 
         damona install fastqc:0.11.9 --url damona
 
+    Download URLs in registry.yaml support the following protocols:
+
+    - ``https://`` for direct downloads (e.g. Zenodo)
+    - ``docker://`` for Docker/OCI images (e.g. Docker Hub, GHCR ``docker://ghcr.io/...``)
+    - ``oras://`` for OCI artifacts such as native SIF files on GHCR (``oras://ghcr.io/...``)
+    - ``library://`` and ``shub://`` for Singularity registries
+
     """
 
     def __init__(self, image_name, binaries=None, from_url=None, cmd=None):
@@ -393,9 +400,9 @@ class RemoteImageInstaller(ImageInstaller):
 
                 download_with_progress(download_name, filename=str(pull_folder / output_name))
 
-            elif download_name.startswith("docker://"):  # docker has no extension .img/.sig
+            elif download_name.startswith(("docker://", "oras://")):  # docker/OCI image or artifact (e.g. GHCR)
                 output_name += ".img"
-                output_name = output_name.replace(":v", "_v")
+                output_name = output_name.replace(":", "_")
                 Client.pull(str(download_name), name=output_name, pull_folder=pull_folder, force=force)
             else:  # use singularity
                 Client.pull(str(download_name), name=output_name, pull_folder=pull_folder, force=force)
