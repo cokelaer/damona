@@ -182,6 +182,49 @@ The full workflow takes under a minute:
 
 For more examples see the `User Guide <https://damona.readthedocs.io>`_.
 
+Example without conda (pyenv + minimap2)
+-----------------------------------------
+
+If you manage Python with `pyenv <https://github.com/pyenv/pyenv>`_ instead of
+conda, the workflow is identical — Damona only requires Python ≥ 3.9 and
+Apptainer.
+
+.. code-block:: bash
+
+    # --- Prerequisites ---------------------------------------------------
+    # 1. Install Apptainer (once, system-wide or via your package manager).
+    #    On Debian/Ubuntu:
+    sudo apt-get install -y apptainer
+    #    Or follow https://apptainer.org/docs/admin/main/installation.html
+
+    # --- Python environment ----------------------------------------------
+    # 2. Create and activate a pyenv virtualenv with Python 3.10
+    pyenv install 3.10.14          # skip if already installed
+    pyenv virtualenv 3.10.14 damona-env
+    pyenv activate damona-env
+
+    # 3. Install Damona
+    pip install damona
+
+    # --- First-time initialisation ---------------------------------------
+    # 4. Run once to create the configuration directory and shell helpers
+    damona
+
+    # 5. Add the shell integration to your start-up file (bash example):
+    echo 'source ~/.config/damona/damona.sh' >> ~/.bashrc
+    source ~/.bashrc
+
+    # --- Install minimap2 ------------------------------------------------
+    # 6. Create and activate a Damona environment
+    damona create my-env
+    damona activate my-env
+
+    # 7. Install minimap2 — the container is downloaded automatically
+    damona install minimap2:2.24.0
+
+    # 8. Use it like any other command
+    minimap2 --version
+
 Motivation
 ==========
 
