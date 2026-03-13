@@ -929,6 +929,65 @@ def upload(**kwargs):  # pragma: no cover
     z._upload(filename)
 
 
+# =================================================================== publish
+@main.command(hidden=True)
+@click.argument("recipe", required=True, type=click.STRING)
+@click.option("--destination", default=None, help="Output .img file path. Defaults to NAME_x.y.z.img derived from the recipe name.")
+@click.option("--force", is_flag=True, help="Overwrite existing container without prompting.")
+@click.option(
+    "--token",
+    default=None,
+    help="A valid Zenodo (or sandbox Zenodo) token. If omitted, read from damona.cfg.",
+)
+@click.option("--mode", default="sandbox.zenodo", help="Zenodo target: 'zenodo' or 'sandbox.zenodo' (default).")
+@click.option("--no-check", is_flag=True, default=False, help="Skip container validation step.")
+@click.option("--no-zenodo", is_flag=True, default=False, help="Skip the Zenodo upload step (build and check only).")
+@common_logger
+def publish(**kwargs):  # pragma: no cover
+    """Build, validate, and upload a container to Zenodo. FOR DEVELOPERS ONLY
+
+    This command automates the complete developer workflow for releasing a new
+    Singularity container:
+
+    \b
+    1. Build the image from a Singularity recipe.
+    2. Validate the image (checks that bash is present).
+    3. Upload the image to Zenodo.
+
+    The recipe must follow the Damona naming convention
+    **Singularity.NAME_x.y.z** so that the software name and version can be
+    inferred automatically::
+
+        damona publish Singularity.fastqc_0.12.1
+
+    Use **--mode zenodo** when you are ready to publish to the production
+    Zenodo repository (the sandbox is used by default for safety)::
+
+        damona publish Singularity.fastqc_0.12.1 --mode zenodo
+
+    You can skip individual steps with **--no-check** or **--no-zenodo**::
+
+        damona publish Singularity.fastqc_0.12.1 --no-zenodo
+
+    """
+    from damona.publisher import Publisher
+
+    recipe = kwargs["recipe"]
+    destination = kwargs["destination"]
+    force = kwargs["force"]
+    token = kwargs["token"]
+    mode = kwargs["mode"]
+    no_check = kwargs["no_check"]
+    no_zenodo = kwargs["no_zenodo"]
+
+    pub = Publisher(recipe, mode=mode, token=token, destination=destination, force=force)
+    pub.build()
+    if not no_check:
+        pub.check()
+    if not no_zenodo:
+        pub.upload()
+
+
 # =================================================================== build
 @main.command(hidden=True)
 @click.argument("filename", required=True, type=click.STRING)
