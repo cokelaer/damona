@@ -19,7 +19,7 @@ import subprocess
 import sys
 import tempfile
 
-from damona.common import Damona, requires_singularity
+from damona.common import Damona, get_container_cmd, requires_singularity
 
 manager = Damona()
 
@@ -122,7 +122,7 @@ class BuilderFromDocker(Builder):
                     sys.exit(1)
 
         # build the image
-        cmd = f"singularity pull --force {destination} docker://{dockerhub_name} "
+        cmd = f"{get_container_cmd()} pull --force {destination} docker://{dockerhub_name} "
         logger.info(f"Running : {cmd}")
         subprocess.call(cmd.split())
 
@@ -178,7 +178,7 @@ class BuilderFromSingularityRecipe(Builder):
                     sys.exit(1)
 
         # build the image
-        cmd = f"singularity build --force {destination} {recipe} "
+        cmd = f"{get_container_cmd()} build --force {destination} {recipe} "
         logger.info(f"Running : {cmd}")
         status = subprocess.call(cmd.split())
         if status != 0:  # pragma: no cover

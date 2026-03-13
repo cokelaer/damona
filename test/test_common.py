@@ -126,3 +126,42 @@ def test_ImageReader():
     ir.is_orphan()
     ir.is_installed()
     print(ir)
+
+
+def test_get_container_cmd_singularity(monkeypatch):
+    """get_container_cmd returns 'singularity' when it is present."""
+    import damona.common as _common
+
+    monkeypatch.setattr(_common, "cmd_exists", lambda cmd: cmd == "singularity")
+    assert get_container_cmd() == "singularity"
+
+
+def test_get_container_cmd_apptainer_only(monkeypatch):
+    """get_container_cmd returns 'apptainer' when only apptainer is present."""
+    import damona.common as _common
+
+    monkeypatch.setattr(_common, "cmd_exists", lambda cmd: cmd == "apptainer")
+    assert get_container_cmd() == "apptainer"
+
+
+def test_get_container_cmd_neither(monkeypatch):
+    """get_container_cmd returns None when neither command is present."""
+    import damona.common as _common
+
+    monkeypatch.setattr(_common, "cmd_exists", lambda cmd: False)
+    assert get_container_cmd() is None
+
+
+def test_binary_reader_apptainer(tmp_path):
+    """BinaryReader can parse wrapper scripts that use apptainer."""
+    import os
+
+    # Create a fake binary wrapper that uses apptainer instead of singularity
+    wrapper = tmp_path / "fastqc"
+    wrapper.write_text(
+        "#!/bin/sh\napptainer -s exec ${DAMONA_SINGULARITY_OPTIONS} "
+        "${DAMONA_PATH}/images/fastqc_0.11.9.img fastqc ${1+\"$@\"}\n"
+    )
+
+    br = BinaryReader(wrapper)
+    assert "fastqc_0.11.9.img" in br.image

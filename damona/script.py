@@ -43,7 +43,7 @@ click_completion.init()
 URL = "https://raw.githubusercontent.com/cokelaer/damona/refs/heads/main/damona/software/registry.yaml"
 
 from damona import Damona, Environ, Environment, version
-from damona.common import BinaryReader, ImageReader, get_damona_path
+from damona.common import BinaryReader, ImageReader, get_container_cmd, get_damona_path
 from damona.install import (
     BiocontainersInstaller,
     LocalImageInstaller,
@@ -908,7 +908,9 @@ def upload(**kwargs):  # pragma: no cover
     filename = kwargs["filename"]
 
     # check that python and bash are available in the container.
-    status = subprocess.run(f"singularity exec {filename} python --version".split(), stdout=subprocess.PIPE)
+    status = subprocess.run(
+        f"{get_container_cmd()} exec {filename} python --version".split(), stdout=subprocess.PIPE
+    )
     if status.returncode:
         click.echo("Damona Warning: could not find **python** command in the container")
         proceed = click.prompt("Do you want to proceed ?")
@@ -918,7 +920,9 @@ def upload(**kwargs):  # pragma: no cover
             click.echo("Exiting...")
             sys.exit(1)
 
-    status = subprocess.run(f"singularity exec {filename} bash --version".split(), stdout=subprocess.PIPE)
+    status = subprocess.run(
+        f"{get_container_cmd()} exec {filename} bash --version".split(), stdout=subprocess.PIPE
+    )
     if status.returncode:
         click.echo("Damona ERROR: could not find **bash** command in the container", err=True)
         sys.exit(1)

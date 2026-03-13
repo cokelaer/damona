@@ -26,7 +26,7 @@ from easydev import cmd_exists, md5
 logger = colorlog.getLogger(__name__)
 
 
-__all__ = ["Damona", "ImageReader", "BinaryReader", "DamonaInit"]
+__all__ = ["Damona", "ImageReader", "BinaryReader", "DamonaInit", "get_container_cmd"]
 
 
 def get_damona_path():
@@ -430,7 +430,11 @@ class BinaryReader:
         self.filename = filename
 
         with self.filename.open("r") as fin:
-            data = [x for x in fin.readlines() if x.strip().startswith("singularity")]
+            data = [
+                x
+                for x in fin.readlines()
+                if x.strip().startswith("singularity") or x.strip().startswith("apptainer")
+            ]
             data = data[0]
 
             data = data.replace("${DAMONA_SINGULARITY_OPTIONS}", "")
@@ -473,14 +477,34 @@ class BinaryReader:
         return container
 
 
+def get_container_cmd():
+    """Return the available container command (``singularity`` or ``apptainer``).
+
+    ``singularity`` is preferred for backward compatibility.  When only
+    ``apptainer`` is present on the system that command is returned instead.
+
+    :returns: ``"singularity"`` or ``"apptainer"``, or ``None`` when neither
+        is found.
+    :rtype: str or None
+    """
+    if cmd_exists("singularity"):
+        return "singularity"
+    elif cmd_exists("apptainer"):
+        return "apptainer"
+    return None
+
+
 def requires_singularity(func):
-    """A decorator to check presence of singularity"""
+    """A decorator to check presence of singularity or apptainer"""
 
     @functools.wraps(func)
     def wrapper(ref, *args, **kwargs):
-        if cmd_exists("singularity"):
+        if get_container_cmd() is not None:
             return func(ref, *args, **kwargs)
         else:
-            logger.error("singularity command was not found. You must install 'singularity' to use Damona")
+            logger.error(
+                "Neither 'singularity' nor 'apptainer' command was found. "
+                "You must install one of them to use Damona"
+            )
 
     return wrapper
