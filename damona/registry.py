@@ -182,14 +182,12 @@ class Release:
         self._data = data
 
     def _get_binaries(self):
-        binaries = self._binaries + self._release_binaries + self._extra_binaries
-        binaries = [x for x in binaries if x not in self._exclude_binaries]
-        binaries = list(set(binaries))
-        binaries = sorted(list(set(binaries)))
-        if len(binaries) == 0:
+        binaries = (
+            set(self._binaries) | set(self._release_binaries) | set(self._extra_binaries)
+        ) - set(self._exclude_binaries)
+        if not binaries:
             return [self._name]
-        else:
-            return binaries
+        return sorted(binaries)
 
     binaries = property(_get_binaries)
 
@@ -353,9 +351,9 @@ class Software:
             logger.warning(f"Input software not found in {regname}")
             return {}
 
-        # read the yaml
-
-        self._yaml = yaml.load(open(regname, "r").read(), Loader=Loader)
+        # read the yaml; use CSafeLoader for faster parsing
+        with open(regname, "r") as fh:
+            self._yaml = yaml.load(fh.read(), Loader=CSafeLoader)
         if len(self._yaml.keys()) != 1:  # pragma: no cover
             logger.error(f"{regname} must contain on single entry named after the images. ")
             sys.exit(1)
@@ -488,10 +486,7 @@ class Registry:
                         logger.warning(f"software {software.name} has no download entry. please fill asap")
                     self.registry[name_version] = release
                 else:  # pragma: no cover
-                    for kk, vv in self.registry.items():
-                        print("{}: {}".format(kk, vv))
-                        for kkk, vvv in self.registry[kk].items():
-                            print(" - {}:  {}".format(kkk, vvv))
+                    logger.warning(f"Duplicate entry {name_version} found in registry, skipping.")
 
     def _url_discovery(self):
         ext_reg = RemoteRegistry(self.from_url)
@@ -508,9 +503,14 @@ class Registry:
 
         _registry_files = glob.glob(__path__[0] + "/*/registry.yaml")
         data = {}
-        for registry in _registry_files:
-            software = Software(registry)
-            data[software.name] = software._yaml[software.name]
+        for registry_file in _registry_files:
+            with open(registry_file, "r") as fh:
+                yaml_data = yaml.load(fh.read(), Loader=CSafeLoader)
+            if yaml_data and len(yaml_data) == 1:
+                name = list(yaml_data.keys())[0]
+                data[name] = yaml_data[name]
+            else:  # pragma: no cover
+                logger.warning(f"Unexpected format in {registry_file}, skipping.")
 
         self._populate(data)
 
