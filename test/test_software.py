@@ -212,7 +212,7 @@ def test_update_global_registry(tmp_path):
     # Initialise a git repo so that "git add" succeeds
     subprocess.run(["git", "init"], cwd=tmp_path, check=True, capture_output=True)
     subprocess.run(
-        ["git", "config", "user.email", "test@test.com"],
+        ["git", "config", "user.email", "test@example.com"],
         cwd=tmp_path,
         check=True,
         capture_output=True,

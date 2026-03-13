@@ -7,6 +7,7 @@ import subprocess
 from contextlib import redirect_stdout
 
 import mock
+import pytest
 from click.testing import CliRunner
 
 import damona
@@ -285,11 +286,8 @@ def test_get_current_env_name_no_warning(monkeypatch):
 def test_delete_base():
     """Test that deleting the base environment raises SystemExit."""
     env = Environ()
-    try:
+    with pytest.raises(SystemExit):
         env.delete("base")
-        assert False, "Should have raised SystemExit"
-    except SystemExit:
-        assert True
 
 
 def test_delete_nonexistent():
@@ -322,11 +320,8 @@ def test_delete_force():
 def test_activate_invalid_env():
     """Test that activating a non-existent environment raises SystemExit."""
     env = Environ()
-    try:
+    with pytest.raises(SystemExit):
         env.activate("env_that_does_not_exist_xyz_abc")
-        assert False, "Should have raised SystemExit"
-    except SystemExit:
-        assert True
 
 
 def test_activate_already_in_path(monkeypatch):
@@ -380,11 +375,8 @@ def test_activate_unknown_shell(monkeypatch):
     env = Environ()
     with mock.patch("subprocess.check_output", side_effect=Exception("ps not found")):
         monkeypatch.setenv("SHELL", "/bin/sh")
-        try:
+        with pytest.raises(SystemExit):
             env.activate("base")
-            assert False, "Should have raised SystemExit"
-        except SystemExit:
-            assert True
 
 
 def test_deactivate_with_env_name(monkeypatch):
@@ -431,10 +423,8 @@ def test_create_existing_env():
     env_manager = Environ()
     env_manager.create(NAME)
     try:
-        env_manager.create(NAME)
-        assert False, "Should have raised SystemExit"
-    except SystemExit:
-        assert True
+        with pytest.raises(SystemExit):
+            env_manager.create(NAME)
     finally:
         manager = Damona()
         path = manager.environments_path / NAME
@@ -445,11 +435,8 @@ def test_create_existing_env():
 def test_copy_not_implemented():
     """Test that Environ.copy() raises NotImplementedError."""
     env = Environ()
-    try:
+    with pytest.raises(NotImplementedError):
         env.copy()
-        assert False, "Should have raised NotImplementedError"
-    except NotImplementedError:
-        assert True
 
 
 def test_environment_rename():
