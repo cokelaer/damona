@@ -1,13 +1,18 @@
 import builtins
+import io
 import os
+import pathlib
+import shutil
 import subprocess
+from contextlib import redirect_stdout
 
 import mock
+import pytest
 from click.testing import CliRunner
 
 import damona
 from damona import Damona, script
-from damona.environ import Environ, Environment
+from damona.environ import Environ, Environment, Images, YamlEnv
 
 
 def test_no_var(monkeypatch):
@@ -200,3 +205,331 @@ def test_create_bundle(tmpdir, monkeypatch):
     # cleanup
     with mock.patch.object(builtins, "input", lambda _: "y"):
         results = runner.invoke(script.delete, [NAME])
+
+
+def test_environment_contains():
+    """Test the __contains__ method of Environment."""
+    e = Environment("base")
+    # base env has no binaries installed by default
+    assert "nonexistent_binary_xyz" not in e
+
+
+def test_environment_repr():
+    """Test the __repr__ method of Environment."""
+    e = Environment("base")
+    r = repr(e)
+    assert "binaries" in r
+    assert "Mb" in r
+
+
+def test_yaml_env(tmp_path):
+    """Test YamlEnv class parses a YAML environment file correctly."""
+    yaml_content = (
+        "name: testenv\n"
+        "\nimages:\n"
+        "- fastqc_0.11.9.img\n"
+        "\nbinaries:\n"
+        "- fastqc from fastqc:0.11.9\n"
+        "- samtools from samtools_1.16.img\n"
+    )
+    yaml_file = tmp_path / "test_env.yaml"
+    yaml_file.write_text(yaml_content)
+
+    ye = YamlEnv(str(yaml_file))
+    assert ye.name == "testenv"
+    assert "fastqc_0.11.9.img" in ye.images
+    assert len(ye.binaries) == 2
+    assert "fastqc from fastqc:0.11.9" in ye.binaries
+    assert "samtools from samtools_1.16.img" in ye.binaries
+
+
+def test_images():
+    """Test the Images class: len, files property, and get_disk_usage."""
+    imgs = Images()
+
+    n = len(imgs)
+    assert isinstance(n, int)
+    assert n >= 0
+
+    # get_disk_usage in Mb (default)
+    usage_mb = imgs.get_disk_usage()
+    assert isinstance(usage_mb, int)
+    assert usage_mb >= 0
+
+    # get_disk_usage in raw bytes
+    usage_bytes = imgs.get_disk_usage(frmt="bytes")
+    assert isinstance(usage_bytes, int)
+    assert usage_bytes >= 0
+
+    # files property should agree with len
+    files = list(imgs.files)
+    assert len(files) == n
+
+
+def test_get_current_env(monkeypatch):
+    """Test get_current_env() returns a Path when DAMONA_ENV is set."""
+    manager = Damona()
+    expected = str(manager.damona_path / "envs" / "base")
+    monkeypatch.setenv("DAMONA_ENV", expected)
+
+    env_path = Environ.get_current_env()
+    assert str(env_path) == expected
+
+
+def test_get_current_env_name_no_warning(monkeypatch):
+    """Test get_current_env_name(warning=False) returns None when no env active."""
+    monkeypatch.delenv("DAMONA_ENV", raising=False)
+    result = Environ.get_current_env_name(warning=False)
+    assert result is None
+
+
+def test_delete_base():
+    """Test that deleting the base environment raises SystemExit."""
+    env = Environ()
+    with pytest.raises(SystemExit):
+        env.delete("base")
+
+
+def test_delete_nonexistent():
+    """Test deleting a non-existent environment logs an error without raising."""
+    env = Environ()
+    # Should not raise; just logs an error
+    env.delete(".does_not_exist_at_all_xyz")
+
+
+def test_delete_force():
+    """Test deleting a non-empty environment with force=True."""
+    env_manager = Environ()
+    NAME = ".dummy_force_delete_test"
+    env_manager.create(NAME)
+
+    manager = Damona()
+    # Put a file inside to make the directory non-empty
+    bin_file = manager.environments_path / NAME / "bin" / "fakebinary"
+    bin_file.write_text("#!/bin/sh\n")
+
+    try:
+        env_manager.delete(NAME, force=True)
+        assert not (manager.environments_path / NAME).exists()
+    finally:
+        path = manager.environments_path / NAME
+        if path.exists():
+            shutil.rmtree(path)
+
+
+def test_activate_invalid_env():
+    """Test that activating a non-existent environment raises SystemExit."""
+    env = Environ()
+    with pytest.raises(SystemExit):
+        env.activate("env_that_does_not_exist_xyz_abc")
+
+
+def test_activate_already_in_path(monkeypatch):
+    """Test that activating an env already in PATH is a silent no-op."""
+    manager = Damona()
+    env_bin = str(manager.damona_path / "envs" / "base" / "bin")
+    monkeypatch.setenv("PATH", f"{env_bin}:/usr/bin:/bin")
+
+    env = Environ()
+    # Should return without printing or raising
+    env.activate("base")
+
+
+def test_activate_zsh_output(monkeypatch):
+    """Test that zsh activation prints correct export commands."""
+    manager = Damona()
+    monkeypatch.setenv("PATH", "/usr/bin:/bin")
+
+    env = Environ()
+    with mock.patch("subprocess.check_output", return_value="zsh"):
+        f = io.StringIO()
+        with redirect_stdout(f):
+            env.activate("base")
+        output = f.getvalue()
+
+    assert "export DAMONA_ENV=" in output
+    assert "export PATH=" in output
+
+
+def test_activate_bash_output(monkeypatch):
+    """Test that bash activation prints correct export commands."""
+    manager = Damona()
+    monkeypatch.setenv("PATH", "/usr/bin:/bin")
+
+    env = Environ()
+    with mock.patch("subprocess.check_output", return_value="bash"):
+        f = io.StringIO()
+        with redirect_stdout(f):
+            env.activate("base")
+        output = f.getvalue()
+
+    assert "export DAMONA_ENV=" in output
+    assert "export PATH=" in output
+
+
+def test_activate_unknown_shell(monkeypatch):
+    """Test that activating with an unrecognized shell raises SystemExit."""
+    manager = Damona()
+    monkeypatch.setenv("PATH", "/usr/bin:/bin")
+
+    env = Environ()
+    with mock.patch("subprocess.check_output", side_effect=Exception("ps not found")):
+        monkeypatch.setenv("SHELL", "/bin/sh")
+        with pytest.raises(SystemExit):
+            env.activate("base")
+
+
+def test_deactivate_with_env_name(monkeypatch):
+    """Test deactivation when a specific env name is provided."""
+    manager = Damona()
+    env_bin = str(manager.damona_path / "envs" / "base" / "bin")
+    monkeypatch.setenv("PATH", f"{env_bin}:/usr/bin:/bin")
+    monkeypatch.setenv("DAMONA_ENV", str(manager.damona_path / "envs" / "base"))
+
+    env = Environ()
+    with mock.patch("subprocess.check_output", return_value="bash"):
+        f = io.StringIO()
+        with redirect_stdout(f):
+            env.deactivate(env_name="base")
+        output = f.getvalue()
+
+    # Base was the only damona env, so DAMONA_ENV must be unset
+    assert "unset DAMONA_ENV" in output
+
+
+def test_deactivate_remaining_damona_paths(monkeypatch):
+    """Test deactivation when another damona env remains in PATH."""
+    manager = Damona()
+    base_bin = str(manager.damona_path / "envs" / "base" / "bin")
+    # Simulate a second damona env path coming *after* base
+    other_bin = str(manager.damona_path / "envs" / "other_env" / "bin")
+    monkeypatch.setenv("PATH", f"{base_bin}:{other_bin}:/usr/bin")
+
+    env = Environ()
+    with mock.patch("subprocess.check_output", return_value="bash"):
+        f = io.StringIO()
+        with redirect_stdout(f):
+            # Deactivate without name removes the first found damona env (base_bin)
+            env.deactivate()
+        output = f.getvalue()
+
+    # other_bin still present, so DAMONA_ENV is updated to other_env's parent
+    assert "export DAMONA_ENV=" in output
+
+
+def test_create_existing_env():
+    """Test that creating an environment that already exists raises SystemExit."""
+    NAME = ".dummy_create_exists_test"
+    env_manager = Environ()
+    env_manager.create(NAME)
+    try:
+        with pytest.raises(SystemExit):
+            env_manager.create(NAME)
+    finally:
+        manager = Damona()
+        path = manager.environments_path / NAME
+        if path.exists():
+            shutil.rmtree(path)
+
+
+def test_copy_not_implemented():
+    """Test that Environ.copy() raises NotImplementedError."""
+    env = Environ()
+    with pytest.raises(NotImplementedError):
+        env.copy()
+
+
+def test_environment_rename():
+    """Test successful environment rename with force=True."""
+    env_manager = Environ()
+    orig_name = ".rename_test_orig"
+    new_name = ".rename_test_new"
+
+    env_manager.create(orig_name)
+    manager = Damona()
+
+    try:
+        e = Environment(orig_name)
+        e.rename(new_name, force=True)
+
+        assert e.name == new_name
+        assert (manager.environments_path / new_name).exists()
+        assert not (manager.environments_path / orig_name).exists()
+    finally:
+        for name in [orig_name, new_name]:
+            path = manager.environments_path / name
+            if path.exists():
+                shutil.rmtree(path)
+
+
+def test_create_yaml(tmp_path):
+    """Test creating a YAML export of the base environment."""
+    e = Environment("base")
+    yaml_file = str(tmp_path / "test_export.yaml")
+    e.create_yaml(output_name=yaml_file)
+
+    assert pathlib.Path(yaml_file).exists()
+
+    # Verify it can be round-tripped through YamlEnv
+    ye = YamlEnv(yaml_file)
+    assert ye.name == "base"
+
+
+def test_create_yaml_default_name(tmp_path, monkeypatch):
+    """Test create_yaml() uses 'damona_<name>.yaml' as the default filename."""
+    monkeypatch.chdir(tmp_path)
+    e = Environment("base")
+    e.create_yaml()  # no output_name → defaults to damona_base.yaml
+
+    default_file = tmp_path / "damona_base.yaml"
+    assert default_file.exists()
+
+
+def test_get_current_env_name_warning(monkeypatch):
+    """Test get_current_env_name(warning=True) logs a warning and returns None."""
+    monkeypatch.delenv("DAMONA_ENV", raising=False)
+    # Should not raise, just log a warning and return None
+    result = Environ.get_current_env_name(warning=True)
+    assert result is None
+
+
+def test_rename_with_input_prompt(monkeypatch):
+    """Test rename() without force=True triggers an input prompt."""
+    env_manager = Environ()
+    orig_name = ".rename_input_test_orig"
+    new_name = ".rename_input_test_new"
+
+    env_manager.create(orig_name)
+    manager = Damona()
+
+    try:
+        e = Environment(orig_name)
+        # Mock input() to simulate the user pressing Enter
+        with mock.patch.object(builtins, "input", lambda _: ""):
+            e.rename(new_name, force=False)
+
+        assert e.name == new_name
+        assert (manager.environments_path / new_name).exists()
+    finally:
+        for name in [orig_name, new_name]:
+            path = manager.environments_path / name
+            if path.exists():
+                shutil.rmtree(path)
+
+
+def test_deactivate_remaining_paths_fish(monkeypatch):
+    """Test deactivation with remaining damona paths outputs fish syntax."""
+    manager = Damona()
+    base_bin = str(manager.damona_path / "envs" / "base" / "bin")
+    other_bin = str(manager.damona_path / "envs" / "other_env" / "bin")
+    monkeypatch.setenv("PATH", f"{base_bin}:{other_bin}:/usr/bin")
+
+    env = Environ()
+    with mock.patch("subprocess.check_output", return_value="fish"):
+        f = io.StringIO()
+        with redirect_stdout(f):
+            env.deactivate()
+        output = f.getvalue()
+
+    # Fish syntax: set -gx DAMONA_ENV when a damona path remains
+    assert "set -gx DAMONA_ENV" in output
