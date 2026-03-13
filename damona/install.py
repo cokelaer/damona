@@ -26,7 +26,7 @@ from spython.main import Client
 
 from damona import Environ, Registry
 from damona import version as damona_version
-from damona.common import ImageReader, requires_singularity
+from damona.common import ImageReader, get_container_cmd, requires_singularity
 from damona.registry import Software
 from damona.utils import download_with_progress
 
@@ -84,11 +84,11 @@ class ImageInstaller:
             # code is returned. ut if not found at all, a 'executable file not
             # found' message should be returned by bash. Not ideal but will do
             # for now.
-            cmd1 = f"singularity exec {self.input_image.filename} {binary}"
-            cmd2 = f"singularity exec {self.input_image.filename} {binary} -v"
-            cmd3 = f"singularity exec {self.input_image.filename} {binary} --version"
+            cmd1 = f"{get_container_cmd()} exec {self.input_image.filename} {binary}"
+            cmd2 = f"{get_container_cmd()} exec {self.input_image.filename} {binary} -v"
+            cmd3 = f"{get_container_cmd()} exec {self.input_image.filename} {binary} --version"
             # ideally we should use commad but not present on all systems....
-            # cmd = f"singularity exec {self.input_image.filename} command -v {binary}"
+            # cmd = f"{get_container_cmd()} exec {self.input_image.filename} command -v {binary}"
 
             status = subprocess.Popen(cmd3, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             status.wait()
@@ -380,7 +380,7 @@ class RemoteImageInstaller(ImageInstaller):
         if self.from_url:
             # The client does not support external https link other than
             # docker, library, shub.
-            cmd = f"singularity pull --dir {pull_folder} "
+            cmd = f"{get_container_cmd()} pull --dir {pull_folder} "
             if force:
                 cmd += " --force "
             cmd += f"{download_name}"
@@ -583,8 +583,12 @@ class BinaryInstaller:
         for binary in sorted(self.binaries):
             bin_path = pathlib.Path(bin_directory) / binary
 
-            CMD = """singularity -s exec ${{DAMONA_SINGULARITY_OPTIONS}} {} {} ${{1+"$@"}}"""
-            CMD = CMD.format(f"${{DAMONA_PATH}}/images/{self.image.shortname}", binary)
+            CMD = """{container_cmd} -s exec ${{DAMONA_SINGULARITY_OPTIONS}} {} {} ${{1+"$@"}}"""
+            CMD = CMD.format(
+                f"${{DAMONA_PATH}}/images/{self.image.shortname}",
+                binary,
+                container_cmd=get_container_cmd() or "singularity",
+            )
 
             if bin_path.exists() and force is False:
                 name = pathlib.Path(bin_path).name
