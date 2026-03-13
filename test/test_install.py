@@ -5,7 +5,7 @@ import pytest
 from click.testing import CliRunner
 
 from damona import Damona, Environ, script
-from damona.install import LocalImageInstaller
+from damona.install import LocalImageInstaller, RemoteURLInstaller
 
 from . import test_dir
 
@@ -15,6 +15,106 @@ def test_cmd():
 
     c = CMD(["damona", "install"])
     c.__repr__()
+
+
+def test_remote_url_installer_binary_inference():
+    """Test that RemoteURLInstaller correctly infers binary names from URLs."""
+    # Binary name inferred from filename
+    inst = RemoteURLInstaller("https://example.com/fastqc_0.11.9.img")
+    assert inst.binaries == ["fastqc"]
+
+    # Binary name provided via name argument
+    inst2 = RemoteURLInstaller("https://example.com/fastqc_0.11.9.img", name="myfastqc")
+    assert inst2.binaries == ["myfastqc"]
+
+    # Binary names provided via binaries list (overrides name)
+    inst3 = RemoteURLInstaller("https://example.com/fastqc_0.11.9.img", binaries=["fastqc", "fastqc2"])
+    assert inst3.binaries == ["fastqc", "fastqc2"]
+
+    # Version with 'v' prefix
+    inst4 = RemoteURLInstaller("https://example.com/samtools_v1.12.0.img")
+    assert inst4.binaries == ["samtools"]
+
+
+def test_remote_url_installer_invalid_filename():
+    """Test that RemoteURLInstaller exits when binary name cannot be inferred."""
+    with pytest.raises(SystemExit):
+        RemoteURLInstaller("https://example.com/myimage.img")
+
+
+def test_install_direct_url_routing(monkeypatch):
+    """Test that install command routes direct URLs to RemoteURLInstaller."""
+    captured = {}
+
+    class FakeRemoteURLInstaller:
+        def __init__(self, url, name=None, binaries=None, cmd=None):
+            captured["url"] = url
+            captured["name"] = name
+            captured["binaries"] = binaries
+            self.image_installed = True
+
+        def is_valid(self):
+            return True
+
+        def pull_image(self, force=False):
+            pass
+
+        def install_binaries(self, force=False):
+            pass
+
+    monkeypatch.setattr("damona.script.RemoteURLInstaller", FakeRemoteURLInstaller)
+
+    runner = CliRunner()
+    NAME = "damona__testing__install_direct_url"
+    Setup(NAME)
+    manager = Damona()
+    monkeypatch.setenv("DAMONA_ENV", str(manager.damona_path / "envs" / NAME))
+
+    result = runner.invoke(script.install, ["https://example.com/fastqc_0.11.9.img"])
+    assert result.exit_code == 0
+    assert captured.get("url") == "https://example.com/fastqc_0.11.9.img"
+    assert captured.get("name") is None  # No name provided for direct URL
+
+    Teardown(NAME)
+
+
+def test_install_from_url_option_routing(monkeypatch):
+    """Test that --from-url option routes to RemoteURLInstaller with correct name."""
+    captured = {}
+
+    class FakeRemoteURLInstaller:
+        def __init__(self, url, name=None, binaries=None, cmd=None):
+            captured["url"] = url
+            captured["name"] = name
+            captured["binaries"] = binaries
+            self.image_installed = True
+
+        def is_valid(self):
+            return True
+
+        def pull_image(self, force=False):
+            pass
+
+        def install_binaries(self, force=False):
+            pass
+
+    monkeypatch.setattr("damona.script.RemoteURLInstaller", FakeRemoteURLInstaller)
+
+    runner = CliRunner()
+    NAME = "damona__testing__install_from_url"
+    Setup(NAME)
+    manager = Damona()
+    monkeypatch.setenv("DAMONA_ENV", str(manager.damona_path / "envs" / NAME))
+
+    result = runner.invoke(
+        script.install,
+        ["fastqc", "--from-url", "https://example.com/fastqc_0.11.9.img"],
+    )
+    assert result.exit_code == 0
+    assert captured.get("url") == "https://example.com/fastqc_0.11.9.img"
+    assert captured.get("name") == "fastqc"
+
+    Teardown(NAME)
 
 
 def test_ImageInstaller(monkeypatch):
