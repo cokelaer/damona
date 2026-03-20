@@ -1,0 +1,10 @@
+macs3:
+  doi: 10.5281/zenodo.19140701
+  zenodo_id: 19140702
+  binaries: macs3
+  releases:
+    3.0.4:
+      download: https://zenodo.org/record/19140702/files/macs3_3.0.4.img
+      md5sum: 7a411e882daccd6defc3f23f9ff10672
+      doi: 10.5281/zenodo.19140702
+      filesize: 236580864
