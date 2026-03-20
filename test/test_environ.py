@@ -204,7 +204,7 @@ def test_create_bundle(tmpdir, monkeypatch):
 
     # cleanup
     with mock.patch.object(builtins, "input", lambda _: "y"):
-        results = runner.invoke(script.delete, [NAME])
+        results = runner.invoke(script.remove, [NAME])
 
 
 def test_environment_contains():

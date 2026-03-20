@@ -47,7 +47,7 @@ def test_ImageInstaller(monkeypatch):
 def Teardown(NAME):
     runner = CliRunner()
     with mock.patch.object(builtins, "input", lambda _: "y"):
-        results = runner.invoke(script.delete, [NAME])
+        results = runner.invoke(script.remove, [NAME])
         assert results.exit_code == 0
 
 

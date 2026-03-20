@@ -186,7 +186,7 @@ def test_import_bundle(monkeypatch, tmpdir):
 
     # suppress this temporary environment
     with mock.patch.object(builtins, "input", lambda _: "y"):
-        results = runner.invoke(script.delete, [NAME2])
+        results = runner.invoke(script.remove, [NAME2])
         assert results.exit_code == 0
 
     # supress the damona__testing__ temporary environment
@@ -196,7 +196,7 @@ def test_import_bundle(monkeypatch, tmpdir):
 def Teardown(name):
     runner = CliRunner()
     with mock.patch.object(builtins, "input", lambda _: "y"):
-        results = runner.invoke(script.delete, [name])
+        results = runner.invoke(script.remove, [name])
         assert results.exit_code == 0
 
 
@@ -217,7 +217,7 @@ def test_install_remove(monkeypatch):
 
     results = runner.invoke(script.install, ["bwa"])
     assert results.exit_code == 0
-    results = runner.invoke(script.remove, ["bwa"])
+    results = runner.invoke(script.uninstall, ["bwa"])
     assert results.exit_code == 0
 
     Teardown(NAME)
