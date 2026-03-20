@@ -514,8 +514,7 @@ Version   Description
           * Fix shell script to handle DAMONA_EXE variable
 0.5.0     * Major refactoring.
             - Simplification of the registries
-            - New command to build images from local recipes or dockerhub
-              entries.
+            - New command to build images from local recipes or dockerhub entries.
             - Install command can now install local container.
             - check md5 of images to not download/copy again
 0.4.3     * Implement damona activate/deactivate
