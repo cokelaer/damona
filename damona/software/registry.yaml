@@ -1824,6 +1824,21 @@ fastANI:
       doi: 10.5281/zenodo.17594736
       filesize: 251166720
 
+# bedops/registry.yaml
+bedops:
+  doi: 10.5281/zenodo.19140270
+  zenodo_id: 19140271
+  binaries: bam2bed gff2bed-typical starch-megarow bam2bed-float128 gff2starch starch-typical
+bam2bed-megarow gff2starch-float128 starchcat bam2bed-typical gff2starch-megarow starchcat-float128 bam2bed_gnuParallel gff2starch-typical starchcat-megarow bam2bed_gnuParallel-float128 gtf2bed starchcat-typical bam2bed_gnuParallel-megarow gtf2bed-float128 starchcluster_gnuParallel bam2bed_gnuParallel-typical gtf2bed-megarow starchcluster_gnuParallel-float128 bam2bed_sge gtf2bed-typical starchcluster_gnuParallel-megarow bam2bed_sge-float128 gtf2starch starchcluster_gnuParallel-typical bam2bed_sge-megarow gtf2starch-float128 starchcluster_sge bam2bed_sge-typical gtf2starch-megarow starchcluster_sge-float128 bam2bed_slurm gtf2starch-typical starchcluster_sge-megarow bam2bed_slurm-float128 gvf2bed starchcluster_sge-typical bam2bed_slurm-megarow gvf2bed-float128 starchcluster_slurm bam2bed_slurm-typical gvf2bed-megarow starchcluster_slurm-float128 bam2starch gvf2bed-typical starchcluster_slurm-megarow bam2starch-float128 gvf2starch starchcluster_slurm-typical bam2starch-megarow gvf2starch-float128 starchstrip bam2starch-typical gvf2starch-megarow starchstrip-float128 bam2starch_gnuParallel gvf2starch-typical starchstrip-megarow bam2starch_gnuParallel-float128 psl2bed starchstrip-typical bam2starch_gnuParallel-megarow psl2bed-float128 switch-BEDOPS-binary-type bam2starch_gnuParallel-typical psl2bed-megarow unstarch bam2starch_sge psl2bed-typical unstarch-float128 bam2starch_sge-float128 psl2starch unstarch-megarow bam2starch_sge-megarow psl2starch-float128 unstarch-typical bam2starch_sge-typical psl2starch-megarow update-sort-bed-migrate-candidates bam2starch_slurm psl2starch-typical update-sort-bed-migrate-candidates-float128 bam2starch_slurm-float128 rmsk2bed update-sort-bed-migrate-candidates-megarow bam2starch_slurm-megarow rmsk2bed-float128 update-sort-bed-migrate-candidates-typical bam2starch_slurm-typical rmsk2bed-megarow update-sort-bed-slurm bedextract rmsk2bed-typical update-sort-bed-slurm-float128 bedextract-float128 rmsk2starch update-sort-bed-slurm-megarow bedextract-megarow rmsk2starch-float128 update-sort-bed-slurm-typical bedextract-typical rmsk2starch-megarow update-sort-bed-starch-slurm bedmap rmsk2starch-typical update-sort-bed-starch-slurm-float128 bedmap-float128 sam2bed update-sort-bed-starch-slurm-megarow bedmap-megarow sam2bed-float128 update-sort-bed-starch-slurm-typical bedmap-typical sam2bed-megarow vcf2bed bedops sam2bed-typical vcf2bed-float128 bedops-float128 sam2starch vcf2bed-megarow bedops-megarow sam2starch-float128 vcf2bed-typical bedops-typical sam2starch-megarow vcf2starch closest-features sam2starch-typical vcf2starch-float128 closest-features-float128 sort-bed vcf2starch-megarow closest-features-megarow sort-bed-float128 vcf2starch-typical
+closest-features-typical sort-bed-megarow wig2bed convert2bed sort-bed-typical wig2bed-float128 convert2bed-float128 starch wig2bed-megarow convert2bed-megarow starch-diff wig2bed-typical convert2bed-typical starch-diff-float128 wig2starch gff2bed starch-diff-megarow wig2starch-float128 gff2bed-float128 starch-diff-typical wig2starch-megarow gff2bed-megarow starch-float128 wig2starch-typical
+
+  releases:
+  2.4.41:
+  download: https://zenodo.org/record/19140271/files/bedops_2.4.41.img
+  md5sum: 9a9d5cf29c76d1547075935b4cf0af23
+  doi: 10.5281/zenodo.19140271
+  filesize: 60321792
+
 # wig2bed/registry.yaml
 wig2bed:
   doi: 10.5281/zenodo.18895804

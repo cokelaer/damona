@@ -1,0 +1,24 @@
+Bootstrap: docker
+From: debian:bookworm-slim
+
+%post
+    set -e
+    apt-get update
+    apt-get install -y --no-install-recommends wget ca-certificates bzip2
+    wget -qO /tmp/bedops.tar.bz2 \
+        https://github.com/bedops/bedops/releases/download/v2.4.41/bedops_linux_x86_64-v2.4.41.tar.bz2
+    mkdir /tmp/bedops_extract
+    tar -xjf /tmp/bedops.tar.bz2 -C /tmp/bedops_extract/
+    mv /tmp/bedops_extract/bin/* /usr/local/bin/
+    rm -rf /tmp/bedops_extract/
+    rm /tmp/bedops.tar.bz2
+    apt-get purge -y wget bzip2
+    apt-get autoremove -y
+    apt-get clean
+    rm -rf /var/lib/apt/lists/*
+
+%environment
+    export PATH=/usr/local/bin:$PATH
+
+%runscript
+    exec "$@"

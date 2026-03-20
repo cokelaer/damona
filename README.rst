@@ -178,7 +178,7 @@ The full workflow takes under a minute:
 
     # 5. Rename or remove the environment when you're done
     damona rename TEST --new-name prod
-    damona delete prod
+    damona remove prod
 
 For more examples see the `User Guide <https://damona.readthedocs.io>`_.
 
@@ -254,20 +254,25 @@ Commands (Full CLI Reference)
 
 Run ``damona --help`` to see all available commands::
 
-    activate    Activate a damona environment.
-    clean       Remove orphan images and binaries from all environments.
-    create      Create a new environment
-    deactivate  Deactivate the current Damona environment.
-    delete      Remove an environment
-    env         List all environments with some stats.
-    export      Create a bundle of a given environment.
-    info        Print information about a given environment.
-    install     Download and install an image and its binaries.
-    list        List all packages that can be installed
-    remove      Remove binaries or image from an environment.
-    rename      Rename an existing environment
-    search      Search for a container or binary.
-    stats       Get information about Damona images and binaries
+    Environment management:
+      create      Create a new environment
+      remove      Remove an environment and all its binaries.
+      rename      Rename an existing environment.
+      env         List all environments with their size and binary counts.
+      activate    Activate a damona environment.
+      deactivate  Deactivate the current Damona environment.
+
+    Package management:
+      install     Download and install an image and its binaries into the active environment.
+      uninstall   Uninstall a binary or an image from an environment.
+      clean       Find and remove orphaned images and binaries across all environments.
+      export      Export an environment as a YAML file or a tar bundle.
+      info        Show images and binaries installed in an environment.
+
+    Registry:
+      search      Search the registry for a container image or binary.
+      list        List all containers available in the local registry.
+      stats       Show registry statistics and local installation summary.
 
 For command-specific help (e.g. ``install``)::
 
@@ -391,6 +396,14 @@ the command::
 ========= ========================================================================
 Version   Description
 ========= ========================================================================
+0.17.1    * RENAMED: ``delete`` command renamed to ``remove``
+          * RENAMED: ``remove`` command renamed to ``uninstall``
+          * RENAMED: ``--logger`` option renamed to ``--log-level``
+          * RENAMED: ``--remove`` flag in ``clean`` renamed to ``--do-remove``
+          * IMPROVED: CLI commands grouped into Environment management, Package
+            management, and Registry sections
+          * IMPROVED: simplified ORCID parsing in zenodo upload
+          * ADDED: bedops
 0.17.0    * IMPROVED: CLI output now uses rich tables and panels
           * IMPROVED: auto-update shell config files (bash/zsh/fish) on startup
           * FIXED: fish shell activation and PATH propagation
