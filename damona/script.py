@@ -56,6 +56,22 @@ click.rich_click.OPTIONS_TABLE_COLUMN_TYPES = ["required", "opt_short", "opt_lon
 click.rich_click.OPTIONS_TABLE_HELP_SECTIONS = ["help", "deprecated", "envvar", "default", "required", "metavar"]
 click.rich_click.STYLE_ERRORS_SUGGESTION = "magenta italic"
 click.rich_click.SHOW_ARGUMENTS = True
+click.rich_click.COMMAND_GROUPS = {
+    "damona": [
+        {
+            "name": "Environment management",
+            "commands": ["create", "remove", "rename", "env", "activate", "deactivate"],
+        },
+        {
+            "name": "Package management",
+            "commands": ["install", "uninstall", "clean", "export", "info"],
+        },
+        {
+            "name": "Registry",
+            "commands": ["search", "list", "stats"],
+        },
+    ]
+}
 
 # manager = Damona()
 def url_exists(url):
@@ -75,10 +91,10 @@ CONTEXT_SETTINGS = dict(help_option_names=["-h", "--help"])
 
 def common_logger(func):
     @click.option(
-        "--logger",
+        "--log-level",
         default="INFO",
         type=click.Choice(["INFO", "DEBUG", "WARNING", "CRITICAL", "ERROR"]),
-        help="""Set level information to DEBUG, INFO, WARNING, CRITICAL, ERROR. Use e.g., 'damona --level INFO command'""",
+        help="Set the logging level.",
     )
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
@@ -87,7 +103,7 @@ def common_logger(func):
         logger.remove()
         logger.add(
             sys.stderr,
-            level=kwargs.get("logger", "INFO"),
+            level=kwargs.get("log_level", "INFO"),
             format="<green>{time}</green> | <level>{level}</level> | <cyan>{message}</cyan>",
         )
         return func(*args, **kwargs)
@@ -128,13 +144,12 @@ def main():
 
 @main.command()
 @click.argument("environment", required=True, type=click.STRING)
-@click.option("--from-bundle", type=click.STRING, help="a bundle file create with 'damona export --bundle' command")
-@click.option("--from-yaml", type=click.STRING, help="a yaml file create with 'damona export --yaml' command")
+@click.option("--from-bundle", type=click.STRING, help="A bundle file created with 'damona export --bundle'.")
+@click.option("--from-yaml", type=click.STRING, help="A YAML file created with 'damona export --yaml'.")
 @click.option(
     "--force",
     is_flag=True,
-    help="""When creating an environment with --from-bundle, rewrite binaries and
-images even though the environment exists.""",
+    help="When restoring from a bundle or YAML, overwrite existing binaries and images.",
 )
 @common_logger
 def create(**kwargs):
@@ -174,19 +189,30 @@ def create(**kwargs):
 
 @main.command()
 @click.argument("environment", required=True, type=click.STRING)
-@click.option("--force", is_flag=True, help="""When creating an environment with --from-bundle, rewrite binaries and""")
+@click.option("--force", is_flag=True, help="Remove without asking for confirmation.")
 @common_logger
-def delete(**kwargs):
-    """Remove an environment"""
+def remove(**kwargs):
+    """Remove an environment and all its binaries.
+
+    Remove the environment named TEST:
+
+        damona remove TEST
+
+    To remove a package (binary + image) from the active environment, use:
+
+        damona uninstall fastqc
+
+    """
     env = Environ()
     env.delete(kwargs["environment"], force=kwargs["force"])
 
 
 @main.command()
 @click.argument("environment", required=True, type=click.STRING)
-@click.option("--new-name", required=True, type=click.STRING, help="""new name of the environments""")
+@click.option("--new-name", required=True, type=click.STRING, help="New name for the environment.")
+@common_logger
 def rename(**kwargs):
-    """Rename an existing environment"""
+    """Rename an existing environment."""
     env = Environment(kwargs["environment"])
     env.rename(kwargs["new_name"])
 
@@ -195,13 +221,13 @@ def rename(**kwargs):
 @main.command()
 @common_logger
 def env(**kwargs):
-    """List all environemnts with some stats.
+    """List all environments with their size and binary counts.
 
     Print information about current environments:
 
         damona env
 
-
+    The currently active environment is marked with a checkmark.
     """
     envs = Environ()
     console = Console()
@@ -264,62 +290,42 @@ def deactivate(**kwargs):
 # =================================================================== install
 @main.command()
 @click.argument("image", required=True, type=click.STRING)
-@click.option("--force-image", is_flag=True, help="Replaces existing image.")
-@click.option("--force", is_flag=True, help="Replaces images and binaries.")
-@click.option("--force-binaries", is_flag=True, help="Replace binaries.")
-@click.option("--local-registry-only", is_flag=True, default=False, help="if provided, URL is ignored")
+@click.option("--force-image", is_flag=True, help="Overwrite the image if it already exists.")
+@click.option("--force", is_flag=True, help="Overwrite both the image and its binaries.")
+@click.option("--force-binaries", is_flag=True, help="Overwrite binaries even if they already exist.")
+@click.option(
+    "--local-registry-only", is_flag=True, default=False, help="Use the local registry only, ignore the online URL."
+)
 @click.option(
     "--registry",
     default=URL,
-    help="""The online registry file to search for containers. You can set your own registy following this example.""",
+    help="URL of the online registry file. Override to use a custom registry.",
 )
 @click.option(
     "--binaries",
     default=None,
-    help="""If not provided, we assume this is an executable singulatrity and its name is the binary name
-    """,
+    help="Comma-separated list of binary names to install. Defaults to the image name.",
 )
 @common_logger
 def install(**kwargs):
-    """Download and install an image and its binaries.
+    """Download and install an image and its binaries into the active environment.
 
-    An image has a name and a version and can be installed as::
-
-        damona install NAME:version
-
-    If the version is omitted, the latest version is installed. Therefore, the
-    following two commands are equivalent if 0.11.9 is the latest version available::
+    Install a registered image by name, optionally specifying a version:
 
         damona install fastqc
         damona install fastqc:0.11.9
 
-    You may also install a local image. In such case, you must name your
-    image with a version (e.g. fastqc_0.11.9.img). We assume that name of
-    the image is the binary name, however, binaries can be set manually::
+    If the version is omitted, the latest available version is installed.
 
-        damona install fastqc_0.4.2.img
-        damona install test_0.4.2.img --binary fastqc
+    You may also install a local image file. By convention, image filenames must
+    follow the pattern NAME_[v]x.y.z[_info].img (extension can be .img or .sif).
+    The binary name defaults to the image name, but can be overridden:
 
-    By convention, images must follow the pattern NAME_[v]x.y.z[_info].img
-    where the [v] character is optional and the [_info] is an optional _
-    character followed by any text. Finally, the extension can be .img or .sif
+        damona install fastqc_0.11.9.img
+        damona install tool_0.4.2.img --binaries fastqc,tool2
 
-    Images are installed in the ~/.config/damona/images directory. It is the
-    DAMONA_PATH environment variable. Therefore, you can redefine this variable
-    to install images elsewhere.
-
-    You may have images online on a website. To install such images, use
-    the --from-url (see developer guide for details). The binary will be named
-    after the name provided. For instance, this command download the image
-    and creates a binary called 'fastqc'. ::
-
-        damona install fastqc --from-url https://biomics.pasteur.fr/salsa/damona/fastqc_0.11.8.img
-
-    Or wish to use an existing docker file::
-
-        damona install biocontainers/hisat2:v2.0.5-1-deb
-
-    Note (June 2023) biocontainers do not work anymore...
+    Images are stored in ~/.config/damona/images/ (or the directory set by
+    the DAMONA_PATH environment variable).
 
     """
     logger.debug(kwargs)
@@ -383,37 +389,26 @@ def install(**kwargs):
             sys.exit(1)
 
 
-# =================================================================== remove
+# =================================================================== uninstall
 @main.command()
 @click.argument("name", required=True, type=click.STRING)
-@click.option("--environment", type=click.STRING, default=None)
+@click.option(
+    "--environment", type=click.STRING, default=None, help="Target environment. Defaults to the currently active one."
+)
 # @click.option("--force", is_flag=True, help="force the removal of binaries or images")
 @common_logger
-def remove(**kwargs):
-    """Remove binaries or image from an environment.
+def uninstall(**kwargs):
+    """Uninstall a binary or an image from an environment.
 
-    You can remove a binary from an environment given its path. It will not be removed
-    if used by an executable in an environment.::
+    To uninstall an image (identified by the .img extension), pass its filename:
 
-        damona remove /home/cokelaer/.config/damona/images/fastqc_0.11.8.img
+        damona uninstall fastqc_0.11.8.img
 
-    if you have the name of the image, it works as well::
+    To uninstall a binary from the active environment (and the image if it becomes orphaned):
 
-        damona remove fastqc_0.11.8.img
+        damona uninstall fastqc
 
-    You must give the .img extension in both cases otherwise it is considered
-    to be a binary that you want to remove.
-
-    If you suppress a binary like here::
-
-        damona remove fastqc
-
-    it removes the binary from the activate environment only. Then, if the image is now an
-    orphan, it is also removed.
-
-
-    You can also remove an image (and its binaries) from an environment. Note, however,
-    that the image is not deleted if used in other environments.
+    An image is only deleted from disk when it is no longer referenced by any environment.
     """
     # First, let us figure out the current or user-defined environment
     envs = Environ()
@@ -469,17 +464,24 @@ def remove(**kwargs):
 
 # =================================================================== clean
 @main.command()
-@click.option("--remove", is_flag=True, help="remove the binary and image orphans in all environments ")
+@click.option(
+    "--do-remove", is_flag=True, help="Actually delete the orphaned binaries and images (dry-run by default)."
+)
 @common_logger
 def clean(**kwargs):
-    """Remove orphan images and binaries from all environments.
+    """Find and remove orphaned images and binaries across all environments.
 
-    This command finds images that have no associated binaries in any environment.
-    This may happen with prior version of a given binary.
+    An orphaned binary points to a missing image; an orphaned image has no
+    binary referencing it in any environment. This can happen after upgrades.
 
-    Note that if you want to remove an environmnt, just delete it or use::
+    By default this is a dry run — use --do-remove to actually delete:
 
-        conda env --delete NAME
+        damona clean
+        damona clean --do-remove
+
+    To remove an entire environment, use:
+
+        damona remove NAME
 
     """
     logger.debug(kwargs)
@@ -493,12 +495,12 @@ def clean(**kwargs):
         logger.info("No binary orphan found")
     else:
         logger.info(f"Found {len(orphans)} binary orphans.")
-        if kwargs["remove"]:
+        if kwargs["do_remove"]:
             for x in orphans:
                 os.remove(os.path.expanduser(x))
                 logger.info(f"Removed {x}")
         else:
-            logger.warning("Please use --remove to confirm that you want to remove the orphans")
+            logger.warning("Please use --do-remove to confirm that you want to remove the orphans")
 
     # Second, we find images that have no more binaries
     orphans = dmn.find_orphan_images()
@@ -507,62 +509,53 @@ def clean(**kwargs):
     else:
         logger.info(f"Found {len(orphans)} image orphans.")
 
-        if kwargs["remove"]:  # pragma: no cover
+        if kwargs["do_remove"]:  # pragma: no cover
             for x in orphans:
                 os.remove(os.path.expanduser(x))
                 logger.info(f"Removed {x}")
         else:
-            logger.warning("Please use --remove to confirm that you want to remove the orphans")
+            logger.warning("Please use --do-remove to confirm that you want to remove the orphans")
 
 
 # =================================================================== search
 @main.command()
 @click.argument("pattern", required=True, type=click.STRING)
-@click.option("--images-only", is_flag=True, default=False, help="Show images only")
-@click.option("--include-biocontainers", is_flag=True, default=False, help="include also biocontainers hits")
-@click.option("--local-registry-only", is_flag=True, default=False, help="if provided, URL is ignored")
-@click.option("--binaries-only", is_flag=True, default=False, help="Show binaries only")
+@click.option("--images-only", is_flag=True, default=False, help="Show matching images only, not binaries.")
+@click.option("--include-biocontainers", is_flag=True, default=False, help="Also search the BioContainers registry.")
+@click.option(
+    "--local-registry-only", is_flag=True, default=False, help="Use the local registry only, ignore the online URL."
+)
+@click.option("--binaries-only", is_flag=True, default=False, help="Show matching binaries only, not images.")
 @click.option(
     "--registry",
     default=URL,
     show_default=True,
-    help="""The online registry file to search for containers. You can set your own registy following this example.""",
+    help="URL of the online registry file. Override to use a custom registry.",
 )
 @common_logger
 def search(**kwargs):
-    """Search for a container or binary.
+    """Search the registry for a container image or binary.
 
-    By default, this command introspect the official Damona registry (based on registry files)::
+    Search by name in the official Damona registry:
 
         damona search fastqc
 
-    If you want to list all software and their versions, just type::
+    Use `"*"` to list all available software and versions:
 
         damona search "*"
 
-    With fish shells, use::
+    On fish shells, quote the wildcard differently:
 
         damona search '"*"'
 
-    Damona searches within the official github directory so that you are
-    always up-to-date.
-
-    You may also define your own registry online. To do so, edit the
-    ~/.config/damona/damona.cfg file add add a key/value e.g.
+    You can define a custom registry in ~/.config/damona/damona.cfg:
 
         [urls]
-        alias=https://biomics.pasteur.fr/salsa/damona/registry.txt
+        alias=https://example.com/damona/registry.yaml
 
-    to make it easier::
-
-        damona search fastqc --url alias
-
-    Although not recommended (not curated by Damona), you can also
-    install any container available on biocontainer. To do so, you first
-    need to know the name and version and then:
+    Then pass it via --registry or its alias. To also search BioContainers:
 
         damona search fastqc --include-biocontainers
-
 
     """
     url = kwargs.get("registry")
@@ -581,6 +574,7 @@ def search(**kwargs):
 
     console = Console()
     recommended = None
+    recommended_url = None
 
     if not kwargs["binaries_only"]:
         modules = registry.get_list(pattern=pattern)
@@ -604,11 +598,13 @@ def search(**kwargs):
             table.add_row(mod, size_str, dl_url)
             if not recommended:
                 recommended = mod
+                recommended_url = dl_url
             else:
                 recommended_version = recommended.split(":")[1]
                 try:
                     if packaging.version.parse(version) > packaging.version.parse(recommended_version):
                         recommended = mod
+                        recommended_url = dl_url
                 except packaging.version.InvalidVersion:
                     pass
 
@@ -655,9 +651,12 @@ def search(**kwargs):
                 console.print(f" - {name}")
 
     if recommended:
+        content = f"[bold green]damona install {recommended}[/bold green]"
+        if recommended_url:
+            content += f"\n[dim italic]For your information, url is {recommended_url}[/dim italic]"
         console.print(
             Panel(
-                f"[bold green]damona install {recommended}[/bold green]",
+                content,
                 title="ℹ️  Recommended installation (latest version and dedicated container)",
                 border_style="green",
             )
@@ -669,14 +668,11 @@ def search(**kwargs):
 @click.argument("environment", required=True, type=click.STRING)
 @common_logger
 def info(**kwargs):
-    """Print information about a given environment.
+    """Show images and binaries installed in an environment.
 
-    The default environment is called 'base'.::
+    damona info base
+    damona info myenv
 
-        damona info base
-        damona info test1
-
-    Images abd binaries available are shown
     """
     logger.debug(kwargs)
     envname = kwargs["environment"]
@@ -708,29 +704,24 @@ def info(**kwargs):
 # ============================================================  export
 @main.command()
 @click.argument("environment", required=True, type=click.STRING)
-@click.option("--yaml", help="name of output file")
-@click.option("--bundle", default=None, help="name of output file")
+@click.option("--yaml", help="Output YAML file path.")
+@click.option("--bundle", default=None, help="Output tar bundle file path.")
 @common_logger
 def export(**kwargs):
-    """Create a bundle of a given environment.
+    """Export an environment as a YAML file or a tar bundle.
 
-    the following command copies all binaries from an environment and their
-    associated images into a tar ball file named after the
-    environment.
+    A YAML file records the image and binary names (lightweight, no data):
 
+        damona export TEST --yaml test_env.yaml
 
-        damona export TEST --yaml   test_env.yaml
+    A tar bundle copies the actual image files (portable, larger):
+
         damona export TEST --bundle test_bundle.tar
 
-    We do not compress the tar file. The images are already compressed.
+    The exported file can be used to recreate the environment:
 
-    This create a bundle named damona_test1.tar. You can then create a new
-    environment starting from this bundle:
-
-
-        damona env --create TEST1 --from-bundle test_bundle.tar
-        damona env --create TEST1 --from-yaml   test_env.yaml
-
+        damona create TEST1 --from-yaml   test_env.yaml
+        damona create TEST1 --from-bundle test_bundle.tar
 
     """
     from damona import Environment
@@ -748,30 +739,32 @@ def export(**kwargs):
         bundle_file = kwargs["bundle"]
         output = env.create_bundle(output_name=kwargs["bundle"])
         logger.info(
-            f"Use this command to create a new environment: \n\n\tdamona create test1 --from-bundle {bundle_file}"
+            f"Use this command to recreate the environment: \n\n\tdamona create NEW_NAME --from-bundle {bundle_file}"
         )
     elif kwargs["yaml"]:
         yaml_file = kwargs["yaml"]
         env.create_yaml(output_name=yaml_file)
-        logger.info(f"Use this command to create a new environment: \n\n\tdamona create test1 --from-yaml {yaml_file}")
+        logger.info(
+            f"Use this command to recreate the environment: \n\n\tdamona create NEW_NAME --from-yaml {yaml_file}"
+        )
+    else:
+        raise click.UsageError("Please specify --yaml or --bundle. See 'damona export --help'.")
 
 
 # ============================================================  stats
 
 
 @main.command()
-@click.option("--include-biocontainers", is_flag=True, help="include also biocontainers (experimental)")
-@click.option("--include-downloads", is_flag=True, help="include downloads")
+@click.option("--include-biocontainers", is_flag=True, help="Also count BioContainers entries (experimental).")
+@click.option("--include-downloads", is_flag=True, help="Fetch and show download counts from Zenodo (slow).")
 @common_logger
 def stats(**kwargs):
-    """Get information about Damona images and binaries
+    """Show registry statistics and local installation summary.
 
-    Just type::
+    Prints the number of containers, versions, and unique binaries in the
+    registry, plus how many images are installed locally and their disk usage:
 
         damona stats
-
-    This will print the actual status of Damona with number of binaries/images.
-    This will also give local information
 
     """
     import contextlib
@@ -833,7 +826,7 @@ def stats(**kwargs):
 @main.command()
 @common_logger
 def list(**kwargs):
-    """List all packages that can be installed"""
+    """List all containers available in the local registry."""
     r = Registry()
     console = Console()
     table = Table(show_header=True, header_style="bold cyan", box=None, pad_edge=False)
@@ -856,25 +849,23 @@ def list(**kwargs):
     default=None,
     help="""A valid zenodo (or sandbox zenodo) token (see damona zenodo --help for details).""",
 )
-@click.option("--mode", default="sandbox.zenodo", help="mode can be either 'zenodo' or 'sandbox.zenodo'")
 @click.option(
-    "--no-check",
-    default=False,
-    help="Damona is driven by the Sequana project. Presence of bash and python are usually required by Sequana pipelines (Snakemake) so we make them compulsary. If developers do not need them, the --no-check option may be used. ",
+    "--mode", default="sandbox.zenodo", help="Upload target: 'zenodo' for production, 'sandbox.zenodo' for testing."
+)
+@click.option(
+    "--no-check", default=False, is_flag=True, help="Skip the python/bash availability check inside the container."
 )
 @common_logger
 def upload(**kwargs):  # pragma: no cover
-    """Upload a singularity file to Zenodo. FOR DEVELOPERS ONLY
+    """Upload a Singularity image to Zenodo. FOR DEVELOPERS ONLY.
 
-    This command is for developers of the DAMONA project only.
-
-    The sandbox.zenodo is a sandbox where you can try to upload a new singularity file:
+    Test the upload on the Zenodo sandbox first:
 
         damona upload file_1.0.0.img --mode sandbox.zenodo
 
-    Once done and happy with the results, you can upload to Zenodo itself once and for all:
+    Once satisfied, publish to production Zenodo:
 
-        damona upload file_2.0.0.img --mode sandbox.zenodo
+        damona upload file_1.0.0.img --mode zenodo
 
     If no registry.yaml is found in the local directory, it is created.
     Otherwise, it is updated. The changes are also printed on the stdout.
@@ -908,9 +899,7 @@ def upload(**kwargs):  # pragma: no cover
     filename = kwargs["filename"]
 
     # check that python and bash are available in the container.
-    status = subprocess.run(
-        f"{get_container_cmd()} exec {filename} python --version".split(), stdout=subprocess.PIPE
-    )
+    status = subprocess.run(f"{get_container_cmd()} exec {filename} python --version".split(), stdout=subprocess.PIPE)
     if status.returncode:
         click.echo("Damona Warning: could not find **python** command in the container")
         proceed = click.prompt("Do you want to proceed ?")
@@ -920,9 +909,7 @@ def upload(**kwargs):  # pragma: no cover
             click.echo("Exiting...")
             sys.exit(1)
 
-    status = subprocess.run(
-        f"{get_container_cmd()} exec {filename} bash --version".split(), stdout=subprocess.PIPE
-    )
+    status = subprocess.run(f"{get_container_cmd()} exec {filename} bash --version".split(), stdout=subprocess.PIPE)
     if status.returncode:
         click.echo("Damona ERROR: could not find **bash** command in the container", err=True)
         sys.exit(1)
@@ -936,41 +923,32 @@ def upload(**kwargs):  # pragma: no cover
 # =================================================================== build
 @main.command(hidden=True)
 @click.argument("filename", required=True, type=click.STRING)
-@click.option("--destination", default=None, help="Not implemented yet")
-@click.option("--force", is_flag=True, help="add --force option")
+@click.option(
+    "--destination",
+    default=None,
+    help="Output image filename (required when the source has no version, e.g. docker:// URLs).",
+)
+@click.option("--force", is_flag=True, help="Overwrite the output image if it already exists.")
 @common_logger
 def build(**kwargs):  # pragma: no cover
-    """Build a container from dockerhub, singularity file or damona recipes.
+    """Build a Singularity image from a local recipe, a Damona recipe, or a Docker image.
 
-    If you do not wish to build images yourself, you can download existing
-    images. See the "damona install command".
-
-    You can build a singularity image from a local singularity file. Note that
-    your Singulary recipes must follow the naming convention
-    Singularity.NAME_x,y,z
+    From a local Singularity recipe (filename must follow Singularity.NAME_x.y.z):
 
     \b
-        # a local recipes (recipes must have a version)
-        build Singularity.salmon_1.3.0
+        damona build Singularity.salmon_1.3.0
 
-    You may build an image from a singularity recipes to be found in Damona
-    itself. In such case, the name and version are enough. Siuch recipes can be
-    listed using "damona list"
+    From a Damona-registered recipe (listed by 'damona list'):
 
         damona build salmon:1.3.0
 
-    You may also build image from a docker image to be found on docker hub:
+    From a Docker Hub image:
 
         damona build docker://biocontainers/bowtie2:v2.4.1_cv1
 
-    If no version is added, you need to add one using --destination. This will fail:
-
-        damona build docker://kapeel/hisat2
-
-    so you need to informa damona about the version:
+    When the source URL carries no version, provide the output name explicitly:
 
         damona build docker://kapeel/hisat2 --destination hisat2_v2.0.0.img
-
 
     """
     logger.debug(kwargs)
