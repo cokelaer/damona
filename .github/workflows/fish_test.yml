@@ -42,7 +42,6 @@ jobs:
           echo "$RUNNER_OS not supported"
           exit 1
         fi
-      retries: 3
       timeout-minutes: 5
 
 
