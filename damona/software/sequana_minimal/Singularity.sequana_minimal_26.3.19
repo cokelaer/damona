@@ -1,0 +1,64 @@
+Bootstrap: docker
+From: mambaorg/micromamba:latest
+
+%labels
+    Author thomas cokelaer
+
+%post
+
+    export DEBIAN_FRONTEND=noninteractive
+    apt-get update --fix-missing
+    apt-get install -y graphviz bash
+
+    # export the PATH here so that pip is found later on
+    export PATH=$PATH:/opt/conda/envs/main/bin/
+    export LANG=C   # prevents perl from raising warnings
+
+    # an alias
+    export OPTS=" -q -c conda-forge -c bioconda -n main -y "
+
+    # micromamba
+    micromamba create -y -n main
+    export PATH=$PATH:/usr/local/micromamba/bin
+
+    micromamba install $OPTS python="3.10"
+
+    # compression tools
+    micromamba install $OPTS pigz pbzip2 dsrc gzip
+
+    # alignment and variant calling tools
+    micromamba install $OPTS samtools bcftools bamtools bedtools bowtie bowtie2 bwa
+    micromamba install $OPTS freebayes sambamba minimap2 STAR
+
+    # tabix and other utilities
+    micromamba install $OPTS tabix
+
+    # write PERL5LIB into the container environment so bowtie2 (a Perl script)
+    # can find its modules (e.g. Sys::Hostname) at runtime.
+    # Use conda's own perl (not system perl) to discover the correct lib paths.
+    PERL5LIB_PATH=$(/opt/conda/envs/main/bin/perl -e 'print join(":", grep { -d $_ } @INC)')
+    echo "export PERL5LIB=${PERL5LIB_PATH}" >> $SINGULARITY_ENVIRONMENT
+
+    # cleanup
+    micromamba clean --packages -y
+    micromamba clean --all -y
+    rm -rf /opt/conda/pkgs
+    rm -rf /opt/conda/envs/main/share/doc
+    rm -rf /opt/conda/envs/main/share/man
+    rm -rf /opt/conda/envs/main/lib/python3.10/test
+    rm -rf /opt/conda/envs/main/lib/python3.10/ensurepip
+    find /opt/conda/envs/main -name "*.pyc" -delete
+    find /opt/conda/envs/main -name "__pycache__" -type d -exec rm -rf {} +
+    find /opt/conda/envs/main -name "*.a" -delete
+    find /opt/conda/envs/main -path "*/share/doc" -type d -exec rm -rf {} +
+    find /opt/conda/envs/main -path "*/share/info" -type d -exec rm -rf {} +
+    find /opt/conda/envs/main -path "*/tests" -type d -exec rm -rf {} +
+    find /opt/conda/envs/main -path "*/test" -type d -exec rm -rf {} +
+    rm -rf /var/lib/apt/lists/*
+
+%environment
+    export PATH=/opt/conda/envs/main/bin/:$PATH
+    export LANG=C
+
+%runscript
+    PYTHONNOUSERSITE=1 exec ${1+"$@"}

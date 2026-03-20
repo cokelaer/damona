@@ -1082,6 +1082,11 @@ sequana_minimal:
       md5sum: 16446c37ef2e6fdcbef9402b49a7a663
       doi: 10.5281/zenodo.8037162
       filesize: 331116544
+    26.3.19:
+      download: https://zenodo.org/record/19127803/files/sequana_minimal_26.3.19.img
+      md5sum: 84b1437ac190714da3dbdc96e8974741
+      doi: 10.5281/zenodo.19127803
+      filesize: 340459520
 
 # sequana_ribofinder/registry.yaml
 sequana_ribofinder:

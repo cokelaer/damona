@@ -9,6 +9,7 @@
   - **DOI:** [10.5281/zenodo.8037162](https://doi.org/10.5281/zenodo.8037162)
   - **Size:** 315.78 MB
   - **Binaries:** 0 available
+  - **ISSUES: bowtie2 does not work
 
 ## Binaries (46 total)
 
