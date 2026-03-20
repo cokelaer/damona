@@ -81,10 +81,10 @@ def test_damona_create_and_install(monkeypatch):
     monkeypatch.setenv("DAMONA_ENV", str(manager.damona_path / "envs" / NAME))
 
     runner = CliRunner()
-    results = runner.invoke(script.install, ["bwa"])
+    results = runner.invoke(script.install, ["bwa", "--local-registry-only"])
     assert results.exit_code == 0
 
-    results = runner.invoke(script.install, ["bwa", "--force"])
+    results = runner.invoke(script.install, ["bwa", "--force", "--local-registry-only"])
     assert results.exit_code == 0
 
     Teardown(NAME)
@@ -124,13 +124,13 @@ def test_search():
     results = runner.invoke(script.search, [])
     assert results.exit_code == 2
 
-    results = runner.invoke(script.search, ["*"])
+    results = runner.invoke(script.search, ["*", "--local-registry-only"])
     assert results.exit_code == 0
 
-    results = runner.invoke(script.search, ["fastqc"])
+    results = runner.invoke(script.search, ["fastqc", "--local-registry-only"])
     assert results.exit_code == 0
 
-    results = runner.invoke(script.search, ["fastqc", "--binaries-only"])
+    results = runner.invoke(script.search, ["fastqc", "--binaries-only", "--local-registry-only"])
     assert results.exit_code == 0
 
     results = runner.invoke(script.search, ["fastqc", "--registry", "damona"])
@@ -215,7 +215,7 @@ def test_install_remove(monkeypatch):
     manager = Damona()
     monkeypatch.setenv("DAMONA_ENV", str(manager.damona_path / "envs" / NAME))
 
-    results = runner.invoke(script.install, ["bwa"])
+    results = runner.invoke(script.install, ["bwa", "--local-registry-only"])
     assert results.exit_code == 0
     results = runner.invoke(script.uninstall, ["bwa"])
     assert results.exit_code == 0
