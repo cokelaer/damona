@@ -119,6 +119,7 @@ class Zenodo:  # pragma: no cover
             self.token = token
 
         # Do we have an orcid (optional)
+        self.orcid = None
         if orcid is None:
             try:
                 self.orcid = cfg.config.get(f"{mode}", "orcid")
@@ -127,6 +128,16 @@ class Zenodo:  # pragma: no cover
                 pass
         else:
             self.orcid = orcid
+
+        if self.orcid:
+            self.orcid = (
+                self.orcid.replace("https://orcid.org/", "").replace("http://orcid.org/", "").strip("/").strip()
+            )
+            import re
+
+            if not re.fullmatch(r"\d{4}-\d{4}-\d{4}-\d{3}[\dX]", self.orcid):
+                logger.error(f"ORCID '{self.orcid}' does not match the expected format XXXX-XXXX-XXXX-XXXX")
+                sys.exit(1)
 
         # Do we have a name ?
         if author is None:
