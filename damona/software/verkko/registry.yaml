@@ -1,0 +1,10 @@
+verkko:
+  doi: 10.5281/zenodo.19150107
+  zenodo_id: 19150108
+  binaries: verkho
+  releases:
+    2.3.2:
+      download: https://zenodo.org/record/19150108/files/verkko_2.3.2.img
+      md5sum: fcef196b61a4b8847ba3fa8aff05e215
+      doi: 10.5281/zenodo.19150108
+      filesize: 495968256

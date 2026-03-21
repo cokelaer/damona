@@ -1872,3 +1872,27 @@ macs3:
       doi: 10.5281/zenodo.19140702
       filesize: 236580864
 
+# sniffles/registry.yaml
+sniffles:
+  doi: 10.5281/zenodo.19149686
+  zenodo_id: 19149687
+  binaries: sniffles
+  releases:
+    2.7.3:
+      download: https://zenodo.org/record/19149687/files/sniffles_2.7.3.img
+      md5sum: 66e971a89e1085c7a59ccf50f0d946d5
+      doi: 10.5281/zenodo.19149687
+      filesize: 208121856
+
+# verkko/registry.yaml
+verkko:
+  doi: 10.5281/zenodo.19150107
+  zenodo_id: 19150108
+  binaries: verkho
+  releases:
+    2.3.2:
+      download: https://zenodo.org/record/19150108/files/verkko_2.3.2.img
+      md5sum: fcef196b61a4b8847ba3fa8aff05e215
+      doi: 10.5281/zenodo.19150108
+      filesize: 495968256
+
