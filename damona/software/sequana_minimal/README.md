@@ -9,7 +9,13 @@
   - **DOI:** [10.5281/zenodo.8037162](https://doi.org/10.5281/zenodo.8037162)
   - **Size:** 315.78 MB
   - **Binaries:** 0 available
-  - **ISSUES: bowtie2 does not work
+
+- **Version 26.3.19**
+  - [Download](https://zenodo.org/record/19127803/files/sequana_minimal_26.3.19.img)
+  - **MD5:** `84b1437ac190714da3dbdc96e8974741`
+  - **DOI:** [10.5281/zenodo.19127803](https://doi.org/10.5281/zenodo.19127803)
+  - **Size:** 324.69 MB
+  - **Binaries:** 0 available
 
 ## Binaries (46 total)
 

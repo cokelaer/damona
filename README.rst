@@ -396,6 +396,8 @@ the command::
 ========= ========================================================================
 Version   Description
 ========= ========================================================================
+0.17.2    * ADDED sniffles, macs3, verkho
+          * IMPROVED: new damona command for developers: build and check
 0.17.1    * RENAMED: ``delete`` command renamed to ``remove``
           * RENAMED: ``remove`` command renamed to ``uninstall``
           * RENAMED: ``--logger`` option renamed to ``--log-level``

@@ -17,3 +17,8 @@ micromamba:
       md5sum: 8c55d9dd9e3bf1d0feb4ba870c9f72a3
       doi: 10.5281/zenodo.14945238
       filesize: 35102720
+    2.5.0:
+      download: NA
+      md5sum: NA
+      doi: NA
+      filesize: NA

@@ -70,6 +70,10 @@ click.rich_click.COMMAND_GROUPS = {
             "name": "Registry",
             "commands": ["search", "list", "stats"],
         },
+        {
+            "name": "Developer tools",
+            "commands": ["check", "build"],
+        },
     ]
 }
 
@@ -920,8 +924,102 @@ def upload(**kwargs):  # pragma: no cover
     z._upload(filename)
 
 
+# =================================================================== check
+@main.command()
+@click.argument("image", type=click.Path(exists=True))
+@click.option(
+    "--binaries",
+    default=None,
+    help="Comma-separated list of binaries to check. Defaults to those listed in the local registry.",
+)
+@common_logger
+def check(**kwargs):
+    """Check that all binaries in a built image are functional.
+
+    Given a local Singularity image, run each registered binary inside the
+    container and report whether it is found and executable.  Useful after
+    building a new image to catch missing or broken tools before uploading.
+
+    Check all binaries declared in the registry for fastqc:
+
+        damona check ~/.config/damona/images/fastqc_0.11.9.img
+
+    Override the binary list manually:
+
+        damona check fastqc_0.11.9.img --binaries fastqc
+
+    Exit code is 0 if all binaries pass, 1 if any fail.
+    """
+    from damona.common import get_container_cmd
+    from damona.registry import Registry
+
+    image = pathlib.Path(kwargs["image"]).resolve()
+    console = Console()
+
+    # Determine binary list
+    if kwargs["binaries"]:
+        binaries = [b.strip() for b in kwargs["binaries"].split(",")]
+    else:
+        # Try to infer from the local registry using the image filename
+        reader = ImageReader(image)
+        name = reader.guessed_executable
+        version = reader.version
+        reg = Registry(from_url=None)
+        key = f"{name}:{version}"
+        if key in reg.registry:
+            binaries = reg.registry[key].binaries
+        else:
+            logger.critical(f"Could not find '{key}' in the local registry. Use --binaries to specify them explicitly.")
+            raise SystemExit(1)
+
+    container_cmd = get_container_cmd()
+    results = []
+
+    for binary in binaries:
+        found = False
+        version_str = ""
+
+        for args in ["--version", "-v", ""]:
+            cmd = f"{container_cmd} exec {image} {binary} {args}".strip()
+            proc = subprocess.run(cmd, shell=True, capture_output=True)
+            stdout = proc.stdout.decode(errors="replace").strip()
+            stderr = proc.stderr.decode(errors="replace").strip()
+            output = stdout or stderr
+
+            if proc.returncode == 0:
+                found = True
+                version_str = output.splitlines()[0][:60] if output else ""
+                break
+            elif "executable file not found" in stderr or "not found" in stderr:
+                break
+            else:
+                # Non-zero exit but binary ran (e.g. printed usage to stderr)
+                found = True
+                version_str = output.splitlines()[0][:60] if output else ""
+                break
+
+        results.append((binary, found, version_str))
+
+    table = Table(title=f"Binary check: {image.name}", show_lines=False)
+    table.add_column("Binary", style="cyan", no_wrap=True)
+    table.add_column("Status", justify="center")
+    table.add_column("Output", style="dim")
+
+    all_ok = True
+    for binary, ok, version_str in results:
+        status = Text("PASS", style="bold green") if ok else Text("FAIL", style="bold red")
+        table.add_row(binary, status, version_str)
+        if not ok:
+            all_ok = False
+
+    console.print(table)
+
+    if not all_ok:
+        raise SystemExit(1)
+
+
 # =================================================================== build
-@main.command(hidden=True)
+@main.command()
 @click.argument("filename", required=True, type=click.STRING)
 @click.option(
     "--destination",
