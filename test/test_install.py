@@ -17,6 +17,37 @@ def test_cmd():
     c.__repr__()
 
 
+def test_output_name_transformation():
+    """Test that docker:// and oras:// URLs produce valid output filenames."""
+    import re
+
+    valid_pattern = re.compile(r".+_(v|)\d+\.\d+\.\d+(.+|)\.(img|sif)")
+
+    # docker:// with version tag (no 'v' prefix) - GHCR style
+    download_name = "docker://ghcr.io/cokelaer/fastqc:0.11.8"
+    output_name = download_name.split("/")[-1]
+    output_name += ".img"
+    output_name = output_name.replace(":", "_")
+    assert output_name == "fastqc_0.11.8.img"
+    assert valid_pattern.match(output_name)
+
+    # docker:// with version tag with 'v' prefix - biocontainers style
+    download_name = "docker://quay.io/biocontainers/bowtie2:v2.4.1_cv1"
+    output_name = download_name.split("/")[-1]
+    output_name += ".img"
+    output_name = output_name.replace(":", "_")
+    assert output_name == "bowtie2_v2.4.1_cv1.img"
+    assert valid_pattern.match(output_name)
+
+    # oras:// with version tag - GHCR SIF artifact style
+    download_name = "oras://ghcr.io/cokelaer/fastqc:0.11.8"
+    output_name = download_name.split("/")[-1]
+    output_name += ".img"
+    output_name = output_name.replace(":", "_")
+    assert output_name == "fastqc_0.11.8.img"
+    assert valid_pattern.match(output_name)
+
+
 def test_ImageInstaller(monkeypatch):
 
     runner = CliRunner()
