@@ -1,0 +1,25 @@
+BootStrap: localimage
+From: ../../library/micromamba/micromamba_2.0.5.img
+
+%labels
+  maintainer Thomas Cokelaer
+  package.name sniffles
+  package.version 2.7.3
+  package.homepage https://pypi.org/project/sniffles/
+  package.source.url https://github.com/fritzsedlazeck/Sniffles
+  package.license MIT
+
+%post
+  export PATH=$PATH:/opt/conda/envs/main/bin/
+  export OPTS="-q -c conda-forge -c bioconda -n main -y"
+
+  micromamba install $OPTS sniffles=2.7.3
+
+  micromamba clean --packages -y
+  micromamba clean --all -y
+
+%environment
+  export PATH=$PATH:/opt/conda/envs/main/bin/
+
+%runscript
+  exec /opt/conda/envs/main/bin/sniffles "$@"
