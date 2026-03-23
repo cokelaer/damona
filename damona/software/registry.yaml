@@ -1860,6 +1860,18 @@ cutadapt:
       doi: 10.5281/zenodo.18834062
       filesize: 65925120
 
+# deeptools/registry.yaml
+deeptools:
+  doi: 10.5281/zenodo.19187267
+  zenodo_id: 19187268
+  binaries: deeptools
+  releases:
+    3.5.6:
+      download: https://zenodo.org/record/19187268/files/deeptools_3.5.6.img
+      md5sum: ae350b0271a9ebd7f72352a6ee3b7838
+      doi: 10.5281/zenodo.19187268
+      filesize: 245694464
+
 # macs3/registry.yaml
 macs3:
   doi: 10.5281/zenodo.19140701
