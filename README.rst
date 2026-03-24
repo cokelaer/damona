@@ -276,6 +276,11 @@ Run ``damona --help`` to see all available commands::
       list        List all containers available in the local registry.
       stats       Show registry statistics and local installation summary.
 
+    Developer tools:
+      check    Check that all binaries in a built image are functional.
+      build    Build a Singularity image from a local recipe, a Damona recipe, or a Docker image.                                            catalog  Show a developer overview: latest version, size, and base image for every container.
+
+
 For command-specific help (e.g. ``install``)::
 
     damona install --help
@@ -398,6 +403,8 @@ the command::
 ========= ========================================================================
 Version   Description
 ========= ========================================================================
+0.18.0    * NEW command: catalog
+          * DECREASE fott print of repeatmasker
 0.17.2    * ADDED sniffles, macs3, verkho
           * IMPROVED: new damona command for developers: build and check
 0.17.1    * RENAMED: ``delete`` command renamed to ``remove``

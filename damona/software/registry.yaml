@@ -1364,13 +1364,18 @@ delly:
 repeatmasker:
   doi: 10.5281/zenodo.13391622
   zenodo_id: 13391623
-  binaries: segmasker RepeatMasker
+  binaries: RepeatMasker segmasker
   releases:
     4.0.8:
       download: https://zenodo.org/record/13391623/files/repeatmasker_4.0.8.img
       md5sum: eeabbf772362e41ba9bdba249326663e
       doi: 10.5281/zenodo.13391623
       filesize: 1770332160
+    4.2.2:
+      download: https://zenodo.org/record/19202892/files/repeatmasker_4.2.2.img
+      md5sum: ed780599fb828555aee5f8a5b1399c84
+      doi: 10.5281/zenodo.19202892
+      filesize: 468905984
 
 # dustmasker/registry.yaml
 dustmasker:

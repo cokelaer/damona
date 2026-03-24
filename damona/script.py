@@ -72,7 +72,7 @@ click.rich_click.COMMAND_GROUPS = {
         },
         {
             "name": "Developer tools",
-            "commands": ["check", "build"],
+            "commands": ["check", "build", "catalog"],
         },
     ]
 }
@@ -579,6 +579,7 @@ def search(**kwargs):
     console = Console()
     recommended = None
     recommended_url = None
+    recommended_size = None
 
     if not kwargs["binaries_only"]:
         modules = registry.get_list(pattern=pattern)
@@ -603,12 +604,14 @@ def search(**kwargs):
             if not recommended:
                 recommended = mod
                 recommended_url = dl_url
+                recommended_size = size_str
             else:
                 recommended_version = recommended.split(":")[1]
                 try:
                     if packaging.version.parse(version) > packaging.version.parse(recommended_version):
                         recommended = mod
                         recommended_url = dl_url
+                        recommended_size = size_str
                 except packaging.version.InvalidVersion:
                     pass
 
@@ -656,6 +659,8 @@ def search(**kwargs):
 
     if recommended:
         content = f"[bold green]damona install {recommended}[/bold green]"
+        if recommended_size:
+            content += f"  [dim]({recommended_size})[/dim]"
         if recommended_url:
             content += f"\n[dim italic]For your information, url is {recommended_url}[/dim italic]"
         console.print(
@@ -839,6 +844,126 @@ def list(**kwargs):
     for entry in sorted(r.get_list()):
         name, version = entry.split(":")
         table.add_row(name, version)
+    console.print(table)
+
+
+# ===================================================================  catalog
+
+
+def _get_base_image(name, version, damona_root):
+    """Return a short base-image label extracted from the Singularity definition file."""
+    import pathlib as _pathlib
+
+    sif_path = _pathlib.Path(damona_root) / "software" / name / f"Singularity.{name}_{version}"
+    if not sif_path.exists():
+        return "?"
+
+    bootstrap = None
+    from_line = None
+    with open(sif_path) as fh:
+        for line in fh:
+            stripped = line.strip()
+            if stripped.lower().startswith("bootstrap:"):
+                bootstrap = stripped.split(":", 1)[1].strip().lower()
+            elif stripped.lower().startswith("from:"):
+                from_line = stripped.split(":", 1)[1].strip()
+                break
+
+    if from_line is None:
+        return "?"
+
+    from_lower = from_line.lower()
+    # localimage pointing to a library .img file
+    if bootstrap == "localimage" or (bootstrap is None and from_line.endswith(".img")):
+        stem = _pathlib.Path(from_line).stem  # e.g. micromamba_1.5.8
+        return stem.rsplit("_", 1)[0] if "_" in stem else stem
+
+    # docker / library bootstrap — keep registry-prefix stripped
+    label = from_line.split("/")[-1]  # drop registry host and org
+    return label
+
+
+@main.command(hidden=True)
+@click.option(
+    "--sort",
+    default="name",
+    type=click.Choice(["name", "size", "base"], case_sensitive=False),
+    show_default=True,
+    help="Sort rows by software name, download size, or base image.",
+)
+@common_logger
+def catalog(**kwargs):
+    """Show a developer overview: latest version, size, and base image for every container.
+
+    Iterates the local registry and, for each software, reports the latest
+    available version, its download size, and the underlying base image
+    inferred from the Singularity definition file:
+
+        damona catalog
+
+    Sort by size to quickly spot heavy containers:
+
+        damona catalog --sort size
+
+    Sort by base image to group containers sharing the same base:
+
+        damona catalog --sort base
+
+    Useful for spotting containers that use heavy bases (e.g. micromamba) vs
+    lean ones (alpine, debian-slim) and for auditing image sizes at a glance.
+    """
+    import pathlib as _pathlib
+
+    import packaging.version as _pv
+
+    from damona import __path__ as _damona_path
+
+    damona_root = _damona_path[0]
+    registry = Registry(from_url=None)
+    console = Console()
+
+    # Group versions by software name and collect all row data first
+    software_versions: dict = {}
+    for key in registry.get_list():
+        sw_name, ver = key.split(":")
+        software_versions.setdefault(sw_name, []).append(ver)
+
+    rows = []
+    for sw_name in software_versions:
+        versions = software_versions[sw_name]
+        try:
+            latest = str(max(versions, key=lambda v: _pv.parse(v)))
+        except Exception:
+            latest = versions[-1]
+
+        key = f"{sw_name}:{latest}"
+        try:
+            size = registry.registry[key]._data[sw_name]["releases"][latest]["filesize"]
+            size_str = f"{round(size / 1e9, 2)}G" if size > 1e9 else f"{round(size / 1e6, 2)}M"
+        except Exception:
+            size = 0
+            size_str = "?"
+
+        base = _get_base_image(sw_name, latest, damona_root)
+        rows.append((sw_name, latest, size_str, base, size))
+
+    sort_key = kwargs["sort"].lower()
+    if sort_key == "size":
+        rows.sort(key=lambda r: r[4])
+    elif sort_key == "base":
+        rows.sort(key=lambda r: r[3].lower())
+    else:
+        rows.sort(key=lambda r: r[0].lower())
+
+    table = Table(show_header=True, header_style="bold cyan", box=None, pad_edge=False)
+    table.add_column("Software", style="bold", min_width=22)
+    table.add_column("Latest", min_width=12)
+    table.add_column("Size", justify="right", min_width=8)
+    table.add_column("Base image", min_width=24)
+
+    for sw_name, latest, size_str, base, _ in rows:
+        table.add_row(sw_name, latest, size_str, base)
+
     console.print(table)
 
 

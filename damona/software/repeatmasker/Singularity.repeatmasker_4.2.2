@@ -1,0 +1,46 @@
+Bootstrap: docker
+From: mambaorg/micromamba:1.5.8
+
+%labels
+    Author thomas cokelaer
+
+%post
+    export PATH=$PATH:/opt/conda/envs/main/bin/
+    export OPTS=" -q -c conda-forge -c bioconda -n main -y "
+
+    micromamba create -y -n main
+
+    # Install RepeatMasker; bioconda pulls in rmblast as a hard dep
+    micromamba install $OPTS repeatmasker
+
+    # Remove BLAST+/RMBlast binaries — HMMER (Dfam) is sufficient for modern usage
+    # Singularity builds a single squashfs so deletions here reduce the final .img
+    for bin in rmblastn blastn blastp blastx tblastn tblastx \
+               blast_formatter deltablast psiblast rpsblast rpstblastn \
+               makeblastdb blastdbcmd blastdbcheck blastdb_aliastool \
+               blast_report seedtop blastdb_upgrade; do
+        rm -f /opt/conda/envs/main/bin/$bin
+    done
+    # Remove blast shared-library data and docs
+    find /opt/conda/envs/main -type d \
+        \( -path "*/rmblast-*" -o -path "*/ncbi-blast-*" \) \
+        -exec rm -rf {} + 2>/dev/null || true
+
+    # Reconfigure RepeatMasker to use HMMER (bioconda sets rmblast as default)
+    # Use the conda perl — the base image's system perl lacks required modules
+    RM_DIR=$(find /opt/conda/envs/main/share -maxdepth 2 -name "RepeatMasker" -type d | head -1)
+    cd "$RM_DIR" && /opt/conda/envs/main/bin/perl configure \
+        --trf_prgm /opt/conda/envs/main/bin/trf \
+        --hmmer_dir /opt/conda/envs/main/bin
+
+    micromamba clean --packages -y
+    micromamba clean --all -y
+    rm -rf /opt/conda/pkgs
+
+%environment
+    export LC_ALL=C.UTF-8
+    export LANG=C.UTF-8
+    export PATH=$PATH:/opt/conda/envs/main/bin/
+
+%runscript
+    RepeatMasker "$@"

@@ -14,6 +14,8 @@ import damona
 from damona import Damona, script
 from damona.environ import Environ, Environment, Images, YamlEnv
 
+from . import test_dir
+
 
 def test_no_var(monkeypatch):
     monkeypatch.delenv("DAMONA_ENV", raising=False)
@@ -533,3 +535,158 @@ def test_deactivate_remaining_paths_fish(monkeypatch):
 
     # Fish syntax: set -gx DAMONA_ENV when a damona path remains
     assert "set -gx DAMONA_ENV" in output
+
+
+# ---------------------------------------------------------------------------
+# create_from_yaml coverage  (environ.py lines 629-668)
+# ---------------------------------------------------------------------------
+
+
+def test_create_from_yaml_existing_no_force():
+    """create_from_yaml with an existing env and force=False should sys.exit."""
+    env_manager = Environ()
+    NAME = ".dummy_yaml_existing_no_force"
+    env_manager.create(NAME)
+    manager = Damona()
+    try:
+        with pytest.raises(SystemExit):
+            env_manager.create_from_yaml(NAME, yaml="dummy.yaml", force=False)
+    finally:
+        path = manager.environments_path / NAME
+        if path.exists():
+            shutil.rmtree(path)
+
+
+def test_create_from_yaml_with_mocked_installers(tmp_path):
+    """create_from_yaml exercises image/binary install loops with mocks."""
+    yaml_content = "name: testenv\n\nimages:\n- fastqc_0.11.9.img\n\nbinaries:\n- fastqc from fastqc:0.11.9\n"
+    yaml_file = tmp_path / "env.yaml"
+    yaml_file.write_text(yaml_content)
+
+    NAME = ".dummy_yaml_install_mocked"
+    env_manager = Environ()
+    manager = Damona()
+    try:
+        with mock.patch("damona.install.RemoteImageInstaller") as mock_rii_cls, mock.patch(
+            "damona.install.BinaryInstaller"
+        ) as mock_bi_cls:
+            mock_rii_inst = mock.MagicMock()
+            mock_rii_cls.return_value = mock_rii_inst
+            mock_bi_inst = mock.MagicMock()
+            mock_bi_cls.return_value = mock_bi_inst
+            env_manager.create_from_yaml(NAME, yaml=str(yaml_file))
+
+        mock_rii_inst.pull_image.assert_called_once_with(force=True)
+        mock_bi_inst.install_binaries.assert_called_once()
+    finally:
+        path = manager.environments_path / NAME
+        if path.exists():
+            shutil.rmtree(path)
+
+
+def test_create_from_yaml_existing_force(tmp_path):
+    """create_from_yaml with existing env and force=True overwrites (lines 634-635)."""
+    yaml_content = "name: testenv\n\nimages:\n\nbinaries:\n"
+    yaml_file = tmp_path / "env.yaml"
+    yaml_file.write_text(yaml_content)
+
+    NAME = ".dummy_yaml_force_overwrite"
+    env_manager = Environ()
+    manager = Damona()
+    env_manager.create(NAME)
+    try:
+        with mock.patch("damona.install.RemoteImageInstaller"), mock.patch("damona.install.BinaryInstaller"):
+            env_manager.create_from_yaml(NAME, yaml=str(yaml_file), force=True)
+        assert (manager.environments_path / NAME).exists()
+    finally:
+        path = manager.environments_path / NAME
+        if path.exists():
+            shutil.rmtree(path)
+
+
+# ---------------------------------------------------------------------------
+# create_from_bundle coverage  (environ.py lines 670-735)
+# ---------------------------------------------------------------------------
+
+
+def test_create_from_bundle_existing_no_force():
+    """create_from_bundle with existing env and force=False should sys.exit."""
+    env_manager = Environ()
+    NAME = ".dummy_bundle_existing"
+    env_manager.create(NAME)
+    manager = Damona()
+    try:
+        with pytest.raises(SystemExit):
+            env_manager.create_from_bundle(NAME, bundle="dummy.tar", force=False)
+    finally:
+        path = manager.environments_path / NAME
+        if path.exists():
+            shutil.rmtree(path)
+
+
+def test_get_current_state_with_binary(tmp_path, monkeypatch):
+    """get_current_state and create_yaml populate image/binary entries when env is non-empty."""
+    from damona.install import BinaryInstaller
+
+    NAME = ".dummy_state_with_binary"
+    env_manager = Environ()
+    manager = Damona()
+    env_manager.create(NAME)
+    monkeypatch.setenv("DAMONA_ENV", str(manager.damona_path / "envs" / NAME))
+
+    try:
+        bi = BinaryInstaller(["hello"], f"{test_dir}/data/testing_1.0.0.img")
+        bi.install_binaries(force=True)
+
+        e = Environment(NAME)
+        state = e.get_current_state()
+        assert "binaries" in state
+        assert "images" in state
+        assert "hello" in state["binaries"]
+
+        # create_yaml lines 214, 223-224 (loop over images/binaries)
+        yaml_out = str(tmp_path / "state_env.yaml")
+        e.create_yaml(output_name=yaml_out)
+        content = pathlib.Path(yaml_out).read_text()
+        assert "hello" in content
+    finally:
+        path = manager.environments_path / NAME
+        if path.exists():
+            shutil.rmtree(path)
+
+
+def test_create_from_bundle_bin_only(tmp_path):
+    """create_from_bundle with a tar containing only bin/ entries."""
+    import tarfile as _tarfile
+
+    NAME = ".dummy_bundle_bin_only"
+    env_manager = Environ()
+    manager = Damona()
+
+    tar_path = tmp_path / "test_bundle.tar"
+    fake_binary = tmp_path / "fakebinary"
+    fake_binary.write_text("#!/bin/sh\necho hello\n")
+
+    with _tarfile.open(str(tar_path), "w") as tar:
+        tar.add(str(fake_binary), arcname="bin/fakebinary")
+
+    try:
+        # rm_tree at the end of create_from_bundle calls .glob() and .rmdir() on
+        # the images/ sub-dir; create it up-front so the cleanup succeeds even
+        # when no images/ entry exists in the tar.
+        with mock.patch("damona.environ.Environ.create") as mock_create:
+
+            def _create_with_images(env_name, force=False):
+                env_path = manager.environments_path / env_name
+                env_path.mkdir(exist_ok=True)
+                (env_path / "bin").mkdir(exist_ok=True)
+                (env_path / "images").mkdir(exist_ok=True)
+
+            mock_create.side_effect = _create_with_images
+            env_manager.create_from_bundle(NAME, bundle=str(tar_path))
+
+        assert (manager.environments_path / NAME / "bin" / "fakebinary").exists()
+    finally:
+        path = manager.environments_path / NAME
+        if path.exists():
+            shutil.rmtree(path)
