@@ -27,7 +27,7 @@ From: python:3.12-slim
     && cd / && rm -rf samtools-${SAMTOOLS_VERSION}
 
   # install minimap2 pre-built binary
-  curl -sSL https://github.com/lh3/minimap2/releases/download/v${MINIMAP2_VERSION}/minimap2-${MINIMAP2_VERSION}_x64-linux.tar.bz2 | tar -jxf - \
+  curl -sSL https://github.com/lh3/minimap2/releases/download/v${MINIMAP2_VERSION}/minimap2-${MINIMAP2_VERSION}_x64-linux.tar.bz2 | tar -jxf - --no-same-owner \
     && cp minimap2-${MINIMAP2_VERSION}_x64-linux/minimap2 /usr/local/bin/ \
     && rm -rf minimap2-${MINIMAP2_VERSION}_x64-linux
 

@@ -1920,13 +1920,13 @@ verkko:
 
 # isoquant/registry.yaml
 isoquant:
-  doi: 10.5281/zenodo.19232776
-  zenodo_id: 19232777
   binaries: isoquant
   releases:
     3.12.2:
-      download: https://zenodo.org/record/19232777/files/isoquant_3.12.2.img
-      md5sum: 115fb62a9ba023ebc79efcf71b417746
-      doi: 10.5281/zenodo.19232777
-      filesize: 303300608
+      download: https://zenodo.org/record/19235839/files/isoquant_3.12.2.img
+      md5sum: 55ada464acbd930310d20f3d185906f2
+      doi: 10.5281/zenodo.19235839
+      filesize: 301338624
+
+
 
