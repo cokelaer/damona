@@ -103,7 +103,6 @@ class Zenodo:  # pragma: no cover
     def __init__(self, mode="sandbox.zenodo", token=None, author=None, affiliation=None, orcid=None):
         assert mode in ["zenodo", "sandbox.zenodo"]
         self.mode = mode
-        self.headers = {"Content-Type": "application/json"}
         self.last_requests = []
 
         cfg = Config()
@@ -163,10 +162,10 @@ class Zenodo:  # pragma: no cover
             logger.error("you must provide an author and affiliation")
             sys.exit(1)
 
-    def _get_params(self):
-        return {"access_token": self.token}
+    def _get_headers(self):
+        return {"Content-Type": "application/json", "Authorization": f"Bearer {self.token}"}
 
-    params = property(_get_params)
+    headers = property(_get_headers)
 
     def _status(self, r, correct_codes):
         try:
@@ -195,7 +194,7 @@ class Zenodo:  # pragma: no cover
 
         logger.info("Creating a new deposit")
         url = f"https://{self.mode}.org/api/deposit/depositions"
-        r = requests.post(url, params=self.params, json={}, headers=self.headers)
+        r = requests.post(url, json={}, headers=self.headers)
         self._status(r, [201])
 
         try:
@@ -208,13 +207,13 @@ class Zenodo:  # pragma: no cover
     def get_all_depositions(self):  # pragma: no cover
         """Return all depositions for the currently authenticated user"""
         url = f"https://{self.mode}.org/api/deposit/depositions"
-        r = requests.get(url, params=self.params, json={})
+        r = requests.get(url, json={}, headers=self.headers)
         self._status(r, [200])
         return r
 
     def get_deposition(self, ID):  # pragma: no cover
         url = f"https://{self.mode}.org/api/deposit/depositions/{ID}"
-        r = requests.get(url, params=self.params, json={})
+        r = requests.get(url, json={}, headers=self.headers)
         self._status(r, [200])
         return r
 
@@ -224,7 +223,7 @@ class Zenodo:  # pragma: no cover
         Normal status code is 204. If already deleted, sent 401
         """
         url = f"https://{self.mode}.org/api/deposit/depositions/{ID}"
-        r = requests.delete(url, params=self.params, json={})
+        r = requests.delete(url, json={}, headers=self.headers)
         self._status(r, [201])
         return r
 
@@ -247,7 +246,9 @@ class Zenodo:  # pragma: no cover
 
             with tqdm(total=total_size, unit="B", unit_scale=True, unit_divisor=1024) as t:
                 wrapped_file = CallbackIOWrapper(t.update, fp, "read")
-                r = requests.put(f"{bucket_url}/{basename}", data=wrapped_file, params=self.params)
+                r = requests.put(
+                    f"{bucket_url}/{basename}", data=wrapped_file, headers={"Authorization": f"Bearer {self.token}"}
+                )
 
             self._status(r, [200, 201])
             return r
@@ -283,7 +284,7 @@ analysis.""",
         logger.info("Uploading metadata")
         ID = self.get_id(deposit)
         url = f"https://{self.mode}.org/api/deposit/depositions/{ID}"
-        r = requests.put(url, params=self.params, data=json.dumps(data), headers=self.headers)
+        r = requests.put(url, data=json.dumps(data), headers=self.headers)
         self._status(r, [200])
         return r
 
@@ -291,7 +292,7 @@ analysis.""",
         ID = self.get_id(deposit)
         logger.info(f"Publishing {ID}")
         url = f"https://{self.mode}.org/api/deposit/depositions/{ID}/actions/publish"
-        r = requests.post(url, params=self.params, headers=self.headers)
+        r = requests.post(url, headers=self.headers)
         self._status(r, [202, 504])
         return r
 
@@ -299,7 +300,7 @@ analysis.""",
         ID = self.get_id(deposit)
         logger.info(f"Unlocking {ID}")
         url = f"https://{self.mode}.org/api/deposit/depositions/{ID}/actions/edit"
-        r = requests.post(url, params=self.params)
+        r = requests.post(url, headers=self.headers)
         self._status(r, [201, 403])
         return r
 
@@ -308,7 +309,13 @@ analysis.""",
         logger.info(f"Creating a new version for record {deposit}. Please wait")
         ID = self.get_id(deposit)
         url = f"https://{self.mode}.org/api/deposit/depositions/{ID}/actions/newversion"
-        r = requests.post(url, params=self.params)
+        r = requests.post(url, headers=self.headers)
+        if r.status_code == 403:
+            logger.error(
+                f"403 on newversion for record {ID}. Common cause: an unpublished draft already exists. "
+                f"Go to https://{self.mode}.org/me/uploads and discard any pending draft for this record, then retry."
+            )
+            sys.exit(1)
         self._status(r, [201])
         return r
 
@@ -336,23 +343,22 @@ analysis.""",
     def _upload(self, filename):
         data = ImageName(filename)
         software = Software(data.name)
+        known = bool(software.name) and self.mode != "sandbox.zenodo"
 
-        # sandbox has no registry in general, so no name, therefore we create
-        # a new deposit.
-        if software.name and self.mode != "sandbox.zenodo":
-            logger.info("Software known, adding new version.")
-            msg = self.create_new_version_with_file_and_publish(filename)
-            print(msg)
-            with open(self.registry_name, "a+") as fout:
-                fout.write(msg)
+        # Always create a new independent deposit. Zenodo records are owned by
+        # whoever created them, so attempting newversion on someone else's record
+        # always fails with 403. Each version gets its own record instead.
+        if known:
+            logger.info("Software known, creating new independent deposit for this version.")
         else:
-            logger.info("Software not known, adding new deposit.")
-            msg = self.create_new_deposit_with_file_and_publish(filename)
-            print(msg)
-            with open(self.registry_name, "w") as fout:
-                fout.write(msg)
+            logger.info("Software not known, creating new deposit.")
 
-    def create_new_deposit_with_file_and_publish(self, filename):  # pragma: no cover
+        msg = self.create_new_deposit_with_file_and_publish(filename, known=known)
+        print(msg)
+        with open(self.registry_name, "a+" if known else "w") as fout:
+            fout.write(msg)
+
+    def create_new_deposit_with_file_and_publish(self, filename, known=False):  # pragma: no cover
         """ """
         data = ImageName(filename)
 
@@ -368,31 +374,37 @@ analysis.""",
 
         if self.last_requests[-1].ok:
             json = self.last_requests[-1].json()
-            msg = self._print_info_new_deposit(data, json)
+            msg = self._print_info_new_deposit(data, json, known=known)
             return msg
 
-    def _print_info_new_deposit(self, data, json):
-        # figure out the filename entryy we have just added
+    def _print_info_new_deposit(self, data, json, known=False):
+        # figure out the filename entry we have just added
         entry = [x for x in json["files"] if x["filename"] == data.basename][0]
 
         zenodo_id = json["id"]
         doi = json["conceptdoi"]
-        msg = f"{data.name}:\n"
-        msg += f"  doi: {doi}\n"
-        msg += f"  zenodo_id: {zenodo_id}\n"
-        msg += "  releases:\n"
-
         this_doi = json["doi"]
         record_html = json["links"]["record_html"]
-
         md5sum = entry["checksum"]
         filesize = entry["filesize"]
         basename = entry["filename"]
-        msg += f"    {data.version}:\n"
-        msg += f"      download: {record_html}/files/{basename}\n"
-        msg += f"      md5sum: {md5sum}\n"
-        msg += f"      doi: {this_doi}\n"
-        msg += f"      filesize: {filesize}\n"  # no EOF
+
+        if known:
+            # Software already has a registry entry. Output only the new release
+            # block and remind the developer to update the top-level zenodo_id.
+            msg = f"    {data.version}:\n"
+            msg += f"      download: {record_html}/files/{basename}\n"
+            msg += f"      md5sum: {md5sum}\n"
+            msg += f"      doi: {this_doi}\n"
+            msg += f"      filesize: {filesize}\n"
+        else:
+            msg = f"{data.name}:\n"
+            msg += "  releases:\n"
+            msg += f"    {data.version}:\n"
+            msg += f"      download: {record_html}/files/{basename}\n"
+            msg += f"      md5sum: {md5sum}\n"
+            msg += f"      doi: {this_doi}\n"
+            msg += f"      filesize: {filesize}\n"
         return msg
 
     def create_new_version_with_file_and_publish(self, filename, deposit=None):
@@ -450,14 +462,22 @@ analysis.""",
 
 
 def get_stats_software(software):
-    """Returns number of downloads"""
+    """Returns total number of downloads across all releases."""
     from damona.registry import Software
 
     s = Software(software)
-    try:
-        return get_stats_id(s.zenodo_id, software)
-    except AttributeError:
-        return 0
+    counts = []
+    for release in getattr(s, "releases", {}).values():
+        if release.doi and "zenodo" in release.doi:
+            record_id = release.doi.split("zenodo.")[-1]
+            n = get_stats_id(record_id, software)
+            if isinstance(n, int) and n >= 0:
+                counts.append(n)
+    # Old-style versioned records all return the same all_versions total,
+    # so deduplicating avoids multiplying the concept count by N releases.
+    # New-style independent deposits each have a unique count, so the set
+    # preserves them all and the sum is correct.
+    return sum(set(counts))
 
 
 def get_stats_id(ID, name=None):

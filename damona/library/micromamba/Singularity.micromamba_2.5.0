@@ -1,0 +1,12 @@
+BootStrap: docker
+From: mambaorg/micromamba:2.5.0
+
+%post
+    micromamba create -y -n main
+    export PATH=$PATH:/usr/local/micromamba/bin
+    micromamba clean --all -y
+
+%environment
+    export PATH=$PATH:/usr/local/micromamba/bin
+    export LANG=C.UTF-8
+    export LC_ALL=C.UTF-8

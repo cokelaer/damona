@@ -802,19 +802,18 @@ def stats(**kwargs):
         console.print("\n[bold]Detailed summary of downloads for each container:[/bold]")
         from damona import admin, zenodo
 
-        dl_table = Table(show_header=True, header_style="bold cyan", box=None, pad_edge=False)
-        dl_table.add_column("Software", min_width=25)
-        dl_table.add_column("Downloads", justify="right")
-        all_software = admin.get_software_names()
+        all_software = sorted(admin.get_software_names())
         N = 0
-        for software in sorted(all_software):
+        console.print(f"{'Software':<25} {'Downloads':>10}")
+        console.print("-" * 36)
+        for software in all_software:
             downloads = zenodo.get_stats_software(software)
-            dl_table.add_row(software, str(downloads))
+            console.print(f"{software:<25} {str(downloads):>10}")
             try:
-                N += int(downloads.replace(",", ""))
+                N += int(str(downloads).replace(",", ""))
             except (AttributeError, ValueError):
-                N += downloads
-        console.print(dl_table)
+                pass
+        console.print("-" * 36)
         console.print(f"[bold]Total:[/bold] {N}")
 
     envs = Environ()

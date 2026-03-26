@@ -403,6 +403,19 @@ the command::
 ========= ========================================================================
 Version   Description
 ========= ========================================================================
+0.19.0    * ADDED: isoquant container (scratch-built, no micromamba)
+          * FIXED: Zenodo upload now uses Bearer token authentication header
+            instead of ``access_token`` query parameter (required by the new
+            Zenodo InvenioRDM API)
+          * CHANGED: upload always creates a new independent deposit instead of
+            versioning an existing one, so any developer can contribute a new
+            release regardless of who originally created the record
+          * REMOVED: top-level ``doi`` field from registry (was the Zenodo
+            concept DOI — unused and no longer meaningful with independent
+            deposits)
+          * IMPROVED: ``damona stats --include-downloads`` now prints results
+            line-by-line as they arrive instead of waiting for all requests to
+            complete
 0.18.0    * NEW command: catalog
           * DECREASE fott print of repeatmasker
 0.17.2    * ADDED sniffles, macs3, verkho

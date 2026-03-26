@@ -5,6 +5,11 @@ busco:
   releases:
     5.4.6:
       download: https://zenodo.org/record/7794877/files/busco_5.4.6.img
-      md5sum: 9707085637957d598d4d5bd8b0886bcf 
+      md5sum: 9707085637957d598d4d5bd8b0886bcf
       doi: 10.5281/zenodo.7794877
       filesize: 546848768
+    6.0.0:
+      download: https://zenodo.org/record/19233171/files/busco_6.0.0.img
+      md5sum: a24cabbbc9804b390c09198eaf5e7498
+      doi: 10.5281/zenodo.19233171
+      filesize: 730955776

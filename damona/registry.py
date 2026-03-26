@@ -182,9 +182,9 @@ class Release:
         self._data = data
 
     def _get_binaries(self):
-        binaries = (
-            set(self._binaries) | set(self._release_binaries) | set(self._extra_binaries)
-        ) - set(self._exclude_binaries)
+        binaries = (set(self._binaries) | set(self._release_binaries) | set(self._extra_binaries)) - set(
+            self._exclude_binaries
+        )
         if not binaries:
             return [self._name]
         return sorted(binaries)
@@ -337,8 +337,6 @@ class Software:
             self._data = data
             if len(data):
                 self.releases = self._interpret_registry(data)
-                self.doi = data[self.name].get("doi", None)
-                self.zenodo_id = data[self.name].get("zenodo_id", None)
             else:  # pragma: no cover
                 self._name = None
                 self._version = None
