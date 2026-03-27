@@ -7,6 +7,7 @@ From: python:3.10-slim
   PRODIGAL_VERSION=2.6.3
   AUGUSTUS_VERSION=3.5.0
   SEPP_VERSION=4.5.5
+  MINIPROT_VERSION=0.13
 
   apt-get update && apt-get install -yq --no-install-recommends \
     default-jre ncbi-blast+ hmmer make curl bzip2 g++ \
@@ -49,6 +50,10 @@ From: python:3.10-slim
   curl -sSL https://github.com/smirarab/sepp/archive/refs/tags/v${SEPP_VERSION}.tar.gz | tar zx \
     && cd sepp-${SEPP_VERSION} && python setup.py config && python setup.py install && cd / && rm -rf /sepp-${SEPP_VERSION}
   apt-get purge -yq git && apt-get autoremove -yq && rm -rf /var/lib/apt/lists/*
+
+  ## install miniprot
+  curl -sSL https://github.com/lh3/miniprot/archive/refs/tags/v${MINIPROT_VERSION}.tar.gz | tar zx \
+    && cd miniprot-${MINIPROT_VERSION} && make && cp miniprot /usr/local/bin/ && cd / && rm -rf /miniprot-${MINIPROT_VERSION}
 
   ## install BUSCO
   pip install --no-cache-dir https://gitlab.com/ezlab/busco/-/archive/$BUSCO_VERSION/busco-$BUSCO_VERSION.tar.gz

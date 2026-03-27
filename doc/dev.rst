@@ -14,9 +14,9 @@ Build a Singularity image::
 
     damona build --help
 
-Upload a finished image to Zenodo::
+Publish a finished image to Zenodo::
 
-    damona upload --help
+    damona publish --help
 
 .. _dev-config:
 
@@ -72,26 +72,62 @@ Consider the example tool **SOFTWARE**.  Navigate to its recipes directory::
     cd recipes/SOFTWARE
 
 .. warning:: The following commands require a registered Zenodo token and will
-   actually upload data to Zenodo.  Omit ``--mode zenodo`` to use the sandbox
-   first.
+   actually create Zenodo records.  Always test with the sandbox first
+   (the default) before using ``--production``.
 
 **Case 1 – New tool (no existing Zenodo record):**
 
-Build the image, then upload::
+Test with the sandbox first (default), then publish for real::
 
-    damona upload SOFTWARE_1.0.0.img --mode zenodo
+    damona publish SOFTWARE_1.0.0.img               # sandbox — no real DOI
+    damona publish SOFTWARE_1.0.0.img --production  # production — permanent DOI
 
-Damona uploads the image with pre-filled metadata and creates a
-``registry.yaml`` file ready to commit.  **Edit the file to add a** ``binaries``
-**section if needed**, then commit and push.
+Damona uploads the image, creates a new Zenodo deposit, and then prompts
+interactively for the binary names that the container exposes::
+
+    Binary names for 'SOFTWARE' (space or comma separated) [SOFTWARE]: software softtool
+
+The answer is written as a ``binaries:`` field at the top of the generated
+``registry.yaml``.  Review the file, then commit and push.
+
+To skip the interactive prompt (e.g. in a script), pass ``--binaries``
+directly::
+
+    damona publish SOFTWARE_1.0.0.img --production --binaries "software softtool"
 
 **Case 2 – New version of an existing tool:**
 
 ::
 
-    damona upload SOFTWARE_2.0.0.img --mode zenodo
+    damona publish SOFTWARE_2.0.0.img --production
 
-Damona updates the existing ``registry.yaml`` with the new version entry.
+Damona appends the new release block to the local ``registry.yaml`` and
+prompts for any binaries that are **specific to this release** (i.e. not
+covered by the top-level ``binaries:`` field)::
+
+    Extra binaries for this release (space or comma separated, empty to skip) []:
+
+Leave the prompt empty if no extra binaries are needed.  If extra binaries
+are provided they are written as ``extra_binaries:`` inside the release block.
+Pass ``--extra-binaries`` on the command line to skip the prompt.
+
+If the global ``binaries:`` field is currently empty in the registry, a
+warning is printed as a reminder to fill it in.
+
+**Case 3 – Re-publishing the same version (updated image):**
+
+If ``SOFTWARE_2.0.0.img`` was already published and you need to replace it
+with a corrected build, run ``damona publish --production`` again with the same filename.
+Damona detects the existing ``2.0.0`` entry in the local ``registry.yaml``,
+comments it out automatically::
+
+    # 2.0.0:
+    #   download: https://zenodo.org/record/.../SOFTWARE_2.0.0.img
+    #   ...
+
+and then appends the fresh entry below it.  If the old entry had an
+``extra_binaries:`` value it is offered as the default for the new entry's
+prompt, so no information is lost.
 
 Repository layout
 ------------------
@@ -239,6 +275,26 @@ supported:
           0.11.8:
             download: https://example.com/fastqc_0.11.8.img
             md5sum: def456...
+
+When a new release ships additional executables not present in older versions,
+declare them with ``extra_binaries:`` inside that release block.  They are
+combined with the top-level ``binaries:`` at install time::
+
+    busco:
+        binaries: busco
+        releases:
+          6.0.0:
+            download: https://zenodo.org/record/.../busco_6.0.0.img
+            md5sum: a24cabbbc9...
+            filesize: 730955776
+            extra_binaries: miniprot,miniprot_index
+          5.4.6:
+            download: https://zenodo.org/record/.../busco_5.4.6.img
+            md5sum: 9707085637...
+            filesize: 546848768
+
+``damona publish`` prompts for ``extra_binaries`` interactively and writes
+the field automatically when a non-empty value is given.
 
 The ``download`` value can be:
 

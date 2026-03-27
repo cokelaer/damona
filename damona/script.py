@@ -975,36 +975,38 @@ def catalog(**kwargs):
 @click.option(
     "--token",
     default=None,
-    help="""A valid zenodo (or sandbox zenodo) token (see damona zenodo --help for details).""",
+    help="Zenodo API token. If not given, read from ~/.config/damona/damona.cfg.",
 )
 @click.option(
-    "--mode", default="sandbox.zenodo", help="Upload target: 'zenodo' for production, 'sandbox.zenodo' for testing."
+    "--sandbox/--production",
+    default=True,
+    help="Target Zenodo sandbox (default) or production. Use --production when ready to publish for real.",
 )
 @click.option(
     "--no-check", default=False, is_flag=True, help="Skip the python/bash availability check inside the container."
 )
+@click.option(
+    "--binaries",
+    default=None,
+    help="Space or comma separated binary names for new software (skips interactive prompt).",
+)
+@click.option(
+    "--extra-binaries",
+    default=None,
+    help="Space or comma separated extra binaries specific to this release (skips interactive prompt).",
+)
 @common_logger
-def upload(**kwargs):  # pragma: no cover
-    """Upload a Singularity image to Zenodo. FOR DEVELOPERS ONLY.
+def publish(**kwargs):  # pragma: no cover
+    """Publish a Singularity image to Zenodo. FOR DEVELOPERS ONLY.
 
-    Test the upload on the Zenodo sandbox first:
+    By default this targets the Zenodo sandbox so you can test without
+    creating a real DOI.  The result is written to registry_sandbox.yaml.
+    Switch to production with --production when the image is ready:
 
-        damona upload file_1.0.0.img --mode sandbox.zenodo
+        damona publish mytool_1.0.0.img
+        damona publish mytool_1.0.0.img --production
 
-    Once satisfied, publish to production Zenodo:
-
-        damona upload file_1.0.0.img --mode zenodo
-
-    If no registry.yaml is found in the local directory, it is created.
-    Otherwise, it is updated. The changes are also printed on the stdout.
-
-    You can set the token in your home/.config/damona/damona.cfg that looks like
-
-        [general]
-        quiet=False
-
-        [urls]
-        damona=https://biomics.pasteur.fr/salsa/damona/registry.txt
+    Tokens and author metadata are read from ~/.config/damona/damona.cfg:
 
         [zenodo]
         token=APmm6p...
@@ -1021,9 +1023,8 @@ def upload(**kwargs):  # pragma: no cover
     """
     from damona.zenodo import Zenodo
 
-    # some aliases
     token = kwargs["token"]
-    mode = kwargs["mode"]
+    mode = "sandbox.zenodo" if kwargs["sandbox"] else "zenodo"
     filename = kwargs["filename"]
 
     # check that python and bash are available in the container.
@@ -1032,7 +1033,7 @@ def upload(**kwargs):  # pragma: no cover
         click.echo("Damona Warning: could not find **python** command in the container")
         proceed = click.prompt("Do you want to proceed ?")
         if proceed:
-            click.echo("Uploading without Python found in the container.")
+            click.echo("Publishing without Python found in the container.")
         else:
             click.echo("Exiting...")
             sys.exit(1)
@@ -1042,10 +1043,9 @@ def upload(**kwargs):  # pragma: no cover
         click.echo("Damona ERROR: could not find **bash** command in the container", err=True)
         sys.exit(1)
 
-    #
     z = Zenodo(mode, token)
-    logger.info(f"Uploading to {mode}")
-    z._upload(filename)
+    logger.info(f"Publishing to {mode}")
+    z._upload(filename, binaries=kwargs.get("binaries"), extra_binaries=kwargs.get("extra_binaries"))
 
 
 # =================================================================== check

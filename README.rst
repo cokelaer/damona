@@ -403,6 +403,8 @@ the command::
 ========= ========================================================================
 Version   Description
 ========= ========================================================================
+0.19.1    * CHANGED `damona upload` to `damona publish`
+          * NEW: new busco 6.0.0
 0.19.0    * ADDED: isoquant container (scratch-built, no micromamba)
           * FIXED: Zenodo upload now uses Bearer token authentication header
             instead of ``access_token`` query parameter (required by the new

@@ -20,6 +20,7 @@ import os
 import sys
 from configparser import NoOptionError, NoSectionError
 
+import click
 import colorlog
 import requests
 from tqdm import tqdm
@@ -91,7 +92,7 @@ class Zenodo:  # pragma: no cover
 
     This is created when using::
 
-        damona zenodo-upload file.img --mode zenodo
+        damona publish file.img --mode zenodo
 
     The zenodo_id is the record on the main page. e.g https://zenodo.org/records/8033026
     To cite all versions, use the main doi (here 10.5281/zenodo.8033025).
@@ -340,25 +341,136 @@ analysis.""",
 
     registry_name = property(_get_registry)
 
-    def _upload(self, filename):
+    def _comment_out_release(self, registry_file, version):
+        """Comment out an existing release block for *version* in *registry_file*.
+
+        Returns the ``extra_binaries`` value found in the block (or ``None``).
+        The file is rewritten in place with the matching lines prefixed by ``# ``.
+        """
+        if not os.path.exists(registry_file):
+            return None
+
+        with open(registry_file, "r") as f:
+            lines = f.readlines()
+
+        # Locate the uncommented version line at 4-space indent: "    X.Y.Z:"
+        start_idx = None
+        for i, line in enumerate(lines):
+            if line.startswith(f"    {version}:") and not line.lstrip().startswith("#"):
+                start_idx = i
+                break
+
+        if start_idx is None:
+            return None
+
+        # Collect sub-entries: lines with indent > 4 that immediately follow
+        extra_binaries = None
+        end_idx = start_idx + 1
+        while end_idx < len(lines):
+            line = lines[end_idx]
+            if not line.strip():
+                break
+            indent = len(line) - len(line.lstrip())
+            if indent <= 4:
+                break
+            if "extra_binaries:" in line:
+                extra_binaries = line.split("extra_binaries:", 1)[1].strip()
+            end_idx += 1
+
+        # Prefix each non-blank line in the block with "# "
+        for i in range(start_idx, end_idx):
+            if lines[i].strip():
+                lines[i] = "# " + lines[i]
+
+        with open(registry_file, "w") as f:
+            f.writelines(lines)
+
+        logger.warning(f"Existing {version} entry commented out in {registry_file}")
+        return extra_binaries
+
+    def _is_known_locally(self, registry_file, software_name):
+        """Return True if *software_name* already has an entry in *registry_file*."""
+        if not os.path.exists(registry_file):
+            return False
+        with open(registry_file, "r") as f:
+            for line in f:
+                if line.startswith(f"{software_name}:") and not line.lstrip().startswith("#"):
+                    return True
+        return False
+
+    def _upload(self, filename, binaries=None, extra_binaries=None):
         data = ImageName(filename)
         software = Software(data.name)
-        known = bool(software.name) and self.mode != "sandbox.zenodo"
+
+        # known_in_registry: software exists in the installed damona registry (production only)
+        known_in_registry = bool(software.name) and self.mode != "sandbox.zenodo"
+        # known_locally: software already has an entry in the local output file (both modes)
+        known_locally = self._is_known_locally(self.registry_name, data.name)
+        # known: drives YAML structure (release-only block vs full entry) and append vs overwrite
+        known = known_in_registry or known_locally
 
         # Always create a new independent deposit. Zenodo records are owned by
         # whoever created them, so attempting newversion on someone else's record
         # always fails with 403. Each version gets its own record instead.
         if known:
             logger.info("Software known, creating new independent deposit for this version.")
+
+            # If this version already exists locally, comment it out and reuse extra_binaries
+            old_extra = self._comment_out_release(self.registry_name, data.version)
+            if old_extra is not None:
+                click.echo(
+                    f"Version {data.version} was already present in {self.registry_name} — old entry commented out."
+                )
+
+            # Warn if the global binaries field is empty (only meaningful for installed registry)
+            if known_in_registry:
+                current_binaries = software._data.get(data.name, {}).get("binaries", "")
+                if not current_binaries:
+                    click.echo(
+                        f"WARNING: 'binaries' field is currently empty for '{data.name}' in the registry. "
+                        "Remember to add it manually."
+                    )
+
+            if extra_binaries is None:
+                default = old_extra or ""
+                prompt = "Extra binaries for this release (space or comma separated, empty to skip)"
+                if default:
+                    prompt += f" [previous value: {default}]"
+                raw = click.prompt(prompt, default=default)
+                extra_binaries = raw.strip() or None
         else:
             logger.info("Software not known, creating new deposit.")
 
-        msg = self.create_new_deposit_with_file_and_publish(filename, known=known)
-        print(msg)
+            if binaries is None:
+                raw = click.prompt(
+                    f"Binary names for '{data.name}' (space or comma separated)",
+                    default=data.name,
+                )
+                binaries = raw.strip() or data.name
+
+        msg = self.create_new_deposit_with_file_and_publish(
+            filename, known=known, binaries=binaries, extra_binaries=extra_binaries
+        )
         with open(self.registry_name, "a+" if known else "w") as fout:
             fout.write(msg)
 
-    def create_new_deposit_with_file_and_publish(self, filename, known=False):  # pragma: no cover
+        from rich.console import Console
+        from rich.panel import Panel
+
+        console = Console()
+        body = (
+            f"[bold green]Image published successfully.[/bold green]\n\n"
+            f"1. Review and edit [bold]{self.registry_name}[/bold] if needed.\n"
+            f"2. Commit the registry and the image recipe:\n\n"
+            f"   [bold]git add {self.registry_name}[/bold]\n"
+            f"   [bold]git commit -m 'add {data.name} {data.version}'[/bold]\n\n"
+            f"3. Open a pull request to merge your changes."
+        )
+        console.print(Panel(body, title="[bold cyan]damona publish — done[/bold cyan]", expand=False))
+
+    def create_new_deposit_with_file_and_publish(
+        self, filename, known=False, binaries=None, extra_binaries=None
+    ):  # pragma: no cover
         """ """
         data = ImageName(filename)
 
@@ -374,10 +486,12 @@ analysis.""",
 
         if self.last_requests[-1].ok:
             json = self.last_requests[-1].json()
-            msg = self._print_info_new_deposit(data, json, known=known)
+            msg = self._print_info_new_deposit(
+                data, json, known=known, binaries=binaries, extra_binaries=extra_binaries
+            )
             return msg
 
-    def _print_info_new_deposit(self, data, json, known=False):
+    def _print_info_new_deposit(self, data, json, known=False, binaries=None, extra_binaries=None):
         # figure out the filename entry we have just added
         entry = [x for x in json["files"] if x["filename"] == data.basename][0]
 
@@ -397,8 +511,12 @@ analysis.""",
             msg += f"      md5sum: {md5sum}\n"
             msg += f"      doi: {this_doi}\n"
             msg += f"      filesize: {filesize}\n"
+            if extra_binaries:
+                msg += f"      extra_binaries: {extra_binaries}\n"
         else:
             msg = f"{data.name}:\n"
+            if binaries:
+                msg += f"  binaries: {binaries}\n"
             msg += "  releases:\n"
             msg += f"    {data.version}:\n"
             msg += f"      download: {record_html}/files/{basename}\n"
