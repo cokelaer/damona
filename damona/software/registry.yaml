@@ -1931,3 +1931,13 @@ isoquant:
 
 
 
+# long_read_sum/registry.yaml
+long_read_sum:
+  binaries: LongReadSum
+  releases:
+    1.3.1:
+      download: https://zenodo.org/record/19265676/files/long_read_sum_1.3.1.img
+      md5sum: 22f0fd6fcb1aaed1f25cda5ca24c9661
+      doi: 10.5281/zenodo.19265676
+      filesize: 332255232
+

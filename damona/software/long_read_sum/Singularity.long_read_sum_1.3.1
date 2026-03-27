@@ -1,0 +1,61 @@
+Bootstrap: docker
+From: python:3.11-slim
+
+%labels
+    Author Sequana Team
+
+%post
+    LONGREADSUM_VERSION=1.3.1
+    HTSLIB_VERSION=1.20
+
+    apt-get update -y && apt-get install -y --no-install-recommends \
+        git make bzip2 curl ca-certificates \
+        gcc g++ swig \
+        zlib1g-dev libbz2-dev liblzma-dev \
+        libhdf5-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+    # Install Python runtime deps
+    pip install --no-cache-dir numpy plotly pyarrow pod5
+
+    # Build htslib 1.20 from source (avoids libcurl variant conflicts)
+    curl -sSL https://github.com/samtools/htslib/releases/download/${HTSLIB_VERSION}/htslib-${HTSLIB_VERSION}.tar.bz2 \
+        | tar -xjf - -C /tmp
+    cd /tmp/htslib-${HTSLIB_VERSION} \
+        && ./configure --prefix=/usr/local --disable-libcurl \
+        && make && make install \
+        && cd / && rm -rf /tmp/htslib-${HTSLIB_VERSION}
+
+    # Symlink HDF5 serial libs into /usr/local/lib so the linker finds them
+    for f in /usr/lib/x86_64-linux-gnu/hdf5/serial/lib*.so*; do
+        ln -sf "$f" /usr/local/lib/
+    done
+    ldconfig
+
+    # Clone LongReadSum
+    git clone --depth=1 --branch v${LONGREADSUM_VERSION} \
+        https://github.com/WGLab/LongReadSum /opt/LongReadSum
+    cd /opt/LongReadSum
+
+    # Pass HDF5 serial headers and /usr/local to the compiler/linker
+    export C_INCLUDE_PATH="/usr/local/include:/usr/include/hdf5/serial"
+    export CPLUS_INCLUDE_PATH="/usr/local/include:/usr/include/hdf5/serial"
+    export LIBRARY_PATH="/usr/local/lib"
+    make
+
+    # Entry-point wrapper
+    printf '#!/bin/sh\nexec python3 /opt/LongReadSum "$@"\n' > /usr/local/bin/LongReadSum
+    chmod +x /usr/local/bin/LongReadSum
+
+    # Cleanup build-only tools; do NOT autoremove — HDF5 runtime libs are
+    # deps of libhdf5-dev and would otherwise be removed with it
+    apt-get purge -y git gcc g++ swig \
+        zlib1g-dev libbz2-dev liblzma-dev libhdf5-dev
+    apt-get clean
+    rm -rf /var/lib/apt/lists/*
+
+%environment
+    export LD_LIBRARY_PATH=/opt/LongReadSum/lib:/usr/local/lib:/usr/lib/x86_64-linux-gnu/hdf5/serial:$LD_LIBRARY_PATH
+
+%runscript
+    exec LongReadSum "$@"
