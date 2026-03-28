@@ -403,6 +403,8 @@ the command::
 ========= ========================================================================
 Version   Description
 ========= ========================================================================
+0.19.2    * CHANGED faster `damona check <IMG>`
+          * UPDATED sequana 0.21 image
 0.19.1    * CHANGED `damona upload` to `damona publish`
           * NEW: new busco 6.0.0
 0.19.0    * ADDED: isoquant container (scratch-built, no micromamba)

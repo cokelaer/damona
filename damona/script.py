@@ -33,6 +33,7 @@ import packaging
 import requests
 import rich_click as click
 from rich.console import Console
+from rich.live import Live
 from rich.panel import Panel
 from rich.table import Table
 from rich.text import Text
@@ -1097,32 +1098,14 @@ def check(**kwargs):
             raise SystemExit(1)
 
     container_cmd = get_container_cmd()
-    results = []
+    container_runner = f"{container_cmd} exec {str(image)}"
 
-    for binary in binaries:
-        found = False
-        version_str = ""
+    try:
+        from versionix.parser import Versionix as _Versionix
 
-        for args in ["--version", "-v", ""]:
-            cmd = f"{container_cmd} exec {image} {binary} {args}".strip()
-            proc = subprocess.run(cmd, shell=True, capture_output=True)
-            stdout = proc.stdout.decode(errors="replace").strip()
-            stderr = proc.stderr.decode(errors="replace").strip()
-            output = stdout or stderr
-
-            if proc.returncode == 0:
-                found = True
-                version_str = output.splitlines()[0][:60] if output else ""
-                break
-            elif "executable file not found" in stderr or "not found" in stderr:
-                break
-            else:
-                # Non-zero exit but binary ran (e.g. printed usage to stderr)
-                found = True
-                version_str = output.splitlines()[0][:60] if output else ""
-                break
-
-        results.append((binary, found, version_str))
+        _versionix_available = True
+    except ImportError:
+        _versionix_available = False
 
     table = Table(title=f"Binary check: {image.name}", show_lines=False)
     table.add_column("Binary", style="cyan", no_wrap=True)
@@ -1130,13 +1113,39 @@ def check(**kwargs):
     table.add_column("Output", style="dim")
 
     all_ok = True
-    for binary, ok, version_str in results:
-        status = Text("PASS", style="bold green") if ok else Text("FAIL", style="bold red")
-        table.add_row(binary, status, version_str)
-        if not ok:
-            all_ok = False
+    with Live(table, console=console, refresh_per_second=4):
+        for binary in binaries:
+            found = False
+            version_str = ""
 
-    console.print(table)
+            # Existence probe: a single fast call is enough to detect "not found"
+            try:
+                probe = subprocess.run(
+                    f"{container_cmd} exec {image} {binary} --version",
+                    shell=True,
+                    capture_output=True,
+                    timeout=10,
+                )
+                probe_out = (probe.stdout + probe.stderr).decode(errors="replace")
+            except subprocess.TimeoutExpired:
+                probe_out = ""
+
+            if "executable file not found" in probe_out or "command not found" in probe_out:
+                found = False
+            else:
+                found = True
+                if _versionix_available:
+                    try:
+                        version_str = _Versionix(binary, container_runner=container_runner).get_version()
+                    except Exception:
+                        version_str = probe_out.splitlines()[0][:60] if probe_out.strip() else ""
+                else:
+                    version_str = probe_out.splitlines()[0][:60] if probe_out.strip() else ""
+
+            status = Text("PASS", style="bold green") if found else Text("FAIL", style="bold red")
+            table.add_row(binary, status, version_str)
+            if not found:
+                all_ok = False
 
     if not all_ok:
         raise SystemExit(1)
