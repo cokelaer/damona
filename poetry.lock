@@ -1419,6 +1419,23 @@ socks = ["pysocks (>=1.5.6,!=1.5.7,<2.0)"]
 zstd = ["zstandard (>=0.18.0)"]
 
 [[package]]
+name = "versionix"
+version = "0.99.4"
+description = "Get version of any tools"
+optional = false
+python-versions = "<4.0,>=3.8"
+groups = ["main"]
+files = [
+    {file = "versionix-0.99.4-py3-none-any.whl", hash = "sha256:42d6812e3ffb4622a9b61e706c8f73887f9688ec495db320c7f0fe71648a0985"},
+    {file = "versionix-0.99.4.tar.gz", hash = "sha256:53d6229c2afee252f78c550017a508bd23a064c7594e0cb94b9d40316955c036"},
+]
+
+[package.dependencies]
+click = ">=8.1.7,<9.0.0"
+colorlog = ">=6.8.2,<7.0.0"
+rich-click = ">=1.7.1,<2.0.0"
+
+[[package]]
 name = "win32-setctime"
 version = "1.2.0"
 description = "A small Python utility to set file creation time on Windows"
@@ -1458,4 +1475,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.8,<4.0"
-content-hash = "2abb5f9331986674b867240e24eb86628db3c46b85013cd16c426c14ce607e14"
+content-hash = "1356b1053d01b3527f652aba98902b8bf80d710dc68ed9d27545f5dfa2bb4035"
