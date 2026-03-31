@@ -112,6 +112,11 @@ bioconvert:
       md5sum: 03b62d736758d524e051db68b55bc627
       doi: 10.5281/zenodo.8078007
       filesize: 1219751936
+    1.2.0:
+      download: https://zenodo.org/record/19359689/files/bioconvert_1.2.0.img
+      md5sum: 2627d0ca4f79be301eb5beb0f725b16f
+      doi: 10.5281/zenodo.19359689
+      filesize: 830828544
 
 # blast/registry.yaml
 blast:
