@@ -11,6 +11,7 @@ multiqc:
       download: https://zenodo.org/record/17100129/files/multiqc_1.27.0.img
       md5sum: a3c7ba2b7fd47c8e7f168f8e3b44a558
       doi: 10.5281/zenodo.17100129
+      broken: true
       filesize: 374587392
     1.27.0-zenodo1:
       download: https://zenodo.org/record/17100751/files/multiqc_1.27.0-zenodo1.img
