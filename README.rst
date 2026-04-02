@@ -113,6 +113,8 @@ Key strengths at a glance
   export/import it to reproduce results anywhere.
 * **Custom registries** — host your own registry to distribute in-house
   containers to your team, just like a private conda channel.
+* **Quality control** — broken or buggy releases can be marked in the registry,
+  hidden from search and auto-selection, but still accessible for reproducibility.
 
 
 Installation

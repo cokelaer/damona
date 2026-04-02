@@ -293,6 +293,29 @@ combined with the top-level ``binaries:`` at install time::
             md5sum: 9707085637...
             filesize: 546848768
 
+**Marking broken releases:**
+
+If a release is found to be buggy or otherwise unsuitable for new users, mark it
+with ``broken: true``. Broken releases are:
+
+- Hidden from ``damona search`` results
+- Skipped when auto-selecting the latest version with ``damona install name``
+- Still installable via explicit version: ``damona install name:x.y.z`` (with a warning)
+
+This preserves reproducibility (users can still access the version) while
+preventing accidental use::
+
+    fastqc:
+        binaries: fastqc
+        releases:
+          0.11.9:
+            download: https://zenodo.org/record/.../fastqc_0.11.9.img
+            md5sum: abc123...
+          0.11.8:
+            download: https://zenodo.org/record/.../fastqc_0.11.8.img
+            md5sum: def456...
+            broken: true  # Hide from search, skip auto-pick
+
 ``damona publish`` prompts for ``extra_binaries`` interactively and writes
 the field automatically when a non-empty value is given.
 
