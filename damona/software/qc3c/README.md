@@ -2,14 +2,19 @@
 
 **DOI:** [10.5281/zenodo.14746666](https://doi.org/10.5281/zenodo.14746666)
 
+## Binaries
+
+`qc3C`
+
+## Installation
+
+```bash
+damona install qc3c               # latest (0.5.0)
+damona install qc3c:VERSION        # specific version
+```
+
 ## Available Versions
-- **Version 0.5.0**
-  - [Download](https://zenodo.org/record/14746667/files/qc3c_0.5.0.img)
-  - **MD5:** `b41c2c087970a02c43a8cfa541b9f881`
-  - **DOI:** [10.5281/zenodo.14746667](https://doi.org/10.5281/zenodo.14746667)
-  - **Size:** 284.99 MB
-  - **Binaries:** 0 available
 
-## Binaries (1 total)
-
-```qc3C```
+| Version | Size | Binaries | DOI |
+|---------|------|----------|-----|
+| **0.5.0** *(latest)* | 284.99 MB | `qc3C` | [10.5281/zenodo.14746667](https://doi.org/10.5281/zenodo.14746667) |

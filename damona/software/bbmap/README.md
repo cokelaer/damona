@@ -2,14 +2,19 @@
 
 **DOI:** [10.5281/zenodo.13810656](https://doi.org/10.5281/zenodo.13810656)
 
+## Binaries
+
+`bbmap.sh` `reformat.sh` `adadapters.sh` `bbmerge.sh` `bbduk.sh` `bbsplit.sh`
+
+## Installation
+
+```bash
+damona install bbmap               # latest (39.1.0)
+damona install bbmap:VERSION        # specific version
+```
+
 ## Available Versions
-- **Version 39.1.0**
-  - [Download](https://zenodo.org/record/13810658/files/bbmap_39.1.0.img)
-  - **MD5:** `3e6c469061a2d45f273b0c24a05140b9`
-  - **DOI:** [10.5281/zenodo.13810658](https://doi.org/10.5281/zenodo.13810658)
-  - **Size:** 223.38 MB
-  - **Binaries:** 0 available
 
-## Binaries (6 total)
-
-```bbmap.sh reformat.sh adadapters.sh bbmerge.sh bbduk.sh bbsplit.sh```
+| Version | Size | Binaries | DOI |
+|---------|------|----------|-----|
+| **39.1.0** *(latest)* | 223.38 MB | `adadapters.sh` `bbduk.sh` `bbmap.sh` `bbmerge.sh` `bbsplit.sh` `reformat.sh` | [10.5281/zenodo.13810658](https://doi.org/10.5281/zenodo.13810658) |

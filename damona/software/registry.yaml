@@ -1962,3 +1962,13 @@ long_read_sum:
       doi: 10.5281/zenodo.19265676
       filesize: 332255232
 
+# bamqc/registry.yaml
+bamqc:
+  binaries: bamqc
+  releases:
+    5.3.8:
+      download: https://zenodo.org/record/TODO/files/bamqc_5.3.8.img
+      md5sum: TODO
+      doi: TODO
+      filesize: TODO
+

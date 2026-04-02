@@ -2,14 +2,19 @@
 
 **DOI:** [10.5281/zenodo.13787536](https://doi.org/10.5281/zenodo.13787536)
 
+## Binaries
+
+`mcl`
+
+## Installation
+
+```bash
+damona install mcl               # latest (22.282.0)
+damona install mcl:VERSION        # specific version
+```
+
 ## Available Versions
-- **Version 22.282.0**
-  - [Download](https://zenodo.org/record/13787537/files/mcl_22.282.0.img)
-  - **MD5:** `b1289eb7c334fdb47dd0615c285d2a1e`
-  - **DOI:** [10.5281/zenodo.13787537](https://doi.org/10.5281/zenodo.13787537)
-  - **Size:** 59.63 MB
-  - **Binaries:** 0 available
 
-## Binaries (1 total)
-
-```mcl```
+| Version | Size | Binaries | DOI |
+|---------|------|----------|-----|
+| **22.282.0** *(latest)* | 59.63 MB | `mcl` | [10.5281/zenodo.13787537](https://doi.org/10.5281/zenodo.13787537) |

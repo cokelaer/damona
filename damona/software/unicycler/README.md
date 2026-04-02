@@ -2,21 +2,20 @@
 
 **DOI:** [10.5281/zenodo.10469284](https://doi.org/10.5281/zenodo.10469284)
 
+## Binaries
+
+`unicycler`
+
+## Installation
+
+```bash
+damona install unicycler               # latest (0.5.1)
+damona install unicycler:VERSION        # specific version
+```
+
 ## Available Versions
-- **Version 0.5.0**
-  - [Download](https://zenodo.org/record/10469285/files/unicycler_0.5.0.img)
-  - **MD5:** `a97f6070d3bd49dac3557dd7043bd30a`
-  - **DOI:** [10.5281/zenodo.10469285](https://doi.org/10.5281/zenodo.10469285)
-  - **Size:** 792.20 MB
-  - **Binaries:** 0 available
 
-- **Version 0.5.1**
-  - [Download](https://zenodo.org/record/TODO/files/unicycler_0.5.1.img)
-  - **MD5:** `460a034743b3c24f41e4221bc4f39725`
-  - **DOI:** [TODO](https://doi.org/TODO)
-  - **Size:** 335.87 MB
-  - **Binaries:** 0 available
-
-## Binaries (1 total)
-
-```unicycler```
+| Version | Size | Binaries | DOI |
+|---------|------|----------|-----|
+| **0.5.1** *(latest)* | 335.87 MB | `unicycler` | [TODO](https://doi.org/TODO) |
+| `0.5.0` | 792.20 MB | `unicycler` | [10.5281/zenodo.10469285](https://doi.org/10.5281/zenodo.10469285) |

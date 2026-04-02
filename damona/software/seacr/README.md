@@ -2,14 +2,19 @@
 
 **DOI:** [10.5281/zenodo.8420793](https://doi.org/10.5281/zenodo.8420793)
 
+## Binaries
+
+`SEACR_1.3.0.sh`
+
+## Installation
+
+```bash
+damona install seacr               # latest (1.3.0)
+damona install seacr:VERSION        # specific version
+```
+
 ## Available Versions
-- **Version 1.3.0**
-  - [Download](https://zenodo.org/record/8420794/files/seacr_1.3.0.img)
-  - **MD5:** `8f9ec304fd2929641b9c7fdd15ab8dd4`
-  - **DOI:** [10.5281/zenodo.8420794](https://doi.org/10.5281/zenodo.8420794)
-  - **Size:** 375.17 MB
-  - **Binaries:** 0 available
 
-## Binaries (1 total)
-
-```SEACR_1.3.0.sh```
+| Version | Size | Binaries | DOI |
+|---------|------|----------|-----|
+| **1.3.0** *(latest)* | 375.17 MB | `SEACR_1.3.0.sh` | [10.5281/zenodo.8420794](https://doi.org/10.5281/zenodo.8420794) |

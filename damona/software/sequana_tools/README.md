@@ -2,105 +2,32 @@
 
 **DOI:** [10.5281/zenodo.5767303](https://doi.org/10.5281/zenodo.5767303)
 
+## Binaries
+
+`fastqc` `bowtie` `STAR` `bowtie2` `bowtie2-build` `bowtie-build` `bwa` `featureCounts` `samtools` `bamtools` `gffread` `dsrc` `MarkDuplicates` `spades.py` `split-paired-reads.py` `filter-abund.py` `extract-paired-reads.py` `snpEff` `deeptools` `picard` `subread` `sambamba` `pbunzip2` `pbzip2` `kraken2` `krona` `ktImportText` `kraken2-build` `freebayes` `minimap2` `bedtools` `interleave-reads.py` `normalize-by-median.py` `ccs`
+
+## Installation
+
+```bash
+damona install sequana_tools               # latest (26.1.14)
+damona install sequana_tools:VERSION        # specific version
+```
+
 ## Available Versions
-- **Version 0.14.3**
-  - [Download](https://zenodo.org/record/7102074/files/sequana_tools_0.14.3.img)
-  - **MD5:** `b580d898575ad164c460738dd8c64172`
-  - **DOI:** [10.5281/zenodo.7102074](https://doi.org/10.5281/zenodo.7102074)
-  - **Size:** 1906.83 MB
-  - **Binaries:** 45 available
 
-- **Version 0.14.2**
-  - [Download](https://zenodo.org/record/7031863/files/sequana_tools_0.14.2.img)
-  - **MD5:** `7c944db77d8c3adc262b6828d96357df`
-  - **DOI:** [10.5281/zenodo.7031863](https://doi.org/10.5281/zenodo.7031863)
-  - **Size:** 1761.33 MB
-  - **Binaries:** 45 available
-
-- **Version 0.14.1**
-  - [Download](https://zenodo.org/record/6794508/files/sequana_tools_0.14.1.img)
-  - **MD5:** `3436493ee8c4c1682ca99f96ecfce951`
-  - **DOI:** [10.5281/zenodo.6794508](https://doi.org/10.5281/zenodo.6794508)
-  - **Size:** 1540.13 MB
-  - **Binaries:** 41 available
-
-- **Version 0.12.1**
-  - [Download](https://zenodo.org/record/5767304/files/sequana_tools_0.12.1.img)
-  - **MD5:** `585b4f752e3a46b430ec5529034c62fc`
-  - **DOI:** [10.5281/zenodo.5767304](https://doi.org/10.5281/zenodo.5767304)
-  - **Size:** 1502.16 MB
-  - **Binaries:** 25 available
-
-- **Version 0.12.0**
-  - [Download](https://zenodo.org/record/5767441/files/sequana_tools_0.12.0.img)
-  - **MD5:** `9eeaff21d450d0df86386feea05245e8`
-  - **DOI:** [10.5281/zenodo.5767441](https://doi.org/10.5281/zenodo.5767441)
-  - **Size:** 1307.20 MB
-  - **Binaries:** 24 available
-
-- **Version 0.11.0**
-  - [Download](https://zenodo.org/record/5767431/files/sequana_tools_0.11.0.img)
-  - **MD5:** `788aa389f22b519076a19a7e3ca38679`
-  - **DOI:** [10.5281/zenodo.5767431](https://doi.org/10.5281/zenodo.5767431)
-  - **Size:** 1604.10 MB
-  - **Binaries:** 21 available
-
-- **Version 0.10.0**
-  - [Download](https://zenodo.org/record/5767315/files/sequana_tools_0.10.0.img)
-  - **MD5:** `566fe2f8ee08153bede621b0c72b7091`
-  - **DOI:** [10.5281/zenodo.5767315](https://doi.org/10.5281/zenodo.5767315)
-  - **Size:** 1413.20 MB
-  - **Binaries:** 17 available
-
-- **Version 0.9.0**
-  - [Download](https://zenodo.org/record/5767308/files/sequana_tools_0.9.0.img)
-  - **MD5:** `1e2cd02d2488108cfc46032013c65f8a`
-  - **DOI:** [10.5281/zenodo.5767308](https://doi.org/10.5281/zenodo.5767308)
-  - **Size:** 1355.97 MB
-  - **Binaries:** 4 available
-
-- **Version 0.14.5**
-  - [Download](https://zenodo.org/record/7341710/files/sequana_tools_0.14.5.img)
-  - **MD5:** `0b486ed2050459e469cde9eca3fd00bc`
-  - **DOI:** [10.5281/zenodo.7341710](https://doi.org/10.5281/zenodo.7341710)
-  - **Size:** 1910.20 MB
-  - **Binaries:** 45 available
-
-- **Version 0.15.1**
-  - [Download](https://zenodo.org/record/7963917/files/sequana_tools_0.15.1.img)
-  - **MD5:** `0e20654cecb7c70d9eba6e11571f45b7`
-  - **DOI:** [10.5281/zenodo.7963917](https://doi.org/10.5281/zenodo.7963917)
-  - **Size:** 1914.09 MB
-  - **Binaries:** 46 available
-
-- **Version 0.19.1**
-  - [Download](https://zenodo.org/record/14945560/files/sequana_tools_0.19.1.img)
-  - **MD5:** `f39c0462e14eb642f6f82fa64101660e`
-  - **DOI:** [10.5281/zenodo.14945560](https://doi.org/10.5281/zenodo.14945560)
-  - **Size:** 1726.54 MB
-  - **Binaries:** 33 available
-
-- **Version 0.19.3**
-  - [Download](https://zenodo.org/record/17535070/files/sequana_tools_0.19.3.img)
-  - **MD5:** `ba16985905ac685e3754194968a8c7cf`
-  - **DOI:** [10.5281/zenodo.17535070](https://doi.org/10.5281/zenodo.17535070)
-  - **Size:** 1746.93 MB
-  - **Binaries:** 33 available
-
-- **Version 25.11.15**
-  - [Download](https://zenodo.org/record/17625030/files/sequana_tools_25.11.15.img)
-  - **MD5:** `efb85a609bae778b5824739f607abd90`
-  - **DOI:** [10.5281/zenodo.17625030](https://doi.org/10.5281/zenodo.17625030)
-  - **Size:** 1772.40 MB
-  - **Binaries:** 32 available
-
-- **Version 26.1.14**
-  - [Download](https://zenodo.org/record/18257162/files/sequana_tools_26.1.14.img)
-  - **MD5:** `678db1c8b8e6307284f94814b854e24d`
-  - **DOI:** [10.5281/zenodo.18257162](https://doi.org/10.5281/zenodo.18257162)
-  - **Size:** 1797.38 MB
-  - **Binaries:** 0 available
-
-## Binaries (34 total)
-
-```fastqc bowtie STAR bowtie2 bowtie2-build bowtie-build bwa featureCounts samtools bamtools gffread dsrc MarkDuplicates spades.py split-paired-reads.py filter-abund.py extract-paired-reads.py snpEff deeptools picard subread sambamba pbunzip2 pbzip2 kraken2 krona ktImportText kraken2-build freebayes minimap2 bedtools interleave-reads.py normalize-by-median.py ccs```
+| Version | Size | Binaries | DOI |
+|---------|------|----------|-----|
+| **26.1.14** *(latest)* | 1797.38 MB | `MarkDuplicates` `STAR` `bamtools` `bedtools` `bowtie` `bowtie-build` `bowtie2` `bowtie2-build` `bwa` `ccs` `deeptools` `dsrc` `extract-paired-reads.py` `fastqc` `featureCounts` `filter-abund.py` `freebayes` `gffread` `interleave-reads.py` `kraken2` `kraken2-build` `krona` `ktImportText` `minimap2` `normalize-by-median.py` `pbunzip2` `pbzip2` `picard` `sambamba` `samtools` `snpEff` `spades.py` `split-paired-reads.py` `subread` | [10.5281/zenodo.18257162](https://doi.org/10.5281/zenodo.18257162) |
+| `25.11.15` | 1772.40 MB | `MarkDuplicates` `STAR` `bamCoverage` `bamtools` `bcftools` `bedtools` `bowtie` `bowtie-build` `bowtie2` `bwa` `deeptools` `dot` `dsrc` `extract-paired-reads.py` `fastp` `featureCounts` `filter-abund.py` `freebayes` `genomeCoverageBed` `gffread` `hmmalign` `hmmbuild` `hmmconvert` `hmmemit` `hmmfetch` `hmmlogo` `hmmpgmd` `hmmpgmd_shard` `hmmpress` `hmmscan` `hmmsearch` `hmmsim` `hmmstat` `interleave-reads.py` `intersectBed` `kallisto` `kraken2` `kraken2-build` `kraken2-inspect` `krona` `ktImportText` `mafft` `minimap2` `normalize-by-median.py` `pbunzip2` `pbzip2` `picard` `plotFingerprint` `rnaseqc` `salmon` `sambamba` `samtools` `seqtk` `sequana` `sequana_taxonomy` `shustring` `snpEff` `sortBed` `spades.py` `split-paired-reads.py` `subread` `trinotate_report_summary.pl` `vcfutils.pl` | [10.5281/zenodo.17625030](https://doi.org/10.5281/zenodo.17625030) |
+| `0.19.3` | 1746.93 MB | `MarkDuplicates` `STAR` `bamCoverage` `bamtools` `bcftools` `bedtools` `bowtie` `bowtie-build` `bowtie2` `bowtie2-build` `bwa` `ccs` `deeptools` `dot` `dsrc` `extract-paired-reads.py` `fastp` `fastqc` `featureCounts` `filter-abund.py` `freebayes` `genomeCoverageBed` `gffread` `hmmalign` `hmmbuild` `hmmconvert` `hmmemit` `hmmfetch` `hmmlogo` `hmmpgmd` `hmmpgmd_shard` `hmmpress` `hmmscan` `hmmsearch` `hmmsim` `hmmstat` `interleave-reads.py` `intersectBed` `kallisto` `kraken2` `kraken2-build` `kraken2-inspect` `krona` `ktImportText` `mafft` `minimap2` `normalize-by-median.py` `pbunzip2` `pbzip2` `picard` `plotFingerprint` `rnaseqc` `salmon` `sambamba` `samtools` `seqkit` `seqtk` `sequana` `sequana_taxonomy` `shustring` `snpEff` `sortBed` `spades.py` `split-paired-reads.py` `subread` `trinotate_report_summary.pl` `vcfutils.pl` | [10.5281/zenodo.17535070](https://doi.org/10.5281/zenodo.17535070) |
+| `0.19.1` | 1726.54 MB | `MarkDuplicates` `STAR` `bamCoverage` `bamtools` `bcftools` `bedtools` `bowtie` `bowtie-build` `bwa` `deeptools` `dot` `dsrc` `extract-paired-reads.py` `fastp` `featureCounts` `filter-abund.py` `freebayes` `genomeCoverageBed` `gffread` `hmmalign` `hmmbuild` `hmmconvert` `hmmemit` `hmmfetch` `hmmlogo` `hmmpgmd` `hmmpgmd_shard` `hmmpress` `hmmscan` `hmmsearch` `hmmsim` `hmmstat` `interleave-reads.py` `intersectBed` `kallisto` `kraken2` `kraken2-build` `kraken2-inspect` `krona` `ktImportText` `mafft` `minimap2` `normalize-by-median.py` `pbunzip2` `pbzip2` `picard` `plotFingerprint` `rnaseqc` `salmon` `sambamba` `samtools` `seqkit` `seqtk` `sequana` `sequana_taxonomy` `shustring` `snpEff` `sortBed` `spades.py` `split-paired-reads.py` `subread` `trinotate_report_summary.pl` `vcfutils.pl` | [10.5281/zenodo.14945560](https://doi.org/10.5281/zenodo.14945560) |
+| `0.15.1` | 1914.09 MB | `Build_Trinotate_Boilerplate_SQLite_db.pl` `MarkDuplicates` `STAR` `Trinity` `bamCoverage` `bam_stat.py` `bamtools` `bcftools` `bedtools` `bowtie` `bowtie-build` `bowtie2` `bowtie2-build` `bwa` `ccs` `clipping_profile.py` `deeptools` `dot` `dsrc` `extract-paired-reads.py` `falco` `fastp` `fastqc` `featureCounts` `filter-abund.py` `freebayes` `geneBody_coverage.py` `geneBody_coverage2.py` `genomeCoverageBed` `gffread` `hmmalign` `hmmbuild` `hmmconvert` `hmmemit` `hmmfetch` `hmmlogo` `hmmpgmd` `hmmpgmd_shard` `hmmpress` `hmmscan` `hmmsearch` `hmmsim` `hmmstat` `infer_experiment.py` `inner_distance.py` `interleave-reads.py` `intersectBed` `junction_annotation.py` `junction_saturation.py` `kallisto` `kraken2` `kraken2-build` `kraken2-inspect` `krona` `ktImportText` `mafft` `minimap2` `normalize-by-median.py` `pbunzip2` `pbzip2` `picard` `plotFingerprint` `read_GC.py` `read_duplication.py` `rnaseqc` `salmon` `sambamba` `samtools` `seqkit` `seqtk` `sequana` `sequana_taxonomy` `shustring` `snpEff` `sortBed` `spades.py` `split-paired-reads.py` `subread` `trinotate_report_summary.pl` `vcfutils.pl` | [10.5281/zenodo.7963917](https://doi.org/10.5281/zenodo.7963917) |
+| `0.14.5` | 1910.20 MB | `Build_Trinotate_Boilerplate_SQLite_db.pl` `MarkDuplicates` `STAR` `Trinity` `bamCoverage` `bam_stat.py` `bamtools` `bcftools` `bedtools` `bowtie` `bowtie-build` `bowtie2` `bowtie2-build` `bwa` `ccs` `clipping_profile.py` `deeptools` `dot` `dsrc` `extract-paired-reads.py` `falco` `fastp` `fastqc` `featureCounts` `filter-abund.py` `freebayes` `geneBody_coverage.py` `geneBody_coverage2.py` `genomeCoverageBed` `gffread` `hmmalign` `hmmbuild` `hmmconvert` `hmmemit` `hmmfetch` `hmmlogo` `hmmpgmd` `hmmpgmd_shard` `hmmpress` `hmmscan` `hmmsearch` `hmmsim` `hmmstat` `infer_experiment.py` `inner_distance.py` `interleave-reads.py` `intersectBed` `junction_annotation.py` `junction_saturation.py` `kallisto` `kraken2` `kraken2-build` `kraken2-inspect` `krona` `ktImportText` `mafft` `minimap2` `normalize-by-median.py` `pbunzip2` `pbzip2` `picard` `plotFingerprint` `read_GC.py` `read_duplication.py` `rnaseqc` `salmon` `sambamba` `samtools` `seqkit` `seqtk` `sequana` `sequana_taxonomy` `shustring` `snpEff` `spades.py` `split-paired-reads.py` `subread` `trinotate_report_summary.pl` `vcfutils.pl` | [10.5281/zenodo.7341710](https://doi.org/10.5281/zenodo.7341710) |
+| `0.14.3` | 1906.83 MB | `Build_Trinotate_Boilerplate_SQLite_db.pl` `MarkDuplicates` `STAR` `Trinity` `bamCoverage` `bam_stat.py` `bamtools` `bcftools` `bedtools` `bowtie` `bowtie-build` `bowtie2` `bowtie2-build` `bwa` `ccs` `clipping_profile.py` `deeptools` `dot` `dsrc` `extract-paired-reads.py` `falco` `fastp` `fastqc` `featureCounts` `filter-abund.py` `freebayes` `geneBody_coverage.py` `geneBody_coverage2.py` `genomeCoverageBed` `gffread` `hmmalign` `hmmbuild` `hmmconvert` `hmmemit` `hmmfetch` `hmmlogo` `hmmpgmd` `hmmpgmd_shard` `hmmpress` `hmmscan` `hmmsearch` `hmmsim` `hmmstat` `infer_experiment.py` `inner_distance.py` `interleave-reads.py` `intersectBed` `junction_annotation.py` `junction_saturation.py` `kallisto` `kraken2` `kraken2-build` `kraken2-inspect` `krona` `ktImportText` `mafft` `minimap2` `normalize-by-median.py` `pbunzip2` `pbzip2` `picard` `plotFingerprint` `read_GC.py` `read_duplication.py` `rnaseqc` `salmon` `sambamba` `samtools` `seqkit` `seqtk` `sequana` `sequana_taxonomy` `shustring` `snpEff` `spades.py` `split-paired-reads.py` `subread` `trinotate_report_summary.pl` `vcfutils.pl` | [10.5281/zenodo.7102074](https://doi.org/10.5281/zenodo.7102074) |
+| `0.14.2` | 1761.33 MB | `Build_Trinotate_Boilerplate_SQLite_db.pl` `MarkDuplicates` `STAR` `Trinity` `bamCoverage` `bam_stat.py` `bamtools` `bcftools` `bedtools` `bowtie` `bowtie-build` `bowtie2` `bowtie2-build` `bwa` `ccs` `clipping_profile.py` `deeptools` `dot` `dsrc` `extract-paired-reads.py` `falco` `fastp` `fastqc` `featureCounts` `filter-abund.py` `freebayes` `geneBody_coverage.py` `geneBody_coverage2.py` `genomeCoverageBed` `gffread` `hmmalign` `hmmbuild` `hmmconvert` `hmmemit` `hmmfetch` `hmmlogo` `hmmpgmd` `hmmpgmd_shard` `hmmpress` `hmmscan` `hmmsearch` `hmmsim` `hmmstat` `infer_experiment.py` `inner_distance.py` `interleave-reads.py` `intersectBed` `junction_annotation.py` `junction_saturation.py` `kallisto` `kraken2` `kraken2-build` `kraken2-inspect` `krona` `ktImportText` `mafft` `minimap2` `normalize-by-median.py` `pbunzip2` `pbzip2` `picard` `plotFingerprint` `read_GC.py` `read_duplication.py` `rnaseqc` `salmon` `sambamba` `samtools` `seqkit` `seqtk` `sequana` `sequana_taxonomy` `shustring` `snpEff` `spades.py` `split-paired-reads.py` `subread` `trinotate_report_summary.pl` `vcfutils.pl` | [10.5281/zenodo.7031863](https://doi.org/10.5281/zenodo.7031863) |
+| `0.14.1` | 1540.13 MB | `Build_Trinotate_Boilerplate_SQLite_db.pl` `MarkDuplicates` `STAR` `Trinity` `bamCoverage` `bam_stat.py` `bamtools` `bcftools` `bedtools` `bowtie` `bowtie-build` `bowtie2` `bowtie2-build` `bwa` `ccs` `clipping_profile.py` `deeptools` `dot` `dsrc` `extract-paired-reads.py` `falco` `fastp` `fastqc` `featureCounts` `filter-abund.py` `freebayes` `geneBody_coverage.py` `geneBody_coverage2.py` `genomeCoverageBed` `gffread` `hmmalign` `hmmbuild` `hmmconvert` `hmmemit` `hmmfetch` `hmmlogo` `hmmpgmd` `hmmpgmd_shard` `hmmpress` `hmmscan` `hmmsearch` `hmmsim` `hmmstat` `infer_experiment.py` `inner_distance.py` `interleave-reads.py` `intersectBed` `junction_annotation.py` `junction_saturation.py` `kallisto` `kraken2` `kraken2-build` `kraken2-inspect` `krona` `ktImportText` `mafft` `minimap2` `normalize-by-median.py` `pbunzip2` `pbzip2` `picard` `plotFingerprint` `read_GC.py` `read_duplication.py` `rnaseqc` `salmon` `sambamba` `samtools` `shustring` `snpEff` `spades.py` `split-paired-reads.py` `subread` `trinotate_report_summary.pl` `vcfutils.pl` | [10.5281/zenodo.6794508](https://doi.org/10.5281/zenodo.6794508) |
+| `0.12.1` | 1502.16 MB | `MarkDuplicates` `STAR` `bamCoverage` `bam_stat.py` `bamtools` `bcftools` `bedtools` `bowtie` `bowtie-build` `bowtie2` `bowtie2-build` `bwa` `ccs` `clipping_profile.py` `deeptools` `dot` `dsrc` `extract-paired-reads.py` `falco` `fastp` `fastq-dump` `fastqc` `featureCounts` `filter-abund.py` `freebayes` `geneBody_coverage.py` `geneBody_coverage2.py` `genomeCoverageBed` `gffread` `infer_experiment.py` `inner_distance.py` `interleave-reads.py` `intersectBed` `junction_annotation.py` `junction_saturation.py` `kraken2` `kraken2-build` `kraken2-inspect` `krona` `ktImportText` `mafft` `minimap2` `normalize-by-median.py` `pbunzip2` `pbzip2` `picard` `plotFingerprint` `read_GC.py` `read_duplication.py` `rnaseqc` `salmon` `sambamba` `samtools` `shustring` `snpEff` `spades.py` `split-paired-reads.py` `subread` `vcfutils.pl` | [10.5281/zenodo.5767304](https://doi.org/10.5281/zenodo.5767304) |
+| `0.12.0` | 1307.20 MB | `MarkDuplicates` `STAR` `bamCoverage` `bam_stat.py` `bamtools` `bcftools` `bedtools` `bowtie` `bowtie-build` `bowtie2` `bowtie2-build` `bwa` `ccs` `clipping_profile.py` `deeptools` `dot` `dsrc` `extract-paired-reads.py` `falco` `fastp` `fastqc` `featureCounts` `filter-abund.py` `freebayes` `geneBody_coverage.py` `geneBody_coverage2.py` `genomeCoverageBed` `gffread` `infer_experiment.py` `inner_distance.py` `interleave-reads.py` `intersectBed` `junction_annotation.py` `junction_saturation.py` `kraken2` `kraken2-build` `kraken2-inspect` `krona` `ktImportText` `mafft` `minimap2` `normalize-by-median.py` `pbunzip2` `pbzip2` `picard` `plotFingerprint` `read_GC.py` `read_duplication.py` `rnaseqc` `salmon` `sambamba` `samtools` `shustring` `snpEff` `spades.py` `split-paired-reads.py` `subread` `vcfutils.pl` | [10.5281/zenodo.5767441](https://doi.org/10.5281/zenodo.5767441) |
+| `0.11.0` | 1604.10 MB | `MarkDuplicates` `STAR` `bamCoverage` `bam_stats.py` `bamtools` `bedtools` `bowtie` `bowtie-build` `bowtie2` `bowtie2-build` `bwa` `ccs` `clipping_profile.py` `deeptools` `dot` `dsrc` `extract-paired-reads.py` `falco` `fastp` `fastqc` `featureCounts` `filter-abund.py` `freebayes` `geneBody_coverage.py` `geneBody_coverage2.py` `genomeCoverageBed` `gffread` `infer_experiments.py` `inner_distance.py` `interleave-reads.py` `intersectBed` `junction_annotation.py` `junction_saturation.py` `kraken2` `kraken2-build` `krona` `ktImportText` `mafft` `minimap2` `normalize-by-median.py` `pbunzip2` `pbzip2` `picard` `plotFingerprint` `read_GC.py` `read_duplication.py` `rnaseqc` `salmon` `sambamba` `samtools` `snpEff` `spades.py` `split-paired-reads.py` `subread` `vcfutils.pl` | [10.5281/zenodo.5767431](https://doi.org/10.5281/zenodo.5767431) |
+| `0.10.0` | 1413.20 MB | `MarkDuplicates` `STAR` `bamCoverage` `bam_stats.py` `bamtools` `bedtools` `bowtie` `bowtie-build` `bowtie2` `bowtie2-build` `bwa` `ccs` `clipping_profile.py` `deeptools` `dot` `dsrc` `extract-paired-reads.py` `falco` `fastqc` `featureCounts` `filter-abund.py` `freebayes` `geneBody_coverage.py` `geneBody_coverage2.py` `gffread` `infer_experiments.py` `inner_distance.py` `interleave-reads.py` `junction_annotation.py` `junction_saturation.py` `kraken2` `kraken2-build` `krona` `ktImportText` `mafft` `minimap2` `normalize-by-median.py` `pbunzip2` `pbzip2` `picard` `read_GC.py` `read_duplication.py` `rnaseqc` `salmon` `sambamba` `samtools` `snpEff` `spades.py` `split-paired-reads.py` `subread` `vcfutils.pl` | [10.5281/zenodo.5767315](https://doi.org/10.5281/zenodo.5767315) |
+| `0.9.0` | 1355.97 MB | `MarkDuplicates` `STAR` `atropos` `bamtools` `bedtools` `bowtie` `bowtie-build` `bowtie2` `bowtie2-build` `bwa` `ccs` `cufflinks` `cutadapt` `deeptools` `dsrc` `extract-paired-reads.py` `fastq_screen` `fastqc` `featureCounts` `filter-abund.py` `freebayes` `gffread` `interleave-reads.py` `kraken2` `kraken2-build` `krona` `ktImportText` `minimap2` `normalize-by-median.py` `pbunzip2` `pbzip2` `picard` `sambamba` `samtools` `snpEff` `spades.py` `split-paired-reads.py` `subread` | [10.5281/zenodo.5767308](https://doi.org/10.5281/zenodo.5767308) |

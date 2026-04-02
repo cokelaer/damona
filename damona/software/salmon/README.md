@@ -2,14 +2,19 @@
 
 **DOI:** [10.5281/zenodo.5708842](https://doi.org/10.5281/zenodo.5708842)
 
+## Binaries
+
+`salmon`
+
+## Installation
+
+```bash
+damona install salmon               # latest (1.3.0)
+damona install salmon:VERSION        # specific version
+```
+
 ## Available Versions
-- **Version 1.3.0**
-  - [Download](https://zenodo.org/record/5708843/files/salmon_1.3.0.img)
-  - **MD5:** `affaafe23fc5e8974ab52fc976617e51`
-  - **DOI:** [10.5281/zenodo.5708843](https://doi.org/10.5281/zenodo.5708843)
-  - **Size:** 320.91 MB
-  - **Binaries:** 0 available
 
-## Binaries (1 total)
-
-```salmon```
+| Version | Size | Binaries | DOI |
+|---------|------|----------|-----|
+| **1.3.0** *(latest)* | 320.91 MB | `salmon` | [10.5281/zenodo.5708843](https://doi.org/10.5281/zenodo.5708843) |

@@ -2,14 +2,19 @@
 
 **DOI:** [10.5281/zenodo.5799573](https://doi.org/10.5281/zenodo.5799573)
 
+## Binaries
+
+`run_spp.R`
+
+## Installation
+
+```bash
+damona install phantompeakqualtools               # latest (1.2.2)
+damona install phantompeakqualtools:VERSION        # specific version
+```
+
 ## Available Versions
-- **Version 1.2.2**
-  - [Download](https://zenodo.org/record/7301453/files/phantompeakqualtools_1.2.2.img)
-  - **MD5:** `e591ae3f427e551693126bc6a1fd8aea`
-  - **DOI:** [10.5281/zenodo.7301453](https://doi.org/10.5281/zenodo.7301453)
-  - **Size:** 750.78 MB
-  - **Binaries:** 0 available
 
-## Binaries (1 total)
-
-```run_spp.R```
+| Version | Size | Binaries | DOI |
+|---------|------|----------|-----|
+| **1.2.2** *(latest)* | 750.78 MB | `run_spp.R` | [10.5281/zenodo.7301453](https://doi.org/10.5281/zenodo.7301453) |
