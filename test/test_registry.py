@@ -103,3 +103,49 @@ def test_biocontainer_registry():
         reg = Registry(biocontainers=f"{test_dir}/data/biocontainers.yaml")
     except ValueError:
         reg = Registry(biocontainers=f"../{test_dir}/data/biocontainers.yaml")
+
+
+def test_broken_flag():
+    """Test that the broken flag filters releases correctly"""
+    from damona.registry import Release
+
+    # Test that Release reads the broken flag
+    data = {
+        "test_tool": {
+            "releases": {
+                "1.0.0": {"download": "http://example.com/1.0.0", "broken": True},
+                "2.0.0": {"download": "http://example.com/2.0.0"},
+            }
+        }
+    }
+
+    release_broken = Release("1.0.0", data)
+    release_normal = Release("2.0.0", data)
+
+    assert release_broken.broken is True
+    assert release_normal.broken is False
+
+
+def test_broken_filter_search():
+    """Test that get_list and get_binaries filter broken releases"""
+    reg = Registry()
+
+    # get_list() should not include any broken releases
+    all_recipes = reg.get_list()
+    for recipe in all_recipes:
+        assert not reg.registry[recipe].broken, f"{recipe} should not be broken in search results"
+
+    # get_binaries() should not include any broken releases
+    all_binaries = reg.get_binaries()
+    for recipe in all_binaries:
+        assert not reg.registry[recipe].broken, f"{recipe} should not be broken in binary search"
+
+
+def test_broken_find_candidate():
+    """Test that find_candidate prefers non-broken versions"""
+    reg = Registry()
+
+    # Test with a tool that may have multiple versions
+    candidate = reg.find_candidate("fastqc")
+    if candidate:
+        assert not reg.registry[candidate].broken, f"find_candidate should return a non-broken release, got {candidate}"

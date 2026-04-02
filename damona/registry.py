@@ -175,6 +175,7 @@ class Release:
         self.md5sum = kwargs.get("md5sum", None)
         self.filesize = kwargs.get("filesize", None)
         self.doi = kwargs.get("doi", None)
+        self.broken = kwargs.get("broken", False)
 
         self._release_binaries = self.split_binaries(kwargs.get("binaries", []))
         self._extra_binaries = self.split_binaries(kwargs.get("extra_binaries", []))
@@ -433,7 +434,11 @@ class Registry:
         self.discovery()
 
     def find_candidate(self, pattern):
-        """Find a unique recipe within the registry."""
+        """Find a unique recipe within the registry.
+
+        When multiple versions exist, prefers non-broken versions.
+        Allows explicit install of broken versions if only they match.
+        """
         candidates = [x for x in self.registry.keys() if pattern == x or pattern in x.split(":")]
 
         if len(candidates) == 0:  # pragma: no cover
@@ -445,18 +450,27 @@ class Registry:
         if len(candidates) == 1:
             return candidates[0]
 
+        # When auto-selecting the latest version, prefer non-broken releases
+        non_broken = [c for c in candidates if not self.registry[c].broken]
+        if non_broken:
+            candidates = non_broken
+
         # sequana_tools_0.9.0 should return sequana_tools for the name and
         # 0.9.0 for the version hence the rsplit
         # similarly fastq_0.11.0-py3 should return 0.11.0
+        # For multiqc:1.27.0-zenodo1, we want to return the actual candidate, not reconstruct it
 
-        names = [x.rsplit(":", 1)[0] for x in candidates]
-        versions = [x.rsplit(":", 1)[1] for x in candidates]
-        versions = [x.split("-")[0] for x in versions]
-        version = max([packaging.version.parse(ver) for ver in versions])
-        name = names[0]
-        registry_name = pattern + ":" + str(version)
+        versions_map = {}
+        for candidate in candidates:
+            version_str = candidate.rsplit(":", 1)[1]
+            semantic_version = version_str.split("-")[0]
+            parsed_version = packaging.version.parse(semantic_version)
+            if parsed_version not in versions_map:
+                versions_map[parsed_version] = []
+            versions_map[parsed_version].append(candidate)
 
-        return registry_name
+        max_version = max(versions_map.keys())
+        return versions_map[max_version][0]
 
     def discovery(self):
         """Look for software/release in the registry and populate the attributes"""
@@ -513,9 +527,11 @@ class Registry:
         self._populate(data)
 
     def get_list(self, pattern=None):
-        """Return list of :class:`Software` found in the registry"""
+        """Return list of :class:`Software` found in the registry (excludes broken releases)"""
         software = {}
         for name, info in self.registry.items():
+            if info.broken:
+                continue
             if pattern:
                 if pattern.lower() in name.lower():
                     software[name] = info.download
@@ -525,9 +541,11 @@ class Registry:
         return recipes
 
     def get_binaries(self, pattern=None):
-        """Return binaries found and from which recipe"""
+        """Return binaries found and from which recipe (excludes broken releases)"""
         recipes = {}
         for name, info in self.registry.items():
+            if info.broken:
+                continue
             if pattern:
                 if pattern.lower() in [x.lower() for x in info.binaries]:
                     recipes[name] = [x for x in info.binaries if pattern.lower() in x.lower()]

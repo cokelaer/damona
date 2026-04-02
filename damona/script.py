@@ -369,6 +369,14 @@ def install(**kwargs):
             registry = Registry(from_url=None)
             p = RemoteImageInstaller(kwargs["image"], from_url=None, cmd=sys.argv, binaries=binaries)
 
+        # Check if the selected release is marked as broken
+        candidate = registry.find_candidate(kwargs["image"])
+        if candidate and candidate in registry.registry and registry.registry[candidate].broken:
+            console = Console()
+            console.print(
+                f"[bold yellow]⚠ Warning:[/bold yellow] {candidate} is marked as broken in the registry. Install with caution."
+            )
+
         if p.is_valid():
             p.pull_image(force=force_image)
             p.install_binaries(force=force_binaries)
