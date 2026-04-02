@@ -1,11 +1,6 @@
 diamond:
-  binaries: diamond,blastp,blastx,blastn,makeblastdb,tblastn,tblastx
+  binaries: diamond
   releases:
-#     2.1.24:
-#       download: https://zenodo.org/record/TODO/files/diamond_2.1.24.img
-#       md5sum: 24e1e7227d1895402b0a7c932f35f316
-#       doi: TODO
-#       filesize: 8993177641590784
     2.1.24:
       download: https://zenodo.org/record/19392584/files/diamond_2.1.24.img
       md5sum: 24e1e7227d1895402b0a7c932f35f316
