@@ -38,6 +38,13 @@
   - **Size:** 1163.25 MB
   - **Binaries:** 0 available
 
+- **Version 1.2.0**
+  - [Download](https://zenodo.org/record/19359689/files/bioconvert_1.2.0.img)
+  - **MD5:** `2627d0ca4f79be301eb5beb0f725b16f`
+  - **DOI:** [10.5281/zenodo.19359689](https://doi.org/10.5281/zenodo.19359689)
+  - **Size:** 792.34 MB
+  - **Binaries:** 0 available
+
 ## Binaries (3 total)
 
 ```bioconvert bioconvert_stats bioconvert_init```

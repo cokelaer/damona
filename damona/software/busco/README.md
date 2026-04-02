@@ -10,6 +10,13 @@
   - **Size:** 521.52 MB
   - **Binaries:** 0 available
 
+- **Version 6.0.0**
+  - [Download](https://zenodo.org/record/19255532/files/busco_6.0.0.img)
+  - **MD5:** `768097c5ab003bc700259447a8c5795c`
+  - **DOI:** [10.5281/zenodo.19255532](https://doi.org/10.5281/zenodo.19255532)
+  - **Size:** 697.32 MB
+  - **Binaries:** 0 available
+
 ## Binaries (1 total)
 
 ```busco```

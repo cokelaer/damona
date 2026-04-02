@@ -52,6 +52,13 @@
   - **Size:** 1316.40 MB
   - **Binaries:** 0 available
 
+- **Version 0.21.0**
+  - [Download](https://zenodo.org/record/19298804/files/sequana_0.21.0.img)
+  - **MD5:** `f9afd66189926caa4a640710f06e1de5`
+  - **DOI:** [10.5281/zenodo.19298804](https://doi.org/10.5281/zenodo.19298804)
+  - **Size:** 974.39 MB
+  - **Binaries:** 0 available
+
 ## Binaries (3 total)
 
 ```sequana sequana_coverage sequana_taxonomy```

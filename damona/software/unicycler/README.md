@@ -10,6 +10,13 @@
   - **Size:** 792.20 MB
   - **Binaries:** 0 available
 
+- **Version 0.5.1**
+  - [Download](https://zenodo.org/record/TODO/files/unicycler_0.5.1.img)
+  - **MD5:** `460a034743b3c24f41e4221bc4f39725`
+  - **DOI:** [TODO](https://doi.org/TODO)
+  - **Size:** 335.87 MB
+  - **Binaries:** 0 available
+
 ## Binaries (1 total)
 
 ```unicycler```
