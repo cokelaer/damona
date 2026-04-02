@@ -1,0 +1,28 @@
+BootStrap: localimage
+From: ../../library/micromamba/micromamba_2.5.0.img
+
+%labels
+  maintainer Thomas Cokelaer
+  package.name idr
+  package.version 2.1.0
+  package.homepage https://github.com/sequana/idr
+  package.source.url https://github.com/sequana/idr
+  package.license GPL3
+
+%post
+  export PATH=$PATH:/opt/conda/envs/main/bin/
+  export OPTS="-q -c conda-forge -c bioconda -n main -y"
+
+  micromamba install $OPTS python="3.10" matplotlib
+
+  pip install --no-cache-dir git+https://github.com/sequana/idr@v2.1.0
+
+  micromamba clean --packages -y
+  micromamba clean --all -y
+  rm -rf /opt/conda/pkgs
+
+%environment
+  export PATH=$PATH:/opt/conda/envs/main/bin/
+
+%runscript
+  exec idr "$@"
