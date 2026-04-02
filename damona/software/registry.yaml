@@ -1967,8 +1967,8 @@ bamqc:
   binaries: bamqc
   releases:
     5.3.8:
-      download: https://zenodo.org/record/TODO/files/bamqc_5.3.8.img
-      md5sum: TODO
-      doi: TODO
-      filesize: TODO
+      download: https://zenodo.org/record/19392341/files/bamqc_5.3.8.img
+      md5sum: 7290f96a48b999ca2170ab8b5bc0e55b
+      doi: 10.5281/zenodo.19392341
+      filesize: 278421504
 
