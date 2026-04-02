@@ -1,0 +1,30 @@
+BootStrap: docker
+From: debian:bookworm-slim
+
+%labels
+  maintainer Thomas Cokelaer
+  package.name diamond
+  package.version 2.1.24
+  package.homepage https://github.com/bbuchfink/diamond
+  package.source.url https://github.com/bbuchfink/diamond
+
+%post
+  export DEBIAN_FRONTEND=noninteractive
+  apt-get update -y
+  apt-get install -y wget ca-certificates ncbi-blast+
+
+  # Download and extract standalone binary
+  wget https://github.com/bbuchfink/diamond/releases/download/v2.1.24/diamond-linux64.tar.gz
+  tar -xzf diamond-linux64.tar.gz diamond
+  mv diamond /usr/local/bin/diamond
+  chmod 755 /usr/local/bin/diamond
+
+  # Cleanup temporary build packages
+  rm diamond-linux64.tar.gz
+  apt-get purge -y wget
+  apt-get autoremove -y
+  apt-get clean
+  rm -rf /var/lib/apt/lists/*
+
+%runscript
+  exec diamond "$@"
