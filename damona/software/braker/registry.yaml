@@ -1,0 +1,13 @@
+braker:
+  binaries: braker.pl
+  releases:
+#     3.0.8:
+#       download: https://zenodo.org/record/TODO/files/braker_3.0.8.img
+#       md5sum: 4623cea283e3d1f51b067dbd44114605
+#       doi: TODO
+#       filesize: 893132800
+    3.0.8:
+      download: https://zenodo.org/record/19392724/files/braker_3.0.8.img
+      md5sum: 4623cea283e3d1f51b067dbd44114605
+      doi: 10.5281/zenodo.19392724
+      filesize: 893132800

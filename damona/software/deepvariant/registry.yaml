@@ -1,0 +1,13 @@
+deepvariant:
+  binaries: run_deepvariant
+  releases:
+#     1.10.0:
+#       download: https://zenodo.org/record/TODO/files/deepvariant_1.10.0.img
+#       md5sum: ceeb1f81772a3e8728dae24d10246876
+#       doi: TODO
+#       filesize: 1974165504
+    1.10.0:
+      download: https://zenodo.org/record/19392799/files/deepvariant_1.10.0.img
+      md5sum: ceeb1f81772a3e8728dae24d10246876
+      doi: 10.5281/zenodo.19392799
+      filesize: 1974165504

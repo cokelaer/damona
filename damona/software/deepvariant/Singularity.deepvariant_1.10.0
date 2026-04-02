@@ -1,0 +1,12 @@
+BootStrap: docker
+From: google/deepvariant:1.10.0
+
+%labels
+  maintainer Thomas Cokelaer
+  package.name deepvariant
+  package.version 1.10.0
+  package.homepage https://github.com/google/deepvariant
+  package.source.url docker://google/deepvariant:1.10.0
+
+%runscript
+  exec run_deepvariant "$@"
