@@ -1,5 +1,5 @@
-BootStrap: localimage
-From: ../../library/micromamba/micromamba_2.5.0.img
+BootStrap: docker
+From: python:3.10-slim
 
 %labels
   maintainer Thomas Cokelaer
@@ -10,19 +10,16 @@ From: ../../library/micromamba/micromamba_2.5.0.img
   package.license GPL3
 
 %post
-  export PATH=$PATH:/opt/conda/envs/main/bin/
-  export OPTS="-q -c conda-forge -c bioconda -n main -y"
-
-  micromamba install $OPTS python="3.10" matplotlib
+  apt-get update
+  apt-get install -y git gcc python3-dev
 
   pip install --no-cache-dir git+https://github.com/sequana/idr@v2.1.0
 
-  micromamba clean --packages -y
-  micromamba clean --all -y
-  rm -rf /opt/conda/pkgs
-
-%environment
-  export PATH=$PATH:/opt/conda/envs/main/bin/
+  apt-get purge -y git gcc python3-dev
+  apt-get autoremove -y
+  apt-get clean
+  rm -rf /var/lib/apt/lists/*
+  rm -rf /root/.cache/pip
 
 %runscript
   exec idr "$@"

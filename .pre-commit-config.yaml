@@ -47,4 +47,14 @@ repos:
         stages: [commit]
         require_serial: true
         always_run: true
+-   repo: local
+    hooks:
+      - id: update_readme
+        name: Update README statistics
+        entry: .pre-commit-hooks/update_readme.py
+        language: system
+        pass_filenames: false
+        stages: [commit]
+        require_serial: true
+        always_run: true
 

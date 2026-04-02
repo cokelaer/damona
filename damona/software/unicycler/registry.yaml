@@ -8,4 +8,9 @@ unicycler:
       md5sum: a97f6070d3bd49dac3557dd7043bd30a
       doi: 10.5281/zenodo.10469285
       filesize: 830676992
+    0.5.1:
+      download: https://zenodo.org/record/TODO/files/unicycler_0.5.1.img
+      md5sum: 460a034743b3c24f41e4221bc4f39725
+      doi: TODO
+      filesize: 352186368
 

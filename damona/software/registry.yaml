@@ -547,6 +547,11 @@ idr:
       md5sum: 0686b5198b1c4b13df4059b9394677bf
       doi: 10.5281/zenodo.7305443
       filesize: 582025216
+    2.1.0:
+      download: https://zenodo.org/record/19391648/files/idr_2.1.0.img
+      md5sum: 61fb14dbd52d3defd83a48699ea1cc09
+      doi: 10.5281/zenodo.19391648
+      filesize: 140824576
 
 # igvtools/registry.yaml
 igvtools:
@@ -1352,6 +1357,11 @@ unicycler:
       md5sum: a97f6070d3bd49dac3557dd7043bd30a
       doi: 10.5281/zenodo.10469285
       filesize: 830676992
+    0.5.1:
+      download: https://zenodo.org/record/TODO/files/unicycler_0.5.1.img
+      md5sum: 460a034743b3c24f41e4221bc4f39725
+      doi: TODO
+      filesize: 352186368
 
 
 # vt/registry.yaml

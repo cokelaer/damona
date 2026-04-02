@@ -9,7 +9,7 @@ idr:
       doi: 10.5281/zenodo.7305443
       filesize: 582025216
     2.1.0:
-      download: https://zenodo.org/record/TODO/files/idr_2.1.0.img
-      md5sum: TODO
-      doi: TODO
-      filesize: TODO
+      download: https://zenodo.org/record/19391648/files/idr_2.1.0.img
+      md5sum: 61fb14dbd52d3defd83a48699ea1cc09
+      doi: 10.5281/zenodo.19391648
+      filesize: 140824576
