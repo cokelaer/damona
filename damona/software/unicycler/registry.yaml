@@ -9,8 +9,7 @@ unicycler:
       doi: 10.5281/zenodo.10469285
       filesize: 830676992
     0.5.1:
-      download: https://zenodo.org/record/TODO/files/unicycler_0.5.1.img
+      download: https://zenodo.org/record/19392375/files/unicycler_0.5.1.img
       md5sum: 460a034743b3c24f41e4221bc4f39725
-      doi: TODO
+      doi: 10.5281/zenodo.19392375
       filesize: 352186368
-
