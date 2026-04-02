@@ -1,0 +1,27 @@
+BootStrap: docker
+From: debian:bookworm-slim
+
+%labels
+  maintainer Thomas Cokelaer
+  package.name pbsv
+  package.version 2.11.0
+  package.homepage https://github.com/PacificBiosciences/pbsv
+  package.source.url https://github.com/PacificBiosciences/pbsv
+
+%post
+  export DEBIAN_FRONTEND=noninteractive
+  apt-get update -y
+  apt-get install -y wget ca-certificates
+
+  # Download standalone binary directly into system path
+  wget https://github.com/PacificBiosciences/pbsv/releases/download/v2.11.0/pbsv -O /usr/local/bin/pbsv
+  chmod 755 /usr/local/bin/pbsv
+
+  # Cleanup temporary build packages
+  apt-get purge -y wget
+  apt-get autoremove -y
+  apt-get clean
+  rm -rf /var/lib/apt/lists/*
+
+%runscript
+  exec pbsv "$@"

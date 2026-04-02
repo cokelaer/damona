@@ -46,7 +46,7 @@ repos:
         pass_filenames: false
         stages: [commit]
         require_serial: true
-        always_run: true
+        files: damona/software/.+/registry\.yaml$
 -   repo: local
     hooks:
       - id: update_readme
@@ -56,5 +56,5 @@ repos:
         pass_filenames: false
         stages: [commit]
         require_serial: true
-        always_run: true
+        files: damona/software/registry\.yaml$
 

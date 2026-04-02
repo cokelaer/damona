@@ -1,0 +1,8 @@
+pbsv:
+  binaries: pbsv
+  releases:
+    2.11.0:
+      download: https://zenodo.org/record/TODO/files/pbsv_2.11.0.img
+      md5sum: 3582dd9c53db99cd997a8f09ad92377e
+      doi: TODO
+      filesize: 35475456
