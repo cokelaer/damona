@@ -4,7 +4,6 @@ import os
 
 import yaml
 
-
 SAMPLE_REGISTRY_DATA = {
     "bwa": {
         "doi": "10.5281/zenodo.7736676",
@@ -41,49 +40,55 @@ def test_generate_markdown_content():
     """generate_markdown produces the expected Markdown sections."""
     from damona.software.build_readme import generate_markdown
 
-    md = generate_markdown(SAMPLE_REGISTRY_DATA)
+    # Extract software name and data (generate_markdown takes name and data separately)
+    software_name = "bwa"
+    software_data = SAMPLE_REGISTRY_DATA[software_name]
+    md = generate_markdown(software_name, software_data)
 
     assert "# bwa" in md
     assert "10.5281/zenodo.7736676" in md
     assert "0.7.17" in md
-    assert "d538df257a4f1e3ab313de57dee5ccf3" in md
+    assert "10.5281/zenodo.7970243" in md  # release DOI
     # 9392128 bytes / (1024*1024) ≈ 8.96 MB
     assert "8.96 MB" in md
     assert "## Binaries" in md
+    assert "## Installation" in md
     assert "## Available Versions" in md
+    assert "`bwa`" in md
 
 
 def test_generate_markdown_no_binaries():
     """generate_markdown handles releases and tools without a binaries field."""
     from damona.software.build_readme import generate_markdown
 
-    data = {
-        "tool": {
-            "doi": "10.1234/test",
-            "releases": {
-                "1.0.0": {
-                    "download": "https://example.com/tool_1.0.0.img",
-                    "md5sum": "abc123",
-                    "doi": "10.1234/test.v1",
-                    "filesize": 1048576,
-                }
-            },
-        }
+    software_name = "tool"
+    software_data = {
+        "doi": "10.1234/test",
+        "releases": {
+            "1.0.0": {
+                "download": "https://example.com/tool_1.0.0.img",
+                "md5sum": "abc123",
+                "doi": "10.1234/test.v1",
+                "filesize": 1048576,
+            }
+        },
     }
 
-    md = generate_markdown(data)
+    md = generate_markdown(software_name, software_data)
 
     assert "# tool" in md
     assert "1.0.0" in md
     assert "1.00 MB" in md
-    assert "Binaries (0 total)" in md
+    # No binaries specified, should show the tool name as default binary
+    assert "`tool`" in md
 
 
 def test_update_all_creates_readme(tmp_path):
     """update_all writes a README.md when none exists."""
     from damona.software import build_readme
 
-    sub_dir = tmp_path / "mytool"
+    # Directory name must match the software name in the registry YAML
+    sub_dir = tmp_path / "bwa"
     sub_dir.mkdir()
 
     registry_file = sub_dir / "registry.yaml"
@@ -107,7 +112,8 @@ def test_update_all_skips_unchanged(tmp_path, capsys):
     """update_all prints 'skipped … unchanged' when the README is already up to date."""
     from damona.software import build_readme
 
-    sub_dir = tmp_path / "mytool2"
+    # Directory name must match the software name in the registry YAML
+    sub_dir = tmp_path / "bwa"
     sub_dir.mkdir()
 
     registry_file = sub_dir / "registry.yaml"
@@ -130,7 +136,8 @@ def test_update_all_updates_changed_readme(tmp_path, capsys):
     """update_all overwrites README.md when the content has changed."""
     from damona.software import build_readme
 
-    sub_dir = tmp_path / "mytool3"
+    # Directory name must match the software name in the registry YAML
+    sub_dir = tmp_path / "bwa"
     sub_dir.mkdir()
 
     registry_file = sub_dir / "registry.yaml"
