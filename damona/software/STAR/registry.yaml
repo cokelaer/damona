@@ -1,0 +1,13 @@
+STAR:
+  binaries: STAR
+  releases:
+#     2.7.11b:
+#       download: https://zenodo.org/record/TODO/files/STAR_2.7.11b.img
+#       md5sum: a5238f4caa851983789f3f789275ef5c
+#       doi: TODO
+#       filesize: 34226176
+    2.7.11b:
+      download: https://zenodo.org/record/19397156/files/STAR_2.7.11b.img
+      md5sum: a5238f4caa851983789f3f789275ef5c
+      doi: 10.5281/zenodo.19397156
+      filesize: 34226176

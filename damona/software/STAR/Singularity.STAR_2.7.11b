@@ -1,0 +1,32 @@
+BootStrap: docker
+From: debian:bookworm-slim
+
+%labels
+  maintainer Thomas Cokelaer
+  package.name STAR
+  package.version 2.7.11b
+  package.homepage https://github.com/alexdobin/STAR
+  package.source.url https://github.com/alexdobin/STAR
+
+%post
+  export DEBIAN_FRONTEND=noninteractive
+  apt-get update -y
+  apt-get install -y wget unzip ca-certificates
+
+  # Download and extract the standalone archive
+  wget https://github.com/alexdobin/STAR/releases/download/2.7.11b/STAR_2.7.11b.zip
+  unzip STAR_2.7.11b.zip
+  
+  # Map the static executable directly to system path
+  mv STAR_2.7.11b/Linux_x86_64_static/STAR /usr/local/bin/STAR
+  chmod 755 /usr/local/bin/STAR
+
+  # Cleanup extraction workspace
+  rm -rf STAR_2.7.11b STAR_2.7.11b.zip
+  apt-get purge -y wget unzip
+  apt-get autoremove -y
+  apt-get clean
+  rm -rf /var/lib/apt/lists/*
+
+%runscript
+  exec STAR "$@"
