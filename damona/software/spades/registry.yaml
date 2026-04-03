@@ -1,0 +1,13 @@
+spades:
+  binaries: spades.py
+  releases:
+#     4.1.0:
+#       download: https://zenodo.org/record/TODO/files/spades_4.1.0.img
+#       md5sum: 38f3b8d84a7ef41f72504fecb3eaf0c9
+#       doi: TODO
+#       filesize: 224518144
+    4.1.0:
+      download: https://zenodo.org/record/19397480/files/spades_4.1.0.img
+      md5sum: 38f3b8d84a7ef41f72504fecb3eaf0c9
+      doi: 10.5281/zenodo.19397480
+      filesize: 224518144

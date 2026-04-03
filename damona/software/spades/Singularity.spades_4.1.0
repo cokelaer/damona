@@ -1,0 +1,35 @@
+BootStrap: docker
+From: debian:bookworm-slim
+
+%labels
+  maintainer Thomas Cokelaer
+  package.name spades
+  package.version 4.1.0
+  package.homepage https://github.com/ablab/spades
+
+%post
+  export DEBIAN_FRONTEND=noninteractive
+  apt-get update -y
+  
+  # Inject python runtime & networking
+  apt-get install -y wget ca-certificates python3 python-is-python3
+  
+  # Download static SPAdes build
+  wget https://github.com/ablab/spades/releases/download/v4.1.0/SPAdes-4.1.0-Linux.tar.gz
+  tar -zxvf SPAdes-4.1.0-Linux.tar.gz
+  
+  # Map structurally
+  mv SPAdes-4.1.0-Linux /opt/spades
+  
+  # Prune traces to aggressively minimize size
+  rm -f SPAdes-4.1.0-Linux.tar.gz
+  apt-get purge -y wget ca-certificates
+  apt-get autoremove -y
+  apt-get clean
+  rm -rf /var/lib/apt/lists/*
+
+%environment
+  export PATH=/opt/spades/bin:$PATH
+
+%runscript
+  exec spades.py "$@"
