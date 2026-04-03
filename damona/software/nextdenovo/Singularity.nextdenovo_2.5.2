@@ -1,0 +1,24 @@
+BootStrap: docker
+From: mambaorg/micromamba:1.3.1
+
+%labels
+  maintainer Thomas Cokelaer
+  package.name nextdenovo
+  package.version 2.5.2
+  package.homepage https://github.com/Nextomics/NextDenovo
+
+%post
+  export DEBIAN_FRONTEND=noninteractive
+  
+  micromamba install -y -n base -c bioconda -c conda-forge "nextdenovo=2.5.2"
+  
+  micromamba clean --all --yes
+  
+  echo '. /opt/conda/etc/profile.d/conda.sh' >> /etc/profile
+  echo 'conda activate base' >> /etc/profile
+
+%environment
+  export PATH=/opt/conda/bin:$PATH
+
+%runscript
+  exec nextDenovo "$@"

@@ -1,0 +1,13 @@
+nextdenovo:
+  binaries: nextDenovo
+  releases:
+#     2.5.2:
+#       download: https://zenodo.org/record/TODO/files/nextdenovo_2.5.2.img
+#       md5sum: TODO
+#       doi: TODO
+#       filesize: TODO
+    2.5.2:
+      download: https://zenodo.org/record/19397148/files/nextdenovo_2.5.2.img
+      md5sum: 77e637123dfbc3757cfc18858c67de08
+      doi: 10.5281/zenodo.19397148
+      filesize: 170057728
