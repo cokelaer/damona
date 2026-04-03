@@ -1,3 +1,18 @@
+# damona/software/STAR/registry.yaml
+STAR:
+  binaries: STAR
+  releases:
+#     2.7.11b:
+#       download: https://zenodo.org/record/TODO/files/STAR_2.7.11b.img
+#       md5sum: a5238f4caa851983789f3f789275ef5c
+#       doi: TODO
+#       filesize: 34226176
+    2.7.11b:
+      download: https://zenodo.org/record/19397156/files/STAR_2.7.11b.img
+      md5sum: a5238f4caa851983789f3f789275ef5c
+      doi: 10.5281/zenodo.19397156
+      filesize: 34226176
+
 # damona/software/adapterremoval/registry.yaml
 adapterremoval:
   doi: 10.5281/zenodo.13809682
@@ -250,11 +265,6 @@ bowtie2:
 braker:
   binaries: braker.pl
   releases:
-#     3.0.8:
-#       download: https://zenodo.org/record/TODO/files/braker_3.0.8.img
-#       md5sum: 4623cea283e3d1f51b067dbd44114605
-#       doi: TODO
-#       filesize: 893132800
     3.0.8:
       download: https://zenodo.org/record/19392724/files/braker_3.0.8.img
       md5sum: 4623cea283e3d1f51b067dbd44114605
@@ -433,6 +443,21 @@ deeptools:
       md5sum: ae350b0271a9ebd7f72352a6ee3b7838
       doi: 10.5281/zenodo.19187268
       filesize: 245694464
+
+# damona/software/deepvariant/registry.yaml
+deepvariant:
+  binaries: run_deepvariant
+  releases:
+#     1.10.0:
+#       download: https://zenodo.org/record/TODO/files/deepvariant_1.10.0.img
+#       md5sum: ceeb1f81772a3e8728dae24d10246876
+#       doi: TODO
+#       filesize: 1974165504
+    1.10.0:
+      download: https://zenodo.org/record/19392799/files/deepvariant_1.10.0.img
+      md5sum: ceeb1f81772a3e8728dae24d10246876
+      doi: 10.5281/zenodo.19392799
+      filesize: 1974165504
 
 # damona/software/delly/registry.yaml
 delly:
@@ -827,6 +852,16 @@ jellyfish:
       doi: 10.5281/zenodo.8381419
       filesize: 95453184
 
+# damona/software/kallisto/registry.yaml
+kallisto:
+  binaries: kallisto
+  releases:
+    0.51.1:
+      download: https://zenodo.org/record/19397272/files/kallisto_0.51.1.img
+      md5sum: 97b1e857e226bdd842eda201308c5237
+      doi: 10.5281/zenodo.19397272
+      filesize: 73015296
+
 # damona/software/khmer/registry.yaml
 khmer:
   doi: 10.5281/zenodo.13924242
@@ -1099,6 +1134,21 @@ nextclade:
       doi: 10.5281/zenodo.8033046
       filesize: 156852224
 
+# damona/software/nextdenovo/registry.yaml
+nextdenovo:
+  binaries: nextDenovo
+  releases:
+#     2.5.2:
+#       download: https://zenodo.org/record/TODO/files/nextdenovo_2.5.2.img
+#       md5sum: TODO
+#       doi: TODO
+#       filesize: TODO
+    2.5.2:
+      download: https://zenodo.org/record/19397148/files/nextdenovo_2.5.2.img
+      md5sum: 77e637123dfbc3757cfc18858c67de08
+      doi: 10.5281/zenodo.19397148
+      filesize: 170057728
+
 # damona/software/orthofinder/registry.yaml
 orthofinder:
   doi: 10.5281/zenodo.13787523
@@ -1151,6 +1201,16 @@ pbbam:
       md5sum: 869163050c10ef5751b5d3251968c64d
       doi: 10.5281/zenodo.7817189
       filesize: 213422080
+
+# damona/software/pbmm2/registry.yaml
+pbmm2:
+  binaries: pbmm2
+  releases:
+    1.16.99:
+      download: https://zenodo.org/record/19397253/files/pbmm2_1.16.99.img
+      md5sum: 5f9b18156d704a1a8bef56f6ae46eabc
+      doi: 10.5281/zenodo.19397253
+      filesize: 38985728
 
 # damona/software/pbsim/registry.yaml
 pbsim:
@@ -1811,6 +1871,16 @@ snpeff:
       md5sum: da6b6fd6414c97f6c97935ef469a12e2
       doi: 10.5281/zenodo.17098202
       filesize: 308109312
+
+# damona/software/spades/registry.yaml
+spades:
+  binaries: spades.py
+  releases:
+    4.1.0:
+      download: https://zenodo.org/record/TODO/files/spades_4.1.0.img
+      md5sum: 38f3b8d84a7ef41f72504fecb3eaf0c9
+      doi: TODO
+      filesize: 224518144
 
 # damona/software/sratoolkit/registry.yaml
 sratoolkit:

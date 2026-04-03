@@ -110,8 +110,11 @@ __welcome() {
           Welcome to DAMONA
   ======================================
   ${RESET}
-  ${YELLOW}${UNDERLINE} \"Visit https://github.com/cokelaer/damona to help
-   and https://damona.readthedocs.io for more info${RESET}
+  ${BLUE}👤 Author: Thomas Cokelaer
+  📚 Documentation: https://damona.readthedocs.io
+  ❓ Issues & Feedback: https://github.com/cokelaer/damona
+  📝 Citation: Cokelaer et al. (2024) Damona: A conda-style environment manager for Singularity containers
+  ${RESET}
   "
 
   # Print the welcome message
