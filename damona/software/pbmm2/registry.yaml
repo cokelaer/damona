@@ -1,0 +1,8 @@
+pbmm2:
+  binaries: pbmm2
+  releases:
+    1.16.99:
+      download: https://zenodo.org/record/19397253/files/pbmm2_1.16.99.img
+      md5sum: 5f9b18156d704a1a8bef56f6ae46eabc
+      doi: 10.5281/zenodo.19397253
+      filesize: 38985728

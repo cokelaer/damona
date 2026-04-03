@@ -1,0 +1,28 @@
+BootStrap: docker
+From: mambaorg/micromamba:1.3.1
+
+%labels
+  maintainer Thomas Cokelaer
+  package.name pbmm2
+  package.version 1.16.99
+  package.homepage https://github.com/PacificBiosciences/pbmm2
+  package.source.url https://github.com/PacificBiosciences/pbmm2
+
+%post
+  export DEBIAN_FRONTEND=noninteractive
+  
+  # Trigger the micromamba extraction within base
+  micromamba install -y -n base -c bioconda -c conda-forge "pbmm2=1.16.99"
+  
+  # Violently prune cache layers to emulate standalone performance
+  micromamba clean --all --yes
+  
+  # Inject environments for Apptainer execution mapping
+  echo '. /opt/conda/etc/profile.d/conda.sh' >> /etc/profile
+  echo 'conda activate base' >> /etc/profile
+
+%environment
+  export PATH=/opt/conda/bin:$PATH
+
+%runscript
+  exec pbmm2 "$@"
