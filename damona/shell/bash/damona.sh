@@ -94,32 +94,16 @@ __damona_verbose() {
 
 
 __welcome() {
-
-  # Define color and formatting escape sequences
-  RESET="\e[0m"          # Reset all attributes
-  BOLD="\e[1m"           # Bold
-  UNDERLINE="\e[4m"      # Underline
-  GREEN="\e[32m"         # Green text
-  YELLOW="\e[33m"        # Yellow text
-  BLUE="\e[34m"          # Blue text
-  BG_CYAN="\e[46m"       # Cyan background
-
-  # Define the welcome message
-  welcome_message="
-  ${GREEN}${BOLD}======================================
-          Welcome to DAMONA
-  ======================================
-  ${RESET}
-  ${BLUE}👤 Author: Thomas Cokelaer
-  📚 Documentation: https://damona.readthedocs.io
-  ❓ Issues & Feedback: https://github.com/cokelaer/damona
-  📝 Zenodo: https://doi.org/10.5281/zenodo.3978125
-  ${RESET}
-  "
-
-  # Print the welcome message
-  echo -e "$welcome_message"
-
+  echo ""
+  echo "╭─────────────────────────────────────────╮"
+  echo "│            Welcome to Damona            │"
+  echo "│                                         │"
+  echo "│   👤 Author: Thomas Cokelaer            │"
+  echo "│   📚 Docs: damona.readthedocs.io        │"
+  echo "│   ❓ Issues: github.com/cokelaer/damona │"
+  echo "│   📝 Zenodo: doi.org/10.5281/zenodo...  │"
+  echo "╰─────────────────────────────────────────╯"
+  echo ""
 }
 
 
@@ -130,10 +114,6 @@ __damona_setup() {
     # standalone is available or hard-code the damona executable with DAMONA_EXE variable.
     __damona_verbose
     verbose=$?
-
-    if [[ $verbose = 1 ]]; then
-       __welcome
-    fi
 
     if [ "$DAMONA_EXE" ]; then
         if [[ $verbose = 1 ]]; then
@@ -160,15 +140,13 @@ __damona_setup() {
         return 1
     fi
 
-    if [[ $verbose = 1 ]]; then
-        echo "Using Damona executable: $DAMONA_EXE_INTERN"
-    fi
-
 }
 
 damona () {
 
   __damona_setup
+
+  __welcome
 
     if [[ "$#" -lt 1 ]]; then
         "$DAMONA_EXE_INTERN"

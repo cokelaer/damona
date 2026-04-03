@@ -1,5 +1,5 @@
 
-files: '\.(py|rst|sh)$'
+files: '\.(py|rst|sh|yaml)$'
 fail_fast: false
 
 repos:
@@ -32,29 +32,19 @@ repos:
         args: ["--profile", "black"] # solves conflicts between black and isort
 -   repo: local
     hooks:
-      - id: concat-registry
-        name: Concatenate registry.yaml files
-        entry: .pre-commit-hooks/concat_registry.py
-        language: system
-        pass_filenames: false
--   repo: local
-    hooks:
       - id: update_registry
         name: Update global registry
         entry: damona/software/update_global_registry.py
         language: system
         pass_filenames: false
-        stages: [commit]
+        stages: [pre-commit]
         require_serial: true
         files: damona/software/.+/registry\.yaml$
--   repo: local
-    hooks:
       - id: update_readme
         name: Update README statistics
         entry: .pre-commit-hooks/update_readme.py
         language: system
         pass_filenames: false
-        stages: [commit]
+        stages: [pre-commit]
         require_serial: true
-        files: damona/software/registry\.yaml$
-
+        files: damona/software/.+/registry\.yaml$

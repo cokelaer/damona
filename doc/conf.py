@@ -51,6 +51,7 @@ extensions = [
     "sphinx.ext.viewcode",
     "sphinx.ext.autosummary",
     "sphinx_copybutton",
+    "sphinx_click",
 ]
 # note that the numpy directives is buggy. Example: class and init are not recognised as two entities for the autoclass_content=both here below
 
@@ -64,7 +65,7 @@ autoclass_content = "both"
 templates_path = ["_templates"]
 
 # The suffix of source filenames.
-source_suffix = ".rst"
+source_suffix = {".rst": "restructuredtext"}
 
 # The encoding of source files.
 # source_encoding = 'utf-8-sig'
@@ -147,15 +148,7 @@ numpydoc_show_class_members = False
 
 # The theme to use for HTML and HTML Help pages.  Major themes that come with
 # Sphinx are currently 'default' and 'sphinxdoc'.
-on_rtd = os.environ.get("READTHEDOCS", None) == "True"
-if not on_rtd:
-    import sphinx_rtd_theme
-
-    html_theme = "bizstyle"
-    html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
-else:
-    html_theme = "bizstyle"
-    # html_theme = "sphinx_rtd_theme"
+html_theme = "bizstyle"
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -176,10 +169,7 @@ html_short_title = "damona"
 # of the sidebar.
 # html_logo = "../../share/data/images/crx_logo.png"
 html_logo = "damona_logo.png"
-html_theme_options = {
-    "logo_only": True,
-    "display_version": False,
-}
+html_theme_options = {}
 
 # The name of an image file (within the static path) to use as favicon of the
 # docs.  This file should be a Windows icon file (.ico) being 16x16 or 32x32

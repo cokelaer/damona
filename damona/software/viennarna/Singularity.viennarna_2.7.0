@@ -1,0 +1,47 @@
+BootStrap: docker
+From: debian:bookworm-slim
+
+%labels
+  maintainer Thomas Cokelaer
+  package.name viennarna
+  package.version 2.7.0
+  package.homepage https://github.com/ViennaRNA/ViennaRNA
+
+%post
+  export DEBIAN_FRONTEND=noninteractive
+  apt-get update -y
+  
+  # Inject pure runtime environments
+  apt-get install -y --no-install-recommends bash python3 zlib1g libgomp1
+  
+  # Inject heavy compiler toolchain for source building
+  apt-get install -y --no-install-recommends gcc g++ make autoconf automake cmake perl python3-dev zlib1g-dev wget ca-certificates
+  
+  NAME="ViennaRNA"
+  VERSION="2.7.0"
+  
+  # Fetch and extract
+  wget https://github.com/ViennaRNA/ViennaRNA/releases/download/v${VERSION}/${NAME}-${VERSION}.tar.gz
+  tar xvfz ${NAME}-${VERSION}.tar.gz
+  cd ${NAME}-${VERSION}
+  
+  # Configure with python3 hooks and parallel execution
+  ./configure --prefix=/usr/local --enable-threads --with-python=/usr/bin/python3
+  make -j 8
+  make install
+  
+  cd ..
+  rm -rf ${NAME}-${VERSION}*
+  
+  # Aggressive compiler purge
+  apt-get purge -y gcc g++ make autoconf automake cmake perl python3-dev zlib1g-dev wget ca-certificates
+  apt-get autoremove -y
+  apt-get clean
+  rm -rf /var/lib/apt/lists/*
+
+%environment
+  export PATH=/usr/local/bin:$PATH
+  export LC_ALL=C
+
+%runscript
+  exec RNAfold "$@"
