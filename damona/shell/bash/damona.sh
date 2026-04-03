@@ -113,7 +113,7 @@ __welcome() {
   ${BLUE}👤 Author: Thomas Cokelaer
   📚 Documentation: https://damona.readthedocs.io
   ❓ Issues & Feedback: https://github.com/cokelaer/damona
-  📝 Citation: Cokelaer et al. (2024) Damona: A conda-style environment manager for Singularity containers
+  📝 Zenodo: https://doi.org/10.5281/zenodo.3978125
   ${RESET}
   "
 
