@@ -633,6 +633,12 @@ def search(**kwargs):
         table.add_column("Release", style="bold", min_width=25)
         table.add_column("Binaries")
         table.add_column("Size", justify="right", min_width=8)
+
+        # Track best recommendation from binaries (if no dedicated container found)
+        fallback_recommended = None
+        fallback_url = None
+        fallback_size = None
+
         for mod in sorted(modules.keys()):
             v = modules[mod]
             name, version = mod.split(":")
@@ -647,6 +653,33 @@ def search(**kwargs):
                 size_str = "-1"
 
             table.add_row(mod, ", ".join(v), size_str)
+
+            # Track latest container with this binary (for fallback recommendation)
+            if not fallback_recommended:
+                fallback_recommended = mod
+                try:
+                    fallback_url = registry.registry[mod]._data[name]["releases"][version]["download"]
+                except Exception:
+                    fallback_url = None
+                fallback_size = size_str
+            else:
+                fallback_version = fallback_recommended.split(":")[1]
+                try:
+                    if packaging.version.parse(version) > packaging.version.parse(fallback_version):
+                        fallback_recommended = mod
+                        try:
+                            fallback_url = registry.registry[mod]._data[name]["releases"][version]["download"]
+                        except Exception:
+                            fallback_url = None
+                        fallback_size = size_str
+                except packaging.version.InvalidVersion:
+                    pass
+
+        # Use fallback recommendation if no dedicated container found
+        if not recommended and fallback_recommended:
+            recommended = fallback_recommended
+            recommended_url = fallback_url
+            recommended_size = fallback_size
 
         console.print(f"\nPattern '[bold]{pattern}[/bold]' found as binaries:")
         console.print(table)
@@ -672,10 +705,19 @@ def search(**kwargs):
             content += f"  [dim]({recommended_size})[/dim]"
         if recommended_url:
             content += f"\n[dim italic]For your information, url is {recommended_url}[/dim italic]"
+
+        # Determine title based on whether it's a dedicated container or bundled
+        rec_name = recommended.split(":")[0]
+        is_dedicated = pattern and rec_name.lower() == pattern.lower()
+        if is_dedicated:
+            title = "ℹ️  Recommended installation (latest version and dedicated container)"
+        else:
+            title = f"ℹ️  Recommended installation (bundled in {rec_name})"
+
         console.print(
             Panel(
                 content,
-                title="ℹ️  Recommended installation (latest version and dedicated container)",
+                title=title,
                 border_style="green",
             )
         )
