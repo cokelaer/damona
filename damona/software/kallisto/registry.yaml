@@ -1,0 +1,8 @@
+kallisto:
+  binaries: kallisto
+  releases:
+    0.51.1:
+      download: https://zenodo.org/record/19397272/files/kallisto_0.51.1.img
+      md5sum: 97b1e857e226bdd842eda201308c5237
+      doi: 10.5281/zenodo.19397272
+      filesize: 73015296

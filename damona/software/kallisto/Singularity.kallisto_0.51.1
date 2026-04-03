@@ -1,0 +1,27 @@
+BootStrap: docker
+From: mambaorg/micromamba:1.3.1
+
+%labels
+  maintainer Thomas Cokelaer
+  package.name kallisto
+  package.version 0.51.1
+  package.homepage https://pachterlab.github.io/kallisto/
+
+%post
+  export DEBIAN_FRONTEND=noninteractive
+  
+  # Trigger the micromamba extraction within base
+  micromamba install -y -n base -c bioconda -c conda-forge "kallisto=0.51.1"
+  
+  # Violently prune cache layers
+  micromamba clean --all --yes
+  
+  # Inject environments for Apptainer execution mapping
+  echo '. /opt/conda/etc/profile.d/conda.sh' >> /etc/profile
+  echo 'conda activate base' >> /etc/profile
+
+%environment
+  export PATH=/opt/conda/bin:$PATH
+
+%runscript
+  exec kallisto "$@"
