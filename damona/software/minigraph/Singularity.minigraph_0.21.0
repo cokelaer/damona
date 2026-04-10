@@ -1,0 +1,28 @@
+Bootstrap: docker
+From: debian:bookworm-slim
+
+%labels
+    Author Antigravity
+    Version 0.21.0
+
+%post
+    apt-get update
+    apt-get install -y wget bzip2 ca-certificates
+    
+    export MINIGRAPH_VERSION=0.21
+    wget https://github.com/lh3/minigraph/releases/download/v${MINIGRAPH_VERSION}/minigraph-${MINIGRAPH_VERSION}_x64-linux.tar.bz2
+    tar --no-same-owner -xvjf minigraph-${MINIGRAPH_VERSION}_x64-linux.tar.bz2
+    cp minigraph-${MINIGRAPH_VERSION}_x64-linux/minigraph /usr/local/bin/
+    
+    rm -rf minigraph-${MINIGRAPH_VERSION}_x64-linux minigraph-${MINIGRAPH_VERSION}_x64-linux.tar.bz2
+    
+    apt-get purge -y wget bzip2
+    apt-get autoremove -y
+    apt-get clean
+    rm -rf /var/lib/apt/lists/*
+
+%environment
+    export LANG=C.UTF-8
+
+%runscript
+    exec /usr/local/bin/minigraph "$@"

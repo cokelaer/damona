@@ -1034,6 +1034,16 @@ miniasm:
       doi: 10.5281/zenodo.13550867
       filesize: 27189248
 
+# minigraph/registry.yaml
+minigraph:
+  binaries: minigraph
+  releases:
+    0.21.0:
+      download: https://zenodo.org/record/19496277/files/minigraph_0.21.0.img
+      md5sum: dd139afa3f6b4380d4d95ee1d7499423
+      doi: 10.5281/zenodo.19496277
+      filesize: 31956992
+
 # minimap2/registry.yaml
 minimap2:
   doi: 10.5281/zenodo.5799480
