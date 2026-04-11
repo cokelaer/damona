@@ -1,0 +1,36 @@
+Bootstrap: docker
+From: debian:bookworm-slim
+
+%labels
+    Author thomas cokelaer
+
+%post
+
+    export DEBIAN_FRONTEND=noninteractive
+
+    apt-get update && apt-get install -y --no-install-recommends \
+        wget \
+        ca-certificates \
+        openjdk-17-jre-headless \
+    && rm -rf /var/lib/apt/lists/*
+
+    # Directories
+    INSTALLDIR=/usr/local/lib/picard
+    BINDIR=/usr/local/bin
+    mkdir -p $INSTALLDIR
+
+    # Download picard.jar from GitHub releases
+    wget -q https://github.com/broadinstitute/picard/releases/download/3.4.0/picard.jar \
+        -O $INSTALLDIR/picard.jar
+
+    # Purge download-only tools (do NOT purge ca-certificates — JRE depends on it)
+    apt-get purge -y wget libpsl5
+    apt-get clean
+
+    # Create wrapper script
+    echo '#!/bin/sh' > $BINDIR/picard
+    echo 'exec java -jar /usr/local/lib/picard/picard.jar "$@"' >> $BINDIR/picard
+    chmod +x $BINDIR/picard
+
+%runscript
+    exec picard "$@"

@@ -1275,6 +1275,16 @@ phantompeakqualtools:
       doi: 10.5281/zenodo.7301453
       filesize: 787251200
 
+# picard/registry.yaml
+picard:
+  binaries: picard
+  releases:
+    3.4.0:
+      download: https://zenodo.org/record/19520759/files/picard_3.4.0.img
+      md5sum: 5487b1d1789944c375bf34130ee552f3
+      doi: 10.5281/zenodo.19520759
+      filesize: 168427520
+
 # pigz/registry.yaml
 pigz:
   doi: 10.5281/zenodo.7034375
