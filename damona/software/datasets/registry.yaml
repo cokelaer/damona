@@ -23,3 +23,8 @@ datasets:
       md5sum: 9ba8489277172740505a428f8b10b8dc
       doi: 10.5281/zenodo.18772363
       filesize: 31682560
+    18.23.0:
+      download: https://zenodo.org/record/19551400/files/datasets_18.23.0.img
+      md5sum: 99ea927e321e5bad49ddb7bdfbe47ae4
+      doi: 10.5281/zenodo.19551400
+      filesize: 31719424
