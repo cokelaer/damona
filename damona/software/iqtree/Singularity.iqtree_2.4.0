@@ -1,0 +1,33 @@
+Bootstrap: docker
+From: debian:bookworm-slim
+
+%labels
+    Author thomas cokelaer
+
+%post
+
+    export DEBIAN_FRONTEND=noninteractive
+
+    apt-get update && apt-get install -y --no-install-recommends \
+        wget \
+        ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+    # Download pre-compiled IQ-TREE2 Linux binary
+    VERSION=2.4.0
+    wget -q https://github.com/iqtree/iqtree2/releases/download/v${VERSION}/iqtree-${VERSION}-Linux-intel.tar.gz \
+        -O /tmp/iqtree.tar.gz
+
+    tar -xzf /tmp/iqtree.tar.gz -C /tmp/
+    mv /tmp/iqtree-${VERSION}-Linux-intel/bin/iqtree2 /usr/local/bin/iqtree2
+    chmod +x /usr/local/bin/iqtree2
+    rm -rf /tmp/iqtree.tar.gz /tmp/iqtree-${VERSION}-Linux-intel
+
+    # Purge download-only tools
+    apt-get purge -y wget
+    apt-get autoremove -y
+    apt-get clean
+    rm -rf /var/lib/apt/lists/*
+
+%runscript
+    exec iqtree2 "$@"

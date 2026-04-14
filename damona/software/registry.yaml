@@ -812,6 +812,16 @@ infernal:
       doi: 10.5281/zenodo.13739624
       filesize: 124108800
 
+# iqtree/registry.yaml
+iqtree:
+  binaries: iqtree2
+  releases:
+    2.4.0:
+      download: https://zenodo.org/record/19581728/files/iqtree_2.4.0.img
+      md5sum: c60411d39d574b6316beffe5821be376
+      doi: 10.5281/zenodo.19581728
+      filesize: 36098048
+
 # ir/registry.yaml
 ir:
   doi: 10.5281/zenodo.13305731
