@@ -146,9 +146,8 @@ damona () {
 
   __damona_setup
 
-  __welcome
-
     if [[ "$#" -lt 1 ]]; then
+        __welcome
         "$DAMONA_EXE_INTERN"
     else
         \local cmd="$1"

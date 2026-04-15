@@ -25,6 +25,20 @@ end
 
 
 
+function __damona_welcome
+    echo ""
+    echo "╭─────────────────────────────────────────╮"
+    echo "│            Welcome to Damona            │"
+    echo "│                                         │"
+    echo "│   👤 Author: Thomas Cokelaer            │"
+    echo "│   📚 Docs: damona.readthedocs.io        │"
+    echo "│   ❓ Issues: github.com/cokelaer/damona │"
+    echo "│   📝 Zenodo: doi.org/10.5281/zenodo...  │"
+    echo "╰─────────────────────────────────────────╯"
+    echo ""
+end
+
+
 function damona
 
 
@@ -52,6 +66,7 @@ function damona
 
 
     if [ (count $argv) -lt 1 ]
+        __damona_welcome
         eval $DAMONA_EXE_INTERN
     else
         set -l cmd $argv[1]

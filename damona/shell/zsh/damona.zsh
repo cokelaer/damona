@@ -131,10 +131,6 @@ __damona_setup() {
     __damona_verbose
     verbose=$?
 
-    if [[ $verbose = 1 ]]; then
-       __welcome
-    fi
-
     if [ "$DAMONA_EXE" ]; then
         if [[ $verbose = 1 ]]; then
             echo "Using user-defined DAMONA_EXE"
@@ -181,6 +177,7 @@ damona () {
   __damona_setup
 
     if [[ "$#" -lt 1 ]]; then
+        __welcome
         "$DAMONA_EXE_INTERN"
     else
         \local cmd="$1"
