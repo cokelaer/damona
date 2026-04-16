@@ -58,8 +58,8 @@ Think of Damona as *conda for Singularity images*: the same familiar
 ``create / activate / install`` workflow you already know, but with the
 rock-solid isolation and reproducibility that containers provide.
 
-.. note::  As of Apr. 2026, **Damona** ships 146 containers (220 versions),
-           providing **744 unique ready-to-use binaries**.
+.. note::  As of Apr. 2026, **Damona** ships 147 containers (221 versions),
+           providing **745 unique ready-to-use binaries**.
 
 
 
@@ -405,9 +405,7 @@ the command::
 ========= ========================================================================
 Version   Description
 ========= ========================================================================
-
-
-
+0.20.1    * ADD mash 2.3
 0.20.0    * ADD  add spades 4.1.0, kallisto 0.51.1, pbmm2 1.16.99, STAR 2.7.11b,
            nextdenovo 2.5.2, deepvariant 1.10.0, diamond 2.1.24, pbsv 2.11.0,
            unicycler 0.5.1, bamqc, idr 2.1.0 and unicycler 0.5.1, minigraph,

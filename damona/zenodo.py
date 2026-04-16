@@ -462,8 +462,8 @@ analysis.""",
             f"[bold green]Image published successfully.[/bold green]\n\n"
             f"1. Review and edit [bold]{self.registry_name}[/bold] if needed.\n"
             f"2. Commit the registry and the image recipe:\n\n"
-            f"   [bold]git add {self.registry_name}[/bold]\n"
-            f"   [bold]git commit -m 'add {data.name} {data.version}'[/bold]\n\n"
+            f"   [bold]git add {self.registry_name} Singularity.{self.registry_name}* [/bold]\n"
+            f"   [bold]git commit -m 'add {data.name} {data.version} .'[/bold]\n\n"
             f"3. Open a pull request to merge your changes."
         )
         console.print(Panel(body, title="[bold cyan]damona publish — done[/bold cyan]", expand=False))

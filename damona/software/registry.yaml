@@ -991,6 +991,16 @@ mafft:
       doi: 10.5281/zenodo.8037105
       filesize: 123727872
 
+# mash/registry.yaml
+mash:
+  binaries: mash
+  releases:
+    2.3.0:
+      download: https://zenodo.org/record/19605079/files/mash_2.3.0.img
+      md5sum: 3162e1bbf3976a262e7adeabbcd4cd1f
+      doi: 10.5281/zenodo.19605079
+      filesize: 33320960
+
 # mauve/registry.yaml
 mauve:
   doi: 10.5281/zenodo.14193974

@@ -1,0 +1,30 @@
+Bootstrap: docker
+From: debian:bookworm-slim
+
+%labels
+    Author thomas cokelaer
+
+%post
+    export DEBIAN_FRONTEND=noninteractive
+
+    apt-get update && apt-get install -y --no-install-recommends \
+        wget \
+        ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+    VERSION=2.3
+    wget -q https://github.com/marbl/Mash/releases/download/v${VERSION}/mash-Linux64-v${VERSION}.tar \
+        -O /tmp/mash.tar
+
+    tar --no-same-owner -xf /tmp/mash.tar -C /tmp/
+    mv /tmp/mash-Linux64-v${VERSION}/mash /usr/local/bin/mash
+    chmod +x /usr/local/bin/mash
+    rm -rf /tmp/mash.tar /tmp/mash-Linux64-v${VERSION}
+
+    apt-get purge -y wget
+    apt-get autoremove -y
+    apt-get clean
+    rm -rf /var/lib/apt/lists/*
+
+%runscript
+    exec mash "$@"
