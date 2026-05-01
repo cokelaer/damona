@@ -227,6 +227,16 @@ blast:
       doi: 10.5281/zenodo.7848524
       filesize: 93806592
 
+# blat/registry.yaml
+blat:
+  binaries: blat
+  releases:
+    39.1.0:
+      download: https://zenodo.org/record/19960262/files/blat_39.1.0.img
+      md5sum: 7eb44ffaf2f7f53f87884b790016e919
+      doi: 10.5281/zenodo.19960262
+      filesize: 35299328
+
 # bowtie/registry.yaml
 bowtie:
   doi: 10.5281/zenodo.5810334
@@ -891,6 +901,21 @@ khmer:
       md5sum: 89fbb75b2c9ce80ebfb527e989e66c41
       doi: 10.5281/zenodo.13924243
       filesize: 76582912
+
+# kmc/registry.yaml
+kmc:
+  binaries: kmc, kmc_tools, kmc_dump
+  releases:
+#     3.2.4:
+#       download: https://zenodo.org/record/XXXXXXX/files/kmc_3.2.4.img
+#       md5sum: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+#       doi: 10.5281/zenodo.XXXXXXX
+#       filesize: 0
+    3.2.4:
+      download: https://zenodo.org/record/19960433/files/kmc_3.2.4.img
+      md5sum: eda2b49fb42372873991330817860ec7
+      doi: 10.5281/zenodo.19960433
+      filesize: 36065280
 
 # kraken/registry.yaml
 kraken:

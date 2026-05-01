@@ -1,0 +1,33 @@
+Bootstrap: docker
+From: debian:bookworm-slim
+
+%labels
+    Author thomas cokelaer
+
+%post
+    export DEBIAN_FRONTEND=noninteractive
+
+    apt-get update && apt-get install -y --no-install-recommends \
+        wget \
+        ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+    VERSION=3.2.4
+    wget -q https://github.com/refresh-bio/KMC/releases/download/v${VERSION}/KMC${VERSION}.linux.x64.tar.gz \
+        -O /tmp/kmc.tar.gz
+
+    tar -xzf /tmp/kmc.tar.gz -C /tmp/
+    mv /tmp/bin/kmc /usr/local/bin/kmc
+    mv /tmp/bin/kmc_tools /usr/local/bin/kmc_tools
+    mv /tmp/bin/kmc_dump /usr/local/bin/kmc_dump
+    
+    chmod +x /usr/local/bin/kmc /usr/local/bin/kmc_tools /usr/local/bin/kmc_dump
+    rm -rf /tmp/kmc.tar.gz /tmp/bin /tmp/include
+
+    apt-get purge -y wget
+    apt-get autoremove -y
+    apt-get clean
+    rm -rf /var/lib/apt/lists/*
+
+%runscript
+    exec "$@"

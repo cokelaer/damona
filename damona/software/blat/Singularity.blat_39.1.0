@@ -1,0 +1,28 @@
+Bootstrap: docker
+From: debian:bookworm-slim
+
+%labels
+    Author thomas cokelaer
+
+%post
+    export DEBIAN_FRONTEND=noninteractive
+
+    apt-get update && apt-get install -y --no-install-recommends \
+        wget \
+        ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+    # Download standalone BLAT binary from UCSC (build 469)
+    # Note: /blat on UCSC is a directory; the binary is at /blat/blat
+    wget -q https://hgdownload.soe.ucsc.edu/admin/exe/linux.x86_64/blat/blat \
+        -O /usr/local/bin/blat
+    chmod +x /usr/local/bin/blat
+
+    # Purge download-only tools
+    apt-get purge -y wget
+    apt-get autoremove -y
+    apt-get clean
+    rm -rf /var/lib/apt/lists/*
+
+%runscript
+    exec blat "$@"

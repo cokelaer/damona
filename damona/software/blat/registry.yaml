@@ -1,0 +1,8 @@
+blat:
+  binaries: blat
+  releases:
+    39.1.0:
+      download: https://zenodo.org/record/19960262/files/blat_39.1.0.img
+      md5sum: 7eb44ffaf2f7f53f87884b790016e919
+      doi: 10.5281/zenodo.19960262
+      filesize: 35299328

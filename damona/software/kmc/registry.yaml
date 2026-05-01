@@ -1,0 +1,13 @@
+kmc:
+  binaries: kmc, kmc_tools, kmc_dump
+  releases:
+#     3.2.4:
+#       download: https://zenodo.org/record/XXXXXXX/files/kmc_3.2.4.img
+#       md5sum: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+#       doi: 10.5281/zenodo.XXXXXXX
+#       filesize: 0
+    3.2.4:
+      download: https://zenodo.org/record/19960433/files/kmc_3.2.4.img
+      md5sum: eda2b49fb42372873991330817860ec7
+      doi: 10.5281/zenodo.19960433
+      filesize: 36065280
