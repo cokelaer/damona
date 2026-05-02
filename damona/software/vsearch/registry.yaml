@@ -1,0 +1,8 @@
+vsearch:
+  binaries: vsearch
+  releases:
+    2.31.0:
+      download: https://zenodo.org/record/19988928/files/vsearch_2.31.0.img
+      md5sum: 987aff7ffda398d2595ee9dcf35604c2
+      doi: 10.5281/zenodo.19988928
+      filesize: 31744000
