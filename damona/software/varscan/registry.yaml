@@ -1,0 +1,8 @@
+varscan:
+  binaries: varscan
+  releases:
+    2.4.6:
+      download: https://zenodo.org/record/19988162/files/varscan_2.4.6.img
+      md5sum: 4c2d1daaf3fd714dd85b211ed4249ad6
+      doi: 10.5281/zenodo.19988162
+      filesize: 109662208

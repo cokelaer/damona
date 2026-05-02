@@ -1,0 +1,33 @@
+Bootstrap: docker
+From: debian:bookworm-slim
+
+%labels
+    Author thomas cokelaer
+
+%post
+    export DEBIAN_FRONTEND=noninteractive
+
+    # Install Python 3 and pip + any essential build dependencies
+    apt-get update && apt-get install -y --no-install-recommends \
+        python3 \
+        python3-pip \
+        zlib1g-dev \
+        build-essential \
+        python3-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+    # Install umi-tools version 1.1.6
+    # Uses --break-system-packages due to PEP 668 on Debian Bookworm
+    pip install --no-cache-dir --break-system-packages umi_tools==1.1.6
+
+    # Provide a symlink if 'umi-tools' is commonly called (binary is natively 'umi_tools')
+    # but the instructions ask for umi_tools.
+    
+    # Cleanup unnecessary apt tools to reduce filesize
+    apt-get purge -y build-essential python3-dev
+    apt-get autoremove -y
+    apt-get clean
+    rm -rf /var/lib/apt/lists/*
+
+%runscript
+    exec "$@"

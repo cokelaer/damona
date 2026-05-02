@@ -2080,6 +2080,16 @@ ucsc:
       doi: 10.5281/zenodo.10011490
       filesize: 148918272
 
+# umi_tools/registry.yaml
+umi-tools:
+  binaries: umi_tools
+  releases:
+    1.1.6:
+      download: https://zenodo.org/record/19987634/files/umi-tools_1.1.6.img
+      md5sum: 74164f8ba49d74f482aca2e5eb65d00a
+      doi: 10.5281/zenodo.19987634
+      filesize: 199622656
+
 # unicycler/registry.yaml
 unicycler:
   doi: 10.5281/zenodo.10469284
@@ -2108,6 +2118,16 @@ vadr:
       md5sum: ed748fb3cccbb488b49fe05c18ec2bab
       doi: 10.5281/zenodo.13323321
       filesize: 831700992
+
+# varscan/registry.yaml
+varscan:
+  binaries: varscan
+  releases:
+    2.4.6:
+      download: https://zenodo.org/record/19988162/files/varscan_2.4.6.img
+      md5sum: 4c2d1daaf3fd714dd85b211ed4249ad6
+      doi: 10.5281/zenodo.19988162
+      filesize: 109662208
 
 # verkko/registry.yaml
 verkko:

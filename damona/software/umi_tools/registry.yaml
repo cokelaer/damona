@@ -1,0 +1,8 @@
+umi-tools:
+  binaries: umi_tools
+  releases:
+    1.1.6:
+      download: https://zenodo.org/record/19987634/files/umi-tools_1.1.6.img
+      md5sum: 74164f8ba49d74f482aca2e5eb65d00a
+      doi: 10.5281/zenodo.19987634
+      filesize: 199622656
