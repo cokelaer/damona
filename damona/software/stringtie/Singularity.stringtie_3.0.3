@@ -1,0 +1,39 @@
+Bootstrap: docker
+From: debian:bookworm-slim
+
+%labels
+    Author thomas cokelaer
+
+%post
+    export DEBIAN_FRONTEND=noninteractive
+
+    # Install wget and certificates
+    apt-get update && apt-get install -y --no-install-recommends \
+        wget \
+        ca-certificates \
+        python3 \
+    && rm -rf /var/lib/apt/lists/*
+
+    # Download standalone stringtie tarball
+    VERSION=3.0.3
+    wget -q https://github.com/gpertea/stringtie/releases/download/v${VERSION}/stringtie-${VERSION}.Linux_x86_64.tar.gz \
+        -O /tmp/stringtie.tar.gz
+
+    # Extract binaries (stringtie and prepDE.py3)
+    tar -xzf /tmp/stringtie.tar.gz -C /tmp/
+    cp /tmp/stringtie-${VERSION}.Linux_x86_64/stringtie /usr/local/bin/stringtie
+    if [ -f /tmp/stringtie-${VERSION}.Linux_x86_64/prepDE.py3 ]; then
+        cp /tmp/stringtie-${VERSION}.Linux_x86_64/prepDE.py3 /usr/local/bin/prepDE.py3
+        chmod +x /usr/local/bin/prepDE.py3
+    fi
+    chmod +x /usr/local/bin/stringtie
+
+    # Cleanup
+    rm -rf /tmp/stringtie.tar.gz /tmp/stringtie-${VERSION}.Linux_x86_64
+    apt-get purge -y wget
+    apt-get autoremove -y
+    apt-get clean
+    rm -rf /var/lib/apt/lists/*
+
+%runscript
+    exec stringtie "$@"

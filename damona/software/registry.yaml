@@ -1974,6 +1974,16 @@ sratoolkit:
       doi: 10.5281/zenodo.10894351
       filesize: 165797888
 
+# stringtie/registry.yaml
+stringtie:
+  binaries: stringtie
+  releases:
+    3.0.3:
+      download: https://zenodo.org/record/20006324/files/stringtie_3.0.3.img
+      md5sum: 3f11dd1b75b2870bc27930f0eebba39c
+      doi: 10.5281/zenodo.20006324
+      filesize: 49471488
+
 # subread/registry.yaml
 subread:
   doi: 10.5281/zenodo.8037098
