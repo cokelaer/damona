@@ -1,0 +1,31 @@
+Bootstrap: docker
+From: debian:bookworm-slim
+
+%labels
+    Author thomas cokelaer
+
+%post
+    export DEBIAN_FRONTEND=noninteractive
+
+    # Install wget and certificates
+    apt-get update && apt-get install -y --no-install-recommends \
+        wget \
+        ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+    # Download standalone muscle binary
+    VERSION=5.3
+    wget -q https://github.com/rcedgar/muscle/releases/download/v${VERSION}/muscle-linux-x86.v${VERSION} \
+        -O /usr/local/bin/muscle
+
+    # Make executable
+    chmod +x /usr/local/bin/muscle
+
+    # Cleanup
+    apt-get purge -y wget
+    apt-get autoremove -y
+    apt-get clean
+    rm -rf /var/lib/apt/lists/*
+
+%runscript
+    exec muscle "$@"

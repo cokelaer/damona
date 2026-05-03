@@ -1161,6 +1161,21 @@ mummer:
       doi: 10.5281/zenodo.10936494
       filesize: 152612864
 
+# muscle/registry.yaml
+muscle:
+  binaries: muscle
+  releases:
+#     5.3.0:
+#       download: https://zenodo.org/record/XXXXXXX/files/muscle_5.3.0.img
+#       md5sum: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+#       doi: 10.5281/zenodo.XXXXXXX
+#       filesize: 0
+    5.3.0:
+      download: https://zenodo.org/record/20014432/files/muscle_5.3.0.img
+      md5sum: f7e8b2f015cda5e0459ab2d6ab55615a
+      doi: 10.5281/zenodo.20014432
+      filesize: 33001472
+
 # nanopolish/registry.yaml
 nanopolish:
   doi: 10.5281/zenodo.8173324
