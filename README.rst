@@ -405,7 +405,8 @@ the command::
 ========= ========================================================================
 Version   Description
 ========= ========================================================================
-0.20.1    * ADD mash 2.3
+0.20.1    * ADD muscle 5.3.0, stringtie 3.0.3, vsearch 2.31.0, varscan 2.4.6,
+            blat 39.1.0, kmc 3.2.4, mash 2.3
 0.20.0    * ADD  add spades 4.1.0, kallisto 0.51.1, pbmm2 1.16.99, STAR 2.7.11b,
            nextdenovo 2.5.2, deepvariant 1.10.0, diamond 2.1.24, pbsv 2.11.0,
            unicycler 0.5.1, bamqc, idr 2.1.0 and unicycler 0.5.1, minigraph,
