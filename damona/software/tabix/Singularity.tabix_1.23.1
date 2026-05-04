@@ -1,0 +1,44 @@
+Bootstrap: docker
+From: alpine:3.21
+
+
+%labels
+    Author thomas cokelaer
+
+%post
+
+    apk update
+    apk add curl unzip
+
+    apk add ca-certificates
+    update-ca-certificates
+    apk add --update --no-cache ncurses --force-non-repository
+    apk add --virtual=deps --update --no-cache curl-dev musl-dev g++ make zlib-dev xz-dev xz bzip2 bzip2-dev xz-libs --force-non-repository bash
+
+
+    # get archive in the build/ directory
+    mkdir /build
+    cd /build
+    curl -OL https://github.com/samtools/htslib/releases/download/1.23.1/htslib-1.23.1.tar.bz2
+    tar xjf htslib-1.23.1.tar.bz2
+
+    cd htslib-1.23.1 && make
+    mv tabix bgzip htsfile /usr/bin
+
+    cd /
+    rm -rf /build
+    apk del make g++ deps
+    apk add zlib libbz2 xz-libs libcurl ncurses-libs ca-certificates bash
+
+
+
+%environment
+    export LANG=C.UTF-8
+
+%runscript
+    exec /usr/bin/tabix "$@"
+
+%test
+    /usr/bin/tabix --version
+    /usr/bin/bgzip --version
+    /usr/bin/htsfile --version

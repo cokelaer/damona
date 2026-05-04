@@ -2033,6 +2033,16 @@ tRNAscan_SE:
       doi: 10.5281/zenodo.13924259
       filesize: 132579328
 
+# tabix/registry.yaml
+tabix:
+  binaries: tabix, bgzip, htsfile
+  releases:
+    1.23.1:
+      download: https://zenodo.org/record/20025205/files/tabix_1.23.1.img
+      md5sum: 9125e207fb284f1cbaf42158755c2bd5
+      doi: 10.5281/zenodo.20025205
+      filesize: 15527936
+
 # transdecoder/registry.yaml
 trandecoder:
   doi: 10.5281/zenodo.8092506
