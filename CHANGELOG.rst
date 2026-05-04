@@ -1,6 +1,11 @@
 Changelog
 =========
 
+Unreleased
+----------
+
+- Added new recipe: mmseqs2 18.0.0.
+
 Version 0.20.0 (April 2026)
 ----------------------------
 

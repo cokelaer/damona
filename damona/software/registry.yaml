@@ -1116,6 +1116,16 @@ minimap2:
       doi: 10.5281/zenodo.7817800
       filesize: 7053312
 
+# mmseqs2/registry.yaml
+mmseqs2:
+  binaries: mmseqs
+  releases:
+    18.0.0:
+      download: https://zenodo.org/record/20020316/files/mmseqs2_18.0.0.img
+      md5sum: 1ddba72b30847c17a1b5312737fc107a
+      doi: 10.5281/zenodo.20020316
+      filesize: 39301120
+
 # mosdepth/registry.yaml
 mosdepth:
   doi: 10.5281/zenodo.12805459
