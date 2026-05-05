@@ -406,11 +406,12 @@ the command::
 Version   Description
 ========= ========================================================================
 0.20.1    * ADD muscle 5.3.0, stringtie 3.0.3, vsearch 2.31.0, varscan 2.4.6,
-            blat 39.1.0, kmc 3.2.4, mash 2.3
+            blat 39.1.0, kmc 3.2.4, mash 2.3, mmseqs2 18.0.0, tabix 1.23.1,
+            htseq 2.1.2, bakta 1.12.0
 0.20.0    * ADD  add spades 4.1.0, kallisto 0.51.1, pbmm2 1.16.99, STAR 2.7.11b,
-           nextdenovo 2.5.2, deepvariant 1.10.0, diamond 2.1.24, pbsv 2.11.0,
-           unicycler 0.5.1, bamqc, idr 2.1.0 and unicycler 0.5.1, minigraph,
-           picard 3.4.0, new datasets versions, iqtree 2.4.0
+            nextdenovo 2.5.2, deepvariant 1.10.0, diamond 2.1.24, pbsv 2.11.0,
+            unicycler 0.5.1, bamqc, idr 2.1.0 and unicycler 0.5.1, minigraph,
+            picard 3.4.0, new datasets versions, iqtree 2.4.0
            * UPDATED or CHANGED Add broken flag to mark buggy releases
            * FIX welcome message
 0.19.2    * CHANGED faster `damona check <IMG>`
