@@ -1,0 +1,37 @@
+Bootstrap: docker
+From: mambaorg/micromamba:latest
+
+%labels
+    Author thomas cokelaer
+
+%post
+    export MAMBA_DOCKERFILE_NUMBER=1
+    apt-get update && apt-get install -yq --no-install-recommends \
+        ca-certificates bash procps \
+        && rm -rf /var/lib/apt/lists/*
+
+    # Install Bakta and all dependencies via Micromamba
+    micromamba install -y -n base -c conda-forge -c bioconda \
+        bakta=1.12.0 \
+        python=3.11 \
+        && micromamba clean --all --yes
+
+    # Ensure python is in /usr/local/bin for damona/snakemake
+    ln -s /opt/conda/bin/python /usr/local/bin/python
+    ln -s /opt/conda/bin/python3 /usr/local/bin/python3
+
+%environment
+    export PATH="/opt/conda/bin:/usr/local/bin:/usr/bin:/bin"
+    export LC_ALL=C.UTF-8
+    export LANG=C.UTF-8
+
+%runscript
+    exec /opt/conda/bin/bakta "$@"
+
+%test
+    export PATH="/opt/conda/bin:$PATH"
+    bakta --help
+    bakta_db --help
+    diamond --version
+    blastn -version
+    amrfinder --version

@@ -1,0 +1,13 @@
+bakta:
+  binaries: bakta bakta_db
+  releases:
+#     1.12.0:
+#       download: https://zenodo.org/record/20035041/files/bakta_1.12.0.img
+#       md5sum: 28443d6fd1e69bdc8ecfcce694632465
+#       doi: 10.5281/zenodo.20035041
+#       filesize: 821194752
+    1.12.0:
+      download: https://zenodo.org/record/20034830/files/bakta_1.12.0.img
+      md5sum: 28443d6fd1e69bdc8ecfcce694632465
+      doi: 10.5281/zenodo.20034830
+      filesize: 821194752
