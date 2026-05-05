@@ -781,6 +781,16 @@ homer:
       doi: 10.5281/zenodo.7305501
       filesize: 486887424
 
+# htseq/registry.yaml
+htseq:
+  binaries: htseq-count  htseq-qa htseq-count-barcodes
+  releases:
+    2.1.2:
+      download: https://zenodo.org/record/20034653/files/htseq_2.1.2.img
+      md5sum: cd60966d945ceec54949f1124e6e2bf3
+      doi: 10.5281/zenodo.20034653
+      filesize: 151539712
+
 # idr/registry.yaml
 idr:
   doi: 10.5281/zenodo.7305442
