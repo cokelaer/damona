@@ -1,0 +1,35 @@
+Bootstrap: docker
+From: alpine:3.21
+
+%labels
+    Author thomas cokelaer
+
+%post
+    apk update
+    apk add ca-certificates
+    update-ca-certificates
+    apk add --virtual=deps --update --no-cache \
+        curl g++ make autoconf automake libtool \
+        zlib-dev bzip2-dev xz-dev perl \
+        --force-non-repository bash
+
+    export VERSION="0.1.16"
+    mkdir /build
+    cd /build
+    curl -OL https://github.com/vcftools/vcftools/releases/download/v${VERSION}/vcftools-${VERSION}.tar.gz
+    tar xzf vcftools-${VERSION}.tar.gz
+    cd vcftools-${VERSION}
+    ./autogen.sh
+    ./configure --prefix=/usr/local
+    make
+    make install
+    cd /
+    rm -rf /build
+    apk del make g++ autoconf automake libtool
+
+%environment
+    export LANG=C.UTF-8
+    export PATH=/usr/local/bin:$PATH
+
+%runscript
+    exec vcftools "$@"

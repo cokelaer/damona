@@ -1,0 +1,8 @@
+vcftools:
+  binaries: vcftools
+  releases:
+    0.1.16:
+      download:
+      md5sum:
+      doi:
+      filesize:

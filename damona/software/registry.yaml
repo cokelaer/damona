@@ -2209,6 +2209,16 @@ varscan:
       doi: 10.5281/zenodo.19988162
       filesize: 109662208
 
+# vcftools/registry.yaml
+vcftools:
+  binaries: vcftools
+  releases:
+    0.1.16:
+      download:
+      md5sum:
+      doi:
+      filesize:
+
 # verkko/registry.yaml
 verkko:
   doi: 10.5281/zenodo.19150107
