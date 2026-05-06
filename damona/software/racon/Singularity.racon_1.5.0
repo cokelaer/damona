@@ -1,0 +1,34 @@
+Bootstrap: docker
+From: debian:bookworm-slim
+
+%labels
+    Author Thomas Cokelaer
+    Version 1.5.0
+    Description Racon 1.5.0 - consensus sequence polishing tool
+
+%post
+    apt-get update
+    apt-get install -y --no-install-recommends git cmake g++ make zlib1g-dev ca-certificates
+
+    cd /tmp
+    rm -rf racon
+    git clone --recursive --branch 1.5.0 https://github.com/lbcb-sci/racon.git
+    cd racon
+
+    mkdir build && cd build
+    cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_POLICY_VERSION_MINIMUM=3.5 ..
+    make -j$(nproc)
+    make install
+
+    cd /tmp && rm -rf racon
+
+    apt-get purge -y git cmake g++ make zlib1g-dev ca-certificates
+    apt-get autoremove -y
+    apt-get clean
+    rm -rf /var/lib/apt/lists/*
+
+%environment
+    export PATH=/usr/local/bin:$PATH
+
+%runscript
+    exec racon "$@"

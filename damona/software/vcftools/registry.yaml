@@ -2,7 +2,7 @@ vcftools:
   binaries: vcftools
   releases:
     0.1.16:
-      download:
-      md5sum:
-      doi:
-      filesize:
+      download: https://zenodo.org/record/20052678/files/vcftools_0.1.16.img
+      md5sum: 4bf06563f4a9b8030c003eaad1a83863
+      doi: 10.5281/zenodo.20052678
+      filesize: 111128576

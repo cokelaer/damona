@@ -1,0 +1,9 @@
+# Racon registry
+racon:
+  binaries: racon
+  releases:
+    1.5.0:
+      download: https://zenodo.org/record/20052755/files/racon_1.5.0.img
+      md5sum: 17f8c31bf12729c0eae39388476fd862
+      doi: 10.5281/zenodo.20052755
+      filesize: 28696576

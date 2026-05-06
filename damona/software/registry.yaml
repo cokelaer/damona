@@ -1532,6 +1532,17 @@ quast:
       doi: 10.5281/zenodo.14223782
       filesize: 422801408
 
+# racon/registry.yaml
+# Racon registry
+racon:
+  binaries: racon
+  releases:
+    1.5.0:
+      download: https://zenodo.org/record/20052755/files/racon_1.5.0.img
+      md5sum: 17f8c31bf12729c0eae39388476fd862
+      doi: 10.5281/zenodo.20052755
+      filesize: 28696576
+
 # ragtag/registry.yaml
 ragtag:
   doi: 10.5281/zenodo.13759600
@@ -2214,10 +2225,10 @@ vcftools:
   binaries: vcftools
   releases:
     0.1.16:
-      download:
-      md5sum:
-      doi:
-      filesize:
+      download: https://zenodo.org/record/20052678/files/vcftools_0.1.16.img
+      md5sum: 4bf06563f4a9b8030c003eaad1a83863
+      doi: 10.5281/zenodo.20052678
+      filesize: 111128576
 
 # verkko/registry.yaml
 verkko:
