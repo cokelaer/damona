@@ -1670,6 +1670,16 @@ salmon:
       doi: 10.5281/zenodo.5708843
       filesize: 336496158
 
+# sambamba/registry.yaml
+sambamba:
+  binaries: sambamba
+  releases:
+    1.0.1:
+      download: https://zenodo.org/record/20052351/files/sambamba_1.0.1.img
+      md5sum: 5c8bccc7c0a1289f2d03c1ad969e838c
+      doi: 10.5281/zenodo.20052351
+      filesize: 33525760
+
 # samtools/registry.yaml
 samtools:
   doi: 10.5281/zenodo.7215277

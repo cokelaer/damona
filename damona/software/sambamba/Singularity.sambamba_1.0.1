@@ -1,0 +1,28 @@
+Bootstrap: docker
+From: debian:bookworm-slim
+
+%labels
+    Author Thomas Cokelaer
+    Version 1.0.1
+    Description Sambamba 1.0.1 - fast biological sequence analysis tools
+
+%post
+    apt-get update
+    apt-get install -y --no-install-recommends wget ca-certificates
+
+    cd /tmp
+    wget -q https://github.com/biod/sambamba/releases/download/v1.0.1/sambamba-1.0.1-linux-amd64-static.gz
+    gunzip sambamba-1.0.1-linux-amd64-static.gz
+    chmod +x sambamba-1.0.1-linux-amd64-static
+    mv sambamba-1.0.1-linux-amd64-static /usr/local/bin/sambamba
+
+    apt-get purge -y wget ca-certificates
+    apt-get autoremove -y
+    apt-get clean
+    rm -rf /var/lib/apt/lists/*
+
+%environment
+    export PATH=/usr/local/bin:$PATH
+
+%runscript
+    exec sambamba "$@"
