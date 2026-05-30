@@ -56,7 +56,7 @@ sequana_tools:
       md5sum: 1e2cd02d2488108cfc46032013c65f8a
       doi: 10.5281/zenodo.5767308
       filesize: 1421837854
-      binaries:  cufflinks cutadapt atropos  fastq_screen    
+      binaries:  cufflinks cutadapt atropos  fastq_screen
 
     0.14.5:
       download: https://zenodo.org/record/7341710/files/sequana_tools_0.14.5.img
@@ -95,3 +95,8 @@ sequana_tools:
       md5sum: 678db1c8b8e6307284f94814b854e24d
       doi: 10.5281/zenodo.18257162
       filesize: 1884684288
+    26.5.30:
+      download: https://zenodo.org/record/20451943/files/sequana_tools_26.5.30.img
+      md5sum: 6f3da7b19a84e8febbea331cc212df40
+      doi: 10.5281/zenodo.20451943
+      filesize: 1826471936

@@ -1,0 +1,8 @@
+trimmomatic:
+  binaries: trimmomatic
+  releases:
+    0.40.0:
+      download: https://zenodo.org/record/20346003/files/trimmomatic_0.40.0.img
+      md5sum: 77308a3e92902986a5f86b395ddee5b0
+      doi: 10.5281/zenodo.20346003
+      filesize: 109678592

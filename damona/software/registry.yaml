@@ -59,6 +59,17 @@ augustus:
       doi: 10.5281/zenodo.13711282
       filesize: 348143616
 
+# awk/registry.yaml
+awk:
+  doi: 10.5281/zenodo.7034375
+  binaries: awk
+  releases:
+    5.3.2:
+      download: https://zenodo.org/record/20451789/files/awk_5.3.2.img
+      md5sum: 036b8fd75867e1b8c0a900bc7254632e
+      doi: 10.5281/zenodo.20451789
+      filesize: 7761920
+
 # bakta/registry.yaml
 bakta:
   binaries: bakta bakta_db
@@ -959,6 +970,17 @@ kraken:
       doi: 10.5281/zenodo.5801365
       filesize: 723301918
       binaries: kraken2 kraken2-build
+
+# krona/registry.yaml
+krona:
+  doi: 10.1186/1471-2105-12-385
+  binaries: ktImportText ktImportTaxonomy ktImportBLAST ktImportMETAREP ktImportMGRAST ktImportXML
+  releases:
+    2.8.1:
+      download: https://zenodo.org/record/20451801/files/krona_2.8.1.img
+      md5sum: 62fff6d63df1869df74141968bca55a0
+      doi: 10.5281/zenodo.20451801
+      filesize: 112091136
 
 # laa/registry.yaml
 pblaa:
@@ -1972,6 +1994,11 @@ sequana_tools:
       md5sum: 678db1c8b8e6307284f94814b854e24d
       doi: 10.5281/zenodo.18257162
       filesize: 1884684288
+    26.5.30:
+      download: https://zenodo.org/record/20451943/files/sequana_tools_26.5.30.img
+      md5sum: 6f3da7b19a84e8febbea331cc212df40
+      doi: 10.5281/zenodo.20451943
+      filesize: 1826471936
 
 # shustring/registry.yaml
 shustring:
@@ -2122,6 +2149,16 @@ trimgalore:
       md5sum: 8feda0cef20aed55849f93d913b5671f
       doi: 10.5281/zenodo.10048982
       filesize: 243253248
+
+# trimmomatic/registry.yaml
+trimmomatic:
+  binaries: trimmomatic
+  releases:
+    0.40.0:
+      download: https://zenodo.org/record/20346003/files/trimmomatic_0.40.0.img
+      md5sum: 77308a3e92902986a5f86b395ddee5b0
+      doi: 10.5281/zenodo.20346003
+      filesize: 109678592
 
 # trinity/registry.yaml
 trinity:

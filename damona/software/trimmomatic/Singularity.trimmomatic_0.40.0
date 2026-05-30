@@ -1,0 +1,47 @@
+Bootstrap: docker
+From: debian:bookworm-slim
+
+%labels
+    Author thomas cokelaer
+    Version 0.40.0
+
+%post
+    export DEBIAN_FRONTEND=noninteractive
+
+    apt-get update && apt-get install -y --no-install-recommends \
+        wget \
+        ca-certificates \
+        openjdk-17-jre-headless \
+        unzip \
+    && rm -rf /var/lib/apt/lists/*
+
+    # Directories
+    INSTALLDIR=/usr/local/lib/trimmomatic
+    BINDIR=/usr/local/bin
+    mkdir -p $INSTALLDIR
+
+    # Download Trimmomatic from GitHub releases
+    # version 0.40.0
+    wget -q https://github.com/usadellab/Trimmomatic/releases/download/v0.40/Trimmomatic-0.40.zip \
+        -O /tmp/trimmomatic.zip
+    unzip -o /tmp/trimmomatic.zip -d /tmp
+    cp /tmp/trimmomatic-0.40.jar $INSTALLDIR/trimmomatic.jar
+    cp -r /tmp/adapters $INSTALLDIR/
+    
+    rm -rf /tmp/trimmomatic.zip /tmp/trimmomatic-0.40.jar /tmp/adapters /tmp/LICENSE
+
+
+    # Purge download-only tools
+    apt-get purge -y wget unzip libpsl5
+    apt-get clean
+
+    # Create wrapper script
+    echo '#!/bin/sh' > $BINDIR/trimmomatic
+    echo 'exec java -jar /usr/local/lib/trimmomatic/trimmomatic.jar "$@"' >> $BINDIR/trimmomatic
+    chmod +x $BINDIR/trimmomatic
+
+%runscript
+    exec trimmomatic "$@"
+
+%test
+    trimmomatic -version

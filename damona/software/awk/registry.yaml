@@ -1,0 +1,9 @@
+awk:
+  doi: 10.5281/zenodo.7034375
+  binaries: awk
+  releases:
+    5.3.2:
+      download: https://zenodo.org/record/20451789/files/awk_5.3.2.img
+      md5sum: 036b8fd75867e1b8c0a900bc7254632e
+      doi: 10.5281/zenodo.20451789
+      filesize: 7761920

@@ -1,0 +1,35 @@
+Bootstrap: docker
+From: ubuntu:22.04
+
+%labels
+    Author thomas cokelaer
+
+%post
+    export DEBIAN_FRONTEND=noninteractive
+    apt-get update && apt-get install -y \
+        wget \
+        perl \
+        ca-certificates \
+        libwww-perl \
+        libxml-libxml-perl \
+        bash \
+        && apt-get clean
+
+    mkdir -p /opt/krona
+    cd /opt/krona
+    wget https://github.com/marbl/Krona/releases/download/v2.8.1/KronaTools-2.8.1.tar
+    tar -xvf KronaTools-2.8.1.tar --no-same-owner --strip-components=1
+    perl install.pl --prefix /usr/local
+
+    # Cleanup (remove the tarball but keep the extracted files)
+    rm KronaTools-2.8.1.tar
+
+%environment
+    export PATH=/usr/local/bin:$PATH
+    export LANG=C.UTF-8
+
+%runscript
+    exec /usr/local/bin/ktImportText "$@"
+
+%test
+    /usr/local/bin/ktImportText --help
