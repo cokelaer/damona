@@ -523,7 +523,7 @@ analysis.""",
             msg += f"      md5sum: {md5sum}\n"
             msg += f"      doi: {this_doi}\n"
             msg += f"      filesize: {filesize}\n"
-        return msg
+        return msg + "\n"
 
     def create_new_version_with_file_and_publish(self, filename, deposit=None):
         data = ImageName(filename)

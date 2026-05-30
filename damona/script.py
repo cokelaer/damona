@@ -578,7 +578,8 @@ def search(**kwargs):
     else:
         pattern = kwargs["pattern"]
 
-    if url_exists(url) and kwargs["local_registry_only"] is False:
+    searched_online = url_exists(url) and kwargs["local_registry_only"] is False
+    if searched_online:
         logger.info(f"Searching online registry ({url})")
         registry = Registry(from_url=url)
     else:
@@ -683,6 +684,23 @@ def search(**kwargs):
 
         console.print(f"\nPattern '[bold]{pattern}[/bold]' found as binaries:")
         console.print(table)
+
+    # If searched online and found nothing, offer local fallback
+    if searched_online and not recommended and not modules:
+        console.print("\n[yellow]No results found online. Checking local registry...[/yellow]")
+        local_registry = Registry(from_url=None)
+
+        local_images = local_registry.get_list(pattern=pattern) if not kwargs["binaries_only"] else []
+        local_binaries = local_registry.get_binaries(pattern=pattern) if not kwargs["images_only"] else {}
+
+        if local_images or local_binaries:
+            console.print("[yellow]Found in local registry:[/yellow]")
+            if local_images:
+                console.print(f"  [bold]Tip:[/bold] Run with [bold]--local-registry-only[/bold] to use local results")
+            if local_binaries:
+                console.print(f"  [bold]Tip:[/bold] Run with [bold]--local-registry-only[/bold] to use local results")
+        else:
+            console.print("[red]Not found in local registry either.[/red]")
 
     if kwargs["include_biocontainers"]:
         console.print("\n[bold]Searching biocontainers:[/bold]")
