@@ -1,0 +1,20 @@
+Bootstrap: docker
+From: python:3.11-slim
+
+%labels
+    Author Damona Team
+    Version 2.8.0
+    Software whatshap
+
+%post
+    export DEBIAN_FRONTEND=noninteractive
+    apt-get update
+    apt-get install -y --no-install-recommends gcc g++
+    pip install --no-cache-dir whatshap==2.8.0
+    apt-get purge -y gcc g++
+    apt-get autoremove -y
+    apt-get clean
+    rm -rf /var/lib/apt/lists/*
+
+%runscript
+    exec "$@"

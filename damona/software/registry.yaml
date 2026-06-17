@@ -2328,6 +2328,16 @@ wget:
       doi: 10.5281/zenodo.14415567
       filesize: 5545984
 
+# whatshap/registry.yaml
+whatshap:
+  binaries: whatshap
+  releases:
+    2.8.0:
+      download: https://zenodo.org/record/20730357/files/whatshap_2.8.0.img
+      md5sum: 666fbbe7170b3fab03bb4a8b522a122b
+      doi: 10.5281/zenodo.20730357
+      filesize: 167866368
+
 # wig2bed/registry.yaml
 wig2bed:
   doi: 10.5281/zenodo.18895804
