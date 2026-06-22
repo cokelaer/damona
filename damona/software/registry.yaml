@@ -1125,10 +1125,10 @@ merqury:
   binaries: merqury.sh meryl
   releases:
     1.3.0:
-      download: https://zenodo.org/record/20798304/files/merqury_1.3.0.img
-      md5sum: 15bc6276b8507b4ba0da12752a6001fe
-      doi: 10.5281/zenodo.20798304
-      filesize: 49819648
+      download: https://zenodo.org/record/20799327/files/merqury_1.3.0.img
+      md5sum: ed056b471bd404cede2f4d0b8181e608
+      doi: 10.5281/zenodo.20799327
+      filesize: 149372928
 
 # miniasm/registry.yaml
 miniasm:
