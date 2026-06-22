@@ -78,3 +78,6 @@ sequana/resources/data/measles.fa.bwt
 sequana/resources/data/measles.fa.pac
 sequana/resources/data/measles.fa.sa
 
+
+# Scratch build plan files
+BUILD_PLAN.md
