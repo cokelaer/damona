@@ -1,8 +1,8 @@
 merqury:
-  binaries: merqury.sh
+  binaries: merqury.sh meryl
   releases:
     1.3.0:
-      download: https://zenodo.org/record/20797043/files/merqury_1.3.0.img
-      md5sum: b531fa52f2bae69f572d47f601c2f718
-      doi: 10.5281/zenodo.20797043
-      filesize: 39325696
+      download: https://zenodo.org/record/20798304/files/merqury_1.3.0.img
+      md5sum: 15bc6276b8507b4ba0da12752a6001fe
+      doi: 10.5281/zenodo.20798304
+      filesize: 49819648

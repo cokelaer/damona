@@ -14,7 +14,8 @@ From: debian:bookworm-slim
     apt-get install -y --no-install-recommends \
         wget \
         ca-certificates \
-        meryl \
+        xz-utils \
+        libgomp1 \
         bedtools \
         samtools \
         r-base-core \
@@ -28,15 +29,21 @@ From: debian:bookworm-slim
     mv /opt/merqury-1.3 /opt/merqury
     rm -f /tmp/merqury.tar.gz
 
+    # Download and extract Meryl
+    wget https://github.com/marbl/meryl/releases/download/v1.4.1/meryl-1.4.1.Linux-amd64.tar.xz -O /tmp/meryl.tar.xz
+    tar -xJf /tmp/meryl.tar.xz -C /opt
+    mv /opt/meryl-1.4.1 /opt/meryl
+    rm -f /tmp/meryl.tar.xz
+
     # Remove temporary apt packages
-    apt-get purge -y wget ca-certificates
+    apt-get purge -y wget ca-certificates xz-utils
     apt-get autoremove -y
     apt-get clean -y
     rm -rf /var/lib/apt/lists/*
 
 %environment
     export MERQURY=/opt/merqury
-    export PATH=/opt/merqury:$PATH
+    export PATH=/opt/merqury:/opt/meryl/bin:$PATH
     export LC_ALL=C
 
 %runscript
