@@ -1120,6 +1120,16 @@ meme:
       doi: 10.5281/zenodo.14931138
       filesize: 623738880
 
+# merqury/registry.yaml
+merqury:
+  binaries: merqury.sh
+  releases:
+    1.3.0:
+      download: https://zenodo.org/record/20797043/files/merqury_1.3.0.img
+      md5sum: b531fa52f2bae69f572d47f601c2f718
+      doi: 10.5281/zenodo.20797043
+      filesize: 39325696
+
 # miniasm/registry.yaml
 miniasm:
   doi: 10.5281/zenodo.13550866
