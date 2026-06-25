@@ -15,8 +15,8 @@ DAMONA
     :target: http://damona.readthedocs.org/en/latest/?badge=latest
     :alt: Documentation Status
 
-.. image:: https://zenodo.org/badge/282275608.svg
-   :target: https://zenodo.org/badge/latestdoi/282275608
+.. image:: https://zenodo.org/badge/DOI/10.5281/zenodo.19592323.svg
+   :target: https://doi.org/10.5281/zenodo.19592323
 
 .. image:: https://static.pepy.tech/badge/damona
    :target: https://pepy.tech/project/damona
@@ -405,6 +405,12 @@ the command::
 ========= ========================================================================
 Version   Description
 ========= ========================================================================
+0.21.0    * ADD datasets 18.31.0, merqury 1.3.0 (with meryl binary), whatshap
+            2.8.0, racon 1.5.0, sambamba 1.0.1, vcftools 0.1.16, awk 5.3.2,
+            krona 2.8.1, trimmomatic 0.40.0, sequana_tools 26.5.30
+          * FIXED deeptools binaries
+          * CHANGED `search` adds a local registry fallback when the online
+            query returns no results
 0.20.1    * ADD muscle 5.3.0, stringtie 3.0.3, vsearch 2.31.0, varscan 2.4.6,
             blat 39.1.0, kmc 3.2.4, mash 2.3, mmseqs2 18.0.0, tabix 1.23.1,
             htseq 2.1.2, bakta 1.12.0
