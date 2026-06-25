@@ -171,7 +171,7 @@ class Zenodo:  # pragma: no cover
     def _status(self, r, correct_codes):
         try:
             caller = inspect.stack()[1].function
-        except:
+        except Exception:
             caller = ""
 
         self.last_requests.append(r)
@@ -181,7 +181,7 @@ class Zenodo:  # pragma: no cover
             try:
                 output = f"{r.json()}"
                 logger.warning(output)
-            except:
+            except Exception:
                 logger.warning("Could not figure out the erorr from json()")
             finally:
 
@@ -201,7 +201,7 @@ class Zenodo:  # pragma: no cover
         try:
             ID = self.last_requests[-1].json()["id"]
             logger.info(f"Created a new deposit with ID={ID}")
-        except:
+        except Exception:
             raise
         return r
 
@@ -233,7 +233,7 @@ class Zenodo:  # pragma: no cover
 
         try:
             bucket_url = json_deposit["links"]["bucket"]
-        except:
+        except Exception:
             bucket_url = json_deposit.json()["links"]["bucket"]
 
         jsons = {}
@@ -327,10 +327,10 @@ analysis.""",
         """
         try:
             return data.json()["id"]
-        except:
+        except Exception:
             try:
                 return data["id"]
-            except:
+            except Exception:
                 return data
 
     def _get_registry(self):

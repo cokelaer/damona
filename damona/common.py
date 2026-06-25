@@ -431,16 +431,14 @@ class BinaryReader:
 
         with self.filename.open("r") as fin:
             data = [
-                x
-                for x in fin.readlines()
-                if x.strip().startswith("singularity") or x.strip().startswith("apptainer")
+                x for x in fin.readlines() if x.strip().startswith("singularity") or x.strip().startswith("apptainer")
             ]
             data = data[0]
 
             data = data.replace("${DAMONA_SINGULARITY_OPTIONS}", "")
             try:
                 image_path = data.split("exec")[1].split()[0]
-            except:  # pragma: no cover
+            except Exception:  # pragma: no cover
                 image_path = data.split("run")[1].split()[0]
                 logger.warning(f"command line in {self.filename} uses 'run'; should be reinstalled ")
 
@@ -503,8 +501,7 @@ def requires_singularity(func):
             return func(ref, *args, **kwargs)
         else:
             logger.error(
-                "Neither 'singularity' nor 'apptainer' command was found. "
-                "You must install one of them to use Damona"
+                "Neither 'singularity' nor 'apptainer' command was found. " "You must install one of them to use Damona"
             )
 
     return wrapper

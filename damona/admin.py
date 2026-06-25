@@ -124,5 +124,5 @@ def build_biocontainers_registry(output="biocontainers.yml", force=False, limit=
                     image_name = most_recent_docker["image_name"]
                     fout.write(f"    {version.meta_version}:\n")
                     fout.write(f"      download: docker://{image_name}\n")
-                except:
+                except Exception:
                     print(f"Passed {name}:{version} no docker.")

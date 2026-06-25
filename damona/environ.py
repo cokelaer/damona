@@ -608,7 +608,7 @@ class Environ:
                 os.mkdir(env_path / "bin")
                 logger.info(f"Created {env_name} in {env_directory}")
                 logger.info(f"Type 'damona activate {env_name}' to activate it")
-            except:  # pragma: no cover
+            except Exception:  # pragma: no cover
                 pass  # if already created, error are caught here
 
     def create_from_yaml(self, env_name, yaml, force=False):
