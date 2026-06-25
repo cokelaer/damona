@@ -418,8 +418,8 @@ Version   Description
             nextdenovo 2.5.2, deepvariant 1.10.0, diamond 2.1.24, pbsv 2.11.0,
             unicycler 0.5.1, bamqc, idr 2.1.0 and unicycler 0.5.1, minigraph,
             picard 3.4.0, new datasets versions, iqtree 2.4.0
-           * UPDATED or CHANGED Add broken flag to mark buggy releases
-           * FIX welcome message
+          * UPDATED or CHANGED Add broken flag to mark buggy releases
+          * FIX welcome message
 0.19.2    * CHANGED faster `damona check <IMG>`
           * UPDATED sequana 0.21 image
 0.19.1    * CHANGED `damona upload` to `damona publish`
