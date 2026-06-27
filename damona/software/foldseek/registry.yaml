@@ -1,0 +1,8 @@
+foldseek:
+  binaries: foldseek
+  releases:
+    10.0.0:
+      download: https://zenodo.org/record/20942973/files/foldseek_10.0.0.img
+      md5sum: 0cf4c4930e6f0f7e9740964f7f0c4dfd
+      doi: 10.5281/zenodo.20942973
+      filesize: 63561728

@@ -1,0 +1,40 @@
+Bootstrap: docker
+From: debian:bookworm-slim
+
+%labels
+    Author thomas cokelaer
+    Version 10.0.0
+    Software foldseek
+    Source https://github.com/steineggerlab/foldseek
+
+%post
+    export DEBIAN_FRONTEND=noninteractive
+
+    # Install wget, curl, aria2c and ca-certificates as runtime tools
+    apt-get update && apt-get install -y --no-install-recommends \
+        wget \
+        curl \
+        aria2 \
+        ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+    # Download foldseek linux-avx2 binary (release 10-941cd33)
+    wget -q https://github.com/steineggerlab/foldseek/releases/download/10-941cd33/foldseek-linux-avx2.tar.gz \
+        -O /tmp/foldseek.tar.gz
+
+    # Extract and install binary
+    tar -xzf /tmp/foldseek.tar.gz -C /tmp/
+    cp /tmp/foldseek/bin/foldseek /usr/local/bin/foldseek
+    chmod +x /usr/local/bin/foldseek
+
+    # Cleanup only temporary build files (keep wget/curl/aria2c as runtime tools)
+    rm -rf /tmp/foldseek.tar.gz /tmp/foldseek
+    apt-get clean
+    rm -rf /var/lib/apt/lists/*
+
+%environment
+    export LC_ALL=C
+    export PATH=/usr/local/bin:$PATH
+
+%runscript
+    exec foldseek "$@"
