@@ -1,10 +1,11 @@
 Changelog
 =========
 
-Unreleased
-----------
+Version 0.22.0 (June 2026)
+---------------------------
 
 - Added new recipe: mmseqs2 18.0.0.
+- Added foldseek 10.0.0 container recipe and registry.
 
 Version 0.20.0 (April 2026)
 ----------------------------
