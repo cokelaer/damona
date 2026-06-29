@@ -10,28 +10,70 @@ From: mambaorg/micromamba:1.5.8
 
     micromamba create -y -n main
 
-    # Install RepeatMasker; bioconda pulls in rmblast as a hard dep
-    micromamba install $OPTS repeatmasker
+    # Install RepeatMasker plus its engine deps explicitly. rmblast provides
+    # rmblastn AND makeblastdb (both required by the RMBlast search engine);
+    # do not rely on it being pulled transitively.
+    micromamba install $OPTS repeatmasker rmblast hmmer trf
 
-    # Remove BLAST+/RMBlast binaries — HMMER (Dfam) is sufficient for modern usage
-    # Singularity builds a single squashfs so deletions here reduce the final .img
-    for bin in rmblastn blastn blastp blastx tblastn tblastx \
+    # Remove only the standalone NCBI-BLAST aligners that RepeatMasker never
+    # calls. KEEP rmblastn, makeblastdb, blastdbcmd, blastdb_aliastool — the
+    # RMBlast engine shells out to makeblastdb to format the -lib/target DB, so
+    # deleting it breaks every run ("makeblastdb ... does not exist").
+    for bin in blastn blastp blastx tblastn tblastx \
                blast_formatter deltablast psiblast rpsblast rpstblastn \
-               makeblastdb blastdbcmd blastdbcheck blastdb_aliastool \
-               blast_report seedtop blastdb_upgrade; do
+               seedtop blastdb_upgrade; do
         rm -f /opt/conda/envs/main/bin/$bin
     done
-    # Remove blast shared-library data and docs
-    find /opt/conda/envs/main -type d \
-        \( -path "*/rmblast-*" -o -path "*/ncbi-blast-*" \) \
-        -exec rm -rf {} + 2>/dev/null || true
 
-    # Reconfigure RepeatMasker to use HMMER (bioconda sets rmblast as default)
+    # Reconfigure RepeatMasker for both RMBlast (default) and HMMER (Dfam) engines
     # Use the conda perl — the base image's system perl lacks required modules
     RM_DIR=$(find /opt/conda/envs/main/share -maxdepth 2 -name "RepeatMasker" -type d | head -1)
     cd "$RM_DIR" && /opt/conda/envs/main/bin/perl configure \
         --trf_prgm /opt/conda/envs/main/bin/trf \
-        --hmmer_dir /opt/conda/envs/main/bin
+        --rmblast_dir /opt/conda/envs/main/bin \
+        --hmmer_dir /opt/conda/envs/main/bin \
+        --default_search_engine rmblast
+
+    # configure does NOT reliably honour --default_search_engine in batch mode:
+    # it leaves DEFAULT_SEARCH_ENGINE = 'hmmer'. With the HMMER default, a plain
+    # `RepeatMasker --species ...` looks for the HMM partitions (which we do not
+    # ship) and aborts with "0/9 families ... no components/partitions present".
+    # Force the value to 'ncbi' (NCBI/RMBlast) so the bare command uses RMBlast.
+    /opt/conda/envs/main/bin/perl -0pi -e \
+        "s/(DEFAULT_SEARCH_ENGINE'\s*=>\s*\{[^}]*?'value'\s*=>\s*')hmmer'/\${1}ncbi'/s" \
+        "$RM_DIR/RepeatMaskerConfig.pm"
+
+    # ---- FamDB / Dfam library -------------------------------------------------
+    # bioconda's repeatmasker ships NO *.h5, so RepeatMasker and famdb.py abort
+    # with "FamDB data directory not found". Bake the needed Dfam 4.0 partitions
+    # into Libraries/famdb (famdb.py 3.0.0 expects the dfam40.*.h5 naming):
+    #   - dfam40.0.h5                    : partition 0, taxonomy index (required)
+    #   - dfam40.curated.consensus.0.h5  : root curated consensus sequences;
+    #     partition 0 covers all curated families incl. Leishmania (tax 5658),
+    #     so RMBlast -species masking works. Verify a taxon with:
+    #       famdb.py -i <libdir> check <taxid>
+    # For -engine hmmer add dfam40.curated.hmm.0.h5; for deeper coverage add the
+    # uncurated.* partitions (much larger).
+    export RM_LIB="$RM_DIR/Libraries/famdb"
+    mkdir -p "$RM_LIB"
+    /opt/conda/envs/main/bin/python - <<'PY'
+import urllib.request, gzip, shutil, os
+base = "https://www.dfam.org/releases/Dfam_4.0/families/FamDB/"
+files = ["dfam40.0.h5", "dfam40.curated.consensus.0.h5"]
+d = os.environ["RM_LIB"]
+for name in files:
+    gz = os.path.join(d, name + ".gz")
+    h5 = os.path.join(d, name)
+    urllib.request.urlretrieve(base + name + ".gz", gz)
+    with gzip.open(gz, "rb") as fi, open(h5, "wb") as fo:
+        shutil.copyfileobj(fi, fo)
+    os.remove(gz)
+    print("famdb partition installed:", h5, os.path.getsize(h5), "bytes")
+PY
+
+    # Point famdb.py at this directory when -i is not given on the command line.
+    FAMDB_DIR=$(find /opt/conda/envs/main/share -maxdepth 1 -name "famdb-*" -type d | head -1)
+    printf '\nFAMDB_DATA_DIR = %s\n' "$RM_LIB" >> "$FAMDB_DIR/famdb.conf"
 
     micromamba clean --packages -y
     micromamba clean --all -y
@@ -41,6 +83,7 @@ From: mambaorg/micromamba:1.5.8
     export LC_ALL=C.UTF-8
     export LANG=C.UTF-8
     export PATH=$PATH:/opt/conda/envs/main/bin/
+    export FAMDB_DATA_DIR=/opt/conda/envs/main/share/RepeatMasker/Libraries/famdb
 
 %runscript
     RepeatMasker "$@"
