@@ -1618,7 +1618,7 @@ raxml:
 repeatmasker:
   doi: 10.5281/zenodo.13391622
   zenodo_id: 13391623
-  binaries: RepeatMasker segmasker rmblastn
+  binaries: RepeatMasker segmasker rmblastn rmOutToGFF3.pl DupMasker ProcessRepeats RM2Bed.py RepeatProteinMask
   releases:
     4.0.8:
       download: https://zenodo.org/record/13391623/files/repeatmasker_4.0.8.img
