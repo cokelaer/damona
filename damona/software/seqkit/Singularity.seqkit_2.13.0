@@ -1,0 +1,52 @@
+Bootstrap: docker
+From: alpine:3.22
+
+%labels
+    Author Thomas Cokelaer
+    Version 2.13.0
+    Description seqkit - a cross-platform and ultrafast toolkit for FASTA/FASTQ file manipulation
+
+%post
+    set -e
+
+    # bash is required downstream (damona/snakemake wrappers) -- never removed
+    apk add --no-cache bash ca-certificates
+
+    # wget only needed to fetch the prebuilt static Go binary; purge after
+    apk add --no-cache --virtual .fetch-deps wget
+
+    mkdir -p /opt/src
+    cd /opt/src
+    wget -q https://github.com/shenwei356/seqkit/releases/download/v2.13.0/seqkit_linux_amd64.tar.gz
+    tar -xzf seqkit_linux_amd64.tar.gz
+    install -m 0755 seqkit /usr/local/bin/seqkit
+
+    # cleanup: build scratch and fetch-only deps
+    cd /
+    rm -rf /opt/src
+    apk del .fetch-deps
+    rm -rf /var/cache/apk/*
+
+%environment
+    export LC_ALL=C
+
+%runscript
+    exec seqkit "$@"
+
+%test
+    set -e
+    seqkit version | grep -F "v2.13.0"
+
+    # smoke test: tiny FASTA through seqkit stats
+    TMPDIR=$(mktemp -d)
+    printf ">seq1\nACGTACGTACGT\n>seq2\nGGGGCCCCAAAA\n" > "$TMPDIR/test.fa"
+    seqkit stats "$TMPDIR/test.fa" | grep -F "test.fa"
+    rm -rf "$TMPDIR"
+
+%help
+    seqkit 2.13.0 -- a cross-platform and ultrafast toolkit for FASTA/FASTQ
+    file manipulation (https://github.com/shenwei356/seqkit).
+
+    Usage:
+        singularity run seqkit_2.13.0.img stats reads.fastq.gz
+        singularity exec seqkit_2.13.0.img seqkit seq --help

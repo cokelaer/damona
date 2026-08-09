@@ -1,0 +1,64 @@
+Bootstrap: docker
+From: alpine:3.22
+
+%labels
+    Author Thomas Cokelaer
+    Version 1.5.0
+    Description seqtk 1.5 (r133) -- toolkit for processing FASTA/FASTQ sequences (Heng Li)
+
+%help
+    seqtk 1.5.0 container (Damona recipe)
+
+    seqtk is a fast and lightweight tool for processing sequences in the
+    FASTA or FASTQ format. Upstream: https://github.com/lh3/seqtk
+
+    Usage:
+        apptainer run seqtk_1.5.0.img seq -a in.fq.gz > out.fa
+        apptainer exec seqtk_1.5.0.img seqtk sample -s100 read1.fq 10000 > sub1.fq
+
+    Provided binaries: seqtk (statically linked, musl)
+
+%post
+    set -e
+
+    SEQTK_VERSION=1.5
+
+    # runtime requirement: bash must remain available (Damona/Snakemake)
+    apk add --no-cache bash
+
+    # build-only dependencies, grouped for one-shot removal
+    apk add --no-cache --virtual .build-deps \
+        build-base zlib-dev zlib-static ca-certificates wget
+
+    # build from the release tag (static binary -> no runtime libs needed)
+    mkdir -p /opt/src
+    cd /opt/src
+    wget -q https://github.com/lh3/seqtk/archive/refs/tags/v${SEQTK_VERSION}.tar.gz
+    tar -xzf v${SEQTK_VERSION}.tar.gz
+    cd seqtk-${SEQTK_VERSION}
+    make CFLAGS="-O2 -Wall -static"
+    install -m 0755 seqtk /usr/local/bin/seqtk
+
+    # cleanup: purge build deps, sources and any apk residues
+    apk del .build-deps
+    cd /
+    rm -rf /opt/src
+    rm -rf /var/cache/apk/*
+
+%environment
+    export LC_ALL=C
+
+%runscript
+    exec seqtk "$@"
+
+%test
+    set -e
+    test -x /usr/local/bin/seqtk
+    test -x /bin/bash || test -x /usr/bin/bash
+    seqtk 2>&1 | grep -q "Version: 1.5"
+    # functional smoke test: FASTQ -> FASTA conversion
+    TMPD=$(mktemp -d)
+    printf '@r1\nACGT\n+\nIIII\n' > "$TMPD/test.fq"
+    seqtk seq -a "$TMPD/test.fq" | grep -q "^>r1"
+    rm -rf "$TMPD"
+    echo "seqtk 1.5.0 OK"
