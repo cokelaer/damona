@@ -124,10 +124,10 @@ barrnap:
   binaries: barrnap nhmmer
   releases:
     1.10.6:
-      download: https://zenodo.org/record/XXXXXXX/files/barrnap_1.10.6.img
-      md5sum: 17d965783b4711fdcd2581a2c1b1939a
-      doi: 10.5281/zenodo.XXXXXXX
-      filesize: 742182912
+      download: https://zenodo.org/record/21864930/files/barrnap_1.10.6.img
+      md5sum: 63f46d17c142f5e18ae01c17456b2c96
+      doi: 10.5281/zenodo.21864930
+      filesize: 350806016
 
 # bbmap/registry.yaml
 bbmap:

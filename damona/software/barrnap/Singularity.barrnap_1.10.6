@@ -1,0 +1,190 @@
+BootStrap: localimage
+From: ../../library/micromamba/micromamba_2.5.0.img
+
+# Portable fallback if the local base image is not available:
+#   BootStrap: docker
+#   From: mambaorg/micromamba:2.5.0
+#   ... and add "micromamba create -y -n main" as the first %post command.
+
+%labels
+    Author thomas cokelaer
+    Version 1.10.6
+    Description Rapid microbial RNA annotation (rRNA, tRNA, tmRNA, ncRNA, mRNA) from FASTA to GFF3
+    Software barrnap
+    Source https://github.com/tseemann/barrnap
+    License GPL-3.0
+
+%help
+    barrnap 1.10.6 -- rapid microbial RNA annotation by Torsten Seemann.
+
+    Usage:
+        singularity run barrnap_1.10.6.img genome.fasta > rrna.gff3
+        singularity exec barrnap_1.10.6.img barrnap --kingdom arc genome.fna
+        singularity exec barrnap_1.10.6.img barrnap --listdb
+
+    Kingdoms: bac (default), arc, fun. Features: --rrna (on by default),
+    --trna, --ncrna, --all.
+
+    NOTE 1 (version string): upstream did not bump the internal version
+    variable when tagging v1.10.6, so `barrnap --version` prints
+    "barrnap 1.10.5". The code of tags v1.10.5 and v1.10.6 is byte-identical;
+    v1.10.6 is the packaging release that ships/builds the databases. This is
+    an upstream quirk, not a build error.
+
+    NOTE 2 (databases): the bac/arc/fun Rfam covariance models (*.cm, cmpress
+    indexed) and the DIAMOND protein databases (*.dmnd) are baked into
+    /opt/conda/envs/main/db. `barrnap --updatedb` is NOT usable inside the
+    read-only container (it needs write access to the db folder); it is not
+    needed since the databases are pre-built.
+
+    NOTE 3 (HMMER): barrnap >= 1.0 no longer uses nhmmer -- it was rewritten
+    around infernal (cmsearch/cmscan). HMMER is nevertheless installed here so
+    that `nhmmer` (>= 3.1) is available in the image for legacy workflows and
+    downstream Damona/Snakemake pipelines that expect it.
+
+    NOTE 4 (footprint): the image is aggressively stripped. Removed: the raw
+    database source material (build/Rfam, build/Sprot, build/taxdump.tar.gz,
+    ~660 MB, only consumed by the unusable --updatedb, see NOTE 2), the
+    mmseqs2 and aria2 packages (~205 MB, declared dependencies of the
+    bioconda barrnap package but only used by the database *build* pipeline,
+    never invoked at runtime), and man/doc/info/locale pages, C headers,
+    perl pod files and python IDE/packaging dead weight. The runtime tool
+    contract (the 12 tools barrnap require_exe's, plus nhmmer) and the
+    pre-built bac/arc/fun databases are untouched.
+
+%post
+    export PATH=/opt/conda/envs/main/bin:$PATH
+    export OPTS="-q -c conda-forge -c bioconda -n main -y"
+
+    # barrnap 1.10.6 is a full rewrite: it shells out to infernal (cmsearch,
+    # cmscan), aragorn, bedtools, any2fasta, seqkit, make, transterm,
+    # ziggypep, pyrodigal, diamond and taxonkit. All of those (plus the perl
+    # modules Path::Tiny, File::Which, List::MoreUtils and the pre-built
+    # Rfam/DIAMOND databases) come with the bioconda package, which is why a
+    # micromamba base is used here instead of a plain debian:bookworm-slim
+    # with a standalone binary.
+    #
+    # hmmer is requested explicitly (not a barrnap dependency any more) to
+    # guarantee nhmmer >= 3.1 is present in the final image.
+    micromamba install $OPTS barrnap=1.10.6 "hmmer>=3.1"
+
+    # ---- footprint reduction --------------------------------------------
+    # (1) mmseqs2 (a single 197 MB binary) is a declared dependency of the
+    #     bioconda barrnap package but is never invoked at runtime: barrnap's
+    #     require_exe() list is exactly cmsearch/cmscan/bedtools/aragorn/
+    #     any2fasta/seqkit/make/transterm/ziggypep/pyrodigal/diamond/taxonkit,
+    #     and neither the barrnap nor the ziggypep script references mmseqs.
+    #     It is only used by the database *build* pipeline (--updatedb),
+    #     which cannot run in the read-only image (NOTE 2). aria2 (the
+    #     downloader used by that same pipeline) is a dependency of mmseqs2
+    #     only. --force removes exactly these two packages' own files, no
+    #     dependency pruning, and keeps conda-meta consistent.
+    micromamba remove -q -n main -y --force mmseqs2 aria2
+
+    # (2) raw database source material (~660 MB uncompressed): the Rfam
+    #     covariance models, SwissProt fasta and NCBI taxdump are only read
+    #     by `make -C build` during --updatedb, never at runtime. The build/
+    #     directory itself (and its small Makefile/tsv/csv files) MUST stay:
+    #     barrnap resolves it at startup with Path::Tiny->realpath, which
+    #     croaks if the path does not exist.
+    rm -f /opt/conda/envs/main/build/Rfam \
+          /opt/conda/envs/main/build/Sprot \
+          /opt/conda/envs/main/build/taxdump.tar.gz
+
+    # (3) docs, headers, locales and python dead weight. python exists here
+    #     only to run pyrodigal, so IDLE/tkinter/ensurepip/pip can go.
+    #     /opt/conda/envs/main/test/bac.fa is the %test genome -- kept.
+    #     Deliberately NOT removed: openmpi/openblas/gsl (nhmmer links
+    #     libmpi, libcblas and libgsl), ICU (diamond links libicudata),
+    #     share/terminfo and share/zoneinfo (runtime warnings otherwise).
+    rm -rf /opt/conda/envs/main/man \
+           /opt/conda/envs/main/include \
+           /opt/conda/envs/main/share/man \
+           /opt/conda/envs/main/share/info \
+           /opt/conda/envs/main/share/doc \
+           /opt/conda/envs/main/share/locale \
+           /opt/conda/envs/main/share/gtk-doc \
+           /opt/conda/envs/main/share/aclocal \
+           /opt/conda/envs/main/share/easel
+    # python version left as a glob so a solver-side python bump cannot
+    # silently turn these into no-ops on the wrong path
+    rm -rf /opt/conda/envs/main/lib/python3.*/idlelib \
+           /opt/conda/envs/main/lib/python3.*/tkinter \
+           /opt/conda/envs/main/lib/python3.*/turtledemo \
+           /opt/conda/envs/main/lib/python3.*/ensurepip \
+           /opt/conda/envs/main/lib/python3.*/pydoc_data \
+           /opt/conda/envs/main/lib/python3.*/site-packages/pip \
+           /opt/conda/envs/main/lib/python3.*/site-packages/pip-*.dist-info \
+           /opt/conda/envs/main/bin/pip /opt/conda/envs/main/bin/pip3*
+    # perl docs embedded next to the modules (perldoc-only, never loaded)
+    find /opt/conda/envs/main/lib/perl5 -name "*.pod" -delete 2>/dev/null || true
+
+    micromamba clean --packages -y
+    micromamba clean --all --yes
+    rm -rf /opt/conda/pkgs
+    find /opt/conda -name "*.pyc" -delete
+    find /opt/conda -name "__pycache__" -type d -exec rm -rf {} + 2>/dev/null || true
+    find /opt/conda -name "*.a" -delete
+
+    # apt caches (bash is never removed: required by Damona and Snakemake)
+    # NEVER add /tmp/* or /var/tmp/* here: apptainer bind-mounts the HOST
+    # /tmp and /var/tmp into the build container, so such a glob deletes the
+    # host's files. Nothing is reclaimed anyway (they are mounts, not squashfs).
+    apt-get clean || true
+    rm -rf /var/lib/apt/lists/*
+
+%environment
+    export PATH=/opt/conda/envs/main/bin:$PATH
+    # A defined locale is mandatory: perl otherwise prints "Setting locale
+    # failed" warnings on every start, which breaks the Zenodo/Damona
+    # no-warning-on-startup constraint.
+    export LC_ALL=C.UTF-8
+    export LANG=C.UTF-8
+    export PYTHONNOUSERSITE=1
+
+%runscript
+    exec /opt/conda/envs/main/bin/barrnap "$@"
+
+%test
+    # apptainer does not run the testscript under -e: without this, a crashing
+    # command is silently swallowed and the build still exits 0.
+    set -e
+    export PATH=/opt/conda/envs/main/bin:$PATH
+    export LC_ALL=C.UTF-8
+    export LANG=C.UTF-8
+
+    # barrnap calls Path::Tiny::tempdir for its cmsearch/diamond intermediates.
+    # %test runs against the read-only image, and /tmp is only writable if the
+    # caller left apptainer's tmpfs mounts enabled -- so pick a writable dir
+    # rather than depending on the caller's mount flags. Not set in
+    # %environment on purpose: /dev/shm is small and RAM-backed, and real runs
+    # write sizeable intermediates.
+    if [ -w /tmp ]; then export TMPDIR=/tmp
+    elif [ -w /dev/shm ]; then export TMPDIR=/dev/shm
+    else echo "no writable temp dir available for %test"; exit 1
+    fi
+
+    # prints "barrnap 1.10.5" on purpose, see NOTE 1 in %help
+    barrnap --version
+    barrnap --help
+    barrnap --listdb
+
+    # external tools barrnap requires at runtime
+    for exe in cmsearch cmscan bedtools aragorn any2fasta seqkit make \
+               transterm ziggypep pyrodigal diamond taxonkit; do
+        command -v $exe > /dev/null || { echo "MISSING: $exe"; exit 1; }
+    done
+
+    # nhmmer availability (legacy contract)
+    nhmmer -h > /dev/null
+
+    # bash must survive the cleanup for Damona publishing / Snakemake
+    test -x /bin/bash || test -x /usr/bin/bash
+
+    # end-to-end rRNA prediction on a bundled test genome. No trailing pipe to
+    # head: the pipeline exit status would be head's (always 0) and would mask
+    # a barrnap crash.
+    # (kept in a variable, not a file: the image is read-only during %test)
+    GFF=$(barrnap --quiet --kingdom bac /opt/conda/envs/main/test/bac.fa)
+    echo "$GFF" | grep -q "rRNA"
+    echo "$GFF" | head -5
