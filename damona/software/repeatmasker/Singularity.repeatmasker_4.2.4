@@ -1,0 +1,286 @@
+BootStrap: localimage
+From: ../../library/micromamba/micromamba_2.5.0.img
+
+# Portable fallback if the local base image is not available:
+#   BootStrap: docker
+#   From: mambaorg/micromamba:2.5.0
+#   ... and add "micromamba create -y -n main" as the first %post command.
+
+%labels
+    Author thomas cokelaer
+    Version 4.2.4
+    Description RepeatMasker -- screen DNA sequences for interspersed repeats and low complexity DNA
+    Software repeatmasker
+    Source https://www.repeatmasker.org
+    License OSL-2.1
+
+%help
+    RepeatMasker 4.2.4 with the RMBlast search engine (default) and the Dfam 4.0
+    curated consensus library (root partition).
+
+        RepeatMasker -species human -pa 4 genome.fa
+        famdb.py names 'Homo sapiens'
+
+    Engines: rmblast (default), hmmer (needs the extra dfam40.curated.hmm.0.h5
+    partition, not shipped here to keep the image small).
+
+    DupMasker ships in the image but is not exposed as a damona binary: it
+    requires Libraries/dupliconlib.fa, which bioconda does not package and
+    repeatmasker.org no longer distributes. Bind-mount your own copy over
+    /opt/conda/envs/main/share/RepeatMasker/Libraries/ to use it.
+
+%post
+    set -e
+
+    export PREFIX=/opt/conda/envs/main
+    # prepend: the base image's Debian perl must never shadow the conda perl
+    export PATH=$PREFIX/bin:$PATH
+    export OPTS=" -q -c conda-forge -c bioconda -n main -y "
+
+    # Install RepeatMasker plus its engine deps explicitly. rmblast provides
+    # rmblastn, blastx AND makeblastdb (all required by the RMBlast search
+    # engine); do not rely on them being pulled transitively.
+    # hdf5 is pinned to 2.1 on purpose: every h5py 3.16 build for python 3.14 is
+    # compiled against hdf5 1.14.6 or 2.1.0, yet its run constraint
+    # ("hdf5 >=2.1.0,<3.0a0") lets the solver pull 2.2.0. The sonames match so it
+    # works, but every famdb.py call then prints
+    #   "h5py is running against HDF5 2.2.0 when it was built against 2.1.0"
+    # which pollutes RepeatMasker's output. Drop the pin once conda-forge ships
+    # an h5py built against hdf5 2.2.
+    # pandas is not a repeatmasker dependency but util/RM2Bed.py imports it, and
+    # that script is exposed as a damona binary. Without it RM2Bed.py dies with
+    # "ModuleNotFoundError: No module named 'pandas'".
+    micromamba install $OPTS repeatmasker=4.2.4 rmblast hmmer trf pandas "hdf5=2.1.0=nompi_*"
+
+    # numpy is only used by famdb.py to read HDF5 arrays -- no linear algebra.
+    # Swap OpenBLAS (40 MB) for the reference netlib BLAS (~1 MB).
+    micromamba install $OPTS "libblas=*=*netlib" || true
+
+    # binutils lives in a throw-away env so that "strip" never ends up shipped
+    micromamba create -y -q -n tools -c conda-forge binutils
+    export STRIP=/opt/conda/envs/tools/bin/strip
+
+    # ---- RepeatMasker configuration -------------------------------------------
+    # Reconfigure for both RMBlast (default) and HMMER (Dfam) engines.
+    # Use the conda perl -- the base image's system perl lacks required modules.
+    RM_DIR=$(find $PREFIX/share -maxdepth 2 -name "RepeatMasker" -type d | head -1)
+    cd "$RM_DIR" && $PREFIX/bin/perl configure \
+        --trf_prgm $PREFIX/bin/trf \
+        --rmblast_dir $PREFIX/bin \
+        --hmmer_dir $PREFIX/bin \
+        --default_search_engine rmblast
+
+    # configure does NOT reliably honour --default_search_engine in batch mode:
+    # it leaves DEFAULT_SEARCH_ENGINE = 'hmmer'. With the HMMER default, a plain
+    # `RepeatMasker --species ...` looks for the HMM partitions (which we do not
+    # ship) and aborts with "0/9 families ... no components/partitions present".
+    # Force the value to 'ncbi' (NCBI/RMBlast) so the bare command uses RMBlast.
+    $PREFIX/bin/perl -0pi -e \
+        "s/(DEFAULT_SEARCH_ENGINE'\s*=>\s*\{[^}]*?'value'\s*=>\s*')hmmer'/\${1}ncbi'/s" \
+        "$RM_DIR/RepeatMaskerConfig.pm"
+    rm -f "$RM_DIR/RepeatMaskerConfig.pm.bak"
+
+    # ---- FamDB / Dfam library -------------------------------------------------
+    # bioconda's repeatmasker ships NO *.h5, so RepeatMasker and famdb.py abort
+    # with "FamDB data directory not found". Bake the needed Dfam 4.0 partitions
+    # into Libraries/famdb (famdb.py 3.0.0 expects the dfam40.*.h5 naming):
+    #   - dfam40.0.h5                    : partition 0, taxonomy index (required)
+    #   - dfam40.curated.consensus.0.h5  : root curated consensus sequences;
+    #     partition 0 covers all curated families incl. Leishmania (tax 5658),
+    #     so RMBlast -species masking works. Verify a taxon with:
+    #       famdb.py -i <libdir> check <taxid>
+    # For -engine hmmer add dfam40.curated.hmm.0.h5; for deeper coverage add the
+    # uncurated.* partitions (much larger).
+    export RM_LIB="$RM_DIR/Libraries/famdb"
+    mkdir -p "$RM_LIB"
+    $PREFIX/bin/python - <<'PY'
+import urllib.request, gzip, shutil, os
+base = "https://www.dfam.org/releases/Dfam_4.0/families/FamDB/"
+files = ["dfam40.0.h5", "dfam40.curated.consensus.0.h5"]
+d = os.environ["RM_LIB"]
+for name in files:
+    gz = os.path.join(d, name + ".gz")
+    h5 = os.path.join(d, name)
+    urllib.request.urlretrieve(base + name + ".gz", gz)
+    with gzip.open(gz, "rb") as fi, open(h5, "wb") as fo:
+        shutil.copyfileobj(fi, fo)
+    os.remove(gz)
+    print("famdb partition installed:", h5, os.path.getsize(h5), "bytes")
+PY
+
+    # Point famdb.py at this directory when -i is not given on the command line.
+    FAMDB_DIR=$(find $PREFIX/share -maxdepth 1 -name "famdb-*" -type d | head -1)
+    printf '\nFAMDB_DATA_DIR = %s\n' "$RM_LIB" >> "$FAMDB_DIR/famdb.conf"
+
+    # ---- pre-generate the RepeatPeps protein library ---------------------------
+    # On first run RepeatProteinMask creates Libraries/PROT-Dfam_<version>/,
+    # fills it with `famdb.py repeat_peps` output and formats it with
+    # makeblastdb. In a read-only container that first run can only fail with
+    # "Cannot create directory ...: Read-only file system", so RepeatProteinMask
+    # needs --writable-tmpfs unless the cache is baked in.
+    # Warming it up by running the tool itself (the rootfs is writable here)
+    # guarantees the directory name matches the version string RepeatProteinMask
+    # derives at runtime -- hardcoding "PROT-Dfam_4.0" would silently miss on the
+    # next Dfam release and fall back to the unwritable path.
+    WARMUP=/repeatproteinmask-warmup
+    mkdir -p $WARMUP
+    printf '>warmup\nATGGCCATTGTAATGGGCCGCTGAAAGGGTGCCCGATAGGGTACCTGAGCTTAAGGCTAGCTAGCTAGGCTA\n' \
+        > $WARMUP/warmup.fa
+    ( cd $WARMUP && $PREFIX/bin/RepeatProteinMask warmup.fa ) || true
+    rm -rf $WARMUP
+    # the cache is only useful if both the library and its blast index landed
+    ls "$RM_DIR"/Libraries/PROT-Dfam_*/RepeatPeps.lib > /dev/null
+    ls "$RM_DIR"/Libraries/PROT-Dfam_*/RepeatPeps.lib.psq > /dev/null
+
+    # ===========================================================================
+    # Footprint reduction. Uncompressed env is ~1.8 GB out of the box; the three
+    # offenders are lib64/ncbi-blast+ (566 MB of unstripped shared libs, 118 of
+    # them for 8 tools we keep), unstripped conda libs shipping .debug_info, and
+    # a pile of packages RepeatMasker never calls.
+    # ===========================================================================
+
+    # -- 1. prune lib64/ncbi-blast+ to the ldd closure of the tools we keep -----
+    #    RepeatMasker/DupMasker use rmblastn + makeblastdb; RepeatProteinMask
+    #    shells out to blastx; ProcessRepeats/util use segmasker + dustmasker.
+    #    Computing the closure with ldd (instead of a hand-written deny list)
+    #    keeps this correct across rmblast updates.
+    KEEP_BLAST_BINS="rmblastn blastx makeblastdb blastdbcmd blastdb_aliastool dustmasker segmasker convert2blastmask"
+    #    ldd resolves these through RPATH and prints paths such as
+    #    ".../ncbi-blast+/./libxregexp.so" -- match on the directory, then take
+    #    the basename; a regex anchored on "ncbi-blast+/lib" silently misses
+    #    every "./"-prefixed entry and deletes libs that are actually needed.
+    cd $PREFIX/lib64/ncbi-blast+
+    for b in $KEEP_BLAST_BINS; do ldd $PREFIX/bin/$b 2>/dev/null; done \
+        | grep -F "ncbi-blast+" \
+        | sed 's|.* => ||; s| (0x.*||' \
+        | xargs -n1 basename | sort -u > /tmp.keep.libs
+    test -s /tmp.keep.libs   # abort the build rather than ship a gutted lib dir
+    ls | grep -vxF -f /tmp.keep.libs | xargs -r rm -f
+    rm -f /tmp.keep.libs
+
+    # -- 2. drop whole conda packages that nothing in the runtime path links ----
+    #    entrez-direct : ~200 NCBI E-utilities scripts + 3 large Go binaries,
+    #                    a repeatmasker dependency that no RM code path calls
+    #    tk            : only reachable through python's tkinter (no GUI here)
+    #    ncbi-vdb      : only used by the SRA-aware blast libs (csra/wgs/sraread)
+    #                    which step 1 already removed
+    #    NOTE: openmpi and gsl must stay -- nhmmer links libmpi and libgsl.
+    for pkg in entrez-direct tk ncbi-vdb; do
+        meta=$(ls $PREFIX/conda-meta/$pkg-*.json 2>/dev/null | head -1)
+        [ -n "$meta" ] || continue
+        $PREFIX/bin/python - "$meta" "$PREFIX" <<'PY'
+import json, os, sys
+meta, prefix = sys.argv[1], sys.argv[2]
+for f in json.load(open(meta))["files"]:
+    p = os.path.join(prefix, f)
+    if os.path.islink(p) or os.path.isfile(p):
+        os.remove(p)
+PY
+        rm -f "$meta"
+    done
+    rm -rf $PREFIX/lib/python3.*/site-packages/tkinter $PREFIX/lib/python3.*/lib-dynload/_tkinter*.so
+
+    # -- 3. drop the blast/dev/misc executables RepeatMasker never invokes ------
+    #    (blastn/blastp/tblastn are only referenced through the AB/WU-Blast code
+    #    paths, which need a separate ABBLAST_DIR install anyway)
+    cd $PREFIX/bin
+    rm -f blastn blastp tblastn tblastx blast_formatter deltablast psiblast \
+          rpsblast rpstblastn seedtop blastdb_upgrade blastdbcheck blastdbcp \
+          blastdb_convert blastdb_path blast_formatter_vdb blast_vdb_cmd \
+          blastn_vdb tblastn_vdb tax4blast makeprofiledb makembindex \
+          makeclusterdb windowmasker seqdb_demo seqdb_perf datatool \
+          project_tree_builder legacy_blast.pl update_blastdb.pl \
+          wublastToCrossmatch.pl cleanup-blastdb-volumes.py \
+          get_species_taxids.sh x86_64-conda-linux-gnu-ld \
+          h5c++ h5cc h5fc h5perf_serial h5debug h5watch h5jam h5unjam \
+          h5repart h5import h5format_convert h5benchmark \
+          mpiCC mpic++ mpicc mpicxx mpif77 mpif90 mpifort opal_wrapper ortecc \
+          oshCC oshc++ oshcc oshcxx oshfort shmemCC shmemc++ shmemcc \
+          shmemcxx shmemfort \
+          idle3 idle3.14 f2py pip pip3 \
+          curl-config gsl-config pcre2-config pcre2grep pcre2test test_pcre \
+          ncurses6-config ncursesw6-config python3.14-config python3-config
+
+    # -- 4. dev/doc payload that no runtime code path reads --------------------
+    rm -rf $PREFIX/include $PREFIX/man $PREFIX/cmake $PREFIX/x86_64-conda-linux-gnu \
+           $PREFIX/share/man $PREFIX/share/doc $PREFIX/share/info \
+           $PREFIX/share/locale $PREFIX/share/easel $PREFIX/lib/pkgconfig
+    rm -f $PREFIX/lib/*.a $PREFIX/lib/*.la
+    rm -rf $PREFIX/lib/python3.*/test $PREFIX/lib/python3.*/idlelib \
+           $PREFIX/lib/python3.*/ensurepip \
+           $PREFIX/lib/python3.*/site-packages/pip \
+           $PREFIX/lib/python3.*/site-packages/numpy/*/tests
+    find $PREFIX -depth -name "__pycache__" -type d -exec rm -rf {} + 2>/dev/null || true
+
+    # -- 5. strip debug info -- conda-forge and bioconda ship .so files with a
+    #       full .debug_info section (libxncbi.so alone: 14 MB -> 5 MB) --------
+    find $PREFIX -type f \( -name "*.so" -o -name "*.so.*" -o -perm -u+x \) \
+        -exec $STRIP --strip-unneeded {} + 2>/dev/null || true
+
+    # -- 6. fail the build here, not in %test, if pruning broke a link ---------
+    for b in $KEEP_BLAST_BINS nhmmer nhmmscan trf; do
+        if ldd $PREFIX/bin/$b 2>&1 | grep -q "not found"; then
+            echo "FATAL: $b lost a shared library during footprint reduction:"
+            ldd $PREFIX/bin/$b | grep "not found"
+            exit 1
+        fi
+    done
+
+    # ---- clean up -------------------------------------------------------------
+    micromamba env remove -y -n tools
+    micromamba clean --packages -y
+    micromamba clean --all -y
+    rm -rf /opt/conda/pkgs /root/.cache
+
+%environment
+    export LC_ALL=C.UTF-8
+    export LANG=C.UTF-8
+    export PATH=/opt/conda/envs/main/bin:$PATH
+    export FAMDB_DATA_DIR=/opt/conda/envs/main/share/RepeatMasker/Libraries/famdb
+    # RepeatMasker .pm modules (CrossmatchSearchEngine.pm, etc.) live in the
+    # RepeatMasker dir, not on Perl's @INC. Helper scripts like rmOutToGFF3.pl
+    # are symlinked into bin/ and use $FindBin::Bin, which resolves to bin/ and
+    # not to the symlink target, so they fail to locate them without PERL5LIB.
+    export PERL5LIB=/opt/conda/envs/main/share/RepeatMasker:$PERL5LIB
+
+%runscript
+    RepeatMasker "$@"
+
+%test
+    set -e
+    export PATH=/opt/conda/envs/main/bin:$PATH
+    RepeatMasker -v
+    rmblastn -version
+    blastx -version
+    makeblastdb -version
+    trf -v 2>&1 | head -2 || true
+    nhmmer -h > /dev/null
+    famdb.py -i /opt/conda/envs/main/share/RepeatMasker/Libraries/famdb names 'Homo sapiens' 2>&1 | head -5
+    # guard the hdf5 pin: a solver drift that re-introduces the skew must fail
+    # the build, not quietly prepend a warning to every famdb call
+    if famdb.py -i /opt/conda/envs/main/share/RepeatMasker/Libraries/famdb info 2>&1 \
+        | grep -q "running against HDF5"; then
+        echo "FATAL: h5py/hdf5 version skew is back -- check the hdf5 pin"
+        exit 1
+    fi
+    # host /tmp is bind-mounted here: work in our own mktemp dir, never glob it
+    WORK=$(mktemp -d)
+    printf '>t\nGGAATTCCGGAATTCCGGAATTCCAAGGTTAACCGGTTAACCGGTTAA\n' > $WORK/test.fa
+    RepeatMasker -engine ncbi -species human -dir $WORK $WORK/test.fa
+    ls $WORK
+    # must succeed on the read-only image, i.e. without --writable-tmpfs, which
+    # only holds while the PROT-Dfam_* cache is baked into Libraries/
+    printf '>p\nATGGCCATTGTAATGGGCCGCTGAAAGGGTGCCCGATAGGGTACCTGAGCTTAAGGCTAGCTAGCTAGGCTA\n' \
+        > $WORK/prot.fa
+    ( cd $WORK && RepeatProteinMask prot.fa )
+
+    # every binary exposed through registry.yaml must actually run, not merely
+    # exist: rmOutToGFF3.pl needs PERL5LIB to reach the RepeatMasker .pm files
+    # and RM2Bed.py needs pandas, and both failed silently until tested here
+    ProcessRepeats -species human $WORK/test.fa.cat > /dev/null
+    rmOutToGFF3.pl $WORK/test.fa.out > $WORK/test.gff3
+    # RM2Bed.py takes the output bed as a positional argument; -o is
+    # --ovlp_resolution, not an output flag
+    RM2Bed.py $WORK/test.fa.out $WORK/test.bed > /dev/null
+    segmasker -in $WORK/test.fa -outfmt fasta > /dev/null
+    rm -rf "$WORK"
