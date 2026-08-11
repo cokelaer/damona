@@ -1,6 +1,43 @@
 Changelog
 =========
 
+Version 0.23.0 (August 2026)
+----------------------------
+
+**Containers**
+
+- Added recipes: repeatmasker 4.2.2 and 4.2.4, seqkit 2.13.0, seqtk 1.5.0,
+  barrnap 1.10.6, cufflinks 2.2.1, hicexplorer 3.7.6.
+- repeatmasker 4.2.4 is 43% smaller than 4.2.2 (290 MB against 511 MB) for the
+  same Dfam 4.0 coverage, mostly by stripping the debug symbols that
+  conda-forge and bioconda ship in their shared libraries. It also fixes
+  ``RepeatProteinMask``, which no earlier image could run, and pins the
+  RepeatMasker version: the image published as 4.2.2 actually contains 4.2.4.
+- ``DupMasker`` is no longer advertised for repeatmasker. It requires a
+  duplicon library that is not distributed any more, so it never worked.
+
+**Bug fixes**
+
+- ``damona build`` created its temporary image in ``damona.cfg``, a file
+  rather than a directory, and failed with ``NotADirectoryError``.
+- Listing an environment crashed when its ``bin/`` directory held files
+  Damona did not create, such as hand-made symbolic links. Those are now
+  detected and skipped.
+
+**Performance**
+
+- ``damona stats`` queried Zenodo once per software, which is slow and hits
+  the API rate limit. Lookups are now batched (40 records per request) and
+  cached for 24h.
+
+**Documentation**
+
+- Per-software ``README.md`` files are generated; an optional ``NOTES.md``
+  next to a recipe is now appended to them, so hand-written caveats survive
+  regeneration.
+- Reworked the user and developer guides, moved the changelog out of the
+  README, and declared support for Python 3.11 and 3.12.
+
 Version 0.22.0 (June 2026)
 ---------------------------
 
