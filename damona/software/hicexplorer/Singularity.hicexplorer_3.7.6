@@ -1,0 +1,33 @@
+BootStrap: localimage
+From: ../../library/micromamba/micromamba_2.5.0.img
+
+%labels
+  maintainer Thomas Cokelaer
+  package.name hicexplorer
+  package.version 3.7.6
+  package.homepage https://github.com/deeptools/HiCExplorer
+  package.source.url https://github.com/deeptools/HiCExplorer
+  package.license GPL-3.0
+
+%post
+  export PATH=$PATH:/opt/conda/envs/main/bin/
+  export OPTS="-q -c conda-forge -c bioconda -n main -y"
+
+  micromamba install $OPTS hicexplorer=3.7.6
+
+  micromamba clean --packages -y
+  micromamba clean --all -y
+
+%environment
+  export PATH=$PATH:/opt/conda/envs/main/bin/
+  export LC_ALL=C.UTF-8
+  export LANG=C.UTF-8
+  export PYTHONNOUSERSITE=1
+
+%runscript
+  exec /opt/conda/envs/main/bin/hicexplorer "$@"
+
+%test
+  export PATH=$PATH:/opt/conda/envs/main/bin/
+  hicexplorer --version
+  hicBuildMatrix --version
