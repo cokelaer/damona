@@ -1,0 +1,95 @@
+Bootstrap: docker
+From: debian:bookworm-slim
+
+%labels
+    Author Thomas Cokelaer
+    Version 2.2.1
+    Description Cufflinks 2.2.1 -- RNA-seq transcript assembly, differential expression and regulation (Trapnell lab)
+
+%help
+    cufflinks 2.2.1 container (Damona recipe)
+
+    Cufflinks assembles transcripts, estimates their abundances, and tests
+    for differential expression and regulation in RNA-seq samples.
+    Upstream (frozen since 2014): http://cole-trapnell-lab.github.io/cufflinks/
+
+    Usage:
+        apptainer run cufflinks_2.2.1.img hits.bam
+        apptainer exec cufflinks_2.2.1.img cuffdiff merged.gtf s1.bam s2.bam
+        apptainer exec cufflinks_2.2.1.img cuffcompare -r ref.gtf transcripts.gtf
+
+    Provided binaries (official prebuilt Linux x86_64, stripped):
+        cufflinks, cuffcompare, cuffdiff, cuffquant, cuffnorm, gtf_to_sam
+
+    Excluded on purpose:
+        - cuffmerge: python2-only wrapper script; python2 is EOL and not
+          shipped in this image. Use `stringtie --merge` or run cuffcompare
+          as an alternative.
+        - gffread: the bundled copy is an outdated 2014 build; use a
+          dedicated up-to-date gffread container instead.
+
+    Note: cufflinks tools try to contact an update server at startup and
+    print a harmless "Could not connect to update server" warning when
+    offline; this does not affect results.
+
+%post
+    set -e
+
+    CUFFLINKS_VERSION=2.2.1
+
+    export DEBIAN_FRONTEND=noninteractive
+    apt-get update
+
+    # build-only tools: fetch + strip; purged below.
+    # bash and zlib1g are already part of bookworm-slim (required packages).
+    apt-get install -y --no-install-recommends wget ca-certificates binutils
+
+    mkdir -p /opt/src
+    cd /opt/src
+    wget -q https://cole-trapnell-lab.github.io/cufflinks/assets/downloads/cufflinks-${CUFFLINKS_VERSION}.Linux_x86_64.tar.gz
+    tar -xzf cufflinks-${CUFFLINKS_VERSION}.Linux_x86_64.tar.gz
+    cd cufflinks-${CUFFLINKS_VERSION}.Linux_x86_64
+
+    # ship the C++ suite; exclude cuffmerge (python2 script) and the
+    # bundled outdated gffread (see %help)
+    for b in cufflinks cuffcompare cuffdiff cuffquant cuffnorm gtf_to_sam; do
+        strip "$b"
+        install -m 0755 "$b" /usr/local/bin/"$b"
+    done
+
+    # cleanup: purge build-only packages, sources and apt caches
+    cd /
+    rm -rf /opt/src
+    apt-get purge -y wget ca-certificates binutils
+    apt-get autoremove -y --purge
+    apt-get clean
+    rm -rf /var/lib/apt/lists/*
+
+%environment
+    export LC_ALL=C
+    export LANG=C
+
+%runscript
+    exec cufflinks "$@"
+
+%test
+    set -e
+    for b in cufflinks cuffcompare cuffdiff cuffquant cuffnorm gtf_to_sam; do
+        test -x /usr/local/bin/$b
+    done
+    test -x /bin/bash || test -x /usr/bin/bash
+    cufflinks 2>&1 | grep -q "cufflinks v2.2.1"
+    cuffdiff 2>&1 | grep -q "cuffdiff v2.2.1"
+    cuffcompare 2>&1 | grep -q "cuffcompare v2.2.1"
+    cuffquant 2>&1 | grep -q "cuffquant v2.2.1"
+    cuffnorm 2>&1 | grep -q "cuffnorm v2.2.1"
+    # end-to-end smoke test: cuffcompare on a minimal GTF
+    TMPD=$(mktemp -d)
+    cd "$TMPD"
+    printf 'chr1\ttest\texon\t100\t500\t.\t+\t.\tgene_id "g1"; transcript_id "t1";\n' > mini.gtf
+    cuffcompare -r mini.gtf mini.gtf
+    test -s cuffcmp.stats
+    grep -q "Query mRNAs" cuffcmp.stats
+    cd /
+    rm -rf "$TMPD"
+    echo "cufflinks 2.2.1 OK"

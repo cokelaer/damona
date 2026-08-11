@@ -1,0 +1,9 @@
+cufflinks:
+  binaries: cufflinks cuffcompare cuffdiff cuffquant cuffnorm gtf_to_sam
+  releases:
+    2.2.1:
+      download: https://zenodo.org/record/21873452/files/cufflinks_2.2.1.img
+      md5sum: f5d1e01bbeb8180dedbd2b39c414a103
+      doi: 10.5281/zenodo.21873452
+      filesize: 33751040
+
