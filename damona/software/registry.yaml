@@ -1661,28 +1661,17 @@ repeatmasker:
       md5sum: eeabbf772362e41ba9bdba249326663e
       doi: 10.5281/zenodo.13391623
       filesize: 1770332160
-#     4.2.2:
-#       download: https://zenodo.org/record/21044379/files/repeatmasker_4.2.2.img
-#       md5sum: 88e1998b910a4f6460b1e508a506aabd
-#       doi: 10.5281/zenodo.21044379
-#       filesize: 535699456
     4.2.2:
       download: https://zenodo.org/record/21046045/files/repeatmasker_4.2.2.img
       md5sum: 90870eb7e01371f41cbf92a0d752d87a
       doi: 10.5281/zenodo.21046045
       filesize: 535703552
-    # Built and verified locally, not published to Zenodo yet. Keep this block
-    # commented out until it is: an entry with an empty download reaches the
-    # global registry as "download: null", and since `damona install
-    # repeatmasker` resolves to Releases.last_release, it would pick 4.2.4 and
-    # fail with nothing to download.
-    # Uncomment and fill in download/doi after
-    #   damona publish --production --extra-binaries ""
-#     4.2.4:
-#       download: https://zenodo.org/record/<record>/files/repeatmasker_4.2.4.img
-#       md5sum: 0fbd53a3a786c3c384aa6ee49f265678
-#       doi: 10.5281/zenodo.<record>
-#       filesize: 303915008
+    4.2.4:
+      download: https://zenodo.org/record/21894048/files/repeatmasker_4.2.4.img
+      md5sum: 0fbd53a3a786c3c384aa6ee49f265678
+      doi: 10.5281/zenodo.21894048
+      filesize: 303915008
+
 
 # rnadiff/registry.yaml
 rnadiff:
