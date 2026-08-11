@@ -72,3 +72,19 @@ def test_singularity_recipe(monkeypatch):
             assert False
         except SystemExit:
             assert True
+
+
+def test_get_temp_file():
+    """Builder.get_temp_file returns a temporary .img file in the damona directory."""
+    from damona.builders import Builder, manager
+
+    bb = Builder()
+    fh = bb.get_temp_file()
+    try:
+        assert fh.name.endswith(".img")
+        assert os.path.exists(fh.name)
+        assert os.path.dirname(fh.name) == str(manager.damona_path)
+    finally:
+        fh.close()
+    # the file is removed when closed
+    assert not os.path.exists(fh.name)

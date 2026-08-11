@@ -47,7 +47,9 @@ class Builder:
 
         :returns: A :class:`tempfile.NamedTemporaryFile` with a ``.img`` suffix.
         """
-        filename = tempfile.NamedTemporaryFile(dir=manager.config_path, suffix=".img")
+        # note: manager.config_path is the damona.cfg *file*, not a directory,
+        # so the temporary file must be created in manager.damona_path instead
+        filename = tempfile.NamedTemporaryFile(dir=manager.damona_path, suffix=".img")
         return filename
 
     def teardown(self, dest):
