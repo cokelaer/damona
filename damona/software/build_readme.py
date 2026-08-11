@@ -52,6 +52,24 @@ def parse_registry(yaml_file):
     return data
 
 
+def read_notes(software_name):
+    """Return the hand-written notes of *software_name*, if any.
+
+    README.md files are generated from the registry, so anything written into
+    them by hand is lost on the next run. Caveats worth recording (a mislabelled
+    image, a binary that cannot work without extra data, ...) go into a
+    ``NOTES.md`` next to the recipe instead, and are appended verbatim.
+
+    :param software_name: name of the software, i.e. of its recipe directory
+    :rtype: str
+    """
+    notes_file = f"{software_name}/NOTES.md"
+    if os.path.exists(notes_file):
+        with open(notes_file, "r") as fin:
+            return fin.read().strip()
+    return ""
+
+
 def generate_markdown(software_name, software_data):
     """Generate a Markdown README from software registry data."""
     markdown_content = f"# {software_name}\n\n"
@@ -116,6 +134,10 @@ def generate_markdown(software_name, software_data):
             doi_str = "—"
 
         markdown_content += f"| {version_label} | {size_str} | {binaries_str} | {doi_str} |\n"
+
+    notes = read_notes(software_name)
+    if notes:
+        markdown_content += f"\n## Notes\n\n{notes}\n"
 
     return markdown_content
 

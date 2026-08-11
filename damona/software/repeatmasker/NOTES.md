@@ -1,28 +1,3 @@
-# repeatmasker
-
-**DOI:** [10.5281/zenodo.13391622](https://doi.org/10.5281/zenodo.13391622)
-
-## Binaries
-
-`RepeatMasker` `segmasker` `rmblastn` `rmOutToGFF3.pl` `ProcessRepeats` `RM2Bed.py` `RepeatProteinMask`
-
-## Installation
-
-```bash
-damona install repeatmasker               # latest (4.2.4)
-damona install repeatmasker:VERSION        # specific version
-```
-
-## Available Versions
-
-| Version | Size | Binaries | DOI |
-|---------|------|----------|-----|
-| **4.2.4** *(latest)* | 289.84 MB | `ProcessRepeats` `RM2Bed.py` `RepeatMasker` `RepeatProteinMask` `rmOutToGFF3.pl` `rmblastn` `segmasker` | [10.5281/zenodo.21894048](https://doi.org/10.5281/zenodo.21894048) |
-| `4.2.2` | 510.89 MB | `ProcessRepeats` `RM2Bed.py` `RepeatMasker` `RepeatProteinMask` `rmOutToGFF3.pl` `rmblastn` `segmasker` | [10.5281/zenodo.21046045](https://doi.org/10.5281/zenodo.21046045) |
-| `4.0.8` | 1688.32 MB | `ProcessRepeats` `RM2Bed.py` `RepeatMasker` `RepeatProteinMask` `rmOutToGFF3.pl` `rmblastn` `segmasker` | [10.5281/zenodo.13391623](https://doi.org/10.5281/zenodo.13391623) |
-
-## Notes
-
 **The 4.2.2 image also contains RepeatMasker 4.2.4.** Its recipe pinned no
 version, so bioconda resolved to whatever was current at build time. Comparing
 4.2.2 with 4.2.4 therefore compares packaging, not the software. 4.2.4 pins the

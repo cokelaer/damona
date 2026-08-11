@@ -7,7 +7,7 @@
 ## Installation
 
 ```bash
-damona install bamqc               # latest (1.0.0)
+damona install bamqc               # latest (5.3.8)
 damona install bamqc:VERSION        # specific version
 ```
 
@@ -15,4 +15,4 @@ damona install bamqc:VERSION        # specific version
 
 | Version | Size | Binaries | DOI |
 |---------|------|----------|-----|
-| **1.0.0** *(latest)* | 132.29 MB | `bamqc` | [TODO](https://doi.org/TODO) |
+| **5.3.8** *(latest)* | 265.52 MB | `bamqc` | [10.5281/zenodo.19392341](https://doi.org/10.5281/zenodo.19392341) |

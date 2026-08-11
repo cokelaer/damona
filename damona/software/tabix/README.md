@@ -1,6 +1,8 @@
+# tabix
+
 ## Binaries
 
-`tabix`, `bgzip`, `htsfile`
+`tabix` `bgzip` `htsfile`
 
 ## Installation
 
@@ -13,4 +15,4 @@ damona install tabix:VERSION        # specific version
 
 | Version | Size | Binaries | DOI |
 |---------|------|----------|-----|
-| **1.23.1** *(latest)* | 14.81 MB | `tabix`, `bgzip`, `htsfile` | [10.5281/zenodo.0000000](https://doi.org/10.5281/zenodo.0000000) |
+| **1.23.1** *(latest)* | 14.81 MB | `bgzip` `htsfile` `tabix` | [10.5281/zenodo.20025205](https://doi.org/10.5281/zenodo.20025205) |
