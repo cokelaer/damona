@@ -179,3 +179,62 @@ def test_update_all_handles_parse_error(tmp_path, capsys):
 
     captured = capsys.readouterr()
     assert "skipped" in captured.out
+
+
+def test_split_binaries_unexpected_type():
+    """A binaries field that is neither a list nor a string yields an empty list."""
+    from damona.software.build_readme import split_binaries
+
+    assert split_binaries(None) == []
+    assert split_binaries(123) == []
+
+
+def test_get_latest_version_empty():
+    from damona.software.build_readme import get_latest_version
+
+    assert get_latest_version({}) is None
+
+
+def test_generate_markdown_multiple_versions_and_missing_fields():
+    """Non-latest versions, missing filesize and missing DOI are rendered as-is."""
+    from damona.software.build_readme import generate_markdown
+
+    data = {
+        "releases": {
+            "0.1.0": {"download": "https://example.org/dummy_0.1.0.img", "binaries": "dummy"},
+            "0.2.0": {
+                "download": "https://example.org/dummy_0.2.0.img",
+                "filesize": 1048576,
+                "doi": "10.5281/zenodo.1",
+                "binaries": "dummy",
+            },
+        },
+        "binaries": "dummy",
+    }
+    md = generate_markdown("dummy", data)
+    # latest version is in bold, the older one within backticks
+    assert "**0.2.0** *(latest)*" in md
+    assert "`0.1.0`" in md
+    # missing filesize and doi are replaced by an em dash
+    assert "—" in md
+
+
+def test_update_all_mismatched_software_name(tmp_path, capsys):
+    """A registry.yaml whose top-level key differs from its directory is skipped."""
+    import os
+
+    from damona.software import build_readme
+
+    sub_dir = tmp_path / "toolA"
+    sub_dir.mkdir()
+    (sub_dir / "registry.yaml").write_text("toolB:\n  releases: {}\n")
+
+    old_cwd = os.getcwd()
+    try:
+        os.chdir(tmp_path)
+        build_readme.update_all()
+    finally:
+        os.chdir(old_cwd)
+
+    captured = capsys.readouterr()
+    assert "mismatched software name" in captured.out

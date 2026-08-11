@@ -149,3 +149,30 @@ def test_broken_find_candidate():
     candidate = reg.find_candidate("fastqc")
     if candidate:
         assert not reg.registry[candidate].broken, f"find_candidate should return a non-broken release, got {candidate}"
+
+
+def test_releases_without_releases_key():
+    """A registry entry with no 'releases' section yields an empty Releases."""
+    from damona.registry import Releases
+
+    r = Releases({"dummy": {"binaries": ["dummy"]}})
+    assert len(r) == 0
+
+
+def test_biocontainers_registry_invalid_filename():
+    import pytest
+
+    from damona.registry import BiocontainersRegistry
+
+    with pytest.raises(ValueError):
+        BiocontainersRegistry(filename="/this/file/does/not/exist.yaml")
+
+
+def test_registry_from_url_alias():
+    """A from_url that is an alias of the [urls] config section is resolved."""
+    from damona.config import Config
+
+    config = Config().config
+    alias = list(config["urls"].keys())[0]
+    r = Registry(from_url=alias)
+    assert r.from_url == config["urls"][alias]

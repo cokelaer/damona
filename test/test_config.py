@@ -101,3 +101,16 @@ def test_init_fish_rc(tmp_path):
 
 def test_get_commands():
     get_damona_commands()
+
+
+def test_update_shell_rc_failure(tmp_path, monkeypatch):
+    """A failure while writing the rc file is swallowed and reported as False."""
+    from damona.config import Config
+
+    cfg = Config()
+
+    def boom(*args, **kwargs):
+        raise OSError("read-only file system")
+
+    monkeypatch.setattr("builtins.open", boom)
+    assert cfg._update_shell_rc(str(tmp_path / "dummyrc"), "source x", "block", "bash") is False

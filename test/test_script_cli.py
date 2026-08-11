@@ -417,3 +417,81 @@ def test_info_with_installed_binary(monkeypatch):
         assert results.exit_code == 0
     finally:
         _teardown(NAME)
+
+
+# ---------------------------------------------------------------------------
+# search --include-biocontainers  (lines 705-718)
+# ---------------------------------------------------------------------------
+
+
+def test_search_include_biocontainers():
+    runner = CliRunner()
+    results = runner.invoke(script.search, ["fastqc", "--local-registry-only", "--include-biocontainers"])
+    assert results.exit_code == 0
+    assert "biocontainers" in results.output.lower()
+
+
+# ---------------------------------------------------------------------------
+# search: online search with no hit falls back to the local registry
+# (lines 688-703). The online registry is faked with the local one so that
+# no network access is required.
+# ---------------------------------------------------------------------------
+
+
+def _patch_search_online(mocker):
+    from damona.registry import Registry as _Registry
+
+    mocker.patch("damona.script.url_exists", return_value=True)
+    mocker.patch("damona.script.Registry", side_effect=lambda **kwargs: _Registry(from_url=None))
+
+
+def test_search_online_fallback_found_locally(mocker):
+    """Nothing online but something locally: the tip is displayed."""
+    _patch_search_online(mocker)
+    runner = CliRunner()
+    # get_list is empty for the 'online' registry but not for the local one
+    mocker.patch("damona.registry.Registry.get_list", return_value=[])
+    results = runner.invoke(script.search, ["fastqc", "--images-only"])
+    assert results.exit_code == 0
+
+
+def test_search_online_fallback_not_found(mocker):
+    """Nothing online and nothing locally either."""
+    _patch_search_online(mocker)
+    runner = CliRunner()
+    results = runner.invoke(script.search, ["__no_such_software__", "--images-only"])
+    assert results.exit_code == 0
+    assert "Not found in local registry either" in results.output
+
+
+# ---------------------------------------------------------------------------
+# stats --include-downloads  (lines 870-884)
+# ---------------------------------------------------------------------------
+
+
+def test_stats_include_downloads(mocker):
+    mocker.patch("damona.zenodo.get_stats_all", return_value={"fastqc": 10})
+    runner = CliRunner()
+    results = runner.invoke(script.stats, ["--include-downloads"])
+    assert results.exit_code == 0
+    assert "Total" in results.output
+
+
+# ---------------------------------------------------------------------------
+# _get_base_image helper (lines 925, 939)
+# ---------------------------------------------------------------------------
+
+
+def test_get_base_image_missing_recipe(tmp_path):
+    from damona.script import _get_base_image
+
+    assert _get_base_image("nosuchsoftware", "1.0.0", tmp_path) == "?"
+
+
+def test_get_base_image_without_from(tmp_path):
+    from damona.script import _get_base_image
+
+    recipe = tmp_path / "software" / "dummy"
+    recipe.mkdir(parents=True)
+    (recipe / "Singularity.dummy_1.0.0").write_text("Bootstrap: localimage\n%post\n    echo hello\n")
+    assert _get_base_image("dummy", "1.0.0", tmp_path) == "?"

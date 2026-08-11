@@ -136,3 +136,77 @@ def test_binary_installer_existing_no_force(monkeypatch):
         assert (manager.environments_path / NAME / "bin" / "hello").exists()
     finally:
         Teardown(NAME)
+
+
+# ---------------------------------------------------------------------------
+# RemoteImageInstaller error paths
+# ---------------------------------------------------------------------------
+
+
+def test_remote_installer_unknown_name_with_version():
+    """An unknown NAME:VERSION exits with a suggestion message (lines 296-309)."""
+    from damona.install import RemoteImageInstaller
+
+    p = RemoteImageInstaller("fastqcccc:0.0.1")
+    assert p.is_valid()
+    with pytest.raises(SystemExit):
+        p.pull_image()
+
+
+def test_remote_installer_unknown_name_without_version():
+    """An unknown name without version exits early (lines 313-317)."""
+    from damona.install import RemoteImageInstaller
+
+    p = RemoteImageInstaller("thissoftwaredoesnotexist")
+    with pytest.raises(SystemExit):
+        p.pull_image()
+
+
+# ---------------------------------------------------------------------------
+# BiocontainersInstaller error paths
+# ---------------------------------------------------------------------------
+
+
+def test_biocontainers_installer_bad_prefix():
+    from damona.install import BiocontainersInstaller
+
+    with pytest.raises(SystemExit):
+        BiocontainersInstaller("notbiocontainers/fastqc:0.11.9")
+
+
+def test_biocontainers_installer_bad_suffix():
+    """The suffix must be formatted as NAME:VERSION."""
+    from damona.install import BiocontainersInstaller
+
+    with pytest.raises(SystemExit):
+        BiocontainersInstaller("biocontainers/fastqc")
+
+
+def test_biocontainers_installer_unknown_software():
+    from damona.install import BiocontainersInstaller
+
+    with pytest.raises(SystemExit):
+        BiocontainersInstaller("biocontainers/thissoftwaredoesnotexist:0.0.1")
+
+
+def test_remote_installer_no_candidate(mocker):
+    """When find_candidate returns nothing, pull_image exits (lines 328-333)."""
+    from damona.install import RemoteImageInstaller
+
+    p = RemoteImageInstaller("fastqc")
+    mocker.patch.object(p.registry, "find_candidate", return_value=None)
+    with pytest.raises(SystemExit):
+        p.pull_image()
+
+
+def test_biocontainers_installer_is_valid(mocker):
+    """BiocontainersInstaller has nothing to validate before pulling."""
+    from damona.install import BiocontainersInstaller
+
+    registry = mocker.MagicMock()
+    registry.registry = {"fastqc:0.11.9": mocker.MagicMock(download="docker://quay.io/fastqc")}
+    mocker.patch("damona.install.Registry", return_value=registry)
+
+    bci = BiocontainersInstaller("biocontainers/fastqc:0.11.9")
+    assert bci.is_valid() is True
+    assert bci.image_installed is False
