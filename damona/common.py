@@ -26,7 +26,34 @@ from easydev import cmd_exists, md5
 logger = colorlog.getLogger(__name__)
 
 
-__all__ = ["Damona", "ImageReader", "BinaryReader", "DamonaInit", "get_container_cmd"]
+__all__ = ["Damona", "ImageReader", "BinaryReader", "DamonaInit", "get_container_cmd", "is_damona_binary"]
+
+
+def is_damona_binary(filename):
+    """Return True if *filename* is a wrapper script created by Damona.
+
+    An environment *bin* directory may contain foreign files such as symbolic
+    links to system executables added manually by the user. Those must be
+    ignored since they cannot be parsed by :class:`BinaryReader`.
+
+    :param filename: path to the file to check
+    :rtype: bool
+    """
+    try:
+        with open(filename, "rb") as fin:
+            content = fin.read(8192)
+    except OSError:  # pragma: no cover
+        return False
+
+    if b"\0" in content:
+        return False
+
+    try:
+        lines = content.decode("utf-8").splitlines()
+    except UnicodeDecodeError:
+        return False
+
+    return any(x.strip().startswith(("singularity", "apptainer")) for x in lines)
 
 
 def get_damona_path():
@@ -429,10 +456,13 @@ class BinaryReader:
             filename = pathlib.Path(filename)
         self.filename = filename
 
-        with self.filename.open("r") as fin:
+        with self.filename.open("r", errors="replace") as fin:
             data = [
                 x for x in fin.readlines() if x.strip().startswith("singularity") or x.strip().startswith("apptainer")
             ]
+
+            if not data:
+                raise ValueError(f"{self.filename} is not a Damona binary wrapper")
             data = data[0]
 
             data = data.replace("${DAMONA_SINGULARITY_OPTIONS}", "")
@@ -464,7 +494,7 @@ class BinaryReader:
         """Return the container used by the binary"""
         # we assume the user did not edit the binary file
         # so we expect one uncommented line
-        with self.filename.open("r") as fin:
+        with self.filename.open("r", errors="replace") as fin:
             command = [line for line in fin.readlines() if line.strip() and line.strip()[0] != "#"]
         # where /images is to be followed by the container
         image = [x for x in command[0].split() if "/images/" in x]

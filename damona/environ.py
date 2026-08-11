@@ -23,7 +23,7 @@ import tarfile
 
 from tqdm import tqdm
 
-from damona.common import BinaryReader, Damona
+from damona.common import BinaryReader, Damona, is_damona_binary
 
 manager = Damona()
 
@@ -64,11 +64,21 @@ class Environment:
             sys.exit(1)
 
     def get_installed_binaries(self):
-        """Return all binaries of the environment"""
+        """Return all Damona binaries of the environment
+
+        Foreign files found in the *bin* directory (e.g. symbolic links to
+        system executables added manually) are ignored.
+        """
         binaries = self.path.glob("bin/*")
         binaries = [x for x in binaries if x.is_dir() is False]
 
-        return [x for x in binaries]
+        installed = []
+        for x in binaries:
+            if is_damona_binary(x):
+                installed.append(x)
+            else:
+                logger.debug(f"{x} is not a Damona wrapper. Skipped.")
+        return installed
 
     def __contains__(self, name):
         """Return ``True`` if a binary named *name* is installed in this environment.

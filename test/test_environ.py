@@ -690,3 +690,82 @@ def test_create_from_bundle_bin_only(tmp_path):
         path = manager.environments_path / NAME
         if path.exists():
             shutil.rmtree(path)
+
+
+def test_create_from_bundle_with_image(tmp_path):
+    """create_from_bundle installs the images/ entries of the bundle."""
+    import tarfile as _tarfile
+
+    NAME = ".dummy_bundle_with_image"
+    env_manager = Environ()
+    manager = Damona()
+
+    fake_image = tmp_path / "dummytesting_1.0.0.img"
+    fake_image.write_text("not a real image")
+
+    tar_path = tmp_path / "test_bundle.tar"
+    with _tarfile.open(str(tar_path), "w") as tar:
+        tar.add(str(fake_image), arcname="images/dummytesting_1.0.0.img")
+
+    target_image = manager.damona_path / "images" / "dummytesting_1.0.0.img"
+
+    try:
+        with mock.patch("damona.environ.Environ.create") as mock_create:
+
+            def _create(env_name, force=False):
+                env_path = manager.environments_path / env_name
+                env_path.mkdir(exist_ok=True)
+                (env_path / "bin").mkdir(exist_ok=True)
+                (env_path / "images").mkdir(exist_ok=True)
+
+            mock_create.side_effect = _create
+            env_manager.create_from_bundle(NAME, bundle=str(tar_path))
+
+        # the image was moved into the shared images directory
+        assert target_image.exists()
+
+        # a second import finds the very same image (same md5) and skips the copy
+        with _tarfile.open(str(tar_path), "w") as tar:
+            tar.add(str(fake_image), arcname="images/dummytesting_1.0.0.img")
+        with mock.patch("damona.environ.Environ.create") as mock_create:
+            mock_create.side_effect = _create
+            env_manager.create_from_bundle(NAME, bundle=str(tar_path), force=True)
+    finally:
+        if target_image.exists():
+            target_image.unlink()
+        path = manager.environments_path / NAME
+        if path.exists():
+            shutil.rmtree(path)
+
+
+def test_create_from_bundle_unexpected_member(tmp_path):
+    """A bundle with an unexpected entry is rejected."""
+    import tarfile as _tarfile
+
+    NAME = ".dummy_bundle_unexpected"
+    env_manager = Environ()
+    manager = Damona()
+
+    unexpected = tmp_path / "unexpected.txt"
+    unexpected.write_text("hello")
+
+    tar_path = tmp_path / "test_bundle.tar"
+    with _tarfile.open(str(tar_path), "w") as tar:
+        tar.add(str(unexpected), arcname="unexpected.txt")
+
+    try:
+        with mock.patch("damona.environ.Environ.create") as mock_create:
+
+            def _create(env_name, force=False):
+                env_path = manager.environments_path / env_name
+                env_path.mkdir(exist_ok=True)
+                (env_path / "bin").mkdir(exist_ok=True)
+                (env_path / "images").mkdir(exist_ok=True)
+
+            mock_create.side_effect = _create
+            with pytest.raises(NotImplementedError):
+                env_manager.create_from_bundle(NAME, bundle=str(tar_path))
+    finally:
+        path = manager.environments_path / NAME
+        if path.exists():
+            shutil.rmtree(path)
