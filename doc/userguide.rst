@@ -12,21 +12,40 @@ its own ``--help`` flag::
 
     damona --help
 
-The list of available commands includes:
+Commands are grouped by theme in the ``--help`` output:
 
 .. code-block:: text
 
-    activate      Activate a Damona environment
-    clean         Remove orphan images or binaries
-    deactivate    Deactivate the current environment
-    env           List, create, or delete environments
-    export        Export an environment to a bundle or YAML file
-    info          Display information about an installed image
-    install       Download and install a container image
-    list          List available images in the registry
-    remove        Uninstall a binary or image
-    search        Search the registry for software
-    stats         Display statistics about the local installation
+    Environment management
+      create      Create a new environment
+      remove      Remove an environment and all its binaries
+      rename      Rename an existing environment
+      env         List all environments with their size and binary counts
+      activate    Activate a Damona environment
+      deactivate  Deactivate the current Damona environment
+
+    Package management
+      install     Download and install an image and its binaries
+      uninstall   Uninstall a binary or an image from an environment
+      clean       Find and remove orphaned images and binaries
+      export      Export an environment as a YAML file or a tar bundle
+      info        Show images and binaries installed in an environment
+
+    Registry
+      search      Search the registry for a container image or binary
+      list        List all containers available in the local registry
+      stats       Show registry statistics and local installation summary
+
+    Developer tools
+      check       Check that all binaries in a built image are functional
+      build       Build a Singularity image from a recipe or a Docker image
+      catalog     Show latest version, size, and base image for every container
+
+.. warning:: ``remove`` deletes a whole **environment**; to drop a single
+   binary or image use ``uninstall``.
+
+The *Developer tools* commands are aimed at container authors and are covered
+in the :ref:`developer guide <dev-guide>`.
 
 For detailed help on any sub-command, append ``--help``::
 
@@ -58,10 +77,25 @@ Create an environment
 
 Create a new environment called ``TEST``::
 
-    damona env --create TEST
+    damona create TEST
 
 All environments are created under ``~/.config/damona/envs/``.  After
 creation, run ``damona env`` again to confirm it appears in the list.
+
+An environment can also be re-created from a previous export (see
+:ref:`export`)::
+
+    damona create TEST --from-yaml damona_TEST.yaml
+    damona create TEST --from-bundle damona_TEST.tar
+
+Rename or delete an environment::
+
+    damona rename TEST --new-name PROD
+    damona remove PROD
+
+.. warning:: ``damona remove`` deletes the environment and every wrapper it
+   contains.  Add ``--force`` to skip the confirmation prompt.  The shared
+   images themselves are kept; use ``damona clean`` to reclaim that space.
 
 Activate and deactivate environments
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -120,15 +154,40 @@ Search for a specific tool by name::
 provide a ``registry.txt`` index file.  Point Damona at that file to search
 it::
 
-    damona search "*" --url https://biomics.pasteur.fr/salsa/damona/registry.txt
+    damona search "*" --registry https://biomics.pasteur.fr/salsa/damona/registry.txt
 
 The above URL has a predefined alias called ``damona`` in the default
 configuration, so this shorter form is equivalent::
 
-    damona search "*" --url damona
+    damona search "*" --registry damona
 
 You can add your own aliases in ``~/.config/damona/damona.cfg`` (see the
 :ref:`configuration section <dev-config>` in the developer guide).
+
+To ignore the online registry altogether and use only the copy bundled with
+your installation (no network access required)::
+
+    damona search fastqc --local-registry-only
+
+Scientific scope of the registry
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The following tag clouds give a rough idea of the topics and operations
+covered by the containers currently shipped with Damona.  They are built from
+the `bio.tools <https://bio.tools>`_ annotations of every registered tool and
+binary (see ``doc/build_word_cloud.py`` to regenerate them).
+
+Topics and operations of the registered **tools**:
+
+.. image:: wordcloud_tools.png
+   :width: 90%
+   :alt: Tag cloud of the bio.tools topics covered by Damona containers
+
+Same analysis at the level of individual **binaries**:
+
+.. image:: wordcloud_binaries.png
+   :width: 90%
+   :alt: Tag cloud of the bio.tools topics covered by Damona binaries
 
 Download and install a container
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -165,11 +224,11 @@ After installation the command is immediately available::
 
 Install from an external registry::
 
-    damona install fastqc:0.11.9 --url https://biomics.pasteur.fr/drylab/damona/registry.txt
+    damona install fastqc:0.11.9 --registry https://biomics.pasteur.fr/drylab/damona/registry.txt
 
 Or use the short alias::
 
-    damona install fastqc:0.11.9 --url damona
+    damona install fastqc:0.11.9 --registry damona
 
 Working with multiple environments
 ------------------------------------
@@ -183,15 +242,15 @@ Damona stores everything under ``~/.config/damona/``:
 To test two versions of the same tool side-by-side::
 
     # Create and populate the first environment
-    damona env --create test1
+    damona create test1
     damona activate test1
     damona install fastqc:0.11.9
 
     # Switch to the second environment
     damona deactivate
-    damona env --create test2
+    damona create test2
     damona activate test2
-    damona install fastqc:0.11.8 --url damona
+    damona install fastqc:0.11.8 --registry damona
 
 Both environments now contain their own ``fastqc`` wrapper pointing to the
 appropriate image.  Only **one** copy of each image is stored on disk.
@@ -210,6 +269,70 @@ This creates a wrapper for ``show-snps`` using the ``mummer`` container without
 waiting for an official registry update.  If this helps you please consider
 opening an issue or a pull request so the registry can be updated for
 everyone.
+
+Several binaries can be requested at once with a comma-separated list::
+
+    damona install mummer --binaries show-snps,show-coords
+
+Inspect an environment
+----------------------
+
+List the images and binaries installed in an environment::
+
+    damona info TEST
+
+The whole local registry (every container Damona knows about) is printed by::
+
+    damona list
+
+Summary statistics — number of containers, versions, unique binaries, and how
+much disk space the locally installed images take::
+
+    damona stats
+
+Uninstall software
+------------------
+
+To remove a single binary or an image from an environment, use ``uninstall``
+(not ``remove``, which deletes the whole environment)::
+
+    damona uninstall fastqc
+
+By default the currently active environment is targeted.  Choose another one
+explicitly::
+
+    damona uninstall fastqc --environment TEST
+
+Over time, deleting binaries by hand may leave images behind that no
+environment references any more (or, conversely, wrappers pointing at images
+that no longer exist).  Both kinds of orphans are reported by::
+
+    damona clean
+
+This is a dry-run by default and only prints what it would do.  Add
+``--do-remove`` to actually delete::
+
+    damona clean --do-remove
+
+.. _export:
+
+Export and re-create an environment
+------------------------------------
+
+An environment can be saved either as a small YAML description or as a
+self-contained tar bundle that includes the images themselves::
+
+    damona export TEST --yaml damona_TEST.yaml
+    damona export TEST --bundle damona_TEST.tar
+
+The YAML file only lists image names and versions, so re-creating from it
+downloads the images again.  A bundle is much larger but needs no network
+access, which makes it convenient for an offline cluster::
+
+    damona create TEST2 --from-yaml damona_TEST.yaml
+    damona create TEST2 --from-bundle damona_TEST.tar
+
+Add ``--force`` to overwrite an environment that already exists.
 
 Environmental variables
 ------------------------
@@ -255,3 +378,15 @@ visible inside the container.  Bind it explicitly::
 
 Multiple options can be combined in the same string.
 
+DAMONA_ENV
+~~~~~~~~~~
+
+``DAMONA_ENV`` holds the full path to the environment that is currently
+active.  It is exported by ``damona activate`` and removed again by
+``damona deactivate``; you should not set it by hand.  Damona reads it to know
+where to install new binaries, so it is the first thing to inspect when
+activation appears not to work::
+
+    echo $DAMONA_ENV
+
+An empty value means no environment is active.

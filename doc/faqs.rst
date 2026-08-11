@@ -35,7 +35,7 @@ tool with a different focus:
   and is widely available on computing clusters where Docker is not permitted.
 - **Easy sharing** – A bundle file created with ``damona export`` can be given
   to a colleague who can recreate the exact same environment with
-  ``damona env --from-bundle``.
+  ``damona create --from-bundle``.
 
 In practice many bioinformatics teams use *both*: conda for exploratory work
 and Damona for the stable, shared analysis pipelines that need to be
@@ -46,4 +46,3 @@ Useful related projects
 
 * `StaPH-B Docker images <https://hub.docker.com/u/staphb>`_ – a community
   effort providing Docker images for public-health bioinformatics tools.
-

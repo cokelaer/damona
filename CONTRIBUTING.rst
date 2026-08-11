@@ -10,11 +10,16 @@ If you are interesting in helping on the core development, just create an issue 
 Recipes
 ========
 
-If you have a Singularity recipes and wish to add it, simply create a directory named after the tool (small caps) in ./damona/recipes and add the Singularity recipe. It should be named::
+If you have a Singularity recipe and wish to add it, simply create a directory named after the tool (small caps) in ./damona/software and add the Singularity recipe. It should be named::
 
     Singularity.name_x.y.z
 
-x,y,z being the version and **name** the name of the tool (small caps as much as possible; )
+x,y,z being the version and **name** the name of the tool (small caps as much as possible).
+
+Alongside the recipe, add a ``registry.yaml`` file describing the release. The
+global ``damona/software/registry.yaml`` is generated automatically by a
+pre-commit hook and must not be edited by hand. See the `developer guide
+<https://damona.readthedocs.io/en/latest/dev.html>`_ for the expected format.
 
 Issues
 ==========
@@ -41,7 +46,7 @@ When submitting a pull request, we ask you to check the following:
    some further changes.
 
 2. The contributed code will be **licensed under Damona's license**,
-   https://github.com/cokelaer/damona/blob/master/LICENSE
+   https://github.com/cokelaer/damona/blob/main/LICENSE
    If you did not write the code yourself, you ensure the existing
    license is compatible and include the license information in the
    contributed files, or obtain a permission from the original

@@ -15,6 +15,7 @@ References
     damona.install
     damona.registry
     damona.script
+    damona.utils
     damona.zenodo
 
 admin module
@@ -58,6 +59,13 @@ install module
 registry module
 ---------------
 .. automodule:: damona.registry
+    :members:
+    :undoc-members:
+
+
+utils module
+------------
+.. automodule:: damona.utils
     :members:
     :undoc-members:
 

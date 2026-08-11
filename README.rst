@@ -58,8 +58,8 @@ Think of Damona as *conda for Singularity images*: the same familiar
 ``create / activate / install`` workflow you already know, but with the
 rock-solid isolation and reproducibility that containers provide.
 
-.. note::  As of Aug. 2026, **Damona** ships 169 containers (248 versions),
-           providing **829 unique ready-to-use binaries**.
+.. note::  As of Aug. 2026, **Damona** ships 170 containers (249 versions),
+           providing **834 unique ready-to-use binaries**.
 
 
 
@@ -279,8 +279,9 @@ Run ``damona --help`` to see all available commands::
       stats       Show registry statistics and local installation summary.
 
     Developer tools:
-      check    Check that all binaries in a built image are functional.
-      build    Build a Singularity image from a local recipe, a Damona recipe, or a Docker image.                                            catalog  Show a developer overview: latest version, size, and base image for every container.
+      check       Check that all binaries in a built image are functional.
+      build       Build a Singularity image from a local recipe, a Damona recipe, or a Docker image.
+      catalog     Show a developer overview: latest version, size, and base image for every container.
 
 
 For command-specific help (e.g. ``install``)::
@@ -358,7 +359,7 @@ Search for available packages::
 
 Search an external registry (e.g. the official Damona registry)::
 
-    damona search fastqc --url damona
+    damona search fastqc --registry damona
 
 The ``damona`` URL alias is pre-configured in
 *~/.config/damona/damona.cfg*. You can add your own registry URLs there to
@@ -396,186 +397,13 @@ Each contribution has been an encouragement to pursue this project. Thanks to al
 Changelog
 =========
 
-From version 0.16 onwards, we will not mention the new software and their versions
-but only changes made to the code itself. Entire list of software is available using
-the command::
+The full, up-to-date changelog lives in
+`CHANGELOG.rst <https://github.com/cokelaer/damona/blob/main/CHANGELOG.rst>`_
+and is rendered in the
+`documentation <https://damona.readthedocs.io/en/latest/changelog.html>`_.
+
+From version 0.16 onwards, new software and versions are no longer listed
+there; only changes to the code itself are recorded. The complete list of
+available software is obtained with::
 
     damona list
-
-========= ========================================================================
-Version   Description
-========= ========================================================================
-0.21.0    * ADD datasets 18.31.0, merqury 1.3.0 (with meryl binary), whatshap
-            2.8.0, racon 1.5.0, sambamba 1.0.1, vcftools 0.1.16, awk 5.3.2,
-            krona 2.8.1, trimmomatic 0.40.0, sequana_tools 26.5.30
-          * FIXED deeptools binaries
-          * CHANGED `search` adds a local registry fallback when the online
-            query returns no results
-0.20.1    * ADD muscle 5.3.0, stringtie 3.0.3, vsearch 2.31.0, varscan 2.4.6,
-            blat 39.1.0, kmc 3.2.4, mash 2.3, mmseqs2 18.0.0, tabix 1.23.1,
-            htseq 2.1.2, bakta 1.12.0
-0.20.0    * ADD  add spades 4.1.0, kallisto 0.51.1, pbmm2 1.16.99, STAR 2.7.11b,
-            nextdenovo 2.5.2, deepvariant 1.10.0, diamond 2.1.24, pbsv 2.11.0,
-            unicycler 0.5.1, bamqc, idr 2.1.0 and unicycler 0.5.1, minigraph,
-            picard 3.4.0, new datasets versions, iqtree 2.4.0
-          * UPDATED or CHANGED Add broken flag to mark buggy releases
-          * FIX welcome message
-0.19.2    * CHANGED faster `damona check <IMG>`
-          * UPDATED sequana 0.21 image
-0.19.1    * CHANGED `damona upload` to `damona publish`
-          * NEW: new busco 6.0.0
-0.19.0    * ADDED: isoquant container (scratch-built, no micromamba)
-          * FIXED: Zenodo upload now uses Bearer token authentication header
-            instead of ``access_token`` query parameter (required by the new
-            Zenodo InvenioRDM API)
-          * CHANGED: upload always creates a new independent deposit instead of
-            versioning an existing one, so any developer can contribute a new
-            release regardless of who originally created the record
-          * REMOVED: top-level ``doi`` field from registry (was the Zenodo
-            concept DOI — unused and no longer meaningful with independent
-            deposits)
-          * IMPROVED: ``damona stats --include-downloads`` now prints results
-            line-by-line as they arrive instead of waiting for all requests to
-            complete
-0.18.0    * NEW command: catalog
-          * DECREASE fott print of repeatmasker
-0.17.2    * ADDED sniffles, macs3, verkho
-          * IMPROVED: new damona command for developers: build and check
-0.17.1    * RENAMED: ``delete`` command renamed to ``remove``
-          * RENAMED: ``remove`` command renamed to ``uninstall``
-          * RENAMED: ``--logger`` option renamed to ``--log-level``
-          * RENAMED: ``--remove`` flag in ``clean`` renamed to ``--do-remove``
-          * IMPROVED: CLI commands grouped into Environment management, Package
-            management, and Registry sections
-          * IMPROVED: simplified ORCID parsing in zenodo upload
-          * ADDED: bedops
-0.17.0    * IMPROVED: CLI output now uses rich tables and panels
-          * IMPROVED: auto-update shell config files (bash/zsh/fish) on startup
-          * FIXED: fish shell activation and PATH propagation
-          * FIXED: subprocess-based shell detection replacing env-variable approach
-          * FIXED: first-run exit code no longer causes CI failures
-          * BUILD: remove sudo requirement from singularity build commands
-          * BUILD: add dependency caching to CI workflows
-0.16.0    * update precommit to create global registry automatically
-0.15.2    * ADDED: purge_haplotigs
-          * FIXED: access to online registry (Default behaviour)
-0.15.1    * using loguru (tentative). Update to have real 0.15.X version
-            0.15.0 is unfortunately is not uploading on pypi....
-0.15.0    * biocontainers integrated
-          * Fix #35 to have a common registry online. no need to update damona
-            anymore.
-0.14.7    * ADDED rseqc 5.0.4
-          * UPDATED sequana_tools 0.19.1
-0.14.6    * UPDATED freebayes to 1.3.9
-          * ADDED meme suite 5.5.3
-0.14.5    * UPDATED pyproject to use poetry2.0 and drop py3.8 support for py3.12
-          * ADDED wget 1.25.4, chromap 0.2.7, qc3c 0.5.0 and pairtools 1.1.2
-0.14.4    * UPDATE quast 5.3
-          * ADDED RNAfold 2.7.0
-          * ADDED pilon 1.24
-          * ADDED Mauve 2.4.0
-0.14.3    * ADDED pecat 0.0.3, necat 0.0.1, sequana_coverage 0.18
-          * ADDED: bcftools 1.16, khmer 2.1.1  tRNAscan_SE 2.0.12
-0.14.2    * ADDED: AdapterRemoval, bbmap 39.01, dsrc 2.0.2, lima 2.9.0,
-            necat 0.0.1
-0.14.1    * ADDED: ragtag 2.1.0, orthofinder 2.5.5, mcl , liftoff 1.6.3
-          * Message if version is outdated
-0.14      * ADDED: ir v2.8.0, vadr v1.6.4, seaview v5.0.5, repeatmasker 4.0.8
-            bandage 0.8.1, rnammer 1.2, miniasm 0.3.0, hmmer 2.3.2 and 3.3.2
-            infernal 1.1.5
-          * NEW: progress bar for upload
-          * CHANGES. fixed sandbox.zenodo upload
-          * CHANGES: damona search with container sizes and recommendation
-0.13      * Fix insallation of a registered software given a dockerhub link
-          * Fix requests limits on zenodo (for the stats)
-          * remove URLs section in config (will remove this feature)
-          * handle docker:// link properly to pull image from registry
-0.12.3    * ADDED dustmasker 1.0.0
-          * update art with 2.1.8, 2.3.7, 2.5.8 versions
-          * ADDED mosdepth 0.3.8
-          * ADDED delly 1.2.6
-          * UPDATED micromamba 1.5.8
-0.12.2    * ADDED datasets
-0.12.1    * ADDED pypolca, sratoolkit
-0.12.0    * CORE development: rename zenodo-upload subcommand into upload
-          * UPDATE rtools to v1.3.0 to include limma package
-0.11.1    * ADD pbsim.
-          * UPDATE hifiasm
-0.11.0    * add precommit, update to use pyproject
-0.10.1    * Fix the get_stats_software wrt new  zenodo API
-0.10.0    * ADD zsh support
-          * UPDATE flye 2.9.1
-          * ADD nanopolish and remove nanopolish from sequana_tools binaries
-0.9.1     * ADD hmmer 3.2.2, trinotate 4.0.1, transdecode 5.7.0, trinity 2.15.1
-          * UPDATE bioconvert 1.1.0, bowtie2 2.5.1
-0.9.0     * refactorise the command 'env' by splitting into dedicated subcommands
-            create, delete, rename. add progress bar when downloading container
-          * NEW micromamba image to work as a localimage
-          * NEW sequana_minimal package to hold common tools (bwa, samtools,
-            kraken, etc)
-          * NEW ivar, pangolin, nextclade, subread, mafft packages
-          * UPDATE fastp to 0.23.3, gffread to 0.12.7 (3 times lighter).
-          * UPDATE sequana_tools to use micromamba (30% lighter)
-0.8.4     * fix damona stats command to return unique binaries
-          * more recipes and version (e.g. fastqc 0.12.1, graphviz update, etc)
-0.8.3     * create registry specifically for the sandbox (for testing)
-          * add damona community in the uploads
-          * add pbbam, bioconvert, busco, canu, ccs
-          * add polypolish, samtools 1.16.1, sequana 0.14.6, flye 2.9, canu 2.1.1
-            circlator 1.5.5, hifiasm
-0.8.2     * add idr, samtools, homer, bamtools, bedtools, sequana_denovo
-          * add seqkit recipe and container
-          * add shustring
-0.8.1     * Include ability to interact with biocontainers by allowing retrieval
-            of all biocontainers docker images using this syntax:
-            'damona install biocontainers/xx:1.2.3' Note that although 9000
-            containers are available, in practice, only about 1000 dockers are
-            on dockerhub, which is already nice :-)
-0.8.0     * Fix regression to install a software with its version
-0.7.1     * Implement the fish shell
-          * add command "damona list"
-          * rename recipes/ directory into software/ and created a new library/
-            directory for images used as library, that are not installed.
-0.7.0     * Check that singularity is installed
-          * implement the remove command
-            https://github.com/cokelaer/damona/issues/15
-          * more recipes cleanup (https://github.com/cokelaer/damona/issues/12)
-          * removed damona recipes (pure python package)
-          * cleanup all recipes
-          * add zenodo stats (for admin)
-0.6.0     * add ability to upload images on zenodo. No need for external
-            repositories.
-          * ability to add/delete a software from different images
-          * implement --help for the activate/deactivate (non trivial)
-          * add --rename option in 'damona env'
-          * 'base' environment is now at the same level as other environments
-          * better bash script; no need for DAMONA_EXE variable anymore.
-0.5.3     * Fixing config/shell
-0.5.2     * add missing shell package
-0.5.1     * add DAMONA_SINGULARITY_OPTIONS env variable in the binary
-          * Fix the way binaries are found in the releases.
-          * new recipes: rtools
-          * new releases: sequana_tools_0.10.0
-          * Fix shell script to handle DAMONA_EXE variable
-0.5.0     * Major refactoring.
-            - Simplification of the registries
-            - New command to build images from local recipes or dockerhub entries.
-            - Install command can now install local container.
-            - check md5 of images to not download/copy again
-0.4.3     * Implement damona activate/deactivate
-0.4.2     * Fix typo in the creation of aliases for 'set' containers
-0.4.1     * implemented aliases for the --from-url option stored in a
-            damona.cfg file
-0.4.0     * implemented the 'env' and 'activate' command
-          * ability to setup an external registry on any https and retrieve
-            registry from there to download external images
-0.3.X     * add gffread, rnadiff recipes
-0.3.0     * A stable version with documentation and >95% coverage read-yto-use
-0.2.3     * add new recipes (rnadiff)
-0.2.2     * Download latest if no version provided
-          * include *build* command to build image locally
-0.2.1     fixed manifest
-0.2.0     first working version of damona to pull image locally with binaries
-0.1.1     small update to fix RTD, travis, coveralls
-0.1       first release to test feasibility of the project
-========= ========================================================================
