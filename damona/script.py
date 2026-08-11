@@ -872,16 +872,14 @@ def stats(**kwargs):
         from damona import admin, zenodo
 
         all_software = sorted(admin.get_software_names())
+        downloads_per_software = zenodo.get_stats_all(all_software)
         N = 0
         console.print(f"{'Software':<25} {'Downloads':>10}")
         console.print("-" * 36)
         for software in all_software:
-            downloads = zenodo.get_stats_software(software)
-            console.print(f"{software:<25} {str(downloads):>10}")
-            try:
-                N += int(str(downloads).replace(",", ""))
-            except (AttributeError, ValueError):
-                pass
+            downloads = downloads_per_software.get(software, 0)
+            console.print(f"{software:<25} {downloads:>10}")
+            N += downloads
         console.print("-" * 36)
         console.print(f"[bold]Total:[/bold] {N}")
 

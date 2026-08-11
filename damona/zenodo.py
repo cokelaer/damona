@@ -579,8 +579,155 @@ analysis.""",
         return msg
 
 
+ZENODO_RECORDS_API = "https://zenodo.org/api/records"
+
+#: seconds during which cached download counts are considered fresh
+STATS_CACHE_TTL = 24 * 3600
+
+
+def _get_stats_headers():
+    # a token is optional for public records but raises the Zenodo rate
+    # limits (60 -> 100 requests/min, 2000 -> 5000/hour)
+    try:
+        token = Config().config.get("zenodo", "token")
+        return {"Authorization": f"Bearer {token}"}
+    except (NoSectionError, NoOptionError):
+        return {}
+
+
+def _sleep_if_rate_limited(response):
+    import time
+
+    try:
+        remaining = int(response.headers["X-RateLimit-Remaining"])
+        reset = int(response.headers["X-RateLimit-Reset"])
+    except (KeyError, ValueError):
+        return
+    if remaining < 1:
+        delay = max(reset - int(time.time()), 1)
+        logger.warning(f"Zenodo rate limit attained. Waiting {delay}s")
+        time.sleep(delay)
+
+
+def _stats_cache_file():
+    return Config().user_config_dir / "stats_cache.json"
+
+
+def _load_stats_cache():
+    """Return cached record stats ({record_id: stats}) if fresh, else {}."""
+    import time
+
+    try:
+        with open(_stats_cache_file()) as fin:
+            cache = json.load(fin)
+        if time.time() - cache["timestamp"] < STATS_CACHE_TTL:
+            return cache["records"]
+    except (OSError, KeyError, ValueError):
+        pass
+    return {}
+
+
+def _save_stats_cache(records):
+    import time
+
+    try:
+        with open(_stats_cache_file(), "w") as fout:
+            json.dump({"timestamp": time.time(), "records": records}, fout)
+    except OSError:  # pragma: no cover
+        pass
+
+
+def get_stats_records(record_ids, chunk_size=40):
+    """Fetch download stats for many Zenodo records in a few batched requests.
+
+    Uses the search endpoint (https://zenodo.org/api/records) with a
+    ``recid:(id OR id OR ...)`` query so that one request covers up to
+    *chunk_size* records instead of one request per record.
+
+    :param record_ids: iterable of Zenodo record IDs (str or int)
+    :return: dict of ``{record_id (str): {"conceptrecid": str,
+        "downloads": int, "version_downloads": int}}``. Records that could
+        not be retrieved are absent from the result.
+    """
+    headers = _get_stats_headers()
+    record_ids = [str(x) for x in record_ids]
+    results = {}
+
+    for i in range(0, len(record_ids), chunk_size):
+        chunk = record_ids[i : i + chunk_size]
+        query = "recid:({})".format(" OR ".join(chunk))
+        params = {"q": query, "size": len(chunk), "all_versions": "true"}
+        r = requests.get(ZENODO_RECORDS_API, params=params, headers=headers)
+        if r.status_code == 429:  # pragma: no cover
+            _sleep_if_rate_limited(r)
+            r = requests.get(ZENODO_RECORDS_API, params=params, headers=headers)
+        if r.status_code != 200:  # pragma: no cover
+            logger.warning(f"Zenodo API returned status {r.status_code} for a batch of {len(chunk)} records")
+            continue
+        _sleep_if_rate_limited(r)
+        for hit in r.json()["hits"]["hits"]:
+            stats = hit.get("stats", {})
+            results[str(hit["id"])] = {
+                "conceptrecid": str(hit.get("conceptrecid", hit["id"])),
+                "downloads": stats.get("downloads", 0),
+                "version_downloads": stats.get("version_downloads", 0),
+            }
+    return results
+
+
+def get_stats_all(softwares=None, use_cache=True):
+    """Return total downloads per software as ``{software: downloads}``.
+
+    Batches all Zenodo lookups through :func:`get_stats_records` (a few
+    requests for the whole registry, instead of one per release) and caches
+    the per-record counts for :data:`STATS_CACHE_TTL` seconds in
+    ``stats_cache.json`` next to damona.cfg.
+    """
+    from damona import admin
+    from damona.registry import Software
+
+    if softwares is None:
+        softwares = sorted(admin.get_software_names())
+
+    # map software -> its zenodo record IDs
+    software_ids = {}
+    for software in softwares:
+        s = Software(software)
+        ids = []
+        for release in getattr(s, "releases", {}).values():
+            if release.doi and "zenodo" in release.doi:
+                ids.append(release.doi.split("zenodo.")[-1])
+        software_ids[software] = ids
+
+    all_ids = sorted({x for ids in software_ids.values() for x in ids})
+    records = _load_stats_cache() if use_cache else {}
+    missing = [x for x in all_ids if x not in records]
+    if missing:
+        records.update(get_stats_records(missing))
+        if use_cache:
+            _save_stats_cache(records)
+
+    totals = {}
+    for software, ids in software_ids.items():
+        # Old-style deposits share one concept whose 'downloads' already
+        # aggregates every version; summing per concept (not per record)
+        # counts them once. New-style independent deposits each have their
+        # own concept, so they all contribute.
+        concept_downloads = {}
+        for record_id in ids:
+            record = records.get(record_id)
+            if record:
+                concept_downloads[record["conceptrecid"]] = record["downloads"]
+        totals[software] = sum(concept_downloads.values())
+    return totals
+
+
 def get_stats_software(software):
-    """Returns total number of downloads across all releases."""
+    """Returns total number of downloads across all releases.
+
+    For many softwares at once, prefer :func:`get_stats_all` which batches
+    the Zenodo requests.
+    """
     from damona.registry import Software
 
     s = Software(software)
@@ -599,50 +746,23 @@ def get_stats_software(software):
 
 
 def get_stats_id(ID, name=None):
-    """Returns number of downloads
-
+    """Returns number of downloads (all versions) for a Zenodo record.
 
     For instance, for this link: https://zenodo.org/record/7319782
     you should provide the ID 7319782
-
-
     """
-    import json
-
-    from bs4 import BeautifulSoup
-
     if ID == "bioconainers":
         return 0
     elif ID is None:
         print(f"# ID {ID} is unknown for {name}. developers should update registry")
         return 0
-    else:
 
-        r = requests.get(f"https://zenodo.org/record/{ID}")
-        bs = BeautifulSoup(r.content, features="html.parser")
-
-        # according to damona, there is a limit of 60 requests per minute but also
-        # 2000 requests per hour. Since there are more than 60 software, we expect
-        # this call to reach the limit. Therefore, we introspect the X-RateLimit
-        # and Number of requests remaining and add a sleep.
-        import time
-
-        R = int(r.headers["X-RateLimit-Remaining"])
-        L = int(r.headers["X-RateLimit-Limit"])
-        reset = int(r.headers["X-RateLimit-Reset"])
-        T = int(time.time())
-        if int(r.headers["X-RateLimit-Remaining"]) < 1:
-
-            delay = reset - int(time.time())
-            logger.warning(f"Warning limit attained. please wait {delay}")
-            time.sleep(delay)
-
-        try:
-            data = bs.find(id="recordVersions")
-            data = json.loads(data.attrs["data-record"])["stats"]["all_versions"]["downloads"]
-            return data
-        except Exception as err:
-            print(err)
-            print(ID)
-            print("====")
-            return -1
+    r = requests.get(f"{ZENODO_RECORDS_API}/{ID}", headers=_get_stats_headers())
+    _sleep_if_rate_limited(r)
+    try:
+        return r.json()["stats"]["downloads"]
+    except Exception as err:
+        print(err)
+        print(ID)
+        print("====")
+        return -1

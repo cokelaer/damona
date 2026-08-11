@@ -279,3 +279,218 @@ def test_get_stat_software():
     from damona.zenodo import get_stats_software
 
     stats = get_stats_software("fastqc")
+
+
+def _mock_search_response(hits):
+    response = MagicMock()
+    response.status_code = 200
+    response.headers = {}
+    response.json.return_value = {"hits": {"hits": hits}}
+    return response
+
+
+def test_get_stats_records_batches(mocker):
+    """A single batched request covers several record IDs."""
+    hits = [
+        {"id": 1000, "conceptrecid": "999", "stats": {"downloads": 50, "version_downloads": 30}},
+        {"id": 1001, "conceptrecid": "999", "stats": {"downloads": 50, "version_downloads": 20}},
+    ]
+    mocked = mocker.patch("damona.zenodo.requests.get", return_value=_mock_search_response(hits))
+    records = zenodo.get_stats_records(["1000", "1001"])
+    assert mocked.call_count == 1
+    assert records["1000"]["downloads"] == 50
+    assert records["1001"]["conceptrecid"] == "999"
+
+
+def test_get_stats_records_chunking(mocker):
+    """More IDs than chunk_size triggers several requests."""
+    mocked = mocker.patch("damona.zenodo.requests.get", return_value=_mock_search_response([]))
+    zenodo.get_stats_records([str(x) for x in range(10)], chunk_size=4)
+    assert mocked.call_count == 3
+
+
+def test_get_stats_all_old_style_concept(mocker):
+    """Old-style releases share one concept: its all-versions count is used once."""
+    mock_release1 = MagicMock()
+    mock_release1.doi = "10.5281/zenodo.1000"
+    mock_release2 = MagicMock()
+    mock_release2.doi = "10.5281/zenodo.1001"
+    mock_software = MagicMock()
+    mock_software.releases = {"1.0.0": mock_release1, "1.1.0": mock_release2}
+    mocker.patch("damona.registry.Software", return_value=mock_software)
+    records = {
+        "1000": {"conceptrecid": "999", "downloads": 50, "version_downloads": 30},
+        "1001": {"conceptrecid": "999", "downloads": 50, "version_downloads": 20},
+    }
+    mocker.patch("damona.zenodo.get_stats_records", return_value=records)
+    totals = zenodo.get_stats_all(["busco"], use_cache=False)
+    assert totals == {"busco": 50}
+
+
+def test_get_stats_all_new_style_sum(mocker):
+    """New-style independent deposits each have their own concept: counts sum up."""
+    mock_release1 = MagicMock()
+    mock_release1.doi = "10.5281/zenodo.1000"
+    mock_release2 = MagicMock()
+    mock_release2.doi = "10.5281/zenodo.2000"
+    mock_software = MagicMock()
+    mock_software.releases = {"1.0.0": mock_release1, "2.0.0": mock_release2}
+    mocker.patch("damona.registry.Software", return_value=mock_software)
+    records = {
+        "1000": {"conceptrecid": "1000", "downloads": 100, "version_downloads": 100},
+        "2000": {"conceptrecid": "2000", "downloads": 200, "version_downloads": 200},
+    }
+    mocker.patch("damona.zenodo.get_stats_records", return_value=records)
+    totals = zenodo.get_stats_all(["isoquant"], use_cache=False)
+    assert totals == {"isoquant": 300}
+
+
+def test_get_stats_all_missing_record(mocker):
+    """Records absent from the API response contribute zero, not an error."""
+    mock_release = MagicMock()
+    mock_release.doi = "10.5281/zenodo.1000"
+    mock_software = MagicMock()
+    mock_software.releases = {"1.0.0": mock_release}
+    mocker.patch("damona.registry.Software", return_value=mock_software)
+    mocker.patch("damona.zenodo.get_stats_records", return_value={})
+    totals = zenodo.get_stats_all(["something"], use_cache=False)
+    assert totals == {"something": 0}
+
+
+def test_stats_cache_roundtrip(mocker, tmp_path):
+    """Fresh cache is reused; stale cache is ignored."""
+    cache_file = tmp_path / "stats_cache.json"
+    mocker.patch("damona.zenodo._stats_cache_file", return_value=cache_file)
+
+    records = {"1000": {"conceptrecid": "1000", "downloads": 5, "version_downloads": 5}}
+    zenodo._save_stats_cache(records)
+    assert zenodo._load_stats_cache() == records
+
+    # stale cache must be dropped
+    import json as _json
+
+    data = _json.loads(cache_file.read_text())
+    data["timestamp"] -= zenodo.STATS_CACHE_TTL + 1
+    cache_file.write_text(_json.dumps(data))
+    assert zenodo._load_stats_cache() == {}
+
+
+def test_get_stats_all_uses_cache(mocker, tmp_path):
+    """With a fresh cache, no request is made at all."""
+    cache_file = tmp_path / "stats_cache.json"
+    mocker.patch("damona.zenodo._stats_cache_file", return_value=cache_file)
+
+    mock_release = MagicMock()
+    mock_release.doi = "10.5281/zenodo.1000"
+    mock_software = MagicMock()
+    mock_software.releases = {"1.0.0": mock_release}
+    mocker.patch("damona.registry.Software", return_value=mock_software)
+
+    zenodo._save_stats_cache({"1000": {"conceptrecid": "1000", "downloads": 42, "version_downloads": 42}})
+    mocked = mocker.patch("damona.zenodo.get_stats_records")
+    totals = zenodo.get_stats_all(["fastqc"], use_cache=True)
+    assert totals == {"fastqc": 42}
+    assert mocked.call_count == 0
+
+
+# ---------------------------------------------------------------------------
+# stats helpers
+# ---------------------------------------------------------------------------
+
+
+def test_get_stats_headers_with_token(mocker):
+    """A configured Zenodo token is turned into an Authorization header."""
+    config = MagicMock()
+    config.config.get.return_value = "ABC123"
+    mocker.patch("damona.zenodo.Config", return_value=config)
+    assert zenodo._get_stats_headers() == {"Authorization": "Bearer ABC123"}
+
+
+def test_get_stats_headers_without_token(mocker):
+    from configparser import NoOptionError
+
+    config = MagicMock()
+    config.config.get.side_effect = NoOptionError("token", "zenodo")
+    mocker.patch("damona.zenodo.Config", return_value=config)
+    assert zenodo._get_stats_headers() == {}
+
+
+def test_sleep_if_rate_limited_no_headers():
+    """Missing rate-limit headers must be a no-op."""
+    response = MagicMock()
+    response.headers = {}
+    zenodo._sleep_if_rate_limited(response)
+
+
+def test_sleep_if_rate_limited_quota_left():
+    response = MagicMock()
+    response.headers = {"X-RateLimit-Remaining": "10", "X-RateLimit-Reset": "0"}
+    zenodo._sleep_if_rate_limited(response)
+
+
+def test_sleep_if_rate_limited_waits(mocker):
+    """When the quota is exhausted, we sleep until the reset time."""
+    import time
+
+    sleep = mocker.patch("time.sleep")
+    response = MagicMock()
+    response.headers = {
+        "X-RateLimit-Remaining": "0",
+        "X-RateLimit-Reset": str(int(time.time()) + 5),
+    }
+    zenodo._sleep_if_rate_limited(response)
+    assert sleep.call_count == 1
+    assert sleep.call_args[0][0] > 0
+
+
+def test_load_stats_cache_missing_file(mocker, tmp_path):
+    mocker.patch("damona.zenodo._stats_cache_file", return_value=tmp_path / "does_not_exist.json")
+    assert zenodo._load_stats_cache() == {}
+
+
+def test_load_stats_cache_corrupted(mocker, tmp_path):
+    cache_file = tmp_path / "stats_cache.json"
+    cache_file.write_text("{not json")
+    mocker.patch("damona.zenodo._stats_cache_file", return_value=cache_file)
+    assert zenodo._load_stats_cache() == {}
+
+
+def test_get_stats_id_special_values():
+    assert zenodo.get_stats_id("bioconainers") == 0
+    assert zenodo.get_stats_id(None, name="fastqc") == 0
+
+
+def test_get_stats_id_bad_answer(mocker):
+    """A malformed Zenodo answer returns -1 rather than raising."""
+    response = MagicMock()
+    response.headers = {}
+    response.json.return_value = {}
+    mocker.patch("requests.get", return_value=response)
+    assert zenodo.get_stats_id(123456) == -1
+
+
+def test_stats_cache_file_location():
+    """The stats cache lives next to damona.cfg."""
+    path = zenodo._stats_cache_file()
+    assert path.name == "stats_cache.json"
+
+
+def test_get_stats_all_default_softwares(mocker, tmp_path):
+    """Without an explicit list, get_stats_all covers the whole registry."""
+    mocker.patch("damona.zenodo._stats_cache_file", return_value=tmp_path / "stats_cache.json")
+    mocker.patch("damona.admin.get_software_names", return_value={"fastqc"})
+
+    mock_release = MagicMock()
+    mock_release.doi = "10.5281/zenodo.1000"
+    mock_software = MagicMock()
+    mock_software.releases = {"1.0.0": mock_release}
+    mocker.patch("damona.registry.Software", return_value=mock_software)
+
+    mocker.patch(
+        "damona.zenodo.get_stats_records",
+        return_value={"1000": {"conceptrecid": "1000", "downloads": 7, "version_downloads": 7}},
+    )
+    totals = zenodo.get_stats_all(use_cache=True)
+    assert totals == {"fastqc": 7}
+    # the answer has been cached for the next call
+    assert zenodo._load_stats_cache()["1000"]["downloads"] == 7
