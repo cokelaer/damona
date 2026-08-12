@@ -1,0 +1,179 @@
+BootStrap: localimage
+From: ../../library/micromamba/micromamba_2.5.0.img
+
+# Portable fallback if the local base image is not available:
+#   BootStrap: docker
+#   From: mambaorg/micromamba:2.5.0
+#   ... and add "micromamba create -y -n main" as the first %post command.
+
+%labels
+    maintainer Thomas Cokelaer
+    package.name qualimap
+    package.version 2.3.0
+    package.homepage http://qualimap.conesalab.org/
+    package.source.url https://bitbucket.org/kokonech/qualimap/downloads/qualimap_v2.3.zip
+    package.license GPL-2.0-or-later
+
+%help
+    Qualimap v2.3 (upstream calls it "v2.3", damona names the image 2.3.0) --
+    quality control of alignment sequencing data and its derivatives.
+
+        qualimap bamqc -bam alignment.bam -outdir qc/
+        qualimap rnaseq -bam aln.bam -gtf annotation.gtf -outdir rnaseq_qc/
+        qualimap comp-counts -bam aln.bam -gtf annotation.gtf -out counts.txt
+        qualimap counts -d samples.txt -outdir counts_qc/
+        qualimap multi-bamqc -d datasets.txt -outdir multi/
+
+    Memory: the launcher defaults to -Xmx1200M. Raise it for large BAMs with
+        qualimap bamqc -bam huge.bam --java-mem-size=8G
+
+    Headless: the launcher shipped in this image is patched to "unset DISPLAY"
+    and to pass -Djava.awt.headless=true, so the AWT/JFreeChart plotting works
+    on a compute node with no X server even when the host exports DISPLAY.
+    Running "qualimap" with no tool would start the Swing GUI; that mode is not
+    usable here on purpose.
+
+    Not supported: "qualimap clustering" (epigenomic signals) needs the R
+    package Repitools, which bioconda deliberately dropped from the qualimap
+    dependencies. Its --help works, an actual run will fail on the R side.
+
+%post
+    set -e
+
+    export PREFIX=/opt/conda/envs/main
+    # prepend, never append: the base image is Debian based and its system java
+    # (if any) must not shadow the conda openjdk used by the qualimap launcher
+    export PATH=$PREFIX/bin:$PATH
+    export OPTS=" -q -c conda-forge -c bioconda -n main -y "
+
+    # bioconda ships qualimap as a noarch package named "2.3" (there is no
+    # "2.3.0" on the channel). openjdk, fonts-conda-ecosystem and the
+    # R/Bioconductor stack (r-optparse, r-xml, bioconductor-noiseq,
+    # bioconductor-rsamtools, bioconductor-rtracklayer) come in as dependencies:
+    # qualimap shells out to Rscript for rnaseq / counts / multi-bamqc.
+    micromamba install $OPTS qualimap=2.3
+
+    # ---- headless java --------------------------------------------------------
+    # The upstream launcher runs plain "java $java_options -classpath ...".
+    # On an HPC node DISPLAY is often exported but unreachable from inside the
+    # container, and every plotting code path then dies with an X11 /
+    # HeadlessException. Patch the launcher itself (rather than exporting
+    # JAVA_OPTS, which the launcher would use *instead of* -Xmx and would break
+    # --java-mem-size, or _JAVA_OPTIONS, which prints a "Picked up" line on every
+    # single call).
+    QM=$PREFIX/bin/qualimap
+    test -f $QM
+    sed -i '1a unset DISPLAY' $QM
+    sed -i 's|^\(java \$java_options\)|\1 -Djava.awt.headless=true|' $QM
+    # fail the build here if a future bioconda build changes the launcher layout
+    # and the two sed commands silently matched nothing
+    grep -q '^unset DISPLAY' $QM
+    grep -q 'java.awt.headless=true' $QM
+
+    # fontconfig: the Debian base has no /etc/fonts, so AWT would emit
+    # "Fontconfig error: Cannot load default config file" on every chart.
+    # fonts-conda-ecosystem provides the env-local configuration.
+    test -d $PREFIX/etc/fonts
+
+    # ---- footprint: strip the JDK down to a JRE --------------------------------
+    # jlink is NOT usable here: conda's openjdk ships no jmods/ and its build
+    # rejects linking from the run-time image ("This JDK does not support
+    # linking from the current run-time image"). So trim by hand instead.
+    # NOTE the paths: src.zip and ct.sym live under lib/jvm/LIB/, not lib/jvm/.
+    # lib/jvm/lib/modules (138 MB) and lib/jvm/lib/server (libjvm.so, 88 MB) are
+    # the actual runtime and must stay; lib/jvm/lib/fonts stays too (headless
+    # AWT falls back to it when fontconfig finds nothing).
+    JVM=$PREFIX/lib/jvm
+    rm -f $JVM/lib/src.zip $JVM/lib/ct.sym
+    rm -rf $JVM/jmods $JVM/demo $JVM/sample $JVM/include $JVM/man
+    # development tools: qualimap only ever runs "java -classpath ...".
+    # keytool is kept for TLS trust-store edits, rmiregistry for the (unused but
+    # cheap) RMI path.
+    for t in javac javadoc javap jar jarsigner jcmd jconsole jdb jdeprscan \
+             jdeps jfr jhsdb jimage jinfo jlink jmap jmod jnativescan jpackage \
+             jps jrunscript jshell jstack jstat jstatd jwebserver serialver; do
+        rm -f $JVM/bin/$t $PREFIX/bin/$t
+    done
+    $JVM/bin/java -Djava.awt.headless=true -version
+
+    # ---- footprint: drop the build toolchain ----------------------------------
+    # conda-forge r-base declares gcc/gfortran/binutils/sysroot as RUN deps so
+    # that install.packages() can compile from source. qualimap never compiles:
+    # it calls Rscript on the precompiled scripts it ships. Verified that no
+    # runtime .so (R, Rsamtools, rtracklayer, java) links against anything in
+    # these trees -- libgcc_s/libstdc++ live in $PREFIX/lib and stay. ~880 MB.
+    rm -rf $PREFIX/x86_64-conda-linux-gnu $PREFIX/libexec/gcc $PREFIX/lib/gcc
+    rm -f $PREFIX/bin/x86_64-conda-linux-gnu-*
+    rm -f $PREFIX/bin/gcc $PREFIX/bin/g++ $PREFIX/bin/cc $PREFIX/bin/c++ \
+          $PREFIX/bin/cpp $PREFIX/bin/gfortran $PREFIX/bin/gcc-ar \
+          $PREFIX/bin/gcc-nm $PREFIX/bin/gcc-ranlib
+    # BH is header-only Boost, pulled in only to COMPILE Rsamtools/rtracklayer
+    rm -rf $PREFIX/lib/R/library/BH
+    rm -rf $PREFIX/include $PREFIX/man $PREFIX/share/man $PREFIX/share/doc \
+           $PREFIX/share/info $PREFIX/share/locale
+    rm -f $PREFIX/lib/*.a $PREFIX/lib/*.la
+    find $PREFIX -depth -name "__pycache__" -type d -exec rm -rf {} + 2>/dev/null || true
+
+    # smoke test right after pruning so a broken JVM fails the build early and
+    # not three sections later
+    qualimap --java-mem-size=250M -h 2>&1 | grep -q "QualiMap v.2.3"
+
+    # ---- clean up -------------------------------------------------------------
+    micromamba clean --packages -y
+    micromamba clean --all -y
+    rm -rf /opt/conda/pkgs /root/.cache
+
+%environment
+    export LC_ALL=C.UTF-8
+    export LANG=C.UTF-8
+    export PYTHONNOUSERSITE=1
+    export JAVA_HOME=/opt/conda/envs/main/lib/jvm
+    export PATH=/opt/conda/envs/main/bin:$PATH
+    if [ -d /opt/conda/envs/main/etc/fonts ]; then
+        export FONTCONFIG_PATH=/opt/conda/envs/main/etc/fonts
+    fi
+
+%runscript
+    exec /opt/conda/envs/main/bin/qualimap "$@"
+
+%test
+    set -e
+    export PATH=/opt/conda/envs/main/bin:$PATH
+    export JAVA_HOME=/opt/conda/envs/main/lib/jvm
+    export LC_ALL=C.UTF-8
+    export LANG=C.UTF-8
+
+    # 1. the launcher must be the conda one and must carry the headless patch
+    command -v qualimap
+    grep -q 'java.awt.headless=true' /opt/conda/envs/main/bin/qualimap
+
+    # 1b. the stripped JDK must still be a working headless JVM with AWT --
+    #     java.desktop drives every chart qualimap draws
+    java -Djava.awt.headless=true --list-modules | grep -q '^java.desktop'
+    java -Djava.awt.headless=true -version
+    # the toolchain must be gone (regression guard on image size)
+    test ! -d /opt/conda/envs/main/x86_64-conda-linux-gnu
+    test ! -d /opt/conda/envs/main/libexec/gcc
+    test ! -d /opt/conda/envs/main/lib/R/library/BH
+
+    # 2. top level entry point (this one does exit 0)
+    qualimap --java-mem-size=250M -h 2>&1 | grep -q "QualiMap v.2.3"
+    qualimap --java-mem-size=250M -h 2>&1 | grep -q "Available tools"
+
+    # 3. every tool must be reachable. NOTE: "<tool> --help" exits 1 with
+    #    "ERROR: Unrecognized option: --help" even on a healthy build, so assert
+    #    on the printed usage and never on the exit status.
+    for tool in bamqc rnaseq counts multi-bamqc comp-counts clustering; do
+        qualimap $tool --help 2>&1 | grep -q "usage: qualimap $tool"
+    done
+
+    # 4. must not need an X server, even when DISPLAY points nowhere
+    DISPLAY=:99999 qualimap --java-mem-size=250M -h 2>&1 | grep -q "Available tools"
+
+    # 5. rnaseq / counts / multi-bamqc shell out to Rscript: the R stack must
+    #    load, otherwise those tools break only at run time on the user side
+    command -v Rscript
+    Rscript -e 'suppressMessages({library(optparse); library(XML); library(NOISeq); library(Rsamtools); library(rtracklayer)}); cat("R stack OK\n")' 2>&1 | grep -q "R stack OK"
+
+    # 6. bash must stay available (damona publishing + snakemake)
+    test -x /bin/bash || test -x /usr/bin/bash

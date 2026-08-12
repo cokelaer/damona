@@ -1291,6 +1291,16 @@ muscle:
       doi: 10.5281/zenodo.20014432
       filesize: 33001472
 
+# nanoplot/registry.yaml
+nanoplot:
+  binaries: NanoPlot
+  releases:
+    1.47.1:
+      download: https://zenodo.org/record/XXXXXXX/files/nanoplot_1.47.1.img
+      md5sum: XXXXXXX
+      doi: 10.5281/zenodo.XXXXXXX
+      filesize: XXXXXXX
+
 # nanopolish/registry.yaml
 nanopolish:
   doi: 10.5281/zenodo.8173324
@@ -1588,6 +1598,16 @@ qc3c:
       md5sum: b41c2c087970a02c43a8cfa541b9f881
       doi: 10.5281/zenodo.14746667
       filesize: 298835968
+
+# qualimap/registry.yaml
+qualimap:
+  binaries: qualimap
+  releases:
+    2.3.0:
+      download: https://zenodo.org/record/21909334/files/qualimap_2.3.0.img
+      md5sum: 7d17966be75fa9617d2443d38bb09bee
+      doi: 10.5281/zenodo.21909334
+      filesize: 414801920
 
 # quast/registry.yaml
 quast:

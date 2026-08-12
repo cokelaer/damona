@@ -1,0 +1,8 @@
+qualimap:
+  binaries: qualimap
+  releases:
+    2.3.0:
+      download: https://zenodo.org/record/21909334/files/qualimap_2.3.0.img
+      md5sum: 7d17966be75fa9617d2443d38bb09bee
+      doi: 10.5281/zenodo.21909334
+      filesize: 414801920
