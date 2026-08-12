@@ -1291,16 +1291,6 @@ muscle:
       doi: 10.5281/zenodo.20014432
       filesize: 33001472
 
-# nanoplot/registry.yaml
-nanoplot:
-  binaries: NanoPlot
-  releases:
-    1.47.1:
-      download: https://zenodo.org/record/XXXXXXX/files/nanoplot_1.47.1.img
-      md5sum: XXXXXXX
-      doi: 10.5281/zenodo.XXXXXXX
-      filesize: XXXXXXX
-
 # nanopolish/registry.yaml
 nanopolish:
   doi: 10.5281/zenodo.8173324
