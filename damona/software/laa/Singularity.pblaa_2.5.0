@@ -2,6 +2,8 @@ Bootstrap: docker
 From: redhat/ubi9
 
 
+# bin/ and lib/ are not in git. Fetch them from https://zenodo.org/records/10404929
+# and unpack lib.tar.gz next to this recipe before building (see README).
 %files
     bin/ /usr/local/
     lib/ /usr/local
@@ -14,8 +16,6 @@ From: redhat/ubi9
   yum clean all
   rm -rf /var/cache/yum
   rm -rf /var/cache/dnf
-
-  rm -rf /var/tmp/*
 
 
 %environment

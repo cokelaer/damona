@@ -44,9 +44,8 @@ From: ubuntu:20.04
 
     # Place Guppy installation commands below
 
-    # cleanup
-    rm -rf /tmp/downloaded\_packages/ && \
-    rm -rf /tmp/*.rds && \
+    # cleanup. Never glob /tmp or /var/tmp here: apptainer binds the HOST
+    # /tmp and /var/tmp into %post, so such a rm deletes the builder's files.
     rm -rf /var/lib/apt/lists/*
 
 %environment

@@ -332,6 +332,16 @@ def install(**kwargs):
     Images are stored in ~/.config/damona/images/ (or the directory set by
     the DAMONA_PATH environment variable).
 
+    Finally, an image from the BioContainers project can be installed by
+    prefixing the software with 'biocontainers/'. An explicit version is
+    required (use 'damona search NAME --include-biocontainers' to list them):
+
+        damona install biocontainers/pigz:2.3.4
+
+    Note that BioContainers entries come from a snapshot bundled with damona
+    (March 2025), have no md5sum/DOI, and always install a single binary named
+    after the software (--binaries is ignored). See the user guide.
+
     """
     logger.debug(kwargs)
 

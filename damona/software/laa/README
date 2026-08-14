@@ -1,7 +1,19 @@
-bin and lib directories are required to build the version 2.4.2.
-These lib and dir directories were built with smrtlink on a centos cluster. 
+bin and lib directories are required to build the container.
+These lib and dir directories were built with smrtlink on a centos cluster.
 Using them within a redhat ubi9 the different standalone provided worked
 
 Get the bin and lib from here:
 
 https://zenodo.org/records/10404929
+
+Download the 8 binaries into a bin/ directory next to the recipe, then unpack
+lib.tar.gz (it already contains a top-level lib/) in the same place:
+
+    bin/{bam2sam,ccs,ccs-kinetics-bystrandify,laa,pbbamify,pbindex,pbindexdump,pbmerge}
+    lib/
+
+Version note: the published image is named pblaa_2.4.2.img but the binary
+reports "laa 2.5.0 (commit SL-release-10.2.0)". Verified on the published
+artifact itself (md5 2d9c345467e3e1f173c5806c6ac2f1ed), so the 2.4.2 label was
+wrong from the start, not a later drift. The registry now uses 2.5.0; the
+download URL keeps the old immutable file name.

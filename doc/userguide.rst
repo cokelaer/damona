@@ -150,6 +150,16 @@ Search for a specific tool by name::
 
     damona search fastqc
 
+**BioContainers** – Damona also ships a snapshot of the BioContainers
+catalogue.  Add ``--include-biocontainers`` to search it in addition to the
+Damona registry::
+
+    damona search pigz --include-biocontainers
+
+The BioContainers hits are printed in a separate section together with the
+exact command needed to install them (see
+:ref:`biocontainers`).
+
 **Third-party registries** – Anyone can publish containers on the web and
 provide a ``registry.txt`` index file.  Point Damona at that file to search
 it::
@@ -229,6 +239,58 @@ Install from an external registry::
 Or use the short alias::
 
     damona install fastqc:0.11.9 --registry damona
+
+.. _biocontainers:
+
+Install a BioContainer
+~~~~~~~~~~~~~~~~~~~~~~
+
+Besides its own registry, Damona can install any image from the
+`BioContainers <https://biocontainers.pro>`_ project.  Prefix the software with
+``biocontainers/`` and give an explicit version::
+
+    damona install biocontainers/pigz:2.3.4
+
+Damona resolves the name into a ``docker://quay.io/biocontainers/...`` URL,
+lets Apptainer/Singularity convert the Docker layers into a SIF image stored in
+``~/.config/damona/images/``, and creates the usual shell-wrapper in the active
+environment::
+
+    pigz --version
+    # pigz 2.3.4
+
+Use ``damona search NAME --include-biocontainers`` to find the valid
+``NAME:VERSION`` pairs.
+
+.. warning:: The BioContainers support comes with several limitations you
+   should be aware of:
+
+   * **Frozen catalogue.** The list of tools and versions comes from a snapshot
+     bundled with Damona (``damona/biocontainers/registry.yaml``, ~13,000 tools,
+     taken on 2 March 2025).  Damona does **not** query quay.io at search time,
+     so software or versions released after that date are not listed and cannot
+     be installed this way.
+   * **Exact version required.** Unlike ``damona install fastqc`` (which picks
+     the latest release), a BioContainer must be given as
+     ``biocontainers/NAME:VERSION``.
+   * **A single binary is created**, named after the software itself, and
+     ``--binaries`` is currently **ignored** on this code path.  For containers
+     shipping several executables, add the missing wrappers by hand::
+
+         cd $DAMONA_PATH/envs/YOUR_ENV/bin
+         sed 's/ pigz / unpigz /' pigz > unpigz && chmod 755 unpigz
+
+   * **No integrity check.** Damona registry entries carry an MD5 sum and a file
+     size that are verified after download; BioContainers entries have neither,
+     so the image is used as-is.
+   * **No DOI, no long-term archive.** Damona images are archived on Zenodo with
+     a DOI; BioContainers images are pulled from quay.io and may be updated or
+     removed by their maintainers. For reproducible analyses, prefer the Damona
+     registry when the tool is available there (``damona search`` shows the
+     recommended installation).
+   * **Not covered by the "broken" flag**, and not included in
+     ``damona stats`` (except with the experimental
+     ``--include-biocontainers`` flag).
 
 Working with multiple environments
 ------------------------------------
