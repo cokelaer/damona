@@ -2,7 +2,7 @@ pbsv:
   binaries: pbsv
   releases:
     2.11.0:
-      download: https://zenodo.org/record/TODO/files/pbsv_2.11.0.img
-      md5sum: 3582dd9c53db99cd997a8f09ad92377e
-      doi: TODO
-      filesize: 35475456
+      download: https://zenodo.org/record/21970321/files/pbsv_2.11.0.img
+      md5sum: 7c663356ea83f6102016dc5640ae5cee
+      doi: 10.5281/zenodo.21970321
+      filesize: 35495936

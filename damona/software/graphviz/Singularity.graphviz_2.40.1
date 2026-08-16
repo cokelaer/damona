@@ -4,10 +4,13 @@ From: alpine:3.8
 %labels
 
     AUTHOR thomas cokelaer
-    VERSION v2.43.0
+    VERSION v2.40.1
 
 %post
 
+    # Unpinned on purpose: alpine:3.8 is frozen and carries graphviz 2.40.1,
+    # which is what this container provides (it was mislabelled 2.43.0 until
+    # the published image was checked with dot -V).
     apk update
     apk add graphviz bash
 

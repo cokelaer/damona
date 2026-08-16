@@ -13,7 +13,15 @@ datasets:
       md5sum: a4b643ecb194891801fcff2aee9338e8
       doi: 10.5281/zenodo.18314264
       filesize: 31662080
-    18.17.0:
+    # Was keyed 18.17.0, but the image reports "datasets version: 18.17.1".
+    # The recipe fetches the unversioned .../command-line/LATEST/linux-amd64/
+    # binary, so the build picked up 18.17.1 after NCBI released it. Verified
+    # by running datasets --version inside the published image (md5
+    # 3eff5d21bb0d70483c1afc03f3f54d71). The other five datasets releases were
+    # checked the same way and are correctly labelled. The Zenodo file name
+    # keeps the old 18.17.0 string because deposits are immutable; the DOI and
+    # md5 are unchanged.
+    18.17.1:
       download: https://zenodo.org/record/18700508/files/datasets_18.17.0.img
       md5sum: 3eff5d21bb0d70483c1afc03f3f54d71
       doi: 10.5281/zenodo.18700508
