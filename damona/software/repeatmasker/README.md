@@ -18,8 +18,6 @@ damona install repeatmasker:VERSION        # specific version
 | Version | Size | Binaries | DOI |
 |---------|------|----------|-----|
 | **4.2.4** *(latest)* | 289.84 MB | `ProcessRepeats` `RM2Bed.py` `RepeatMasker` `RepeatProteinMask` `rmOutToGFF3.pl` `rmblastn` `segmasker` | [10.5281/zenodo.21894048](https://doi.org/10.5281/zenodo.21894048) |
-| `4.2.2` | 510.89 MB | `ProcessRepeats` `RM2Bed.py` `RepeatMasker` `RepeatProteinMask` `rmOutToGFF3.pl` `rmblastn` `segmasker` | [10.5281/zenodo.21046045](https://doi.org/10.5281/zenodo.21046045) |
-| `4.0.8` | 1688.32 MB | `ProcessRepeats` `RM2Bed.py` `RepeatMasker` `RepeatProteinMask` `rmOutToGFF3.pl` `rmblastn` `segmasker` | [10.5281/zenodo.13391623](https://doi.org/10.5281/zenodo.13391623) |
 
 ## Notes
 

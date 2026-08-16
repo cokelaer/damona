@@ -1683,22 +1683,22 @@ repeatmasker:
   # never been able to run in these images.
   binaries: RepeatMasker segmasker rmblastn rmOutToGFF3.pl ProcessRepeats RM2Bed.py RepeatProteinMask
   releases:
-    4.0.8:
-      download: https://zenodo.org/record/13391623/files/repeatmasker_4.0.8.img
-      md5sum: eeabbf772362e41ba9bdba249326663e
-      doi: 10.5281/zenodo.13391623
-      filesize: 1770332160
-    4.2.2:
-      download: https://zenodo.org/record/21046045/files/repeatmasker_4.2.2.img
-      md5sum: 90870eb7e01371f41cbf92a0d752d87a
-      doi: 10.5281/zenodo.21046045
-      filesize: 535703552
+    # Two earlier entries were delisted because their keys did not match the
+    # RepeatMasker version inside the image (checked by running RepeatMasker -v
+    # in the published artifact). The recipes install repeatmasker from bioconda
+    # without a version pin, so the build took whatever the channel served:
+    #
+    #   4.0.8 (zenodo 13391623, md5 eeabbf772362e41ba9bdba249326663e) -> 4.1.5
+    #   4.2.2 (zenodo 21046045, md5 90870eb7e01371f41cbf92a0d752d87a) -> 4.2.4
+    #
+    # 4.2.2 duplicated the version below with a different build, and neither was
+    # in real use, so both are removed rather than re-keyed. The Zenodo deposits
+    # and their DOIs remain valid and citable; only the registry listing is gone.
     4.2.4:
       download: https://zenodo.org/record/21894048/files/repeatmasker_4.2.4.img
       md5sum: 0fbd53a3a786c3c384aa6ee49f265678
       doi: 10.5281/zenodo.21894048
       filesize: 303915008
-
 
 # rnadiff/registry.yaml
 rnadiff:
