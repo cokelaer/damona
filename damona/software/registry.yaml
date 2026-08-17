@@ -1344,11 +1344,12 @@ nextclade:
   zenodo_id: 8033046
   binaries: nextclade
   releases:
-    2.15.0:
-      download: https://zenodo.org/record/8033046/files/nextclade_2.15.0.img
-      md5sum: d43dbd07df40a3aa11a7488b206f6e06
-      doi: 10.5281/zenodo.8033046
-      filesize: 156852224
+    2.14.0:
+      download: https://zenodo.org/record/21985439/files/nextclade_2.14.0.img
+      md5sum: 26ff748f7a8b0974179b7b1f833b9d62
+      doi: 10.5281/zenodo.21985439
+      filesize: 98955264
+
 
 # nextdenovo/registry.yaml
 nextdenovo:
