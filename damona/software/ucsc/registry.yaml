@@ -23,3 +23,9 @@ ucsc:
       doi: 10.5281/zenodo.21985936
       filesize: 57663488
 
+    2.9.0:
+      download: https://zenodo.org/record/21986201/files/ucsc_2.9.0.img
+      md5sum: e8e6b9d068067061723cd2a4d6b9977d
+      doi: 10.5281/zenodo.21986201
+      filesize: 54796288
+

@@ -1,0 +1,135 @@
+BootStrap: localimage
+From: ../../library/micromamba/micromamba_2.5.0.img
+
+# Portable fallback if the local base image is not available:
+#   BootStrap: docker
+#   From: mambaorg/micromamba:2.5.0
+#   ... and add "micromamba create -y -n main" as the first %post command.
+
+%labels
+    Author thomas cokelaer
+    Version 2.9.0
+    Description A selection of UCSC Genome Browser command line utilities (kent tools)
+    Software UCSC kent utilities
+    Source https://genome.ucsc.edu/util.html
+    License Free for academic, non-profit and personal use
+
+%help
+    UCSC Genome Browser command line utilities, the v2.9 generation of the
+    bigWig/bigBed converters.
+
+    Tools:
+        bedGraphToBigWig  bedGraph -> bigWig       (kent 445, prints v 2.9)
+        bedToBigBed       bed -> bigBed            (kent 447, prints v. 2.9)
+        bedCoverage       coverage analysis        (kent 377)
+        bedIntersect      intersect two bed files  (kent 377)
+        blastToPsl        blast alignments -> PSL  (kent 377)
+
+    Usage:
+        singularity exec ucsc_2.9.0.img bedGraphToBigWig in.bedGraph chrom.sizes out.bw
+        singularity exec ucsc_2.9.0.img bedToBigBed in.bed chrom.sizes out.bb
+
+    NOTE 1 (why the kent releases are mixed): this recipe pins three different
+    kent releases on purpose. It reproduces the tool set of the image published
+    as 3.7.7, which was built without pins and which the solver assembled from
+    kent 377, 445 and 447. Nothing about that mix is accidental any more -- it
+    is what "the v2.9 generation" means for these five tools, because the two
+    versioned converters only reach v2.9 at kent 445/447 while the other three
+    tools have no kent release in that range at all (bioconda ships them at
+    332, 357, 366, 377, 469, 482 only).
+
+    NOTE 2 (why not one kent release): no single kent release produces v2.9
+    across the board. At kent 377 bedGraphToBigWig prints "v 4" and bedToBigBed
+    "v. 2.7"; at 469 and 482 both print 2.10. See NOTES.md.
+
+    NOTE 3: for a container built from one coherent kent release, use 2.10.0
+    (kent 482). This 2.9.0 exists so the older converter generation stays
+    available and reproducible.
+
+%post
+    export PATH=/opt/conda/envs/main/bin:$PATH
+    export OPTS="-q -c conda-forge -c bioconda -n main -y"
+
+    # Every version is pinned. The mix is deliberate and is explained in
+    # NOTE 1 above: it is the only way to get the v2.9 converters, and it
+    # reproduces what the unpinned 3.7.7 build ended up containing.
+    micromamba install $OPTS \
+        ucsc-bedgraphtobigwig=445 \
+        ucsc-bedtobigbed=447 \
+        ucsc-bedcoverage=377 \
+        ucsc-bedintersect=377 \
+        ucsc-blasttopsl=377
+
+    # ---- footprint reduction --------------------------------------------
+    rm -rf /opt/conda/envs/main/man \
+           /opt/conda/envs/main/include \
+           /opt/conda/envs/main/share/man \
+           /opt/conda/envs/main/share/info \
+           /opt/conda/envs/main/share/doc \
+           /opt/conda/envs/main/share/locale
+
+    micromamba clean --packages -y
+    micromamba clean --all --yes
+    rm -rf /opt/conda/pkgs
+    find /opt/conda -name "*.pyc" -delete
+    find /opt/conda -name "__pycache__" -type d -exec rm -rf {} + 2>/dev/null || true
+    find /opt/conda -name "*.a" -delete
+
+    # apt caches (bash is never removed: required by Damona and Snakemake)
+    # NEVER add /tmp/* or /var/tmp/* here: apptainer bind-mounts the HOST
+    # /tmp and /var/tmp into the build container, so such a glob deletes the
+    # host's files. Nothing is reclaimed anyway (they are mounts, not squashfs).
+    apt-get clean || true
+    rm -rf /var/lib/apt/lists/*
+
+%environment
+    export PATH=/opt/conda/envs/main/bin:$PATH
+    export LC_ALL=C.UTF-8
+    export LANG=C.UTF-8
+    export PYTHONNOUSERSITE=1
+
+%runscript
+    exec /opt/conda/envs/main/bin/bedGraphToBigWig "$@"
+
+%test
+    # apptainer does not run the testscript under -e: without this, a crashing
+    # command is silently swallowed and the build still exits 0.
+    set -e
+    export PATH=/opt/conda/envs/main/bin:$PATH
+    export LC_ALL=C.UTF-8
+    export LANG=C.UTF-8
+
+    # These tools print their usage and exit non-zero when called without
+    # arguments, so grep the banner rather than testing the exit status.
+    bedGraphToBigWig 2>&1 | grep -q "bedGraphToBigWig"
+    bedToBigBed      2>&1 | grep -q "bedToBigBed"
+    bedCoverage      2>&1 | grep -q "bedCoverage"
+    bedIntersect     2>&1 | grep -q "bedIntersect"
+    blastToPsl       2>&1 | grep -q "blastToPsl"
+
+    # the key is the banner version of the converters, so assert it: this is
+    # what distinguishes the image from 2.10.0
+    bedGraphToBigWig 2>&1 | grep -q "v 2\.9"
+    bedToBigBed      2>&1 | grep -q "v\. 2\.9"
+
+    # and assert the pins, since the mix is the whole point (see NOTE 1)
+    META=/opt/conda/envs/main/conda-meta
+    ls $META | grep -q "^ucsc-bedgraphtobigwig-445-" || { echo "bad pin: bedgraphtobigwig"; exit 1; }
+    ls $META | grep -q "^ucsc-bedtobigbed-447-"      || { echo "bad pin: bedtobigbed"; exit 1; }
+    for p in ucsc-bedcoverage ucsc-bedintersect ucsc-blasttopsl; do
+        ls $META | grep -q "^${p}-377-" || { echo "bad pin: $p"; exit 1; }
+    done
+
+    # end-to-end: a two-line bedGraph must convert to a readable bigWig
+    if [ -w /tmp ]; then WORK=/tmp
+    elif [ -w /dev/shm ]; then WORK=/dev/shm
+    else echo "no writable temp dir available for %test"; exit 1
+    fi
+    printf "chr1\t0\t100\t1.5\nchr1\t100\t200\t2.5\n" > $WORK/t.bedGraph
+    printf "chr1\t1000\n" > $WORK/t.sizes
+    bedGraphToBigWig $WORK/t.bedGraph $WORK/t.sizes $WORK/t.bw
+    test -s $WORK/t.bw
+    rm -f $WORK/t.bedGraph $WORK/t.sizes $WORK/t.bw
+
+    # bash must survive the cleanup for Damona publishing / Snakemake
+    test -x /bin/bash || test -x /usr/bin/bash
