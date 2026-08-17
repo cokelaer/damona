@@ -3,16 +3,15 @@ pbbam:
   zenodo_id: 7814654
   binaries: bam2sam pbmerge pbbamify pbindex
   releases:
-    # Not pbbam 2.1.0: the recipe behind it sets VERSION=2.3.0, so this is a
-    # duplicate 2.3.0 build uploaded by mistake. The deposit is permanent, so
-    # the entry is kept but marked mislabelled: installable by explicit
-    # version, hidden from search, never auto-selected. See NOTES.md.
-    2.1.0:
-      download: https://zenodo.org/record/7814654/files/pbbam_2.1.0.img
-      md5sum: af5c1300e7eecb78e39ecca7e2f85a4c
-      doi: 10.5281/zenodo.7814654
-      filesize: 212955136
-      mislabelled: true
+    # An entry keyed 2.1.0 was delisted: it was never pbbam 2.1.0. Its recipe
+    # set VERSION=2.3.0 and fetched the v2.3.0 tarball, so the deposit is a
+    # duplicate of the release below, uploaded by mistake:
+    #
+    #   2.1.0 (zenodo 7814654, md5 af5c1300e7eecb78e39ecca7e2f85a4c) -> 2.3.0
+    #
+    # It added nothing over 2.3.0 and was not in real use, so it is removed
+    # rather than re-keyed. The Zenodo deposit and its DOI remain valid and
+    # citable; only the registry listing is gone. See NOTES.md.
     2.3.0:
       download: https://zenodo.org/record/7817189/files/pbbam_2.3.0.img
       md5sum: 869163050c10ef5751b5d3251968c64d
