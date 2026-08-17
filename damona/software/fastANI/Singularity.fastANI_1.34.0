@@ -11,6 +11,8 @@ From: debian:bookworm-slim
 
     apt-get update && apt-get install -y  wget unzip libboost-all-dev libgsl-dev zlib1g-dev
 
+    # fastANI --version prints "version 1.33" even though this is the official
+    # v1.34 artifact: upstream never bumped the constant. See NOTES.md.
     wget https://github.com/ParBLiSS/FastANI/releases/download/v1.34/fastANI-linux64-v1.34.zip
     unzip fastANI-linux64-v1.34.zip
     mv fastANI /usr/local/bin
