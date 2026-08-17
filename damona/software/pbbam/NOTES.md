@@ -35,7 +35,37 @@ chemistry` is a leftover too: the file is written next to that directory, not
 into it.)
 
 The practical consequence is that the two images behaved identically -- which is
-why the duplicate was worth deleting rather than keeping -- and that the
-surviving 2.3.0 image does not actually have chemistry-bundle support either.
-Fixing that needs `export SMRT_CHEMISTRY_BUNDLE_DIR=/pbbam-2.3.0` in
-`%environment` (the directory holding `chemistry.xml`) and a rebuild.
+why the duplicate was worth deleting rather than keeping -- and that **2.3.0 has
+no working chemistry-bundle support**: on a movie whose chemistry postdates the
+compiled-in table it fails with "unsupported sequencing chemistry combination",
+exactly as if no bundle had been shipped.
+
+2.4.0 fixes it. The bundle lives in `/opt/smrt-chemistry` and the variable is
+exported from `%environment`, so it is active without any caller setup:
+
+```
+$ singularity exec pbbam_2.4.0.img sh -c 'echo $SMRT_CHEMISTRY_BUNDLE_DIR'
+/opt/smrt-chemistry
+```
+
+## Notes on the 2.4.0 build
+
+Built from source on alpine, unlike its predecessors in three ways worth
+keeping:
+
+- **pbcopper is pinned to v2.3.0.** Upstream's `subprojects/pbcopper.wrap`
+  tracks the pbcopper *develop branch*, so every rebuild of the old recipes
+  produced a different container. Cloning the tag into `subprojects/pbcopper`
+  makes the wrap inert.
+- **`CXXFLAGS="-include cstdint"`.** pbcopper 2.3.0 predates GCC 13: its
+  `cli2/OptionValue.h` uses `int8_t` and friends without including `<cstdint>`,
+  which libstdc++ no longer provides transitively. Force-including it fixes
+  every site without patching upstream sources.
+- **Static linking.** The tools otherwise need `libpbbam.so` and
+  `libpbcopper.so`, which exist only inside `builddir`. That is why the old
+  images kept the entire ~200 MB build tree and pointed `PATH` at it; 2.4.0 is
+  15.8 MB.
+
+The chemistry table is pinned by pbcore commit rather than tag, because
+pbcore's newest tag (2.6.0) predates the chemistries the bundle exists to
+describe.

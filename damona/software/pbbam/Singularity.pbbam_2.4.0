@@ -1,0 +1,176 @@
+Bootstrap: docker
+From: alpine:3.24
+
+%labels
+    Author thomas cokelaer
+    Version 2.4.0
+    Description PacBio BAM C++ library and command line tools (bam2sam, pbindex, pbmerge, pbbamify)
+    Software pbbam
+    Source https://github.com/PacificBiosciences/pbbam
+    License BSD-3-Clause-Clear
+
+%help
+    pbbam 2.4.0 -- PacBio BAM utilities.
+
+    Tools:
+        bam2sam                    BAM -> SAM, without the samtools dependency
+        pbindex                    build a .pbi index next to a PacBio BAM
+        pbindexdump                dump a .pbi index as JSON/text
+        pbmerge                    merge PacBio BAMs, keeping the pbi in sync
+        pbbamify                   inject PacBio tags into an aligned BAM
+        ccs-kinetics-bystrandify   split CCS kinetics per strand
+
+    Usage:
+        singularity exec pbbam_2.4.0.img pbindex movie.subreads.bam
+        singularity exec pbbam_2.4.0.img bam2sam --header-only movie.subreads.bam
+        singularity exec pbbam_2.4.0.img pbmerge -o merged.bam in1.bam in2.bam
+
+    NOTE (chemistry bundle): pbbam maps the PacBio chemistry triplet
+    (BindingKit, SequencingKit, BasecallerVersion) to a chemistry name using a
+    table compiled into the binary. Movies produced with a chemistry newer than
+    that table fail with "unsupported sequencing chemistry combination" unless a
+    bundle is supplied. pbbam looks it up at runtime, in
+    $SMRT_CHEMISTRY_BUNDLE_DIR/chemistry.xml (src/ChemistryTable.cpp): if the
+    variable is unset it silently uses the empty table.
+
+    The bundle is baked into /opt/smrt-chemistry and the variable is exported
+    from %environment, so it is active in this image without any caller setup.
+    Earlier pbbam images shipped the file but exported the variable from %post
+    only, which does not reach the runtime environment -- the bundle was
+    downloaded and never read. Verify with:
+
+        singularity exec pbbam_2.4.0.img sh -c 'echo $SMRT_CHEMISTRY_BUNDLE_DIR'
+
+%post
+    set -eux
+
+    PBBAM_VERSION=2.4.0
+    # pbbam 2.4.0 wants pbcopper >=2.3.0,<2.4.0. Upstream's wrap file tracks the
+    # pbcopper *develop branch*, which would make every rebuild of this recipe
+    # a different container; the tag is checked out below instead.
+    PBCOPPER_VERSION=2.3.0
+    # The chemistry table is only published on the pbcore develop branch (its
+    # newest git tag, 2.6.0, predates the chemistries this bundle exists to
+    # describe), so it is pinned by commit rather than by tag.
+    PBCORE_COMMIT=c5805b110ae4f2941284494e909753fe61a0c93c
+
+    apk add --no-cache \
+        g++ make meson ninja pkgconf git wget bash \
+        boost-dev zlib-dev bzip2-dev xz-dev curl-dev
+
+    wget -q https://github.com/PacificBiosciences/pbbam/archive/refs/tags/v${PBBAM_VERSION}.tar.gz
+    tar xzf v${PBBAM_VERSION}.tar.gz
+    rm -f v${PBBAM_VERSION}.tar.gz
+    cd pbbam-${PBBAM_VERSION}
+
+    # Replace the develop-tracking wrap with the pinned release. meson uses a
+    # subprojects/<name> directory in preference to the .wrap file, so cloning
+    # here is enough to make the wrap inert.
+    git clone -q --depth 1 --branch v${PBCOPPER_VERSION} \
+        https://github.com/PacificBiosciences/pbcopper.git subprojects/pbcopper
+
+    # pbcopper 2.3.0 predates GCC 13. Its cli2/OptionValue.h spells int8_t,
+    # uint32_t and friends without including <cstdint>, relying on the
+    # transitive include that libstdc++ dropped in GCC 13; alpine 3.24 ships
+    # GCC 15, so the build fails with "'int8_t' was not declared in this scope".
+    # Force-including the header fixes every such site at once and leaves the
+    # upstream sources untouched (a patch would have to be re-checked against
+    # each new pbcopper tag).
+    export CXXFLAGS="-include cstdint"
+
+    # htslib and zlib come from the hash-pinned wraps shipped in the tarball
+    # (htslib 1.17), not from the distribution, so the build does not drift with
+    # the alpine release. Tests are off: they pull googletest and are not what
+    # this image is for.
+    # Static: this image ships tools, not a library. Linking statically lets the
+    # whole build tree be deleted afterwards -- with the default shared build
+    # the binaries need libpbbam.so and libpbcopper.so, which only exist in
+    # builddir, and removing it leaves every tool unable to start.
+    meson setup builddir \
+        --buildtype=release \
+        --prefix=/usr/local \
+        --default-library=static \
+        -Dtests=false
+    meson compile -C builddir
+
+    # Install the tools by hand: meson install would also drop the library,
+    # headers and pkg-config files into the image, none of which are used at
+    # runtime. The previous recipes instead left the binaries in the build tree
+    # and pointed PATH at it, which kept the whole tree (~200 MB) alive.
+    for t in bam2sam pbindex pbindexdump pbmerge pbbamify ccs-kinetics-bystrandify; do
+        install -m 0755 builddir/tools/$t /usr/local/bin/
+    done
+
+    # A copy of the test data for %test, before the source tree goes away.
+    mkdir -p /opt/pbbam-test
+    install -m 0644 tests/data/transcript.subreads.bam /opt/pbbam-test/
+
+    # ---- the chemistry bundle (see %help) -------------------------------
+    mkdir -p /opt/smrt-chemistry
+    wget -q -O /opt/smrt-chemistry/chemistry.xml \
+        https://raw.githubusercontent.com/PacificBiosciences/pbcore/${PBCORE_COMMIT}/pbcore/chemistry/resources/mapping.xml
+    test -s /opt/smrt-chemistry/chemistry.xml
+
+    # ---- footprint reduction --------------------------------------------
+    cd /
+    rm -rf /pbbam-${PBBAM_VERSION}
+    # strip before the toolchain goes: strip belongs to binutils, which apk del
+    # takes away with g++, and the failure is silent behind "|| true"
+    strip /usr/local/bin/*
+    # runtime needs libstdc++/libgcc and the compression libraries htslib was
+    # linked against; the -dev packages and the toolchain go.
+    apk del g++ make meson ninja pkgconf git wget boost-dev zlib-dev \
+            bzip2-dev xz-dev curl-dev
+    apk add --no-cache libstdc++ libgcc zlib bzip2 xz-libs libcurl
+    rm -rf /var/cache/apk/*
+
+%environment
+    export PATH=/usr/local/bin:$PATH
+    export LC_ALL=C.UTF-8
+    # THE FIX: this must live here, not in %post. %post variables are gone once
+    # the build ends, so pbbam's getenv("SMRT_CHEMISTRY_BUNDLE_DIR") returned
+    # nullptr in the earlier images and the bundle was dead weight.
+    export SMRT_CHEMISTRY_BUNDLE_DIR=/opt/smrt-chemistry
+
+%runscript
+    exec pbindex "$@"
+
+%test
+    # apptainer does not run the testscript under -e: without this, a crashing
+    # command is silently swallowed and the build still exits 0.
+    set -e
+    export PATH=/usr/local/bin:$PATH
+    export SMRT_CHEMISTRY_BUNDLE_DIR=/opt/smrt-chemistry
+
+    # every tool the registry advertises, plus the extras built here
+    for t in bam2sam pbindex pbindexdump pbmerge pbbamify ccs-kinetics-bystrandify; do
+        command -v $t > /dev/null || { echo "MISSING: $t"; exit 1; }
+    done
+
+    # the key must match what the tools report
+    pbindex --version
+    pbindex --version | grep -q "2\.4\.0"
+    bam2sam --version | grep -q "2\.4\.0"
+
+    # the chemistry bundle must be present AND reachable through the variable,
+    # which is the whole point of this rebuild
+    test -s "$SMRT_CHEMISTRY_BUNDLE_DIR/chemistry.xml"
+    # pbbam rejects the bundle unless the root node is exactly MappingTable
+    # (src/ChemistryTable.cpp), so assert the schema, not just the file
+    grep -q "<MappingTable>" "$SMRT_CHEMISTRY_BUNDLE_DIR/chemistry.xml"
+    grep -q "<BindingKit>" "$SMRT_CHEMISTRY_BUNDLE_DIR/chemistry.xml"
+
+    # end-to-end: index a real PacBio BAM and convert it to SAM. %test runs
+    # against the read-only image, so work in a writable directory.
+    if [ -w /tmp ]; then WORK=/tmp
+    elif [ -w /dev/shm ]; then WORK=/dev/shm
+    else echo "no writable temp dir available for %test"; exit 1
+    fi
+    cp /opt/pbbam-test/transcript.subreads.bam $WORK/
+    pbindex $WORK/transcript.subreads.bam
+    test -s $WORK/transcript.subreads.bam.pbi
+    bam2sam --header-only $WORK/transcript.subreads.bam | grep -q "^@HD"
+    rm -f $WORK/transcript.subreads.bam $WORK/transcript.subreads.bam.pbi
+
+    # bash must survive the cleanup for Damona publishing / Snakemake
+    test -x /bin/bash || test -x /usr/bin/bash
