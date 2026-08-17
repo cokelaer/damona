@@ -1,27 +1,3 @@
-# rnaseqc
-
-**DOI:** [10.5281/zenodo.5799563](https://doi.org/10.5281/zenodo.5799563)
-
-## Binaries
-
-`rnaseqc`
-
-## Installation
-
-```bash
-damona install rnaseqc               # latest (2.3.5)
-damona install rnaseqc:VERSION        # specific version
-```
-
-## Available Versions
-
-| Version | Size | Binaries | DOI |
-|---------|------|----------|-----|
-| `2.35.0` *(broken)* | 347.36 MB | `rnaseqc` | [10.5281/zenodo.5799564](https://doi.org/10.5281/zenodo.5799564) |
-| **2.3.5** *(latest)* | 75.02 MB | `rnaseqc` | [10.5281/zenodo.21985582](https://doi.org/10.5281/zenodo.21985582) |
-
-## Notes
-
 **The release keyed 2.35.0 is a typo for 2.3.5.** There has never been an
 RNA-SeQC 2.35.0; the dot was simply put in the wrong place when the container
 was first published.

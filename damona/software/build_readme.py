@@ -39,10 +39,17 @@ def get_release_binaries(software_name, software_data, version_data):
 
 
 def get_latest_version(releases_dict):
-    """Return the latest version from a releases dict."""
+    """Return the latest version from a releases dict.
+
+    Releases flagged ``broken`` are skipped, so that the version advertised
+    here is the one ``damona install <software>`` actually resolves to: the
+    registry prefers non-broken candidates (see Registry.find_candidate). A
+    broken release can still be the answer if it is the only one left.
+    """
     if not releases_dict:
         return None
-    return max(releases_dict.keys(), key=lambda x: packaging.version.parse(x.split("-")[0]))
+    usable = {k: v for k, v in releases_dict.items() if not (v or {}).get("broken")}
+    return max(usable or releases_dict, key=lambda x: packaging.version.parse(x.split("-")[0]))
 
 
 def parse_registry(yaml_file):
@@ -111,6 +118,10 @@ def generate_markdown(software_name, software_data):
         version_label = version
         if version == latest_version:
             version_label = f"**{version}** *(latest)*"
+        elif release.get("broken"):
+            # hidden from search and never auto-selected; still installable
+            # with an explicit version, so it stays listed but is marked
+            version_label = f"`{version}` *(broken)*"
         else:
             version_label = f"`{version}`"
 

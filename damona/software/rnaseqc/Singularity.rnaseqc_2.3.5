@@ -1,0 +1,84 @@
+BootStrap: localimage
+From: ../../library/micromamba/micromamba_2.5.0.img
+
+# Portable fallback if the local base image is not available:
+#   BootStrap: docker
+#   From: mambaorg/micromamba:2.5.0
+#   ... and add "micromamba create -y -n main" as the first %post command.
+
+%labels
+    Author thomas cokelaer
+    Version 2.3.5
+    Description Fast RNA-seq quality control and quantification metrics from an aligned BAM
+    Software RNA-SeQC
+    Source https://github.com/getzlab/rnaseqc
+    License BSD-3-Clause
+
+%help
+    RNA-SeQC 2.3.5 -- QC metrics and gene/exon quantification for aligned
+    RNA-seq data, by the Getz lab.
+
+    Usage:
+        singularity run rnaseqc_2.3.5.img genes.gtf aligned.bam output_dir/
+        singularity exec rnaseqc_2.3.5.img rnaseqc --version
+
+    The GTF must be collapsed to one transcript per gene first (see
+    collapse_annotation.py upstream); rnaseqc rejects a plain GENCODE GTF.
+
+    NOTE (naming): this container supersedes the one keyed 2.35.0 in the
+    registry. That key was a typo for 2.3.5 -- the image behind it holds the
+    very same rna-seqc 2.3.5 build. It is kept listed because it is on Zenodo
+    permanently and sequana_rnaseq refers to it. See NOTES.md.
+
+%post
+    export PATH=/opt/conda/envs/main/bin:$PATH
+    export OPTS="-q -c conda-forge -c bioconda -n main -y"
+
+    # bioconda spells the package rna-seqc; the binary it installs is rnaseqc.
+    micromamba install $OPTS rna-seqc=2.3.5
+
+    # ---- footprint reduction --------------------------------------------
+    rm -rf /opt/conda/envs/main/man \
+           /opt/conda/envs/main/include \
+           /opt/conda/envs/main/share/man \
+           /opt/conda/envs/main/share/info \
+           /opt/conda/envs/main/share/doc \
+           /opt/conda/envs/main/share/locale
+
+    micromamba clean --packages -y
+    micromamba clean --all --yes
+    rm -rf /opt/conda/pkgs
+    find /opt/conda -name "*.pyc" -delete
+    find /opt/conda -name "__pycache__" -type d -exec rm -rf {} + 2>/dev/null || true
+    find /opt/conda -name "*.a" -delete
+
+    # apt caches (bash is never removed: required by Damona and Snakemake)
+    # NEVER add /tmp/* or /var/tmp/* here: apptainer bind-mounts the HOST
+    # /tmp and /var/tmp into the build container, so such a glob deletes the
+    # host's files. Nothing is reclaimed anyway (they are mounts, not squashfs).
+    apt-get clean || true
+    rm -rf /var/lib/apt/lists/*
+
+%environment
+    export PATH=/opt/conda/envs/main/bin:$PATH
+    export LC_ALL=C.UTF-8
+    export LANG=C.UTF-8
+    export PYTHONNOUSERSITE=1
+
+%runscript
+    exec /opt/conda/envs/main/bin/rnaseqc "$@"
+
+%test
+    # apptainer does not run the testscript under -e: without this, a crashing
+    # command is silently swallowed and the build still exits 0.
+    set -e
+    export PATH=/opt/conda/envs/main/bin:$PATH
+    export LC_ALL=C.UTF-8
+    export LANG=C.UTF-8
+
+    # must print "RNASeQC 2.3.5" -- the whole point of this rebuild
+    rnaseqc --version
+    rnaseqc --version | grep -q "2\.3\.5"
+
+    # bash must survive the cleanup for Damona publishing / Snakemake
+    test -x /bin/bash || test -x /usr/bin/bash
