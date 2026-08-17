@@ -1406,25 +1406,10 @@ pangolin:
 pbbam:
   doi: 10.5281/zenodo.7814653
   zenodo_id: 7814654
-  # pbindexdump and ccs-kinetics-bystrandify were built by both releases but
-  # never listed: v2.3.0 and v2.4.0 build the same six tools, and the 2.3.0
-  # recipe put the whole builddir/tools on PATH.
+  # All six tools built by pbbam's tools/ directory are listed; pbindexdump and
+  # ccs-kinetics-bystrandify used to be built without being advertised.
   binaries: bam2sam pbmerge pbbamify pbindex pbindexdump ccs-kinetics-bystrandify
   releases:
-    # An entry keyed 2.1.0 was delisted: it was never pbbam 2.1.0. Its recipe
-    # set VERSION=2.3.0 and fetched the v2.3.0 tarball, so the deposit is a
-    # duplicate of the release below, uploaded by mistake:
-    #
-    #   2.1.0 (zenodo 7814654, md5 af5c1300e7eecb78e39ecca7e2f85a4c) -> 2.3.0
-    #
-    # It added nothing over 2.3.0 and was not in real use, so it is removed
-    # rather than re-keyed. The Zenodo deposit and its DOI remain valid and
-    # citable; only the registry listing is gone. See NOTES.md.
-    2.3.0:
-      download: https://zenodo.org/record/7817189/files/pbbam_2.3.0.img
-      md5sum: 869163050c10ef5751b5d3251968c64d
-      doi: 10.5281/zenodo.7817189
-      filesize: 213422080
     2.4.0:
       download: https://zenodo.org/record/21986315/files/pbbam_2.4.0.img
       md5sum: 22263ad0289a13c265055e61313d64a8

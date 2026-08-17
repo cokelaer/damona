@@ -35,9 +35,7 @@ From: alpine:3.24
 
     The bundle is baked into /opt/smrt-chemistry and the variable is exported
     from %environment, so it is active in this image without any caller setup.
-    Earlier pbbam images shipped the file but exported the variable from %post
-    only, which does not reach the runtime environment -- the bundle was
-    downloaded and never read. Verify with:
+    Verify with:
 
         singularity exec pbbam_2.4.0.img sh -c 'echo $SMRT_CHEMISTRY_BUNDLE_DIR'
 
@@ -127,9 +125,9 @@ From: alpine:3.24
 %environment
     export PATH=/usr/local/bin:$PATH
     export LC_ALL=C.UTF-8
-    # THE FIX: this must live here, not in %post. %post variables are gone once
-    # the build ends, so pbbam's getenv("SMRT_CHEMISTRY_BUNDLE_DIR") returned
-    # nullptr in the earlier images and the bundle was dead weight.
+    # Must live here, not in %post: %post variables are gone once the build
+    # ends, so pbbam's getenv("SMRT_CHEMISTRY_BUNDLE_DIR") would return nullptr
+    # at runtime and the bundle would be dead weight. See NOTES.md.
     export SMRT_CHEMISTRY_BUNDLE_DIR=/opt/smrt-chemistry
 
 %runscript
