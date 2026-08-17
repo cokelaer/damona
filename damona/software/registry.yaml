@@ -36,16 +36,22 @@ art:
       md5sum: 4949d8da803d970e74de7ce898ed3c6b
       doi: 10.5281/zenodo.5708820
       filesize: 339525632
-    2.1.8:
-      download: https://zenodo.org/record/5708823/files/art_3.11.14.img
-      md5sum: e06a9215d9727a2077dd7eee0c06886a
-      doi: 10.5281/zenodo.5708823
-      filesize: 339369984
+    # See notes 3.11.14 is same as 2.1.8
+    #3.11.14:
+    #  download: https://zenodo.org/record/5708823/files/art_3.11.14.img
+    #  md5sum: e06a9215d9727a2077dd7eee0c06886a
+    #  doi: 10.5281/zenodo.5708823
+    #  filesize: 339369984
     2.3.7:
       download: https://zenodo.org/record/12748620/files/art_2.3.7.img
       md5sum: 56b389e8c5c14ffbc8a0933afa49c7d6
       doi: 10.5281/zenodo.12748620
       filesize: 123232256
+    2.1.8:
+      download: https://zenodo.org/record/21980048/files/art_2.1.8.img
+      md5sum: 72cabc30080a8590f9dce93b835b0ae2
+      doi: 10.5281/zenodo.21980048
+      filesize: 153104384
 
 # augustus/registry.yaml
 augustus:
