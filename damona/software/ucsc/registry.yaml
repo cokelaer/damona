@@ -3,8 +3,23 @@ ucsc:
   binaries: bedGraphToBigWig bedCoverage bedToBigBed bedIntersect
   zenodo_id: 10011490
   releases:
+    # 3.7.7 is the bioconda package version 377 with dots inserted, and even
+    # 377 was wrong: nothing was pinned, so that image mixes kent 377, 445 and
+    # 447. No single version describes it. The deposit is permanent, so the
+    # entry is kept but marked mislabelled: installable by explicit version,
+    # hidden from search, never auto-selected. See NOTES.md.
     3.7.7:
       download: https://zenodo.org/record/10011490/files/ucsc_3.7.7.img
       md5sum: 8a4fc249f50096c9c518abda629f9e23
       doi: 10.5281/zenodo.10011490
       filesize: 148918272
+      mislabelled: true
+    # keyed on the version the tools print (bedGraphToBigWig v 2.10); built
+    # from kent 482, which is what the recipe pins
+
+    2.10.0:
+      download: https://zenodo.org/record/21985936/files/ucsc_2.10.0.img
+      md5sum: ae1381e04d885e58ff96f2c4cc9560da
+      doi: 10.5281/zenodo.21985936
+      filesize: 57663488
+

@@ -1,26 +1,3 @@
-# ucsc
-
-**DOI:** [10.5281/zenodo.10011489](https://doi.org/10.5281/zenodo.10011489)
-
-## Binaries
-
-`bedGraphToBigWig` `bedCoverage` `bedToBigBed` `bedIntersect`
-
-## Installation
-
-```bash
-damona install ucsc               # latest (2.10.0)
-damona install ucsc:VERSION        # specific version
-```
-
-## Available Versions
-
-| Version | Size | Binaries | DOI |
-|---------|------|----------|-----|
-| **2.10.0** *(latest)* | 54.99 MB | `bedCoverage` `bedGraphToBigWig` `bedIntersect` `bedToBigBed` | [10.5281/zenodo.21985936](https://doi.org/10.5281/zenodo.21985936) |
-
-## Notes
-
 **The release keyed 3.7.7 was never a version of anything.** It is the bioconda
 package version `377` with dots inserted.
 

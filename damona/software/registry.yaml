@@ -1749,21 +1749,21 @@ rnaseqc:
   releases:
     # 2.35.0 is a typo for 2.3.5 (there is no RNA-SeQC 2.35.0). The image is a
     # correct rna-seqc 2.3.5 build, so the entry is kept -- the deposit is
-    # permanent and sequana_rnaseq pins it -- but flagged broken so that it is
-    # hidden from search and never auto-selected as "latest": 2.35.0 sorts
+    # permanent and sequana_rnaseq pins it -- but marked mislabelled so that it
+    # is hidden from search and never auto-selected as "latest": 2.35.0 sorts
     # above 2.3.5. See NOTES.md.
     2.35.0:
       download: https://zenodo.org/record/5799564/files/rnaseqc_2.35.0.img
       md5sum: 42f2cfdac1fbfbd536ec9ec0a226521a
       doi: 10.5281/zenodo.5799564
       filesize: 364236800
-      broken: true
+      mislabelled: 2.3.5
+      reason: typo for 2.3.5; there is no RNA-SeQC 2.35.0 release
     2.3.5:
       download: https://zenodo.org/record/21985582/files/rnaseqc_2.3.5.img
       md5sum: bdceb52aa945f40be291f695830aa31a
       doi: 10.5281/zenodo.21985582
       filesize: 78667776
-
 
 # rseqc/registry.yaml
 rseqc:
@@ -2331,11 +2331,26 @@ ucsc:
   binaries: bedGraphToBigWig bedCoverage bedToBigBed bedIntersect
   zenodo_id: 10011490
   releases:
+    # 3.7.7 is the bioconda package version 377 with dots inserted, and even
+    # 377 was wrong: nothing was pinned, so that image mixes kent 377, 445 and
+    # 447. No single version describes it. The deposit is permanent, so the
+    # entry is kept but marked mislabelled: installable by explicit version,
+    # hidden from search, never auto-selected. See NOTES.md.
     3.7.7:
       download: https://zenodo.org/record/10011490/files/ucsc_3.7.7.img
       md5sum: 8a4fc249f50096c9c518abda629f9e23
       doi: 10.5281/zenodo.10011490
       filesize: 148918272
+      mislabelled: true
+    # keyed on the version the tools print (bedGraphToBigWig v 2.10); built
+    # from kent 482, which is what the recipe pins
+
+    2.10.0:
+      download: https://zenodo.org/record/21985936/files/ucsc_2.10.0.img
+      md5sum: ae1381e04d885e58ff96f2c4cc9560da
+      doi: 10.5281/zenodo.21985936
+      filesize: 57663488
+
 
 # umi_tools/registry.yaml
 umi-tools:
