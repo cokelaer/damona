@@ -1,26 +1,3 @@
-# pbbam
-
-**DOI:** [10.5281/zenodo.7814653](https://doi.org/10.5281/zenodo.7814653)
-
-## Binaries
-
-`bam2sam` `pbmerge` `pbbamify` `pbindex`
-
-## Installation
-
-```bash
-damona install pbbam               # latest (2.3.0)
-damona install pbbam:VERSION        # specific version
-```
-
-## Available Versions
-
-| Version | Size | Binaries | DOI |
-|---------|------|----------|-----|
-| **2.3.0** *(latest)* | 203.54 MB | `bam2sam` `pbbamify` `pbindex` `pbmerge` | [10.5281/zenodo.7817189](https://doi.org/10.5281/zenodo.7817189) |
-
-## Notes
-
 **The release keyed 2.1.0 is not pbbam 2.1.0.** It is a second build of 2.3.0,
 uploaded to Zenodo by mistake. `Singularity.pbbam_2.1.0` sets `VERSION=2.3.0`
 like its sibling, fetches the same `v2.3.0` tarball, and the tools inside report
