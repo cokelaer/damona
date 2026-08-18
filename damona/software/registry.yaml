@@ -544,12 +544,13 @@ deepvariant:
 delly:
   doi: 10.5281/zenodo.11302859
   zenodo_id: 11302860
+  binaries: delly
   releases:
     1.2.6:
-      download: https://zenodo.org/record/11302860/files/delly_1.2.6.img
-      md5sum: d310e9b990c68ac13260904758fa1131
-      doi: 10.5281/zenodo.11302860
-      filesize: 177160192
+      download: https://zenodo.org/record/22000262/files/delly_1.2.6.img
+      md5sum: 18b9a0b3d2c825eb627ece94bade144f
+      doi: 10.5281/zenodo.22000262
+      filesize: 188874752
 
 # diamond/registry.yaml
 diamond:

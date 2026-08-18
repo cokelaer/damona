@@ -17,4 +17,4 @@ damona install delly:VERSION        # specific version
 
 | Version | Size | Binaries | DOI |
 |---------|------|----------|-----|
-| **1.2.6** *(latest)* | 168.95 MB | `delly` | [10.5281/zenodo.11302860](https://doi.org/10.5281/zenodo.11302860) |
+| **1.2.6** *(latest)* | 180.12 MB | `delly` | [10.5281/zenodo.22000262](https://doi.org/10.5281/zenodo.22000262) |

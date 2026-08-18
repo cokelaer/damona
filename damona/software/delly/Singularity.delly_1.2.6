@@ -1,5 +1,5 @@
 Bootstrap: localimage
-From: ../../library/micromamba/micromamba_1.5.8.img
+From: ../../library/micromamba/micromamba_2.5.0.img
 
 %post
     apt-get update && apt-get upgrade && apt-get install -y bash
@@ -11,8 +11,7 @@ From: ../../library/micromamba/micromamba_1.5.8.img
     # an alias
     export OPTS=" -q -c conda-forge -c bioconda -n main -y "
 
-    micromamba install $OPTS python="3.10"
-    micromamba install $OPTS delly
+    micromamba install $OPTS python="3.10" delly
 
     # cleanup
     micromamba clean --packages -y
