@@ -38,6 +38,23 @@ def get_release_binaries(software_name, software_data, version_data):
     return sorted(combined)
 
 
+def _parse_version(version_str):
+    """Parse a version key for comparison.
+
+    Mirrors :func:`damona.registry._parse_version`: tries the full string
+    first, so a damona recipe-revision suffix such as ``7.520.0-1`` parses as
+    the PEP 440 post-release ``7.520.0.post1`` and sorts above the plain
+    ``7.520.0`` it revises. Falls back to stripping everything from the first
+    ``-`` for suffixes that are not a valid version fragment on their own
+    (``0.11.9-py3``, ``1.27.0-zenodo1``), which then compare equal to their
+    base version, as before.
+    """
+    try:
+        return packaging.version.parse(version_str)
+    except packaging.version.InvalidVersion:
+        return packaging.version.parse(version_str.split("-")[0])
+
+
 def is_mislabelled(version_data):
     """Return True if the release key does not match the image content.
 
@@ -61,7 +78,7 @@ def get_latest_version(releases_dict):
     if not releases_dict:
         return None
     usable = {k: v for k, v in releases_dict.items() if not (v or {}).get("broken") and not is_mislabelled(v)}
-    return max(usable or releases_dict, key=lambda x: packaging.version.parse(x.split("-")[0]))
+    return max(usable or releases_dict, key=_parse_version)
 
 
 def parse_registry(yaml_file):
@@ -120,8 +137,9 @@ def generate_markdown(software_name, software_data):
     markdown_content += "| Version | Size | Binaries | DOI |\n"
     markdown_content += "|---------|------|----------|-----|\n"
 
-    # Sort versions by version number (handling special cases like x.y.z-py3)
-    sorted_versions = sorted(releases.keys(), key=lambda x: packaging.version.parse(x.split("-")[0]), reverse=True)
+    # Sort versions by version number (handling special cases like x.y.z-py3
+    # and damona revision suffixes like x.y.z-1; see _parse_version)
+    sorted_versions = sorted(releases.keys(), key=_parse_version, reverse=True)
 
     for version in sorted_versions:
         release = releases[version]

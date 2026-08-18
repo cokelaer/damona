@@ -9,7 +9,7 @@
 ## Installation
 
 ```bash
-damona install subread               # latest (2.0.3)
+damona install subread               # latest (2.0.3-1)
 damona install subread:VERSION        # specific version
 ```
 
@@ -17,4 +17,5 @@ damona install subread:VERSION        # specific version
 
 | Version | Size | Binaries | DOI |
 |---------|------|----------|-----|
-| **2.0.3** *(latest)* | 145.34 MB | `featureCounts` `subread-align` `subread-buildindex` `subread-fullscan` | [10.5281/zenodo.8037099](https://doi.org/10.5281/zenodo.8037099) |
+| **2.0.3-1** *(latest)* | 151.78 MB | `featureCounts` `subread-align` `subread-buildindex` `subread-fullscan` | [10.5281/zenodo.22001460](https://doi.org/10.5281/zenodo.22001460) |
+| `2.0.3` | 145.34 MB | `featureCounts` `subread-align` `subread-buildindex` `subread-fullscan` | [10.5281/zenodo.8037099](https://doi.org/10.5281/zenodo.8037099) |

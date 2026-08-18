@@ -2226,6 +2226,11 @@ subread:
       md5sum: f27f72595f4c0dc4265d62b9da566f47
       doi: 10.5281/zenodo.8037099
       filesize: 152403968
+    2.0.3-1:
+      download: https://zenodo.org/record/22001460/files/subread_2.0.3-1.img
+      md5sum: 6d68ba36942eeea711e6ce84e54ffa7c
+      doi: 10.5281/zenodo.22001460
+      filesize: 159154176
 
 # tRNAscan_SE/registry.yaml
 tRNAscan_SE:
