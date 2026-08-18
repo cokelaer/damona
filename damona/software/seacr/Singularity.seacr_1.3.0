@@ -1,5 +1,5 @@
 Bootstrap: localimage
-From: ../../library/micromamba/micromamba_1.4.4.img
+From: ../../library/micromamba/micromamba_1.4.3.img
 
 %post
     #Installer R

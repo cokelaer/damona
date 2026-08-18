@@ -1,5 +1,5 @@
 Bootstrap: localimage
-From: micromamba_1.4.3.img
+From: ../../library/micromamba/micromamba_1.4.3.img
 
 
 %environment
