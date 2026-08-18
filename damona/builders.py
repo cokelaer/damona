@@ -15,6 +15,8 @@
 ##############################################################################
 """Builder for containers from docker or singularity images"""
 import os
+import pathlib
+import re
 import subprocess
 import sys
 import tempfile
@@ -28,7 +30,99 @@ import colorlog
 
 logger = colorlog.getLogger(__name__)
 
-__all__ = ["Builder", "BuilderFromSingularityRecipe", "BuilderFromDocker"]
+__all__ = ["Builder", "BuilderFromSingularityRecipe", "BuilderFromDocker", "get_bootstrap_info", "fetch_base_image"]
+
+
+def get_bootstrap_info(recipe):
+    """Return the (bootstrap, from) header fields of a Singularity recipe.
+
+    Both values are lower-cased for the key lookup but the ``From`` value is
+    returned unchanged. Missing fields are returned as ``None``.
+
+    :param recipe: path to a Singularity recipe.
+    :rtype: tuple
+    """
+    bootstrap, source = None, None
+    with open(recipe, "r") as fh:
+        for line in fh:
+            match = re.match(r"^\s*(bootstrap|from)\s*:\s*(\S+)", line, flags=re.IGNORECASE)
+            if match:
+                key = match.group(1).lower()
+                if key == "bootstrap":
+                    bootstrap = match.group(2).lower()
+                else:
+                    source = match.group(2)
+            # header fields are always before the first section
+            if line.startswith("%"):
+                break
+    return bootstrap, source
+
+
+def fetch_base_image(recipe):
+    """Download the local base image required by a recipe if it is missing.
+
+    Recipes based on ``Bootstrap: localimage`` refer to an image stored inside
+    the Damona repository (e.g. ``../../library/micromamba/micromamba_2.5.0.img``).
+    Those images are not tracked by git, so they are missing from a fresh clone
+    or after a cleanup. Here we resolve the image path relatively to the recipe,
+    and if the image is not found, we download it from the registry of the
+    corresponding software (in *library* or *software* directory).
+
+    :param recipe: path to a Singularity recipe.
+    :return: the resolved path of the base image, or None if the recipe does not
+        rely on a local image.
+    """
+    bootstrap, source = get_bootstrap_info(recipe)
+
+    if bootstrap != "localimage" or source is None:
+        return None
+
+    # apptainer resolves the From path from the current directory, but recipes are
+    # written relatively to their own location (usually the same thing since one
+    # builds from the recipe directory). We accept both, and download in the latter.
+    image = (pathlib.Path(recipe).resolve().parent / source).resolve()
+    for candidate in (image, pathlib.Path(source).resolve()):
+        if candidate.exists():
+            logger.debug(f"Base image {candidate} found locally.")
+            return candidate
+
+    logger.info(f"Base image {image} not found. Trying to download it from the Damona registry.")
+
+    # images are named NAME_x.y.z.img by convention
+    try:
+        name, version = image.name[: -len(image.suffix)].rsplit("_", 1)
+    except ValueError:  # pragma: no cover
+        logger.error(f"Cannot guess the software name/version from {image.name} (expected NAME_x.y.z{image.suffix}).")
+        sys.exit(1)
+
+    from damona.registry import Software
+
+    software = Software(name)
+    if version not in software.releases:
+        logger.error(
+            f"No release {version} found in the registry of {name} ({software.registry_name}). "
+            f"Available: {software.versions}"
+        )
+        sys.exit(1)
+
+    release = software.releases[version]
+
+    from damona.utils import download_with_progress
+
+    download_with_progress(release.download, filename=str(image))
+
+    if release.md5sum:
+        from easydev import md5
+
+        if md5(image) != release.md5sum:  # pragma: no cover
+            logger.error(
+                f"MD5 of the downloaded base image {image} does not match the registry "
+                f"({software.registry_name}). Download may have been interrupted."
+            )
+            sys.exit(1)
+
+    logger.info(f"Base image downloaded in {image}")
+    return image
 
 
 class Builder:
@@ -161,6 +255,10 @@ class BuilderFromSingularityRecipe(Builder):
         if os.path.basename(recipe).startswith("Singularity.") is False:
             logger.error("Recipe must start with Singularity.")
             sys.exit(1)
+
+        # recipes based on a local image (e.g. micromamba) require that image to be
+        # present; it is not tracked by git so we may have to download it first.
+        fetch_base_image(recipe)
 
         if destination is None:  # FIXME: do the same as for docker files ?
             destination = os.path.basename(recipe).replace("Singularity.", "") + ".img"
