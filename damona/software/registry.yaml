@@ -1134,6 +1134,11 @@ mafft:
       md5sum: 43cb6b2bf07196be37ba8f39c613a72c
       doi: 10.5281/zenodo.8037105
       filesize: 123727872
+    7.526.0:
+      download: https://zenodo.org/record/22000947/files/mafft_7.526.0.img
+      md5sum: bef5f6ad1b21ac6a9d6a14c11ff17fac
+      doi: 10.5281/zenodo.22000947
+      filesize: 161411072
 
 # mash/registry.yaml
 mash:

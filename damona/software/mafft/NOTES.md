@@ -1,27 +1,3 @@
-# mafft
-
-**DOI:** [10.5281/zenodo.8037104](https://doi.org/10.5281/zenodo.8037104)
-
-## Binaries
-
-`mafft`
-
-## Installation
-
-```bash
-damona install mafft               # latest (7.526.0)
-damona install mafft:VERSION        # specific version
-```
-
-## Available Versions
-
-| Version | Size | Binaries | DOI |
-|---------|------|----------|-----|
-| **7.526.0** *(latest)* | 153.93 MB | `mafft` | [10.5281/zenodo.22000947](https://doi.org/10.5281/zenodo.22000947) |
-| `7.520.0` | 118.00 MB | `mafft` | [10.5281/zenodo.8037105](https://doi.org/10.5281/zenodo.8037105) |
-
-## Notes
-
 **`mafft:7.520.0`'s `%runscript` execs `gffread`, not `mafft`.** The recipe was
 copy-pasted from the gffread recipe and the runscript line was never updated,
 so `singularity run mafft_7.520.0.img` invokes gffread rather than mafft
