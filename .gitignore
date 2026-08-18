@@ -6,6 +6,10 @@ RESOURCES
 damona/software/tentative
 CLAUDE.md
 
+# Claude Code: agents and the build-container workflow are shared, the local
+# permission allowlist is per-machine
+.claude/settings.local.json
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
