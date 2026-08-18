@@ -20,6 +20,6 @@ damona install datasets:VERSION        # specific version
 | **18.31.0** *(latest)* | 33.24 MB | `datasets` | [10.5281/zenodo.20820132](https://doi.org/10.5281/zenodo.20820132) |
 | `18.23.0` | 30.25 MB | `datasets` | [10.5281/zenodo.19551400](https://doi.org/10.5281/zenodo.19551400) |
 | `18.18.0` | 30.21 MB | `datasets` | [10.5281/zenodo.18772363](https://doi.org/10.5281/zenodo.18772363) |
-| `18.17.0` | 30.22 MB | `datasets` | [10.5281/zenodo.18700508](https://doi.org/10.5281/zenodo.18700508) |
+| `18.17.1` | 30.22 MB | `datasets` | [10.5281/zenodo.18700508](https://doi.org/10.5281/zenodo.18700508) |
 | `18.14.0` | 30.20 MB | `datasets` | [10.5281/zenodo.18314264](https://doi.org/10.5281/zenodo.18314264) |
 | `16.10.1` | 31.22 MB | `datasets` | [10.5281/zenodo.10894733](https://doi.org/10.5281/zenodo.10894733) |
