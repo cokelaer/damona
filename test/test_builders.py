@@ -1,7 +1,15 @@
 import os
+import pathlib
 import tempfile
 
-from damona.builders import BuilderFromDocker, BuilderFromSingularityRecipe
+import pytest
+
+from damona.builders import (
+    BuilderFromDocker,
+    BuilderFromSingularityRecipe,
+    fetch_base_image,
+    get_bootstrap_info,
+)
 
 from . import test_dir
 
@@ -72,6 +80,63 @@ def test_singularity_recipe(monkeypatch):
             assert False
         except SystemExit:
             assert True
+
+
+def test_get_bootstrap_info(tmp_path):
+    recipe = tmp_path / "Singularity.dummy_1.0.0"
+    recipe.write_text(
+        "BootStrap: localimage\n"
+        "From: ../../library/micromamba/micromamba_2.5.0.img\n"
+        "\n"
+        "%post\n"
+        "  From: not_a_header\n"
+    )
+    assert get_bootstrap_info(recipe) == ("localimage", "../../library/micromamba/micromamba_2.5.0.img")
+
+    # a docker-based recipe is not concerned
+    recipe = tmp_path / "Singularity.dummy_2.0.0"
+    recipe.write_text("Bootstrap: docker\nFrom: alpine:3.20\n")
+    assert get_bootstrap_info(recipe) == ("docker", "alpine:3.20")
+    assert fetch_base_image(recipe) is None
+
+
+def test_fetch_base_image(tmp_path, monkeypatch):
+    image = tmp_path / "micromamba_2.5.0.img"
+    recipe = tmp_path / "Singularity.dummy_1.0.0"
+    recipe.write_text(f"Bootstrap: localimage\nFrom: {image.name}\n")
+
+    downloaded = {}
+
+    def fake_download(url, filename):
+        downloaded["url"] = url
+        pathlib.Path(filename).write_text("fake image")
+        return pathlib.Path(filename)
+
+    from damona.registry import Software
+
+    expected_md5 = Software("micromamba").releases["2.5.0"].md5sum
+
+    monkeypatch.setattr("damona.utils.download_with_progress", fake_download)
+    # the fake content has of course the wrong md5, so pretend it is the expected one
+    monkeypatch.setattr("easydev.md5", lambda x: expected_md5)
+
+    assert fetch_base_image(recipe) == image.resolve()
+    assert image.exists()
+    assert "micromamba_2.5.0.img" in downloaded["url"]
+
+    # image now exists; no download should occur
+    downloaded.clear()
+    assert fetch_base_image(recipe) == image.resolve()
+    assert downloaded == {}
+
+
+def test_fetch_base_image_unknown_version(tmp_path):
+    image = tmp_path / "micromamba_0.0.0.img"
+    recipe = tmp_path / "Singularity.dummy_1.0.0"
+    recipe.write_text(f"Bootstrap: localimage\nFrom: {image.name}\n")
+
+    with pytest.raises(SystemExit):
+        fetch_base_image(recipe)
 
 
 def test_get_temp_file():

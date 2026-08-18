@@ -278,12 +278,19 @@ Labels and help sections are optional.
 Micromamba-based recipes
 -------------------------
 
-A reusable micromamba base image is kept alongside the recipes (see
-``damona/software/sequana/micromamba_2.5.0.img``).  Use it to install conda
-packages without building from scratch::
+A reusable micromamba base image is kept in the Damona library (see
+``damona/library/micromamba/``).  Use it to install conda packages without
+building from scratch::
 
     Bootstrap: localimage
-    From: micromamba_2.5.0.img
+    From: ../../library/micromamba/micromamba_2.5.0.img
+
+Those ``.img`` files are ignored by git, so they are absent from a fresh clone
+(and disappear if you clean up your working copy).  You do not need to fetch
+them by hand: ``damona build`` reads the ``Bootstrap``/``From`` header, and when
+the base image is missing it downloads it from the registry of the corresponding
+software (here ``damona/library/micromamba/registry.yaml``) and checks its
+md5sum before starting the build.
 
     %post
         apt -y update && apt -y upgrade
