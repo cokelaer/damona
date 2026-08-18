@@ -23,6 +23,7 @@ from configparser import NoOptionError, NoSectionError
 import click
 import colorlog
 import requests
+from easydev import md5
 from tqdm import tqdm
 from tqdm.utils import CallbackIOWrapper
 
@@ -211,6 +212,32 @@ class Zenodo:  # pragma: no cover
         r = requests.get(url, json={}, headers=self.headers)
         self._status(r, [200])
         return r
+
+    def find_resumable_draft(self, filename):  # pragma: no cover
+        """Look for an unpublished draft that already carries this exact file.
+
+        A publish attempt can fail after the (slow) upload has already
+        succeeded -- e.g. a 502/504 from Zenodo's gateway on the final
+        ``actions/publish`` call. Re-running from scratch would create a
+        second deposit and re-upload the file. Match on filename *and* md5
+        so a same-named-but-different build is never mistaken for a resumable
+        draft. Returns the draft dict, or None if nothing matches.
+        """
+        basename = os.path.basename(filename)
+        local_md5 = md5(filename)
+
+        # the list endpoint does not embed each deposit's files; fetch full
+        # detail per unsubmitted candidate to see what it actually holds
+        r = self.get_all_depositions()
+        for summary in r.json():
+            if summary.get("submitted"):
+                continue
+            dep = self.get_deposition(summary["id"]).json()
+            for f in dep.get("files", []):
+                if f.get("filename") == basename and f.get("checksum") == local_md5:
+                    logger.info(f"Found resumable draft {dep['id']} for {basename}; skipping re-upload")
+                    return dep
+        return None
 
     def get_deposition(self, ID):  # pragma: no cover
         url = f"https://{self.mode}.org/api/deposit/depositions/{ID}"
@@ -474,10 +501,14 @@ analysis.""",
         """ """
         data = ImageName(filename)
 
-        logger.info(f"Creating and Publising new deposit for {data.name}_{data.version}")
-        deposit = self.create_new_deposition()
+        deposit = self.find_resumable_draft(filename)
+        if deposit is not None:
+            logger.info(f"Resuming draft deposit {deposit['id']} for {data.name}_{data.version}")
+        else:
+            logger.info(f"Creating and Publising new deposit for {data.name}_{data.version}")
+            deposit = self.create_new_deposition()
+            self.upload(filename, deposit)
 
-        up = self.upload(filename, deposit)
         metadata = self.get_metadata(data.name, data.version)
         self.update_metadata(metadata, deposit)
 
