@@ -6,7 +6,7 @@ From: python:3.11-slim
 
 %post
 
-    apt update -y && apt upgrade && apt install -y git build-essential zlib1g-dev wget && \
+    apt update && apt upgrade -y && apt install -y git build-essential zlib1g-dev wget && \
         apt install -y autoconf automake  pkg-config libtool-bin yaggo curl
 
 
