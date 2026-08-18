@@ -56,3 +56,11 @@ authoritative record here, not the binary's self-report.
 Unrelated to the above: the 2.0.9 release is kraken2, a separate program with
 its own binaries (`kraken2`, `kraken2-build`), not a continuation of these
 scripts.
+
+**`kraken:2.0.9`'s own install is unpinned** (`conda install kraken2`, no
+`=version`). Rebuilding the recipe today installs kraken2 2.1.1, not 2.0.9
+(confirmed by rebuild-and-diff, 2026-08). As above, this was not deliberate:
+the recipe was written assuming the solved package matched the version being
+packaged, and the key was set from that assumption rather than verified
+afterwards. The published 2.0.9 deposit is not known to be wrong -- only the
+recipe's ability to reproduce it is. Left as-is rather than re-pinned.
