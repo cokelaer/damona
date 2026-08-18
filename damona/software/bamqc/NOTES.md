@@ -1,24 +1,3 @@
-# bamqc
-
-## Binaries
-
-`bamqc`
-
-## Installation
-
-```bash
-damona install bamqc               # latest (0.1.25)
-damona install bamqc:VERSION        # specific version
-```
-
-## Available Versions
-
-| Version | Size | Binaries | DOI |
-|---------|------|----------|-----|
-| **0.1.25** *(latest)* | 265.57 MB | `bamqc` | [10.5281/zenodo.21990899](https://doi.org/10.5281/zenodo.21990899) |
-
-## Notes
-
 BamQC is unusual in that it has no version to ask for: upstream publishes no
 tags and no GitHub releases, and `master` has been the same commit
 (`4b3d20f17b36`) since 2018-02-06.
