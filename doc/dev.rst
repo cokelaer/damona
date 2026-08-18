@@ -271,9 +271,51 @@ rather than::
 Adding a ``%test`` block makes it easy to verify the image after building::
 
     %test
+        set -e
         command --version
+        command --version | grep -q "1\\.2\\.3"
+
+``set -e`` is required: apptainer does not run the test script under ``-e``, so
+without it a crashing command is swallowed and the build still exits 0.
 
 Labels and help sections are optional.
+
+Pinning every input
+~~~~~~~~~~~~~~~~~~~
+
+The base image is not the only thing that drifts.  An audit of the published
+catalogue found that most wrong version keys came from a recipe that let some
+other input float, and the resulting image is on Zenodo permanently:
+
+* ``bamqc`` cloned ``master`` -- the key said 5.3.8, the image held 0.1.25
+* ``ucsc`` installed unpinned bioconda packages and mixed three kent releases
+  (377, 445, 447) into a single image keyed 3.7.7
+* ``repeatmasker`` keyed 4.0.8 contains 4.1.5
+* ``fastp`` fetches ``http://opengene.org/fastp/fastp``, which has no version in
+  it, so all three of its releases now rebuild as 1.3.6
+
+So pin:
+
+* **packages**: ``micromamba install pkg=X.Y.Z``, ``apt-get install pkg=VERSION``,
+  ``apk add pkg=X.Y.Z-rN`` -- never the bare package name
+* **downloads**: a URL containing the version, typically
+  ``https://github.com/OWNER/REPO/releases/download/vX.Y.Z/...``.  Never
+  ``LATEST``, ``/master/`` or an unversioned binary path
+* **sources**: ``git clone --depth 1 --branch vX.Y.Z``; where upstream publishes
+  no tags, ``git checkout <commit>`` with a comment saying why that commit
+* **transitive inputs**: meson ``.wrap`` files and git submodules can follow a
+  *branch*.  ``pbbam``'s ``pbcopper.wrap`` tracked ``develop``; cloning the tag
+  into ``subprojects/`` makes the wrap inert
+
+Then assert the version in ``%test``, as above.  That assertion is what keeps
+the registry key and the image from drifting apart: the build fails instead of
+producing a deposit that has to be flagged ``mislabelled`` forever.
+
+When a version genuinely cannot be pinned or asserted -- no tags, no
+``--version``, or an upstream string that disagrees with its own release
+(``fastANI`` v1.34 prints 1.33; ``barrnap`` v1.10.6 ships ``$VERSION =
+"1.10.5"``) -- record it in ``damona/software/<name>/NOTES.md``, which is
+appended to the generated README.
 
 Micromamba-based recipes
 -------------------------
