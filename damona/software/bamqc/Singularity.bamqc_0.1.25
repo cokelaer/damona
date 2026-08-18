@@ -18,8 +18,6 @@ From: ubuntu:24.04
     NOTE (version key): upstream publishes no tags and no releases, so the only
     version this software states about itself is the string hard-coded in its
     sources, "BamQC v0.1.25_devel". That is where the 0.1.25 key comes from.
-    Earlier images of this recipe were keyed 5.3.8, a number that appears
-    nowhere in BamQC; they have been delisted. See NOTES.md.
 
 %post
   export DEBIAN_FRONTEND=noninteractive

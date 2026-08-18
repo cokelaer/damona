@@ -36,12 +36,6 @@ BamQC v0.1.25_devel
 That is where the `0.1.25` key comes from, and `%test` asserts it so the key
 cannot drift away from the binary on a future rebuild.
 
-Earlier images of this recipe were keyed **5.3.8**, a number that appears
-nowhere in BamQC -- not in a tag, not in the sources, not in the output. It was
-almost certainly copied from another tool by mistake. Those deposits have been
-delisted rather than flagged, because the image itself is fine; only the label
-was wrong, and the identical build is now published under the correct key.
-
 ## Reproducibility
 
 With no tag to pin, the recipe pins the commit explicitly. The previous recipe
