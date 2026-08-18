@@ -32,6 +32,22 @@ logger = colorlog.getLogger(__name__)
 __all__ = ["Releases", "Software", "Registry", "Release", "ImageName", "RemoteRegistry"]
 
 
+def _parse_version(version_str):
+    """Parse a version key for comparison.
+
+    Tries the full string first, so a damona recipe-revision suffix such as
+    ``7.520.0-1`` parses as the PEP 440 post-release ``7.520.0.post1`` and
+    sorts above the plain ``7.520.0`` it revises. Falls back to stripping
+    everything from the first ``-`` for suffixes that are not a valid version
+    fragment on their own (``0.11.9-py3``, ``1.27.0-zenodo1``), which then
+    compare equal to their base version, as before.
+    """
+    try:
+        return packaging.version.parse(version_str)
+    except packaging.version.InvalidVersion:
+        return packaging.version.parse(version_str.split("-")[0])
+
+
 class ImageName:
     """Check image name
 
@@ -109,8 +125,7 @@ class Releases(dict):
                 self[str(version)] = Release(version, data)
 
     def _get_last_release(self):
-        # split on - for the special cases 0.11.9-py3
-        return max(list(self.keys()), key=lambda x: packaging.version.parse(x.split("-")[0]))
+        return max(list(self.keys()), key=_parse_version)
 
     last_release = property(_get_last_release, doc="return the last version")
 
@@ -473,14 +488,17 @@ class Registry:
 
         # sequana_tools_0.9.0 should return sequana_tools for the name and
         # 0.9.0 for the version hence the rsplit
-        # similarly fastq_0.11.0-py3 should return 0.11.0
-        # For multiqc:1.27.0-zenodo1, we want to return the actual candidate, not reconstruct it
+        # fastq_0.11.0-py3 and multiqc:1.27.0-zenodo1 are build-tag suffixes
+        # that are not valid version fragments on their own, so _parse_version
+        # falls back to comparing their base version; a damona revision
+        # suffix such as 7.520.0-1 parses on its own as a post-release and
+        # outranks the 7.520.0 it revises. Either way we return the actual
+        # candidate string, not a reconstructed one.
 
         versions_map = {}
         for candidate in candidates:
             version_str = candidate.rsplit(":", 1)[1]
-            semantic_version = version_str.split("-")[0]
-            parsed_version = packaging.version.parse(semantic_version)
+            parsed_version = _parse_version(version_str)
             if parsed_version not in versions_map:
                 versions_map[parsed_version] = []
             versions_map[parsed_version].append(candidate)

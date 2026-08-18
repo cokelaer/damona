@@ -481,6 +481,43 @@ independent, and a release that is merely misnamed should not be reported as
 buggy. Keep the full story (how the mismatch was found, which binary was run
 to confirm it) in a ``NOTES.md`` next to the recipe.
 
+**Same upstream version, better recipe:**
+
+Sometimes nothing is wrong with the image and nothing is mislabelled, but the
+*recipe* improves -- a package that used to float now pins, a smaller base
+image, a fixed footprint -- while upstream has not cut a new release to key it
+against. There is no true new version number to bump to, and inventing one
+(``1.0.1`` when upstream is still at ``1.0.0``) is exactly the mislabelling
+mistake described above, just committed on purpose instead of by accident.
+
+Key the new deposit ``X.Y.Z-N``, ``N`` starting at ``1``, instead::
+
+    mafft:
+        releases:
+          7.520.0:
+            download: https://zenodo.org/record/.../mafft_7.520.0.img
+            md5sum: 43cb6b2b...
+          7.520.0-1:
+            download: https://zenodo.org/record/.../mafft_7.520.0-1.img
+            md5sum: 9f1a2b3c...
+
+The hyphenated suffix is not a dot, so it does not disturb the ``X.Y.Z`` shape
+the Zenodo metadata call asserts on. ``packaging.version`` (already used
+throughout for version comparison and ``latest`` selection) parses
+``7.520.0-1`` as the PEP 440 post-release ``7.520.0.post1``, which sorts after
+plain ``7.520.0`` -- so ``damona install name`` picks the improved recipe by
+default, while ``damona install name:7.520.0`` still resolves the original,
+untouched deposit. Confirmed directly::
+
+    >>> from packaging.version import parse
+    >>> parse("7.520.0-1") > parse("7.520.0")
+    True
+
+Use this instead of ``mislabelled`` when the old key was never wrong -- it
+described its own contents correctly and still does. Use it instead of a
+fabricated version bump because a version string should only change when
+upstream's does.
+
 ``damona publish`` prompts for ``extra_binaries`` interactively and writes
 the field automatically when a non-empty value is given.
 
