@@ -20,6 +20,8 @@ one to use from now on.
 
 **Version ordering caveat:** 2.35.0 sorts *above* 2.3.5, so a plain
 `damona install rnaseqc` would pick the mislabelled image as "latest". The
-2.35.0 entry therefore carries `broken: true`, which keeps it installable by
-explicit version (`damona install rnaseqc:2.35.0`) while hiding it from search
-and from automatic latest-version selection.
+2.35.0 entry therefore carries `mislabelled: 2.3.5`, which keeps it installable
+by explicit version (`damona install rnaseqc:2.35.0`) while hiding it from
+search and from automatic latest-version selection, and points at 2.3.5 as the
+replacement. It is not flagged `broken`: the software inside the image works,
+only its key was wrong.
