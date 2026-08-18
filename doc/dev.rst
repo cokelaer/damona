@@ -398,6 +398,40 @@ preventing accidental use::
             md5sum: def456...
             broken: true  # Hide from search, skip auto-pick
 
+**Marking mislabelled releases:**
+
+``broken`` is about the software inside the image. A different mistake happens
+during curation: the image is perfectly fine but its *version key* is wrong --
+a typo (``2.35.0`` for ``2.3.5``), or a recipe that installed an unpinned conda
+package and got a version other than the one used as the key. Deleting such an
+entry is not an option: the Zenodo deposit is permanent, its DOI is citable, and
+published pipelines may pin the wrong key. Use ``mislabelled`` instead, giving
+the version actually found inside the image::
+
+    rnaseqc:
+        releases:
+          2.3.5:
+            download: https://zenodo.org/record/.../rnaseqc_2.3.5.img
+            md5sum: bdceb52a...
+          2.35.0:
+            download: https://zenodo.org/record/.../rnaseqc_2.35.0.img
+            md5sum: 42f2cfda...
+            mislabelled: 2.3.5
+            reason: typo for 2.3.5; there is no RNA-SeQC 2.35.0 release
+
+A mislabelled release is:
+
+- Hidden from ``damona search`` and from the generated README version table
+  (``damona search --include-mislabelled`` shows it, for curation work)
+- Never auto-selected by ``damona install name``, whatever its key sorts like
+  (``2.35.0`` would otherwise beat ``2.3.5``)
+- Still installable via its exact key, with a warning naming the true version
+
+Prefer this over ``broken: true`` for a labelling mistake: the two flags are
+independent, and a release that is merely misnamed should not be reported as
+buggy. Keep the full story (how the mismatch was found, which binary was run
+to confirm it) in a ``NOTES.md`` next to the recipe.
+
 ``damona publish`` prompts for ``extra_binaries`` interactively and writes
 the field automatically when a non-empty value is given.
 

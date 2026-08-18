@@ -151,6 +151,59 @@ def test_broken_find_candidate():
         assert not reg.registry[candidate].broken, f"find_candidate should return a non-broken release, got {candidate}"
 
 
+def test_mislabelled_flag():
+    """A mislabelled release exposes the true version and the reason."""
+    from damona.registry import Release
+
+    data = {
+        "test_tool": {
+            "releases": {
+                "2.35.0": {
+                    "download": "http://example.com/2.35.0",
+                    "mislabelled": "2.3.5",
+                    "reason": "typo",
+                },
+                "2.3.5": {"download": "http://example.com/2.3.5"},
+            }
+        }
+    }
+
+    mislabelled = Release("2.35.0", data)
+    correct = Release("2.3.5", data)
+
+    assert mislabelled.mislabelled == "2.3.5"
+    assert mislabelled.reason == "typo"
+    # a wrong key says nothing about the image itself
+    assert mislabelled.broken is False
+    assert correct.mislabelled is None
+
+
+def test_mislabelled_filter_search():
+    """get_list/get_binaries hide mislabelled releases unless asked for."""
+    reg = Registry()
+
+    for recipe in reg.get_list():
+        assert not reg.registry[recipe].mislabelled, f"{recipe} should not be advertised"
+    for recipe in reg.get_binaries():
+        assert not reg.registry[recipe].mislabelled, f"{recipe} should not be advertised"
+
+    # rnaseqc:2.35.0 is a real mislabelled entry of the registry
+    assert "rnaseqc:2.35.0" not in reg.get_list()
+    assert "rnaseqc:2.35.0" in reg.get_list(include_mislabelled=True)
+    assert "rnaseqc:2.35.0" in reg.get_binaries(include_mislabelled=True)
+
+
+def test_mislabelled_find_candidate():
+    """A mislabelled key sorting above the correct one is never auto-selected."""
+    reg = Registry()
+
+    # 2.35.0 parses higher than 2.3.5 but must not win
+    assert reg.find_candidate("rnaseqc") == "rnaseqc:2.3.5"
+
+    # ... yet stays installable when named explicitly
+    assert reg.find_candidate("rnaseqc:2.35.0") == "rnaseqc:2.35.0"
+
+
 def test_releases_without_releases_key():
     """A registry entry with no 'releases' section yields an empty Releases."""
     from damona.registry import Releases

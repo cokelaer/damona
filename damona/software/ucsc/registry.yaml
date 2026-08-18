@@ -14,6 +14,7 @@ ucsc:
       doi: 10.5281/zenodo.10011490
       filesize: 148918272
       mislabelled: true
+      reason: no single correct key; the image mixes kent 377, 445 and 447
     # keyed on the version the tools print (bedGraphToBigWig v 2.10); built
     # from kent 482, which is what the recipe pins
 
@@ -28,4 +29,3 @@ ucsc:
       md5sum: e8e6b9d068067061723cd2a4d6b9977d
       doi: 10.5281/zenodo.21986201
       filesize: 54796288
-

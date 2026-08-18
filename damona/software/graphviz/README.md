@@ -18,4 +18,4 @@ damona install graphviz:VERSION        # specific version
 | Version | Size | Binaries | DOI |
 |---------|------|----------|-----|
 | **7.0.5** *(latest)* | 18.98 MB | `circo` `dot` | [10.5281/zenodo.7928262](https://doi.org/10.5281/zenodo.7928262) |
-| `2.43.0` | 12.89 MB | `circo` `dot` | [10.5281/zenodo.7927016](https://doi.org/10.5281/zenodo.7927016) |
+| `2.40.1` | 12.89 MB | `circo` `dot` | [10.5281/zenodo.7927016](https://doi.org/10.5281/zenodo.7927016) |

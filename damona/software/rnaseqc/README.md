@@ -17,7 +17,6 @@ damona install rnaseqc:VERSION        # specific version
 
 | Version | Size | Binaries | DOI |
 |---------|------|----------|-----|
-| `2.35.0` *(broken)* | 347.36 MB | `rnaseqc` | [10.5281/zenodo.5799564](https://doi.org/10.5281/zenodo.5799564) |
 | **2.3.5** *(latest)* | 75.02 MB | `rnaseqc` | [10.5281/zenodo.21985582](https://doi.org/10.5281/zenodo.21985582) |
 
 ## Notes

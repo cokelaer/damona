@@ -15,4 +15,4 @@ damona install pbsv:VERSION        # specific version
 
 | Version | Size | Binaries | DOI |
 |---------|------|----------|-----|
-| **2.11.0** *(latest)* | 33.83 MB | `pbsv` | [TODO](https://doi.org/TODO) |
+| **2.11.0** *(latest)* | 33.85 MB | `pbsv` | [10.5281/zenodo.21970321](https://doi.org/10.5281/zenodo.21970321) |

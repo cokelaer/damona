@@ -38,17 +38,29 @@ def get_release_binaries(software_name, software_data, version_data):
     return sorted(combined)
 
 
+def is_mislabelled(version_data):
+    """Return True if the release key does not match the image content.
+
+    Such releases are kept in the registry (their Zenodo deposit is permanent
+    and may be pinned by published pipelines) but are not advertised: they are
+    left out of the README entirely, exactly as they are left out of
+    ``damona search``. See :attr:`damona.registry.Release.mislabelled`.
+    """
+    return bool((version_data or {}).get("mislabelled"))
+
+
 def get_latest_version(releases_dict):
     """Return the latest version from a releases dict.
 
-    Releases flagged ``broken`` are skipped, so that the version advertised
-    here is the one ``damona install <software>`` actually resolves to: the
-    registry prefers non-broken candidates (see Registry.find_candidate). A
-    broken release can still be the answer if it is the only one left.
+    Releases flagged ``broken`` or ``mislabelled`` are skipped, so that the
+    version advertised here is the one ``damona install <software>`` actually
+    resolves to: the registry prefers non-broken, correctly labelled candidates
+    (see Registry.find_candidate). A broken release can still be the answer if
+    it is the only one left.
     """
     if not releases_dict:
         return None
-    usable = {k: v for k, v in releases_dict.items() if not (v or {}).get("broken")}
+    usable = {k: v for k, v in releases_dict.items() if not (v or {}).get("broken") and not is_mislabelled(v)}
     return max(usable or releases_dict, key=lambda x: packaging.version.parse(x.split("-")[0]))
 
 
@@ -113,6 +125,11 @@ def generate_markdown(software_name, software_data):
 
     for version in sorted_versions:
         release = releases[version]
+
+        # mislabelled keys are not advertised at all; the correct release is
+        # listed instead, and the story belongs in NOTES.md
+        if is_mislabelled(release):
+            continue
 
         # Version name with latest indicator
         version_label = version

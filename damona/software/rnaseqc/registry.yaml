@@ -4,18 +4,18 @@ rnaseqc:
   releases:
     # 2.35.0 is a typo for 2.3.5 (there is no RNA-SeQC 2.35.0). The image is a
     # correct rna-seqc 2.3.5 build, so the entry is kept -- the deposit is
-    # permanent and sequana_rnaseq pins it -- but flagged broken so that it is
-    # hidden from search and never auto-selected as "latest": 2.35.0 sorts
+    # permanent and sequana_rnaseq pins it -- but marked mislabelled so that it
+    # is hidden from search and never auto-selected as "latest": 2.35.0 sorts
     # above 2.3.5. See NOTES.md.
     2.35.0:
       download: https://zenodo.org/record/5799564/files/rnaseqc_2.35.0.img
       md5sum: 42f2cfdac1fbfbd536ec9ec0a226521a
       doi: 10.5281/zenodo.5799564
       filesize: 364236800
-      broken: true
+      mislabelled: 2.3.5
+      reason: typo for 2.3.5; there is no RNA-SeQC 2.35.0 release
     2.3.5:
       download: https://zenodo.org/record/21985582/files/rnaseqc_2.3.5.img
       md5sum: bdceb52aa945f40be291f695830aa31a
       doi: 10.5281/zenodo.21985582
       filesize: 78667776
-

@@ -177,6 +177,14 @@ class Release:
         self.doi = kwargs.get("doi", None)
         self.broken = kwargs.get("broken", False)
 
+        #: version really found inside the image when the release key is wrong.
+        #: The artifact itself is fine: only its label is. Such a release is
+        #: hidden from search/list/README and never auto-selected, but remains
+        #: installable with an explicit version so that already published
+        #: pipelines and DOIs keep working. See :attr:`reason` for the details.
+        self.mislabelled = kwargs.get("mislabelled", None)
+        self.reason = kwargs.get("reason", None)
+
         self._release_binaries = self.split_binaries(kwargs.get("binaries", []))
         self._extra_binaries = self.split_binaries(kwargs.get("extra_binaries", []))
         self._exclude_binaries = self.split_binaries(kwargs.get("exclude_binaries", []))
@@ -436,8 +444,9 @@ class Registry:
     def find_candidate(self, pattern):
         """Find a unique recipe within the registry.
 
-        When multiple versions exist, prefers non-broken versions.
-        Allows explicit install of broken versions if only they match.
+        When multiple versions exist, prefers non-broken and correctly labelled
+        versions. Allows explicit install of broken or mislabelled versions if
+        only they match.
         """
         candidates = [x for x in self.registry.keys() if pattern == x or pattern in x.split(":")]
 
@@ -450,7 +459,14 @@ class Registry:
         if len(candidates) == 1:
             return candidates[0]
 
-        # When auto-selecting the latest version, prefer non-broken releases
+        # When auto-selecting the latest version, never pick a release whose key
+        # does not match its content (a mislabelled key such as 2.35.0 would
+        # otherwise sort above the correct 2.3.5)
+        labelled = [c for c in candidates if not self.registry[c].mislabelled]
+        if labelled:
+            candidates = labelled
+
+        # ... and prefer non-broken releases
         non_broken = [c for c in candidates if not self.registry[c].broken]
         if non_broken:
             candidates = non_broken
@@ -526,11 +542,18 @@ class Registry:
 
         self._populate(data)
 
-    def get_list(self, pattern=None):
-        """Return list of :class:`Software` found in the registry (excludes broken releases)"""
+    def get_list(self, pattern=None, include_mislabelled=False):
+        """Return list of :class:`Software` found in the registry.
+
+        Broken releases are excluded. Mislabelled ones (see
+        :attr:`Release.mislabelled`) are excluded as well unless
+        *include_mislabelled* is set, which is meant for curation only.
+        """
         software = {}
         for name, info in self.registry.items():
             if info.broken:
+                continue
+            if info.mislabelled and not include_mislabelled:
                 continue
             if pattern:
                 if pattern.lower() in name.lower():
@@ -540,11 +563,17 @@ class Registry:
         recipes = sorted(software)
         return recipes
 
-    def get_binaries(self, pattern=None):
-        """Return binaries found and from which recipe (excludes broken releases)"""
+    def get_binaries(self, pattern=None, include_mislabelled=False):
+        """Return binaries found and from which recipe.
+
+        Broken releases are excluded, and so are mislabelled ones unless
+        *include_mislabelled* is set.
+        """
         recipes = {}
         for name, info in self.registry.items():
             if info.broken:
+                continue
+            if info.mislabelled and not include_mislabelled:
                 continue
             if pattern:
                 if pattern.lower() in [x.lower() for x in info.binaries]:

@@ -219,6 +219,32 @@ def test_generate_markdown_multiple_versions_and_missing_fields():
     assert "—" in md
 
 
+def test_generate_markdown_mislabelled_version():
+    """A mislabelled key is neither listed nor advertised as the latest."""
+    from damona.software.build_readme import generate_markdown, get_latest_version
+
+    releases = {
+        "2.35.0": {
+            "download": "https://example.org/dummy_2.35.0.img",
+            "filesize": 1048576,
+            "mislabelled": "2.3.5",
+            "reason": "typo",
+            "binaries": "dummy",
+        },
+        "2.3.5": {
+            "download": "https://example.org/dummy_2.3.5.img",
+            "filesize": 1048576,
+            "binaries": "dummy",
+        },
+    }
+    # 2.35.0 parses higher than 2.3.5 but must not be advertised
+    assert get_latest_version(releases) == "2.3.5"
+
+    md = generate_markdown("dummy", {"releases": releases, "binaries": "dummy"})
+    assert "**2.3.5** *(latest)*" in md
+    assert "2.35.0" not in md
+
+
 def test_update_all_mismatched_software_name(tmp_path, capsys):
     """A registry.yaml whose top-level key differs from its directory is skipped."""
     import os

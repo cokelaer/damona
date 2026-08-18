@@ -379,13 +379,34 @@ def install(**kwargs):
             registry = Registry(from_url=None)
             p = RemoteImageInstaller(kwargs["image"], from_url=None, cmd=sys.argv, binaries=binaries)
 
-        # Check if the selected release is marked as broken
+        # Check if the selected release is marked as broken or mislabelled
         candidate = registry.find_candidate(kwargs["image"])
-        if candidate and candidate in registry.registry and registry.registry[candidate].broken:
+        if candidate and candidate in registry.registry:
+            release = registry.registry[candidate]
             console = Console()
-            console.print(
-                f"[bold yellow]⚠ Warning:[/bold yellow] {candidate} is marked as broken in the registry. Install with caution."
-            )
+            if release.broken:
+                console.print(
+                    f"[bold yellow]⚠ Warning:[/bold yellow] {candidate} is marked as broken in the registry. Install with caution."
+                )
+            if release.mislabelled:
+                name = candidate.split(":")[0]
+                if release.mislabelled is True:
+                    # flagged without a replacement key: used when the image has
+                    # no single correct version to point at (e.g. ucsc 3.7.7,
+                    # which mixes three upstream releases)
+                    msg = (
+                        f"[bold yellow]⚠ Warning:[/bold yellow] {candidate} is mislabelled: its version key "
+                        f"does not match the content of the image. It is kept for reproducibility only."
+                    )
+                else:
+                    msg = (
+                        f"[bold yellow]⚠ Warning:[/bold yellow] {candidate} is mislabelled: the image actually "
+                        f"contains version {release.mislabelled}. It is kept for reproducibility only; "
+                        f"use [bold]{name}:{release.mislabelled}[/bold] instead."
+                    )
+                if release.reason:
+                    msg += f" ({release.reason})"
+                console.print(msg)
 
         if p.is_valid():
             p.pull_image(force=force_image)
@@ -550,6 +571,12 @@ def clean(**kwargs):
 )
 @click.option("--binaries-only", is_flag=True, default=False, help="Show matching binaries only, not images.")
 @click.option(
+    "--include-mislabelled",
+    is_flag=True,
+    default=False,
+    help="Also show releases whose version key does not match the image content (curation only).",
+)
+@click.option(
     "--registry",
     default=URL,
     show_default=True,
@@ -601,8 +628,10 @@ def search(**kwargs):
     recommended_url = None
     recommended_size = None
 
+    include_mislabelled = kwargs["include_mislabelled"]
+
     if not kwargs["binaries_only"]:
-        modules = registry.get_list(pattern=pattern)
+        modules = registry.get_list(pattern=pattern, include_mislabelled=include_mislabelled)
         table = Table(show_header=True, header_style="bold cyan", box=None, pad_edge=False)
         table.add_column("Release", style="bold", min_width=25)
         table.add_column("Size", justify="right", min_width=8)
@@ -620,7 +649,13 @@ def search(**kwargs):
                 logger.warning(f"{mod}. could not extract filesize")
                 size_str = "-1"
 
-            table.add_row(mod, size_str, dl_url)
+            mislabelled = registry.registry[mod].mislabelled
+            table.add_row(f"{mod} (mislabelled)" if mislabelled else mod, size_str, dl_url)
+
+            # a mislabelled release must never be advertised as the one to use
+            if mislabelled:
+                continue
+
             if not recommended:
                 recommended = mod
                 recommended_url = dl_url
@@ -639,7 +674,7 @@ def search(**kwargs):
         console.print(table)
 
     if not kwargs["images_only"]:
-        modules = registry.get_binaries(pattern=pattern)
+        modules = registry.get_binaries(pattern=pattern, include_mislabelled=include_mislabelled)
         table = Table(show_header=True, header_style="bold cyan", box=None, pad_edge=False)
         table.add_column("Release", style="bold", min_width=25)
         table.add_column("Binaries")
