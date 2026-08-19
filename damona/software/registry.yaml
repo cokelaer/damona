@@ -811,9 +811,9 @@ hicexplorer:
   binaries: hicAdjustMatrix hicAggregateContacts hicAverageRegions hicBuildMatrix hicCompareMatrices hicCompartmentalization hicConvertFormat hicCorrectMatrix hicCorrelate hicCreateThresholdFile hicDetectLoops hicDifferentialTAD hicFindRestSite hicFindTADs hicHyperoptDetectLoops hicHyperoptDetectLoopsHiCCUPS hicInfo hicInterIntraTAD hicMergeDomains hicMergeLoops hicMergeMatrixBins hicNormalize hicPCA hicPlotAverageRegions hicPlotDistVsCounts hicPlotMatrix hicPlotSVL hicPlotTADs hicPlotViewpoint hicQC hicQuickQC hicSumMatrices hicTADClassifier hicTrainTADClassifier hicTransform hicValidateLocations hicexplorer chicAggregateStatistic chicDifferentialTest chicExportData chicPlotViewpoint chicQualityControl chicSignificantInteractions chicViewpoint chicViewpointBackgroundModel hic2cool
   releases:
     3.7.6:
-      download: https://zenodo.org/record/19140702/files/hicexplorer_3.7.6.img
+      download: https://zenodo.org/record/22018232/files/hicexplorer_3.7.6.img
       md5sum: 1bf5690b02f1e4dbf1ce04c214dee921
-      doi: 10.5281/zenodo.19140702
+      doi: 10.5281/zenodo.22018232
       filesize: 564117504
 
 # hifiasm/registry.yaml
