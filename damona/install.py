@@ -28,7 +28,7 @@ from damona import Environ, Registry
 from damona import version as damona_version
 from damona.common import ImageReader, get_container_cmd, requires_singularity
 from damona.registry import Software
-from damona.utils import download_with_progress
+from damona.utils import DownloadError, download_with_fallback
 
 DAMONA_PATH = os.environ["DAMONA_PATH"]
 
@@ -245,7 +245,7 @@ class RemoteImageInstaller(ImageInstaller):
 
     """
 
-    def __init__(self, image_name, binaries=None, from_url=None, cmd=None):
+    def __init__(self, image_name, binaries=None, from_url=None, cmd=None, source=None, fallback=True, min_speed=None):
         """.. rubric:: **Constructor**
 
         :param str image_name: The location of the singularity image to be installed.
@@ -253,6 +253,13 @@ class RemoteImageInstaller(ImageInstaller):
             found in the :attr:`image_name`
         :param cmd: internal place holder to fill the history log with the calling command.
         :param from_url: provide a URL if you want to use a third-party online registry
+        :param str source: name of the source to download from (``zenodo`` for the
+            release's own URL, or a mirror declared in
+            ``damona/software/mirrors.yaml``). Defaults to trying them all.
+        :param bool fallback: when no *source* is given, fall through to the declared
+            mirrors if the canonical source fails or is slow.
+        :param float min_speed: abandon a source transferring below this many bytes
+            per second and try the next one.
 
         """
         super(RemoteImageInstaller, self).__init__()
@@ -270,6 +277,11 @@ class RemoteImageInstaller(ImageInstaller):
         self.cmd = cmd
         self.binaries = binaries
         self.image_installed = False
+        self.source = source
+        self.fallback = fallback
+        self.min_speed = min_speed
+        #: name of the source that actually served the image, set by :meth:`pull_image`
+        self.source_used = None
 
     def is_valid(self):
         return True
@@ -391,7 +403,24 @@ class RemoteImageInstaller(ImageInstaller):
             if download_name.startswith("https://"):
                 logger.info(f"downloading into {pull_folder} {output_name}")
 
-                download_with_progress(download_name, filename=str(pull_folder / output_name))
+                try:
+                    sources = info.download_urls(source=self.source)
+                except ValueError as err:
+                    logger.critical(str(err))
+                    sys.exit(1)
+                if self.source is None and not self.fallback:
+                    sources = sources[:1]
+
+                try:
+                    self.source_used, _ = download_with_fallback(
+                        sources,
+                        filename=str(pull_folder / output_name),
+                        expected_md5=info.md5sum,
+                        min_speed=self.min_speed,
+                    )
+                except DownloadError as err:
+                    logger.critical(str(err))
+                    sys.exit(1)
 
             elif download_name.startswith("docker://"):  # docker has no extension .img/.sig
                 output_name += ".img"
@@ -413,15 +442,21 @@ class RemoteImageInstaller(ImageInstaller):
             logger.warning("File not installed properly. Stopping")
             self.image_installed = False
 
-        # check the md5 validity
+        # check the md5 validity. download_with_fallback already verified the
+        # bytes it accepted; this catches the other paths (singularity pull, a
+        # registry entry with no md5) and any corruption while moving the file.
         if info.md5sum:
             if info.md5sum != self.input_image.md5:
-                logger.warning(
+                self.image_installed = False
+                self.input_image.filename.unlink(missing_ok=True)
+                logger.critical(
                     "MD5 of downloaded image does not match the expected md5 found in the "
-                    f"registry of {registry_name}. The latter may be incorrect in damona and needs "
-                    f"to be updated in https://github.com/damona/damona/recipes/{self.image_name}/registry.yaml "
-                    "or the donwload was interrupted"
+                    f"registry of {registry_name}. The image has been discarded rather than "
+                    "installed. Either the registry entry is wrong and needs updating in "
+                    f"https://github.com/damona/damona/recipes/{self.image_name}/registry.yaml, "
+                    "or the download was interrupted or served by a source with different content."
                 )
+                sys.exit(1)
 
         self.image_installed = True
 

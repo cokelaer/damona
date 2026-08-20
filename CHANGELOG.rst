@@ -1,6 +1,35 @@
 Changelog
 =========
 
+Unreleased
+----------
+
+**Mirrors and download resilience**
+
+- A release can now be served by named mirrors as well as by its own Zenodo
+  URL. Mirrors are declared in ``damona/software/mirrors.yaml`` as name to
+  base URL; the image filename is appended, so adding a mirror does not
+  require editing every release. A release whose file is named differently on
+  a mirror overrides the full URL under a ``mirrors:`` key in its own
+  ``registry.yaml``. The name ``zenodo`` is reserved for the release's own
+  ``download`` field.
+- ``damona install`` accepts ``--from NAME`` to force a source, ``--no-fallback``
+  to stay on the canonical one, and ``--min-speed`` to abandon a slow source.
+  With no flag, the canonical source is tried first and mirrors follow, so a
+  slow or unavailable Zenodo no longer fails the install. An unknown ``--from``
+  name lists the valid ones.
+- Transfers now time out, abort when stalled, and can abort when throughput
+  stays below a floor; 429 and 503 answers are retried honouring
+  ``Retry-After``. If every source is slow, the fastest is used anyway rather
+  than failing.
+- Downloaded bytes are verified against the registry md5 before the image is
+  installed. A source serving different content is discarded and the next one
+  is tried, so a mirror never has to be trusted. Previously a mismatch only
+  logged a warning after the image had been installed.
+- ``damona check-mirrors`` (maintainers) checks that every release resolves on
+  every declared mirror, comparing the advertised size with the registry
+  filesize, without transferring images.
+
 Version 0.23.0 (August 2026)
 ----------------------------
 

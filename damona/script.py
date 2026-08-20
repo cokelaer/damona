@@ -311,6 +311,25 @@ def deactivate(**kwargs):
     default=None,
     help="Comma-separated list of binary names to install. Defaults to the image name.",
 )
+@click.option(
+    "--from",
+    "source",
+    default=None,
+    help="Name of the source to download the image from: 'zenodo' for the release's own URL, "
+    "or a mirror declared in damona's mirrors.yaml. Defaults to trying zenodo first, then mirrors.",
+)
+@click.option(
+    "--no-fallback",
+    is_flag=True,
+    default=False,
+    help="Do not fall through to mirrors when the canonical source fails or is slow.",
+)
+@click.option(
+    "--min-speed",
+    type=click.FLOAT,
+    default=None,
+    help="Abandon a source transferring below this many kB/s and try the next one.",
+)
 @common_logger
 def install(**kwargs):
     """Download and install an image and its binaries into the active environment.
@@ -356,6 +375,8 @@ def install(**kwargs):
     if kwargs["force"]:
         force_image, force_binaries = True, True
 
+    min_speed = kwargs["min_speed"] * 1024 if kwargs["min_speed"] else None
+
     if kwargs["binaries"]:
         if "," in kwargs["binaries"]:
             binaries = kwargs["binaries"].split(",")
@@ -373,11 +394,27 @@ def install(**kwargs):
         if url_exists(url) and kwargs["local_registry_only"] is False:
             logger.info(f"Installing from online registry ({url})")
             registry = Registry(from_url=url)
-            p = RemoteImageInstaller(kwargs["image"], from_url=kwargs["registry"], cmd=sys.argv, binaries=binaries)
+            p = RemoteImageInstaller(
+                kwargs["image"],
+                from_url=kwargs["registry"],
+                cmd=sys.argv,
+                binaries=binaries,
+                source=kwargs["source"],
+                fallback=not kwargs["no_fallback"],
+                min_speed=min_speed,
+            )
         else:
             logger.info("Installing from local registry")
             registry = Registry(from_url=None)
-            p = RemoteImageInstaller(kwargs["image"], from_url=None, cmd=sys.argv, binaries=binaries)
+            p = RemoteImageInstaller(
+                kwargs["image"],
+                from_url=None,
+                cmd=sys.argv,
+                binaries=binaries,
+                source=kwargs["source"],
+                fallback=not kwargs["no_fallback"],
+                min_speed=min_speed,
+            )
 
         # Check if the selected release is marked as broken or mislabelled
         candidate = registry.find_candidate(kwargs["image"])
@@ -875,6 +912,29 @@ def export(**kwargs):
 
 
 # ============================================================  stats
+
+
+@main.command(hidden=True)
+@click.option("--mirror", default=None, help="Restrict the check to one named mirror.")
+@click.option("--timeout", type=click.FLOAT, default=10, help="Per-request timeout in seconds.")
+@common_logger
+def check_mirrors(**kwargs):
+    """Check that every release resolves on every declared mirror (maintainers).
+
+    Issues one HEAD request per release and mirror and compares the advertised
+    size with the filesize recorded in the registry. No image is transferred.
+
+        damona check-mirrors --mirror pasteur
+
+    Mirrors are declared in damona/software/mirrors.yaml, under version control
+    with the rest of the registry.
+    """
+    from damona import admin
+
+    results = admin.check_mirrors(mirror=kwargs["mirror"], timeout=kwargs["timeout"])
+    broken = [x for x in results if x[3] != "ok"]
+    if broken:
+        sys.exit(1)
 
 
 @main.command()

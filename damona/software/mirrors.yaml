@@ -1,0 +1,38 @@
+# Named mirrors for the damona catalogue.
+#
+# A mirror is an alternative *source for the same artifact*, not an alternative
+# registry: the bytes are identical and are verified against the md5sum recorded
+# in the release entry, so a mirror never has to be trusted.
+#
+# Each entry maps a short name to a base URL. The image filename is appended to
+# that base, which works because release filenames are deterministic
+# (<name>_<version>.img, the basename of the release's `download` field):
+#
+#     https://<base>/<name>_<version>.img
+#
+# A release whose file is named differently on a given mirror can override the
+# full URL in its own registry.yaml:
+#
+#     releases:
+#       2.5.8:
+#         download: https://zenodo.org/record/5708820/files/art_2.5.8.img
+#         md5sum: 4949d8da803d970e74de7ce898ed3c6b
+#         mirrors:
+#           pasteur: https://biomics.pasteur.fr/damona/other-name.img
+#
+# The name `zenodo` is reserved: it always denotes the release's own `download`
+# field, whatever host that points at.
+#
+# Maintainers: after adding a mirror here, check that every release resolves on
+# it with
+#
+#     damona check-mirrors --mirror <name>
+#
+# This file is shipped with damona and is deliberately not user-editable
+# configuration: a mirror is catalogue metadata and belongs under version
+# control with the rest of the registry.
+
+# No public mirror is in service yet. Entries take the form:
+#
+# pasteur: https://biomics.pasteur.fr/damona/images
+# ifb: https://mirror.ifb.fr/damona

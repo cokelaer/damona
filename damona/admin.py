@@ -27,7 +27,7 @@ from damona import Registry, version
 logger = colorlog.getLogger(__name__)
 
 
-__all__ = ["stats"]
+__all__ = ["stats", "check_mirrors"]
 
 
 def stats(biocontainers=False):
@@ -65,6 +65,69 @@ There is nothing we can do about that in Damona. Actual number is more around 10
         )
 
     return data
+
+
+def check_mirrors(mirror=None, timeout=10):
+    """Check that every release resolves on every declared mirror.
+
+    Maintainer helper. For each release and each mirror it issues a HEAD
+    request and compares the advertised ``Content-Length`` with the
+    ``filesize`` recorded in the registry, which catches a mirror that is
+    incomplete, stale or serving an error page, without transferring any
+    image.
+
+    :param str mirror: restrict the check to one named mirror.
+    :param float timeout: per-request timeout in seconds.
+    :returns: List of ``(software, mirror, url, status)`` tuples, where status
+        is ``"ok"``, ``"missing"``, ``"size-mismatch"`` or an error string.
+    :rtype: list
+    """
+    import requests
+
+    from damona.registry import CANONICAL_SOURCE, get_mirrors
+
+    mirrors = get_mirrors()
+    if mirror:
+        if mirror not in mirrors:
+            logger.error(f"Unknown mirror '{mirror}'. Declared mirrors: {', '.join(mirrors) or 'none'}")
+            return []
+        mirrors = {mirror: mirrors[mirror]}
+
+    if not mirrors:
+        logger.warning("No mirror declared in damona/software/mirrors.yaml")
+        return []
+
+    registry = Registry(biocontainers=False)
+    results = []
+
+    for name, release in tqdm.tqdm(sorted(registry.registry.items())):
+        for mirror_name in mirrors:
+            if mirror_name == CANONICAL_SOURCE:  # pragma: no cover - reserved name
+                continue
+            url = release.mirror_url(mirror_name, mirrors=mirrors)
+            try:
+                resp = requests.head(url, allow_redirects=True, timeout=timeout)
+            except requests.RequestException as err:  # pragma: no cover - network dependent
+                results.append((name, mirror_name, url, f"error: {err}"))
+                continue
+
+            if resp.status_code != 200:
+                results.append((name, mirror_name, url, "missing"))
+                continue
+
+            size = resp.headers.get("Content-Length")
+            if release.filesize and size and int(size) != int(release.filesize):
+                results.append((name, mirror_name, url, "size-mismatch"))
+                continue
+
+            results.append((name, mirror_name, url, "ok"))
+
+    broken = [x for x in results if x[3] != "ok"]
+    logger.info(f"{len(results) - len(broken)}/{len(results)} release/mirror pairs resolve")
+    for item in broken:
+        logger.warning(f"{item[0]} on '{item[1]}': {item[3]} ({item[2]})")
+
+    return results
 
 
 def get_software_names():
