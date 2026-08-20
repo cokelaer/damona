@@ -1021,12 +1021,52 @@ def list(**kwargs):
 # ===================================================================  catalog
 
 
+def _normalise(text):
+    """Lowercase and collapse ``-``/``_``, which are used interchangeably here.
+
+    A registry key, its directory and its Singularity file do not always spell
+    a name the same way: ``umi-tools`` lives in ``software/umi_tools``, and
+    ``qc3c`` is built by ``Singularity.qc3C_0.5.0``.
+    """
+    return text.lower().replace("-", "_")
+
+
+def _find_recipe(name, version, damona_root):
+    """Locate the Singularity definition file of a release, or None.
+
+    Tries the conventional location first, then falls back to a comparison
+    that ignores case and the ``-``/``_`` spelling, and finally drops a damona
+    revision suffix such as ``-zenodo1``, which re-deposits an existing image
+    and therefore shares its recipe.
+    """
+    import pathlib as _pathlib
+
+    root = _pathlib.Path(damona_root)
+    expected = root / "software" / name / f"Singularity.{name}_{version}"
+    if expected.exists():
+        return expected
+
+    # note: builtins.list is shadowed in this module by the "damona list"
+    # command, so the generator is consumed directly rather than via list()
+    candidates = [path for path in root.glob("*/*/Singularity.*")]
+    wanted = [_normalise(f"{name}_{version}")]
+    if "-" in version:
+        # 1.27.0-zenodo1 re-deposits the 1.27.0 image, so the recipe is the same
+        wanted.append(_normalise(f"{name}_{version.rsplit('-', 1)[0]}"))
+
+    for target in wanted:
+        for path in candidates:
+            if _normalise(path.name.split(".", 1)[1]) == target:
+                return path
+    return None
+
+
 def _get_base_image(name, version, damona_root):
     """Return a short base-image label extracted from the Singularity definition file."""
     import pathlib as _pathlib
 
-    sif_path = _pathlib.Path(damona_root) / "software" / name / f"Singularity.{name}_{version}"
-    if not sif_path.exists():
+    sif_path = _find_recipe(name, version, damona_root)
+    if sif_path is None:
         return "?"
 
     bootstrap = None
@@ -1043,15 +1083,13 @@ def _get_base_image(name, version, damona_root):
     if from_line is None:
         return "?"
 
-    from_lower = from_line.lower()
     # localimage pointing to a library .img file
     if bootstrap == "localimage" or (bootstrap is None and from_line.endswith(".img")):
         stem = _pathlib.Path(from_line).stem  # e.g. micromamba_1.5.8
         return stem.rsplit("_", 1)[0] if "_" in stem else stem
 
     # docker / library bootstrap — keep registry-prefix stripped
-    label = from_line.split("/")[-1]  # drop registry host and org
-    return label
+    return from_line.split("/")[-1]  # drop registry host and org
 
 
 @main.command(hidden=True)

@@ -4,6 +4,17 @@ Changelog
 Unreleased
 ----------
 
+**Bug fixes**
+
+- ``damona catalog`` showed ``?`` in the base-image column for 13 releases
+  whose Singularity file is not where the registry key says it should be:
+  a directory spelled differently (``umi-tools`` lives in ``software/umi_tools``),
+  a filename differing in case (``Singularity.qc3C_0.5.0``), a version whose
+  suffix uses ``_`` rather than ``-``, or a ``-zenodo1`` re-deposit that shares
+  the recipe of its base version. The lookup now falls back to a
+  case-insensitive, separator-insensitive search, leaving ``?`` only for the
+  four releases that genuinely ship no recipe.
+
 **Mirrors and download resilience**
 
 - A release can now be served by named mirrors as well as by its own Zenodo

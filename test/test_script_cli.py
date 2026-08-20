@@ -495,3 +495,58 @@ def test_get_base_image_without_from(tmp_path):
     recipe.mkdir(parents=True)
     (recipe / "Singularity.dummy_1.0.0").write_text("Bootstrap: localimage\n%post\n    echo hello\n")
     assert _get_base_image("dummy", "1.0.0", tmp_path) == "?"
+
+
+# --------------------------------------------------------- catalog base images
+#
+# The base-image column reads the Singularity definition file, whose path is
+# not always derivable from the registry key: umi-tools lives in
+# software/umi_tools, qc3c is built by Singularity.qc3C_0.5.0, and a -zenodo1
+# release re-deposits an existing image and shares its recipe.
+
+
+def test_find_recipe_handles_naming_variants():
+    import damona
+    from damona.script import _find_recipe
+
+    root = damona.__path__[0]
+
+    # directory spelled with an underscore, registry key with a hyphen
+    assert _find_recipe("umi-tools", "1.1.6", root).name == "Singularity.umi-tools_1.1.6"
+    # recipe filename differs in case
+    assert _find_recipe("qc3c", "0.5.0", root).name == "Singularity.qc3C_0.5.0"
+    # revision suffix on the version, underscore in the filename
+    assert _find_recipe("fastqc", "0.11.9-py3", root).name == "Singularity.fastqc_0.11.9_py3"
+    # re-deposit suffix falls back to the recipe of the base version
+    assert _find_recipe("multiqc", "1.27.0-zenodo1", root).name == "Singularity.multiqc_1.27.0"
+    # no recipe shipped for that release
+    assert _find_recipe("hisat2", "2.1.0", root) is None
+
+
+def test_catalog_reports_the_base_image_of_awkward_entries():
+    import damona
+    from damona.script import _get_base_image
+
+    root = damona.__path__[0]
+
+    assert _get_base_image("umi-tools", "1.1.6", root) == "debian:bookworm-slim"
+    assert _get_base_image("RNAfold", "2.7.0", root) == "alpine:3.20"
+    assert _get_base_image("pblaa", "2.5.0", root) == "ubi9"  # redhat/ubi9, org stripped
+    assert _get_base_image("hisat2", "2.1.0", root) == "?"  # honest: no recipe here
+
+
+def test_catalog_leaves_few_unknown_bases():
+    """A guard against the column silently degrading again.
+
+    Only releases with no recipe in the package may show "?"; at the time of
+    writing that is dustmasker, hisat2 and two sequana images whose recipe was
+    not kept for that exact version.
+    """
+    import damona
+    from damona.registry import Registry
+    from damona.script import _get_base_image
+
+    root = damona.__path__[0]
+    registry = Registry(from_url=None)
+    unknown = [key for key in registry.get_list() if _get_base_image(*key.split(":"), root) == "?"]
+    assert len(unknown) <= 5, unknown
