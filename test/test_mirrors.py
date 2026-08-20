@@ -233,6 +233,54 @@ def online(url):
         return False
 
 
+def mirrored_releases():
+    from damona.registry import Registry
+
+    registry = Registry(biocontainers=False)
+    return {name: release for name, release in registry.registry.items() if getattr(release, "mirrors", None)}
+
+
+def test_every_mirrored_release_is_well_formed():
+    """Guard the mirror syntax across the whole catalogue, not one entry.
+
+    Grows by itself: each release that gains a mirrors block is checked here
+    for the fields a fall-through needs, so a typo in a new entry fails the
+    suite rather than surfacing as a failed install.
+    """
+    releases = mirrored_releases()
+    assert HELLOWORLD in releases  # the reference entry must keep its mirror
+
+    for name, release in releases.items():
+        assert release.md5sum, f"{name} declares a mirror but no md5sum to verify it against"
+        assert release.filesize, f"{name} declares a mirror but no filesize"
+        sources = release.download_urls()
+        assert sources[0][0] == CANONICAL_SOURCE, f"{name} must try its own URL first"
+        for mirror_name in release.mirrors:
+            url = release.mirror_url(mirror_name)
+            assert url and url.startswith("http"), f"{name} mirror '{mirror_name}' does not resolve"
+            assert (mirror_name, url) in sources
+
+
+def test_declared_mirrors_serve_the_recorded_size():
+    """Every declared mirror must hold the image the registry describes.
+
+    A HEAD per mirror, so the cost stays flat as mirroring is rolled out; the
+    byte-level check is done once, on the small helloworld image, below.
+    """
+    releases = mirrored_releases()
+
+    for name, release in releases.items():
+        for mirror_name, url in release.mirrors.items():
+            try:
+                resp = requests.head(url, allow_redirects=True, timeout=15)
+            except requests.RequestException:  # pragma: no cover - offline
+                pytest.skip(f"{url} unreachable")
+            assert resp.status_code == 200, f"{name} on '{mirror_name}' answered {resp.status_code}"
+            size = resp.headers.get("Content-Length")
+            if size:
+                assert int(size) == int(release.filesize), f"{name} on '{mirror_name}' has the wrong size"
+
+
 def test_helloworld_declares_a_usable_mirror():
     """The shipped entry must parse and expose both sources, canonical first."""
     release = shipped_release()
@@ -277,3 +325,52 @@ def test_helloworld_falls_back_to_the_mirror(tmpdir):
     )
     assert name == "sequana"
     assert path.stat().st_size == release.filesize
+
+
+def test_check_mirrors_sees_per_release_declarations(mocker):
+    """A mirror declared only inside a release must still be checked.
+
+    mirrors.yaml is empty while mirroring is rolled out entry by entry, so a
+    checker that only read that file would report nothing to do.
+    """
+    from damona import admin
+
+    heads = []
+
+    class _Head:
+        status_code = 200
+
+        def __init__(self, size):
+            self.headers = {"Content-Length": str(size)}
+
+    def fake_head(url, **kwargs):
+        heads.append(url)
+        release = [r for r in mirrored_releases().values() if url in r.mirrors.values()][0]
+        return _Head(release.filesize)
+
+    mocker.patch("requests.head", side_effect=fake_head)
+    results = admin.check_mirrors()
+
+    assert results, "per-release mirrors were ignored"
+    assert all(status == "ok" for _, _, _, status in results)
+    assert len(heads) == sum(len(r.mirrors) for r in mirrored_releases().values())
+
+
+def test_check_mirrors_reports_a_size_mismatch(mocker):
+    """A mirror holding a different file must be reported, not passed."""
+    from damona import admin
+
+    class _Head:
+        status_code = 200
+        headers = {"Content-Length": "1"}
+
+    mocker.patch("requests.head", return_value=_Head())
+    results = admin.check_mirrors()
+
+    assert results and all(status == "size-mismatch" for _, _, _, status in results)
+
+
+def test_check_mirrors_rejects_an_unknown_name():
+    from damona import admin
+
+    assert admin.check_mirrors(mirror="nowhere") == []

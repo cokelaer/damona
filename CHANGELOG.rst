@@ -28,7 +28,12 @@ Unreleased
   logged a warning after the image had been installed.
 - ``damona check-mirrors`` (maintainers) checks that every release resolves on
   every declared mirror, comparing the advertised size with the registry
-  filesize, without transferring images.
+  filesize, without transferring images. Mirrors declared inside a release
+  entry are checked as well as those declared globally, and a release is only
+  checked against a mirror it actually resolves to.
+- helloworld 1.0.0 and bwa 0.7.17 are mirrored in
+  ``sequana/damona-containers`` and serve as the live examples in the test
+  suite.
 
 Version 0.23.0 (August 2026)
 ----------------------------
