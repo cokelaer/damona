@@ -804,6 +804,18 @@ gzip:
       doi: 10.5281/zenodo.7034360
       filesize: 3522560
 
+# helloworld/registry.yaml
+helloworld:
+  binaries: helloworld
+  releases:
+    1.0.0:
+      download: https://zenodo.org/record/22035174/files/helloworld_1.0.0.img
+      md5sum: 59c8f836a29a429923a7e3a9d75a2a56
+      doi: 10.5281/zenodo.22035174
+      filesize: 4579328
+      mirrors:
+        sequana: https://github.com/sequana/damona-containers/raw/refs/heads/main/helloworld_1.0.0.img
+
 # hicexplorer/registry.yaml
 hicexplorer:
   doi: 10.5281/zenodo.19140701

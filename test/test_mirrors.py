@@ -209,3 +209,71 @@ def test_a_stalled_transfer_is_abandoned(mocker, tmpdir):
     with pytest.raises(SlowSourceError):
         download_with_progress("https://stalled/x.img", str(destination), stall_timeout=0.01)
     assert not destination.exists()
+
+
+# ------------------------------------------------- the shipped helloworld entry
+#
+# helloworld is the reference case for the mirror syntax: a real release, on
+# Zenodo, with a real second source. These tests keep the shipped registry and
+# the mirror honest rather than exercising the code against a fixture.
+
+HELLOWORLD = "helloworld:1.0.0"
+
+
+def shipped_release():
+    from damona.registry import Registry
+
+    return Registry(biocontainers=False).registry[HELLOWORLD]
+
+
+def online(url):
+    try:
+        return requests.head(url, allow_redirects=True, timeout=10).status_code == 200
+    except requests.RequestException:
+        return False
+
+
+def test_helloworld_declares_a_usable_mirror():
+    """The shipped entry must parse and expose both sources, canonical first."""
+    release = shipped_release()
+    assert "sequana" in release.mirrors
+    assert [name for name, _ in release.download_urls()] == [CANONICAL_SOURCE, "sequana"]
+    assert release.mirror_url("sequana") == release.mirrors["sequana"]
+    assert release.md5sum and release.filesize
+
+
+def test_helloworld_mirror_serves_the_same_artifact(tmpdir):
+    """The mirror is only a mirror if its bytes match the registry md5.
+
+    This is the acceptance test a new mirror has to pass: same checksum as the
+    Zenodo deposit, so an install served by it is indistinguishable.
+    """
+    release = shipped_release()
+    url = release.mirror_url("sequana")
+    if not online(url):  # pragma: no cover - offline or mirror down
+        pytest.skip(f"{url} unreachable")
+
+    name, path = download_with_fallback(
+        release.download_urls(source="sequana"),
+        str(tmpdir / "helloworld_1.0.0.img"),
+        expected_md5=release.md5sum,
+    )
+    assert name == "sequana"
+    assert path.stat().st_size == release.filesize
+
+
+def test_helloworld_falls_back_to_the_mirror(tmpdir):
+    """A dead primary must fall through to the mirror, still checksum-verified."""
+    release = shipped_release()
+    url = release.mirror_url("sequana")
+    if not online(url):  # pragma: no cover - offline or mirror down
+        pytest.skip(f"{url} unreachable")
+
+    sources = [("broken", "https://mirror.invalid.example/helloworld_1.0.0.img")] + release.download_urls(
+        source="sequana"
+    )
+    name, path = download_with_fallback(
+        sources, str(tmpdir / "helloworld_1.0.0.img"), expected_md5=release.md5sum, max_attempts=1
+    )
+    assert name == "sequana"
+    assert path.stat().st_size == release.filesize
