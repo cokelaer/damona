@@ -29,7 +29,32 @@ from damona.config import Config
 logger = colorlog.getLogger(__name__)
 
 
-__all__ = ["Releases", "Software", "Registry", "Release", "ImageName", "RemoteRegistry"]
+__all__ = ["Releases", "Software", "Registry", "Release", "ImageName", "RemoteRegistry", "get_mirrors"]
+
+
+#: Reserved mirror name denoting a release's own ``download`` field.
+CANONICAL_SOURCE = "zenodo"
+
+
+def get_mirrors():
+    """Return the named mirrors shipped with damona.
+
+    Reads ``damona/software/mirrors.yaml``, a maintainer-maintained map of
+    short name to base URL. The file is part of the package rather than user
+    configuration: a mirror is catalogue metadata and is reviewed with the rest
+    of the registry.
+
+    :returns: Mapping of mirror name to base URL, empty if none are declared.
+    :rtype: dict
+    """
+    from damona import __path__
+
+    filename = pathlib.Path(__path__[0]) / "software" / "mirrors.yaml"
+    if not filename.exists():  # pragma: no cover
+        return {}
+    with open(filename, "r") as fin:
+        data = yaml.load(fin, Loader=CSafeLoader) or {}
+    return {str(k): str(v).rstrip("/") for k, v in data.items() if v}
 
 
 def _parse_version(version_str):
@@ -192,6 +217,11 @@ class Release:
         self.doi = kwargs.get("doi", None)
         self.broken = kwargs.get("broken", False)
 
+        #: Per-release mirror overrides: name -> full URL. Only needed when a
+        #: mirror stores the image under a different filename; otherwise the
+        #: URL is derived from the base in :func:`get_mirrors`.
+        self.mirrors = dict(kwargs.get("mirrors", {}) or {})
+
         #: version really found inside the image when the release key is wrong.
         #: The artifact itself is fine: only its label is. Such a release is
         #: hidden from search/list/README and never auto-selected, but remains
@@ -230,6 +260,68 @@ class Release:
             return binaries
         else:
             return binaries.replace(",", " ").split()
+
+    @property
+    def filename(self):
+        """Basename of the release's canonical download URL."""
+        return self.download.split("/")[-1]
+
+    def mirror_url(self, name, mirrors=None):
+        """Return the URL serving this release from the named mirror.
+
+        A per-release override in the registry entry wins; otherwise the URL is
+        the mirror's base with the release filename appended, which is why
+        adding a mirror does not require editing every release.
+
+        :param str name: Mirror name, or ``"zenodo"`` for the canonical source.
+        :param dict mirrors: Name to base-URL map. Defaults to
+            :func:`get_mirrors`.
+        :returns: The URL, or ``None`` if the mirror is unknown.
+        :rtype: str or None
+        """
+        if name == CANONICAL_SOURCE:
+            return self.download
+        if name in self.mirrors:
+            return self.mirrors[name]
+        mirrors = get_mirrors() if mirrors is None else mirrors
+        if name in mirrors:
+            return f"{mirrors[name]}/{self.filename}"
+        return None
+
+    def source_names(self, mirrors=None):
+        """Names of every source that can serve this release, canonical first."""
+        mirrors = get_mirrors() if mirrors is None else mirrors
+        names = [CANONICAL_SOURCE]
+        names += [name for name in self.mirrors if name not in names]
+        names += [name for name in mirrors if name not in names]
+        return names
+
+    def download_urls(self, source=None, mirrors=None):
+        """Ordered URLs to try for this release.
+
+        With no *source*, the canonical download comes first and the declared
+        mirrors follow, so a slow or unavailable primary falls through rather
+        than failing the install. With a *source*, only that one is returned.
+
+        :param str source: Restrict to a single named source.
+        :param dict mirrors: Name to base-URL map, for testing.
+        :returns: List of ``(name, url)`` pairs.
+        :rtype: list
+        :raises ValueError: If *source* names a mirror that does not exist.
+        """
+        mirrors = get_mirrors() if mirrors is None else mirrors
+        if source:
+            url = self.mirror_url(source, mirrors=mirrors)
+            if url is None:
+                known = ", ".join(self.source_names(mirrors=mirrors))
+                raise ValueError(f"Unknown source '{source}' for {self._name}. Known sources: {known}")
+            return [(source, url)]
+        urls = []
+        for name in self.source_names(mirrors=mirrors):
+            url = self.mirror_url(name, mirrors=mirrors)
+            if url and url not in [x[1] for x in urls]:
+                urls.append((name, url))
+        return urls
 
     def __repr__(self):
         binaries = ",".join(self.binaries)

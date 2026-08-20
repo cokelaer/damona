@@ -27,7 +27,7 @@ from damona import Registry, version
 logger = colorlog.getLogger(__name__)
 
 
-__all__ = ["stats"]
+__all__ = ["stats", "check_mirrors"]
 
 
 def stats(biocontainers=False):
@@ -65,6 +65,91 @@ There is nothing we can do about that in Damona. Actual number is more around 10
         )
 
     return data
+
+
+def check_mirrors(mirror=None, timeout=10):
+    """Check that the declared mirrors serve what the registry says they do.
+
+    Maintainer helper. A mirror can be declared in two places: as a base URL in
+    ``damona/software/mirrors.yaml``, which applies to every release, or under
+    a ``mirrors:`` key inside a release entry, which applies to that release
+    only. Both are checked here.
+
+    For each release and mirror it issues a HEAD request and compares the
+    advertised ``Content-Length`` with the ``filesize`` recorded in the
+    registry, which catches a mirror that is missing, stale or serving an error
+    page, without transferring any image.
+
+    A release is only checked against a mirror it actually resolves to: a
+    per-release mirror is not looked for on releases that do not declare it.
+    A base-URL mirror does apply to every release, so a release that has not
+    been uploaded there yet is reported as ``missing``, which is the point.
+
+    :param str mirror: restrict the check to one named mirror.
+    :param float timeout: per-request timeout in seconds.
+    :returns: List of ``(software, mirror, url, status)`` tuples, where status
+        is ``"ok"``, ``"missing"``, ``"size-mismatch"`` or an error string.
+    :rtype: list
+    """
+    import requests
+
+    from damona.registry import CANONICAL_SOURCE, get_mirrors
+
+    registry = Registry(biocontainers=False)
+    bases = get_mirrors()
+
+    # names declared globally, plus those declared by individual releases
+    declared = set(bases)
+    for release in registry.registry.values():
+        declared |= set(getattr(release, "mirrors", {}) or {})
+    declared.discard(CANONICAL_SOURCE)
+
+    if mirror:
+        if mirror not in declared:
+            logger.error(f"Unknown mirror '{mirror}'. Declared mirrors: {', '.join(sorted(declared)) or 'none'}")
+            return []
+        declared = {mirror}
+
+    if not declared:
+        logger.warning("No mirror declared, either in damona/software/mirrors.yaml or in a release entry")
+        return []
+
+    results = []
+
+    for name, release in tqdm.tqdm(sorted(registry.registry.items())):
+        release_mirrors = getattr(release, "mirrors", {}) or {}
+        for mirror_name in sorted(declared):
+            # a per-release mirror only concerns the releases declaring it
+            if mirror_name not in bases and mirror_name not in release_mirrors:
+                continue
+
+            url = release.mirror_url(mirror_name, mirrors=bases)
+            if url is None:  # pragma: no cover - defensive
+                continue
+
+            try:
+                resp = requests.head(url, allow_redirects=True, timeout=timeout)
+            except requests.RequestException as err:  # pragma: no cover - network dependent
+                results.append((name, mirror_name, url, f"error: {err}"))
+                continue
+
+            if resp.status_code != 200:
+                results.append((name, mirror_name, url, "missing"))
+                continue
+
+            size = resp.headers.get("Content-Length")
+            if release.filesize and size and int(size) != int(release.filesize):
+                results.append((name, mirror_name, url, "size-mismatch"))
+                continue
+
+            results.append((name, mirror_name, url, "ok"))
+
+    broken = [x for x in results if x[3] != "ok"]
+    logger.info(f"{len(results) - len(broken)}/{len(results)} release/mirror pairs resolve")
+    for item in broken:
+        logger.warning(f"{item[0]} on '{item[1]}': {item[3]} ({item[2]})")
+
+    return results
 
 
 def get_software_names():
