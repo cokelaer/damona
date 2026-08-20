@@ -364,6 +364,31 @@ def test_uninstall_existing_binary(monkeypatch):
 
 
 # ---------------------------------------------------------------------------
+# uninstall: typo in the binary name gets a did-you-mean suggestion
+# ---------------------------------------------------------------------------
+
+
+def test_uninstall_typo_suggests_close_match(monkeypatch):
+    """A misspelled binary name suggests the installed ones that are close."""
+    from . import test_dir
+
+    NAME = _PREFIX + "uninstall_typo"
+    _setup(NAME)
+    manager = Damona()
+    monkeypatch.setenv("DAMONA_ENV", str(manager.damona_path / "envs" / NAME))
+    runner = CliRunner()
+    try:
+        runner.invoke(script.install, [f"{test_dir}/data/testing_1.0.0.img", "--binaries", "hello", "--force"])
+        results = runner.invoke(script.uninstall, ["hhello"])
+        assert results.exit_code == 0
+        assert "Did you mean: hello ?" in results.output
+        # the real binary is untouched
+        assert (manager.environments_path / NAME / "bin" / "hello").exists()
+    finally:
+        _teardown(NAME)
+
+
+# ---------------------------------------------------------------------------
 # check command  (script.py lines 1078-1143)
 # ---------------------------------------------------------------------------
 

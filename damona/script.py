@@ -20,6 +20,7 @@
 # If not, see <http://www.gnu.org/licenses/>.                             #
 ###########################################################################
 """.. rubric:: Standalone application dedicated to Damona"""
+import difflib
 import functools
 import os
 import pathlib
@@ -536,7 +537,11 @@ def uninstall(**kwargs):
             ir = ImageReader(p)
             ir.delete()
         else:
-            logger.warning(f"{name} was not found in the environment {env_name}. Not removed")
+            msg = f"{name} was not found in the environment {env_name}. Not removed"
+            candidates = difflib.get_close_matches(name, [x.name for x in env.get_installed_binaries()], n=3)
+            if candidates:
+                msg += ". Did you mean: " + ", ".join(candidates) + " ?"
+            logger.warning(msg)
 
     with open(env.path / "history.log", "a+") as fout:
         cmd = " ".join(["damona"] + sys.argv[1:])
