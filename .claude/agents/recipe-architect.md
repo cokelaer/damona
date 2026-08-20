@@ -60,6 +60,11 @@ Then make the pin self-checking:
 # Apptainer Global Standards
 - **Syntax:** Use `Bootstrap: docker` header by default for portability.
 - **Labeling:** Every `.def` MUST include `%labels` with `Author`, `Version`, `Description`.
+  A recipe written through this pipeline is co-authored by the agent, so `Author` lists the
+  maintainer and `Claude`, comma separated: `Author Thomas Cokelaer, Claude`. Keep the human
+  first. When editing an existing recipe that predates this rule, add `, Claude` only if the
+  image is being rebuilt — the label is baked into the `.img` at build time, so changing it
+  without a rebuild makes the recipe and the published image disagree.
 - **Optimization:** Never leave temp files or package-manager caches inside the container. Build sources under `/opt/src` and remove after install.
 - **NEVER `rm -rf /tmp/*` in `%post`:** apptainer binds the HOST /tmp into the build — this glob deletes the user's real files. Use `/opt/src` for build scratch; `%test` scratch via `mktemp -d`.
 - **PATH order:** when a conda/env bin dir is involved, PREPEND it to PATH (never append — system perl/python would shadow the env's). Start `%test` scripts with `set -e`.

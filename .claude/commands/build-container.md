@@ -22,8 +22,9 @@ Call `recipe-architect` once with the requirements AND instruct it to:
 1. Design the recipe (timeboxed research, see agent rules). Pin every input and assert the
    version in `%test` — "simple tool" is not a reason to skip it; the unpinned recipes that
    went wrong in the registry (fastp, gffread, mafft, bamqc) were all simple tools.
-2. Build it itself with `damona build` (it has Bash). Run the build FROM the recipe's directory (`damona/software/<name>/`) — `damona build` writes the `.img` to the cwd, and it belongs next to the recipe.
-3. Report `.img` path + build log tail + Goal State.
+2. Label the recipe with `Author <maintainer>, Claude` in `%labels` (see Step 1).
+3. Build it itself with `damona build` (it has Bash). Run the build FROM the recipe's directory (`damona/software/<name>/`) — `damona build` writes the `.img` to the cwd, and it belongs next to the recipe.
+4. Report `.img` path + build log tail + Goal State.
 
 Then go straight to Step 3 (QA). Skip build-engineer entirely.
 
@@ -36,6 +37,9 @@ Call the `recipe-architect` agent with the user requirements above.
   base-image tag) and assert the version in `%test`. See the agent's Version Pinning section.
   An unpinned recipe produces a container whose key stops being true on the next rebuild, and
   the deposit that goes to Zenodo is permanent.
+- `%labels` `Author` credits the maintainer and the agent, comma separated:
+  `Author Thomas Cokelaer, Claude`. This applies to every recipe produced through this
+  workflow, fast path included.
 - Output: recipe file path + Goal State.
 
 ## Step 2 — Build (build-engineer) [COMPLEX only]
