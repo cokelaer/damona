@@ -1,0 +1,89 @@
+Bootstrap: docker
+From: debian:bookworm-slim
+
+# dustmasker is not distributed on its own: it is one of the executables of the
+# NCBI BLAST+ suite. This recipe pulls the official prebuilt x86_64 tarball for
+# BLAST+ 2.17.0 and keeps ONLY bin/dustmasker (21 MB) out of the 282 MB archive.
+# The binary is dynamically linked against glibc (libgomp, libz, libbz2), so a
+# musl/alpine base cannot be used here.
+
+%labels
+    Author Thomas Cokelaer, Claude
+    Version 1.0.0
+    Description dustmasker - low-complexity region masker for DNA sequences (NCBI BLAST+ 2.17.0)
+
+%post
+    set -e
+
+    export DEBIAN_FRONTEND=noninteractive
+
+    # runtime libraries required by the prebuilt binary (see ldd):
+    #   libgomp1 (OpenMP), zlib1g, libbz2-1.0. bash is part of the base image
+    #   and is required downstream (damona/snakemake wrappers) -- never removed.
+    apt-get update
+    apt-get install -yq --no-install-recommends libgomp1 zlib1g libbz2-1.0
+
+    # fetch-only dependencies, purged at the end of this same %post
+    apt-get install -yq --no-install-recommends ca-certificates wget
+
+    mkdir -p /opt/src
+    cd /opt/src
+
+    # pinned, version-carrying URL (never the LATEST/ path)
+    wget -q https://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/2.17.0/ncbi-blast-2.17.0+-x64-linux.tar.gz
+
+    # upstream md5 (ncbi-blast-2.17.0+-x64-linux.tar.gz.md5)
+    echo "bdec166721de3b55f90a3badc83538e8  ncbi-blast-2.17.0+-x64-linux.tar.gz" | md5sum -c -
+
+    # extract the single executable we need, not the whole suite
+    tar -xzf ncbi-blast-2.17.0+-x64-linux.tar.gz --wildcards '*/bin/dustmasker'
+    echo "7afb509c5ef7768449fc1822e22b8881  ncbi-blast-2.17.0+/bin/dustmasker" | md5sum -c -
+    install -m 0755 ncbi-blast-2.17.0+/bin/dustmasker /usr/local/bin/dustmasker
+
+    # cleanup: tarball, build scratch, fetch-only deps and apt caches
+    cd /
+    rm -rf /opt/src
+    apt-get purge -yq ca-certificates wget
+    apt-get autoremove -yq --purge
+    apt-get clean
+    rm -rf /var/lib/apt/lists/*
+    # wget writes an HSTS cache under /root; it embeds a build timestamp
+    rm -f /root/.wget-hsts
+
+%environment
+    export LC_ALL=C
+
+%runscript
+    exec dustmasker "$@"
+
+%test
+    set -e
+
+    # dustmasker's own application version has been frozen at 1.0.0 for years;
+    # the meaningful pin is the BLAST+ package version on the second line.
+    dustmasker -version | grep -F "dustmasker: 1.0.0"
+    dustmasker -version | grep -F "blast 2.17.0"
+
+    # smoke test: a sequence with a long low-complexity run must be masked
+    TMPDIR=$(mktemp -d)
+    printf ">seq1\nACGTACGTGGATCCAGTCAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACGTAGCTAGCTAG\n" > "$TMPDIR/test.fa"
+    dustmasker -in "$TMPDIR/test.fa" -out "$TMPDIR/out.txt" -outfmt interval
+    test -s "$TMPDIR/out.txt"
+    grep -F ">seq1" "$TMPDIR/out.txt"
+    # the poly-A run must actually be reported as a masked interval
+    grep -E "^[0-9]+ - [0-9]+$" "$TMPDIR/out.txt"
+    rm -rf "$TMPDIR"
+
+%help
+    dustmasker (NCBI BLAST+ 2.17.0) -- identifies and masks low-complexity
+    regions of DNA sequences using the SDUST algorithm
+    (https://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/2.17.0/).
+
+    Note: 'dustmasker -version' prints 'dustmasker: 1.0.0' on its first line
+    (the application version, frozen upstream for years) and
+    'Package: blast 2.17.0' on the second. The damona version key is the
+    application version, 1.0.0; the binary comes from BLAST+ 2.17.0.
+
+    Usage:
+        singularity run dustmasker_1.0.0.img -in genome.fa -out masked.txt -outfmt fasta
+        singularity exec dustmasker_1.0.0.img dustmasker -help

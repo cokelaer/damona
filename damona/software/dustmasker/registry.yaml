@@ -1,10 +1,8 @@
 dustmasker:
-  doi: 10.5281/zenodo.5801359
-  zenodo_id: 5801360
+  binaries: dustmasker
   releases:
     1.0.0:
-      download: https://zenodo.org/record/5801365/files/kraken_2.0.9.img
-      md5sum: bc195a921148969c7f9482f9fe25b3cd
-      doi: 10.5281/zenodo.5801365
-      filesize: 723301918
-      binaries: dustmasker
+      download: https://zenodo.org/record/22035990/files/dustmasker_1.0.0.img
+      md5sum: 6576a3419eb75fd7f6fcea7ee9310761
+      doi: 10.5281/zenodo.22035990
+      filesize: 36876288
