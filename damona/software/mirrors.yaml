@@ -32,7 +32,13 @@
 # configuration: a mirror is catalogue metadata and belongs under version
 # control with the rest of the registry.
 
-# No public mirror is in service yet. Entries take the form:
+# Status: no production mirror is in service yet. Two releases (helloworld
+# 1.0.0, bwa 0.7.17) are mirrored from sequana/damona-containers through
+# per-release `mirrors:` keys, as a working demonstration while durable hosting
+# is arranged. A code-hosting service is not a candidate for the catalogue at
+# large: files are capped at 100 MB there, against a mean image size of 420 MB.
+#
+# Entries here take the form:
 #
 # pasteur: https://biomics.pasteur.fr/damona/images
 # ifb: https://mirror.ifb.fr/damona
