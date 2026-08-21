@@ -6,6 +6,14 @@ RESOURCES
 damona/software/tentative
 CLAUDE.md
 
+# Manuscript supporting analyses (crawls, benchmarks, rebuild campaign).
+# Ignored for now: the HTTP cache alone is ~850 MB. The code and the results
+# files here back published numbers, so before submission the code and the
+# small result files need to be tracked (or deposited separately with a DOI)
+# while the cache stays out -- see plan.md, tasks 4.10 / 4.13.
+analysis/
+analysis/provenance/cache/http.sqlite
+
 # Claude Code: agents and the build-container workflow are shared, the local
 # permission allowlist is per-machine
 .claude/settings.local.json
