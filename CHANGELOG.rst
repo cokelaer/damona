@@ -13,6 +13,11 @@ Unreleased
 
 **Bug fixes**
 
+- An unused image was never deleted as long as any other software was
+  installed: ``ImageReader.is_orphan`` asked whether *some* binary resolved to
+  *some* image, not whether any binary pointed at this one. ``damona images``
+  therefore left orphan images on disk with "still used". It now checks the
+  image's own name.
 - ``damona uninstall`` given an unknown binary name reported only that the
   name was not found in the environment, which reads like the binary was
   never installed. It now appends the closest installed names, so a typo is

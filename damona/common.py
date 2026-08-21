@@ -401,16 +401,9 @@ class ImageReader:
         :returns: ``True`` when no binary uses this image, ``False`` otherwise.
         :rtype: bool
         """
-        binaries = Damona().get_all_binaries()
-        linked_binaries = []
-        for binary in binaries:
-            if BinaryReader(binary).is_image_available():
-                linked_binaries.append(binary)
-
-        if len(linked_binaries) == 0:
-            return True
-        else:
-            return False
+        # the image name as encoded in the binary wrappers: NAME_X.Y.Z
+        name = self.shortname.replace(".img", "").replace(".sif", "")
+        return not Damona().is_image_used(name)
 
     def is_installed(self):
         """Return True is the file exists in the DAMONA_PATH"""

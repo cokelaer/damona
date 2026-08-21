@@ -293,3 +293,32 @@ def test_image_is_orphan_true(tmp_path, monkeypatch):
     monkeypatch.setattr(_common.Damona, "get_all_binaries", lambda self: [])
     ir = ImageReader("/tmp/notused_1.0.0.img")
     assert ir.is_orphan() is True
+
+
+def _make_wrapper(directory, name, image):
+    wrapper = directory / name
+    wrapper.write_text(
+        "#!/bin/sh\nsingularity -s exec ${DAMONA_SINGULARITY_OPTIONS} "
+        f'${{DAMONA_PATH}}/images/{image} {name} ${{1+"$@"}}\n'
+    )
+    return wrapper
+
+
+def test_image_is_orphan_ignores_other_images(tmp_path, monkeypatch):
+    """Binaries pointing at *other* images do not keep an image alive."""
+    import damona.common as _common
+
+    other = _make_wrapper(tmp_path, "fastqc", "fastqc_0.11.9.img")
+    monkeypatch.setattr(_common.Damona, "get_all_binaries", lambda self: {other})
+    ir = ImageReader("/tmp/helloworld_1.0.0.img")
+    assert ir.is_orphan() is True
+
+
+def test_image_is_orphan_false_when_used(tmp_path, monkeypatch):
+    """An image referenced by a binary is not an orphan."""
+    import damona.common as _common
+
+    used = _make_wrapper(tmp_path, "helloworld", "helloworld_1.0.0.img")
+    monkeypatch.setattr(_common.Damona, "get_all_binaries", lambda self: {used})
+    ir = ImageReader("/tmp/helloworld_1.0.0.img")
+    assert ir.is_orphan() is False
