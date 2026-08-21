@@ -1,8 +1,8 @@
 Changelog
 =========
 
-Unreleased
-----------
+Version 0.24.0 (August 2026)
+----------------------------
 
 **Containers**
 
