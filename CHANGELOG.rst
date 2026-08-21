@@ -4,8 +4,19 @@ Changelog
 Unreleased
 ----------
 
+**Containers**
+
+- Added recipe: dustmasker 1.0.0, a 35 MiB image extracted from the pinned
+  NCBI BLAST+ 2.17.0 tarball. The 1.0.0 entry previously resolved to
+  ``kraken_2.0.9.img``, a 690 MB kraken image that happens to ship the same
+  dustmasker; installing dustmasker no longer pulls kraken.
+
 **Bug fixes**
 
+- ``damona uninstall`` given an unknown binary name reported only that the
+  name was not found in the environment, which reads like the binary was
+  never installed. It now appends the closest installed names, so a typo is
+  obvious.
 - ``damona catalog`` showed ``?`` in the base-image column for 13 releases
   whose Singularity file is not where the registry key says it should be:
   a directory spelled differently (``umi-tools`` lives in ``software/umi_tools``),
