@@ -1,5 +1,5 @@
 salmon:
-  binaries: salmon
+  binaries: salmon,gffread
   doi: 10.5281/zenodo.5708842
   zenodo_id: 5708843
   releases:
@@ -8,3 +8,8 @@ salmon:
       md5sum: affaafe23fc5e8974ab52fc976617e51
       doi: 10.5281/zenodo.5708843
       filesize: 336496158
+    1.3.0-1:
+      download: https://zenodo.org/record/22118211/files/salmon_1.3.0-1.img
+      md5sum: c41e6ee601871ad13f20f0c3f7725caf
+      doi: 10.5281/zenodo.22118211
+      filesize: 78082048
