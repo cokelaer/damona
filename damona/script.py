@@ -687,7 +687,7 @@ def search(**kwargs):
                     size_str = f"{round(size / 1e9, 2)}G"
                 else:
                     size_str = f"{round(size / 1e6, 2)}M"
-            except Exception:
+            except (KeyError, TypeError, ValueError):
                 logger.warning(f"{mod}. could not extract filesize")
                 size_str = "-1"
 
@@ -737,7 +737,7 @@ def search(**kwargs):
                     size_str = f"{round(size / 1e9, 2)}G"
                 else:
                     size_str = f"{round(size / 1e6, 2)}M"
-            except Exception:
+            except (KeyError, TypeError, ValueError):
                 logger.warning(f"{mod}. could not extract filesize")
                 size_str = "-1"
 
@@ -748,7 +748,7 @@ def search(**kwargs):
                 fallback_recommended = mod
                 try:
                     fallback_url = registry.registry[mod]._data[name]["releases"][version]["download"]
-                except Exception:
+                except (KeyError, AttributeError, TypeError):
                     fallback_url = None
                 fallback_size = size_str
             else:
@@ -758,7 +758,7 @@ def search(**kwargs):
                         fallback_recommended = mod
                         try:
                             fallback_url = registry.registry[mod]._data[name]["releases"][version]["download"]
-                        except Exception:
+                        except (KeyError, AttributeError, TypeError):
                             fallback_url = None
                         fallback_size = size_str
                 except packaging.version.InvalidVersion:
@@ -782,7 +782,7 @@ def search(**kwargs):
                 console.print("\n[yellow]Did you mean:[/yellow]")
                 for suggestion in suggestions:
                     console.print(f"  - [bold]{suggestion}[/bold]")
-        except Exception:
+        except (KeyError, AttributeError):
             pass
 
     # If searched online and found nothing, offer local fallback
@@ -1166,14 +1166,14 @@ def catalog(**kwargs):
         versions = software_versions[sw_name]
         try:
             latest = str(max(versions, key=lambda v: _pv.parse(v)))
-        except Exception:
+        except (ValueError, packaging.version.InvalidVersion):
             latest = versions[-1]
 
         key = f"{sw_name}:{latest}"
         try:
             size = registry.registry[key]._data[sw_name]["releases"][latest]["filesize"]
             size_str = f"{round(size / 1e9, 2)}G" if size > 1e9 else f"{round(size / 1e6, 2)}M"
-        except Exception:
+        except (KeyError, AttributeError, TypeError):
             size = 0
             size_str = "?"
 
@@ -1370,7 +1370,7 @@ def check(**kwargs):
                 if _versionix_available:
                     try:
                         version_str = _Versionix(binary, container_runner=container_runner).get_version()
-                    except Exception:
+                    except (RuntimeError, OSError, ValueError):
                         version_str = probe_out.splitlines()[0][:60] if probe_out.strip() else ""
                 else:
                     version_str = probe_out.splitlines()[0][:60] if probe_out.strip() else ""

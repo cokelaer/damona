@@ -529,6 +529,8 @@ class Registry:
 
     """
 
+    _cache = {}  # Cache for loaded registries: key=(from_url, biocontainers) -> registry dict
+
     def __init__(self, from_url=None, biocontainers=None):
         """.. rubric:: **Constructor**
 
@@ -546,7 +548,14 @@ class Registry:
         self.from_biocontainers = biocontainers
         self.from_url = from_url
         self.registry = {}
-        self.discovery()
+
+        # Use cached registry if available
+        cache_key = (from_url, biocontainers)
+        if cache_key in self._cache:
+            self.registry = self._cache[cache_key]
+        else:
+            self.discovery()
+            self._cache[cache_key] = self.registry
 
     def find_candidate(self, pattern):
         """Find a unique recipe within the registry.
