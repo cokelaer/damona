@@ -41,11 +41,11 @@ def test_single_registry():
     # binaries is not provided and found from the registry name
     salmon_registry = [x for x in _registry_files if "salmon" in x][0]
     sr = Software(salmon_registry)
-    assert sr.releases["1.3.0"].binaries == ["salmon"]
+    assert sr.releases["1.3.0"].binaries == ["gffread", "salmon"]
 
     # Sofware can take as input a full path name, a dictionary, a name
     sr = Software("salmon")
-    assert sr.releases["1.3.0"].binaries == ["salmon"]
+    assert sr.releases["1.3.0"].binaries == ["gffread", "salmon"]
     sr.releases.last_release
 
     print(sr)

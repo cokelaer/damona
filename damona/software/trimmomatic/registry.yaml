@@ -6,3 +6,8 @@ trimmomatic:
       md5sum: 77308a3e92902986a5f86b395ddee5b0
       doi: 10.5281/zenodo.20346003
       filesize: 109678592
+    0.39.0:
+      download: https://zenodo.org/record/22145522/files/trimmomatic_0.39.0.img
+      md5sum: 2198f4822fc3aeef56e7f46bc7d54026
+      doi: 10.5281/zenodo.22145522
+      filesize: 109662208

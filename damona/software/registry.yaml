@@ -1836,6 +1836,11 @@ salmon:
       md5sum: c41e6ee601871ad13f20f0c3f7725caf
       doi: 10.5281/zenodo.22118211
       filesize: 78082048
+    1.2.0:
+      download: https://zenodo.org/record/22144681/files/salmon_1.2.0.img
+      md5sum: 77e658d4ca32040e7afe1aff49007ef7
+      doi: 10.5281/zenodo.22144681
+      filesize: 75821056
 
 # sambamba/registry.yaml
 sambamba:
@@ -2314,6 +2319,11 @@ trimmomatic:
       md5sum: 77308a3e92902986a5f86b395ddee5b0
       doi: 10.5281/zenodo.20346003
       filesize: 109678592
+    0.39.0:
+      download: https://zenodo.org/record/22145522/files/trimmomatic_0.39.0.img
+      md5sum: 2198f4822fc3aeef56e7f46bc7d54026
+      doi: 10.5281/zenodo.22145522
+      filesize: 109662208
 
 # trinity/registry.yaml
 trinity:

@@ -1,0 +1,47 @@
+Bootstrap: docker
+From: debian:bookworm-slim@sha256:88200866dfff7ea7f5cbcb6ec7c8a701889efe6fe859fe64d6990e4b07ea4171
+
+%labels
+    Author Thomas Cokelaer, Claude
+    Version 0.39.0
+    Description Trimmomatic: a flexible read trimming tool for Illumina NGS data
+
+%post
+    export DEBIAN_FRONTEND=noninteractive
+
+    apt-get update && apt-get install -y --no-install-recommends \
+        wget=1.21.3-1+deb12u1 \
+        ca-certificates=20250419~deb12u1 \
+        openjdk-17-jre-headless=17.0.20.1+1-1~deb12u1 \
+        unzip=6.0-28+deb12u1 \
+    && rm -rf /var/lib/apt/lists/*
+
+    # Directories
+    INSTALLDIR=/usr/local/lib/trimmomatic
+    BINDIR=/usr/local/bin
+    mkdir -p $INSTALLDIR
+
+    # Download Trimmomatic from GitHub releases
+    # version 0.39
+    wget -q https://github.com/usadellab/Trimmomatic/releases/download/v0.39/Trimmomatic-0.39.zip \
+        -O /tmp/trimmomatic.zip
+    unzip -o /tmp/trimmomatic.zip -d /tmp
+    cp /tmp/Trimmomatic-0.39/trimmomatic-0.39.jar $INSTALLDIR/trimmomatic.jar
+    cp -r /tmp/Trimmomatic-0.39/adapters $INSTALLDIR/
+
+    rm -rf /tmp/trimmomatic.zip /tmp/Trimmomatic-0.39
+
+    # Purge download-only tools
+    apt-get purge -y wget unzip libpsl5
+    apt-get clean
+
+    # Create wrapper script
+    echo '#!/bin/sh' > $BINDIR/trimmomatic
+    echo 'exec java -jar /usr/local/lib/trimmomatic/trimmomatic.jar "$@"' >> $BINDIR/trimmomatic
+    chmod +x $BINDIR/trimmomatic
+
+%runscript
+    exec trimmomatic "$@"
+
+%test
+    trimmomatic -version | grep -q "0.39"
