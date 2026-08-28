@@ -712,8 +712,9 @@ def search(**kwargs):
                 except packaging.version.InvalidVersion:
                     pass
 
-        console.print(f"\nPattern '[bold]{pattern}[/bold]' found in these releases:")
-        console.print(table)
+        if modules:
+            console.print(f"\nPattern '[bold]{pattern}[/bold]' found in these releases:")
+            console.print(table)
 
     if not kwargs["images_only"]:
         modules = registry.get_binaries(pattern=pattern, include_mislabelled=include_mislabelled)
@@ -769,8 +770,20 @@ def search(**kwargs):
             recommended_url = fallback_url
             recommended_size = fallback_size
 
-        console.print(f"\nPattern '[bold]{pattern}[/bold]' found as binaries:")
-        console.print(table)
+        if modules:
+            console.print(f"\nPattern '[bold]{pattern}[/bold]' found as binaries:")
+            console.print(table)
+
+    # If searching locally with no results, suggest similar names
+    if not searched_online and not recommended and pattern:
+        try:
+            suggestions = registry.suggest_similar(pattern)
+            if suggestions:
+                console.print("\n[yellow]Did you mean:[/yellow]")
+                for suggestion in suggestions:
+                    console.print(f"  - [bold]{suggestion}[/bold]")
+        except Exception:
+            pass
 
     # If searched online and found nothing, offer local fallback
     if searched_online and not recommended and not modules:
@@ -788,6 +801,12 @@ def search(**kwargs):
                 console.print(f"  [bold]Tip:[/bold] Run with [bold]--local-registry-only[/bold] to use local results")
         else:
             console.print("[red]Not found in local registry either.[/red]")
+            if pattern:
+                suggestions = local_registry.suggest_similar(pattern)
+                if suggestions:
+                    console.print("\n[yellow]Did you mean:[/yellow]")
+                    for suggestion in suggestions:
+                        console.print(f"  - [bold]{suggestion}[/bold]")
 
     if kwargs["include_biocontainers"]:
         console.print("\n[bold]Searching biocontainers:[/bold]")

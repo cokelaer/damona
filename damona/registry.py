@@ -691,3 +691,17 @@ class Registry:
             else:
                 recipes[name] = info.binaries
         return recipes
+
+    def suggest_similar(self, pattern, n=5, cutoff=0.6):
+        """Suggest similar software names using string similarity.
+
+        :param str pattern: The pattern to search for
+        :param int n: Maximum number of suggestions to return
+        :param float cutoff: Minimum similarity score (0-1)
+        :returns: List of similar software names (without versions)
+        :rtype: list
+        """
+        import difflib
+
+        software_names = sorted(set(name.split(":")[0] for name in self.registry.keys()))
+        return difflib.get_close_matches(pattern, software_names, n=n, cutoff=cutoff)
