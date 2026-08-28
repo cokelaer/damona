@@ -117,6 +117,20 @@ def common_logger(func):
     return wrapper
 
 
+def format_filesize(size_bytes):
+    """Format file size in bytes to human-readable string.
+
+    :param int size_bytes: Size in bytes
+    :returns: Formatted size string (e.g., "75.82M", "1.5G")
+    :rtype: str
+    """
+    if size_bytes is None:
+        return "-1"
+    if size_bytes > 1e9:
+        return f"{round(size_bytes / 1e9, 2)}G"
+    return f"{round(size_bytes / 1e6, 2)}M"
+
+
 @click.group(context_settings=CONTEXT_SETTINGS)
 @click.version_option(version=version)
 def main():
@@ -683,10 +697,7 @@ def search(**kwargs):
             dl_url = registry.registry[mod]._data[name]["releases"][version]["download"]
             try:
                 size = registry.registry[mod]._data[name]["releases"][version]["filesize"]
-                if size > 1e9:
-                    size_str = f"{round(size / 1e9, 2)}G"
-                else:
-                    size_str = f"{round(size / 1e6, 2)}M"
+                size_str = format_filesize(size)
             except (KeyError, TypeError, ValueError):
                 logger.warning(f"{mod}. could not extract filesize")
                 size_str = "-1"
@@ -733,10 +744,7 @@ def search(**kwargs):
             name, version = mod.split(":")
             try:
                 size = registry.registry[mod]._data[name]["releases"][version]["filesize"]
-                if size > 1e9:
-                    size_str = f"{round(size / 1e9, 2)}G"
-                else:
-                    size_str = f"{round(size / 1e6, 2)}M"
+                size_str = format_filesize(size)
             except (KeyError, TypeError, ValueError):
                 logger.warning(f"{mod}. could not extract filesize")
                 size_str = "-1"
@@ -1172,7 +1180,8 @@ def catalog(**kwargs):
         key = f"{sw_name}:{latest}"
         try:
             size = registry.registry[key]._data[sw_name]["releases"][latest]["filesize"]
-            size_str = f"{round(size / 1e9, 2)}G" if size > 1e9 else f"{round(size / 1e6, 2)}M"
+            size = size or 0  # Handle None values
+            size_str = format_filesize(size)
         except (KeyError, AttributeError, TypeError):
             size = 0
             size_str = "?"
