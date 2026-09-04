@@ -313,6 +313,22 @@ def test_export_no_flags():
         _teardown(NAME)
 
 
+def test_export_include_forwarding():
+    runner = CliRunner()
+    mocked_env = mock.Mock()
+
+    with mock.patch("damona.Environment", return_value=mocked_env):
+        results = runner.invoke(
+            script.export,
+            ["demo", "--yaml", "demo.yaml", "--include", "mash,bwa,samtools"],
+        )
+
+    assert results.exit_code == 0
+    mocked_env.create_yaml.assert_called_once_with(
+        output_name="demo.yaml", include=["mash", "bwa", "samtools"]
+    )
+
+
 # ---------------------------------------------------------------------------
 # uninstall: no active env and no --environment  (script.py lines 423-426)
 # ---------------------------------------------------------------------------

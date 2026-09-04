@@ -487,6 +487,85 @@ def test_create_yaml_default_name(tmp_path, monkeypatch):
     assert default_file.exists()
 
 
+def test_create_yaml_include_filters_binaries_and_images(tmp_path):
+    NAME = ".dummy_yaml_include"
+    env_manager = Environ()
+    manager = Damona()
+    env_manager.create(NAME)
+
+    try:
+        env_path = manager.environments_path / NAME
+        image1 = manager.images_directory / "alpha_1.0.0.img"
+        image2 = manager.images_directory / "shared_2.0.0.img"
+        image1.write_text("alpha image")
+        image2.write_text("shared image")
+
+        (env_path / "bin" / "alpha").write_text(
+            '#!/bin/sh\nsingularity -s exec ${DAMONA_SINGULARITY_OPTIONS} ${DAMONA_PATH}/images/alpha_1.0.0.img alpha ${1+"$@"}\n'
+        )
+        (env_path / "bin" / "beta").write_text(
+            '#!/bin/sh\nsingularity -s exec ${DAMONA_SINGULARITY_OPTIONS} ${DAMONA_PATH}/images/shared_2.0.0.img beta ${1+"$@"}\n'
+        )
+        (env_path / "bin" / "gamma").write_text(
+            '#!/bin/sh\nsingularity -s exec ${DAMONA_SINGULARITY_OPTIONS} ${DAMONA_PATH}/images/shared_2.0.0.img gamma ${1+"$@"}\n'
+        )
+
+        e = Environment(NAME)
+        yaml_file = str(tmp_path / "test_export_include.yaml")
+        e.create_yaml(output_name=yaml_file, include=["beta", "gamma"])
+
+        content = pathlib.Path(yaml_file).read_text()
+        assert "- shared_2.0.0.img" in content
+        assert "alpha_1.0.0.img" not in content
+        assert "- beta from shared:2.0.0" in content
+        assert "- gamma from shared:2.0.0" in content
+        assert "alpha from alpha:1.0.0" not in content
+    finally:
+        shutil.rmtree(manager.environments_path / NAME)
+        for image in ["alpha_1.0.0.img", "shared_2.0.0.img"]:
+            image_path = manager.images_directory / image
+            if image_path.exists():
+                image_path.unlink()
+
+
+def test_create_bundle_include_filters_binaries_and_images(tmp_path):
+    import tarfile
+
+    NAME = ".dummy_bundle_include"
+    env_manager = Environ()
+    manager = Damona()
+    env_manager.create(NAME)
+
+    try:
+        env_path = manager.environments_path / NAME
+        image1 = manager.images_directory / "alpha_bundle_1.0.0.img"
+        image2 = manager.images_directory / "beta_bundle_1.0.0.img"
+        image1.write_text("alpha image")
+        image2.write_text("beta image")
+
+        (env_path / "bin" / "alpha").write_text(
+            '#!/bin/sh\nsingularity -s exec ${DAMONA_SINGULARITY_OPTIONS} ${DAMONA_PATH}/images/alpha_bundle_1.0.0.img alpha ${1+"$@"}\n'
+        )
+        (env_path / "bin" / "beta").write_text(
+            '#!/bin/sh\nsingularity -s exec ${DAMONA_SINGULARITY_OPTIONS} ${DAMONA_PATH}/images/beta_bundle_1.0.0.img beta ${1+"$@"}\n'
+        )
+
+        e = Environment(NAME)
+        bundle_file = str(tmp_path / "test_export_include.tar")
+        e.create_bundle(output_name=bundle_file, include=["alpha"])
+
+        with tarfile.open(bundle_file, "r") as archive:
+            names = sorted(archive.getnames())
+
+        assert names == ["bin/alpha", "images/alpha_bundle_1.0.0.img"]
+    finally:
+        shutil.rmtree(manager.environments_path / NAME)
+        for image in ["alpha_bundle_1.0.0.img", "beta_bundle_1.0.0.img"]:
+            image_path = manager.images_directory / image
+            if image_path.exists():
+                image_path.unlink()
+
+
 def test_get_current_env_name_warning(monkeypatch):
     """Test get_current_env_name(warning=True) logs a warning and returns None."""
     monkeypatch.delenv("DAMONA_ENV", raising=False)

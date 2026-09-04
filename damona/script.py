@@ -898,6 +898,10 @@ def info(**kwargs):
 @click.argument("environment", required=True, type=click.STRING)
 @click.option("--yaml", help="Output YAML file path.")
 @click.option("--bundle", default=None, help="Output tar bundle file path.")
+@click.option(
+    "--include",
+    help="Only export the listed binaries (comma-separated).",
+)
 @common_logger
 def export(**kwargs):
     """Export an environment as a YAML file or a tar bundle.
@@ -920,27 +924,31 @@ def export(**kwargs):
 
     logger.debug(kwargs)
 
-    environment = kwargs["environment"]
     envname = kwargs["environment"]
-
-    # TODO This should be based on the binaries of the environment, not the images
-    # to do so, we'll need an installed.txt file
+    if kwargs["include"]:
+        include = [name.strip() for name in kwargs["include"].split(",") if name.strip()]
+        include = [name for name in dict.fromkeys(include)]
+    else:
+        include = None
 
     env = Environment(envname)
-    if kwargs["bundle"]:
-        bundle_file = kwargs["bundle"]
-        output = env.create_bundle(output_name=kwargs["bundle"])
-        logger.info(
-            f"Use this command to recreate the environment: \n\n\tdamona create NEW_NAME --from-bundle {bundle_file}"
-        )
-    elif kwargs["yaml"]:
-        yaml_file = kwargs["yaml"]
-        env.create_yaml(output_name=yaml_file)
-        logger.info(
-            f"Use this command to recreate the environment: \n\n\tdamona create NEW_NAME --from-yaml {yaml_file}"
-        )
-    else:
-        raise click.UsageError("Please specify --yaml or --bundle. See 'damona export --help'.")
+    try:
+        if kwargs["bundle"]:
+            bundle_file = kwargs["bundle"]
+            env.create_bundle(output_name=kwargs["bundle"], include=include)
+            logger.info(
+                f"Use this command to recreate the environment: \n\n\tdamona create NEW_NAME --from-bundle {bundle_file}"
+            )
+        elif kwargs["yaml"]:
+            yaml_file = kwargs["yaml"]
+            env.create_yaml(output_name=yaml_file, include=include)
+            logger.info(
+                f"Use this command to recreate the environment: \n\n\tdamona create NEW_NAME --from-yaml {yaml_file}"
+            )
+        else:
+            raise click.UsageError("Please specify --yaml or --bundle. See 'damona export --help'.")
+    except ValueError as err:
+        raise click.UsageError(str(err))
 
 
 # ============================================================  stats
