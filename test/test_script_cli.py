@@ -320,7 +320,7 @@ def test_export_include_forwarding():
     with mock.patch("damona.Environment", return_value=mocked_env):
         results = runner.invoke(
             script.export,
-            ["demo", "--yaml", "demo.yaml", "--include", "mash,bwa,samtools"],
+            ["demo", "--yaml", "demo.yaml", "--include", " mash , bwa, mash , samtools "],
         )
 
     assert results.exit_code == 0

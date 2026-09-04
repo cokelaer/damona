@@ -921,6 +921,7 @@ def export(**kwargs):
 
     """
     from damona import Environment
+    from damona.environ import UnknownBinariesError
 
     logger.debug(kwargs)
 
@@ -947,7 +948,7 @@ def export(**kwargs):
             )
         else:
             raise click.UsageError("Please specify --yaml or --bundle. See 'damona export --help'.")
-    except ValueError as err:
+    except UnknownBinariesError as err:
         raise click.UsageError(str(err))
 
 

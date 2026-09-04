@@ -36,6 +36,10 @@ logger = colorlog.getLogger(__name__)
 __all__ = ["Environ", "Environment"]
 
 
+class UnknownBinariesError(ValueError):
+    pass
+
+
 class Environment:
     """Class to handle a specific environment given its name
 
@@ -176,7 +180,7 @@ class Environment:
             binaries_by_name = {binary.name: binary for binary in binaries}
             missing = [name for name in include if name not in binaries_by_name]
             if missing:
-                raise ValueError(
+                raise UnknownBinariesError(
                     f"Unknown binaries for environment {self.name}: {', '.join(sorted(set(missing)))}"
                 )
             binaries = [binaries_by_name[name] for name in include]

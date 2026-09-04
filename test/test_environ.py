@@ -12,7 +12,7 @@ from click.testing import CliRunner
 
 import damona
 from damona import Damona, script
-from damona.environ import Environ, Environment, Images, YamlEnv
+from damona.environ import Environ, Environment, Images, UnknownBinariesError, YamlEnv
 
 from . import test_dir
 
@@ -564,6 +564,31 @@ def test_create_bundle_include_filters_binaries_and_images(tmp_path):
             image_path = manager.images_directory / image
             if image_path.exists():
                 image_path.unlink()
+
+
+def test_create_yaml_include_raises_on_unknown_binary(tmp_path):
+    NAME = ".dummy_yaml_include_missing"
+    env_manager = Environ()
+    manager = Damona()
+    env_manager.create(NAME)
+
+    try:
+        env_path = manager.environments_path / NAME
+        image = manager.images_directory / "known_1.0.0.img"
+        image.write_text("known image")
+        (env_path / "bin" / "known").write_text(
+            '#!/bin/sh\nsingularity -s exec ${DAMONA_SINGULARITY_OPTIONS} ${DAMONA_PATH}/images/known_1.0.0.img known ${1+"$@"}\n'
+        )
+
+        e = Environment(NAME)
+        yaml_file = str(tmp_path / "missing_export.yaml")
+        with pytest.raises(UnknownBinariesError, match="Unknown binaries"):
+            e.create_yaml(output_name=yaml_file, include=["missing"])
+    finally:
+        shutil.rmtree(manager.environments_path / NAME)
+        image_path = manager.images_directory / "known_1.0.0.img"
+        if image_path.exists():
+            image_path.unlink()
 
 
 def test_get_current_env_name_warning(monkeypatch):
