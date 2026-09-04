@@ -33,7 +33,7 @@ import colorlog
 logger = colorlog.getLogger(__name__)
 
 
-__all__ = ["Environ", "Environment"]
+__all__ = ["Environ", "Environment", "UnknownBinariesError"]
 
 
 class UnknownBinariesError(ValueError):

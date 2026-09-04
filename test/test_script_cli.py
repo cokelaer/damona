@@ -11,6 +11,7 @@ import pytest
 from click.testing import CliRunner
 
 from damona import Damona, Environ, script
+from damona.environ import UnknownBinariesError
 
 # ---------------------------------------------------------------------------
 # helpers
@@ -327,6 +328,18 @@ def test_export_include_forwarding():
     mocked_env.create_yaml.assert_called_once_with(
         output_name="demo.yaml", include=["mash", "bwa", "samtools"]
     )
+
+
+def test_export_include_unknown_binary():
+    runner = CliRunner()
+    mocked_env = mock.Mock()
+    mocked_env.create_yaml.side_effect = UnknownBinariesError("Unknown binaries for environment demo: missing")
+
+    with mock.patch("damona.Environment", return_value=mocked_env):
+        results = runner.invoke(script.export, ["demo", "--yaml", "demo.yaml", "--include", "missing"])
+
+    assert results.exit_code == 2
+    assert "Unknown binaries for environment demo: missing" in results.output
 
 
 # ---------------------------------------------------------------------------
