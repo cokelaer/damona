@@ -5,6 +5,7 @@ RESOURCES
 *.img
 damona/software/tentative
 CLAUDE.md
+.agent-cache.json
 
 # Manuscript supporting analyses (crawls, benchmarks, rebuild campaign).
 # Ignored for now: the HTTP cache alone is ~850 MB. The code and the results
