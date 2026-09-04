@@ -37,6 +37,8 @@ __all__ = ["Environ", "Environment", "UnknownBinariesError"]
 
 
 class UnknownBinariesError(ValueError):
+    """Raised when an export include list references binaries not in the environment."""
+
     pass
 
 
@@ -176,7 +178,8 @@ class Environment:
         binaries = [x.absolute() for x in self.get_installed_binaries()]
         binaries = sorted(binaries)
 
-        if include:
+        if include is not None:
+            include = [name for name in dict.fromkeys(include)]
             binaries_by_name = {binary.name: binary for binary in binaries}
             missing = [name for name in include if name not in binaries_by_name]
             if missing:
@@ -194,7 +197,10 @@ class Environment:
         return binaries, images
 
     def create_bundle(self, output_name=None, include=None):
-        """Create a bundle with all images and binaries used by the environment.
+        """Create a bundle with the environment images and binaries.
+
+        When *include* is provided, only the selected binaries and the images
+        they reference are added to the bundle.
 
         :param str output_name: if provided this will be the output filename
         :param list include: optional binary names to export

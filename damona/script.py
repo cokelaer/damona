@@ -900,7 +900,8 @@ def info(**kwargs):
 @click.option("--bundle", default=None, help="Output tar bundle file path.")
 @click.option(
     "--include",
-    help="Only export the listed binaries (comma-separated).",
+    multiple=True,
+    help="Only export the listed binaries. Repeat the option or use comma-separated values.",
 )
 @common_logger
 def export(**kwargs):
@@ -926,9 +927,15 @@ def export(**kwargs):
     logger.debug(kwargs)
 
     envname = kwargs["environment"]
-    if kwargs["include"]:
-        include = [name.strip() for name in kwargs["include"].split(",") if name.strip()]
-        include = [name for name in dict.fromkeys(include)]
+    raw_include = kwargs["include"]
+    if raw_include:
+        parts = []
+        for item in raw_include:
+            parts.extend([name.strip() for name in item.split(",")])
+        if parts and all(name == "" for name in parts):
+            include = []
+        else:
+            include = [name for name in dict.fromkeys(name for name in parts if name)]
     else:
         include = None
 

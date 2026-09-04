@@ -512,7 +512,7 @@ def test_create_yaml_include_filters_binaries_and_images(tmp_path):
 
         e = Environment(NAME)
         yaml_file = str(tmp_path / "test_export_include.yaml")
-        e.create_yaml(output_name=yaml_file, include=["beta", "gamma"])
+        e.create_yaml(output_name=yaml_file, include=["beta", "beta", "gamma"])
 
         content = pathlib.Path(yaml_file).read_text()
         assert "- shared_2.0.0.img" in content
@@ -520,6 +520,7 @@ def test_create_yaml_include_filters_binaries_and_images(tmp_path):
         assert "- beta from shared:2.0.0" in content
         assert "- gamma from shared:2.0.0" in content
         assert "alpha from alpha:1.0.0" not in content
+        assert content.count("- beta from shared:2.0.0") == 1
     finally:
         shutil.rmtree(manager.environments_path / NAME)
         for image in ["alpha_1.0.0.img", "shared_2.0.0.img"]:
@@ -552,7 +553,7 @@ def test_create_bundle_include_filters_binaries_and_images(tmp_path):
 
         e = Environment(NAME)
         bundle_file = str(tmp_path / "test_export_include.tar")
-        e.create_bundle(output_name=bundle_file, include=["alpha"])
+        e.create_bundle(output_name=bundle_file, include=["alpha", "alpha"])
 
         with tarfile.open(bundle_file, "r") as archive:
             names = sorted(archive.getnames())
@@ -587,6 +588,33 @@ def test_create_yaml_include_raises_on_unknown_binary(tmp_path):
     finally:
         shutil.rmtree(manager.environments_path / NAME)
         image_path = manager.images_directory / "known_1.0.0.img"
+        if image_path.exists():
+            image_path.unlink()
+
+
+def test_create_yaml_include_empty_exports_nothing(tmp_path):
+    NAME = ".dummy_yaml_include_empty"
+    env_manager = Environ()
+    manager = Damona()
+    env_manager.create(NAME)
+
+    try:
+        env_path = manager.environments_path / NAME
+        image = manager.images_directory / "empty_1.0.0.img"
+        image.write_text("empty image")
+        (env_path / "bin" / "empty").write_text(
+            '#!/bin/sh\nsingularity -s exec ${DAMONA_SINGULARITY_OPTIONS} ${DAMONA_PATH}/images/empty_1.0.0.img empty ${1+"$@"}\n'
+        )
+
+        e = Environment(NAME)
+        yaml_file = str(tmp_path / "empty_export.yaml")
+        e.create_yaml(output_name=yaml_file, include=[])
+
+        content = pathlib.Path(yaml_file).read_text()
+        assert content == f"name: {NAME}\n\nimages:\n\nbinaries:\n"
+    finally:
+        shutil.rmtree(manager.environments_path / NAME)
+        image_path = manager.images_directory / "empty_1.0.0.img"
         if image_path.exists():
             image_path.unlink()
 

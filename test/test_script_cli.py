@@ -321,7 +321,7 @@ def test_export_include_forwarding():
     with mock.patch("damona.Environment", return_value=mocked_env):
         results = runner.invoke(
             script.export,
-            ["demo", "--yaml", "demo.yaml", "--include", " mash , bwa, mash , samtools "],
+            ["demo", "--yaml", "demo.yaml", "--include", " mash , bwa", "--include", "mash , samtools "],
         )
 
     assert results.exit_code == 0
@@ -340,6 +340,17 @@ def test_export_include_unknown_binary():
 
     assert results.exit_code == 2
     assert "Unknown binaries for environment demo: missing" in results.output
+
+
+def test_export_include_empty_string():
+    runner = CliRunner()
+    mocked_env = mock.Mock()
+
+    with mock.patch("damona.Environment", return_value=mocked_env):
+        results = runner.invoke(script.export, ["demo", "--yaml", "demo.yaml", "--include", ""])
+
+    assert results.exit_code == 0
+    mocked_env.create_yaml.assert_called_once_with(output_name="demo.yaml", include=[])
 
 
 # ---------------------------------------------------------------------------
