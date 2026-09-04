@@ -33,7 +33,13 @@ import colorlog
 logger = colorlog.getLogger(__name__)
 
 
-__all__ = ["Environ", "Environment"]
+__all__ = ["Environ", "Environment", "UnknownBinariesError"]
+
+
+class UnknownBinariesError(ValueError):
+    """Raised when an export include list references binaries not in the environment."""
+
+    pass
 
 
 class Environment:
@@ -168,25 +174,42 @@ class Environment:
             images.add(image)
         return {"images": images, "binaries": binaries, "name": self.name}
 
-    def create_bundle(self, output_name=None):
-        """Create a bundle with all images and binaries used by the environment.
+    def _get_export_binaries_and_images(self, include=None):
+        binaries = [x.absolute() for x in self.get_installed_binaries()]
+        binaries = sorted(binaries)
+
+        if include is not None:
+            include = [name for name in dict.fromkeys(include)]
+            binaries_by_name = {binary.name: binary for binary in binaries}
+            missing = [name for name in include if name not in binaries_by_name]
+            if missing:
+                raise UnknownBinariesError(
+                    f"Unknown binaries for environment {self.name}: {', '.join(sorted(set(missing)))}"
+                )
+            binaries = [binaries_by_name[name] for name in include]
+
+        images = []
+        for binary in binaries:
+            image = pathlib.Path(BinaryReader(binary).image)
+            if image not in images:
+                images.append(image)
+
+        return binaries, images
+
+    def create_bundle(self, output_name=None, include=None):
+        """Create a bundle with the environment images and binaries.
+
+        When *include* is provided, only the selected binaries and the images
+        they reference are added to the bundle.
 
         :param str output_name: if provided this will be the output filename
+        :param list include: optional binary names to export
         :return: the name of the bundle. If output_name is None, set to damona_ENVNAME.tar
         """
         if output_name is None:
             output_name = f"damona_{self.name}.tar"
 
-        # for later maybe
-        exclude = []
-
-        # all binaries
-        binaries = self.get_installed_binaries()
-        binaries = [x.absolute() for x in binaries if x not in exclude]
-        binaries = sorted(binaries)
-
-        # all containers
-        images = [pathlib.Path(x) for x in self.get_images()]
+        binaries, images = self._get_export_binaries_and_images(include=include)
 
         archive = tarfile.open(output_name, "w")
         for filename in binaries:
@@ -200,7 +223,7 @@ class Environment:
         logger.info(f"Saved environment {self.name} into {output_name}")
         return output_name
 
-    def create_yaml(self, output_name=None):
+    def create_yaml(self, output_name=None, include=None):
         """Export the environment as a YAML file.
 
         The YAML file lists the images and binaries that make up this
@@ -209,12 +232,13 @@ class Environment:
 
         :param str output_name: Path of the output file.  Defaults to
             ``damona_<name>.yaml`` in the current working directory.
+        :param list include: optional binary names to export
         :returns: Nothing.  The file is written to disk.
         """
         if output_name is None:
             output_name = f"damona_{self.name}.yaml"
 
-        images = [pathlib.Path(x) for x in self.get_images()]
+        binaries, images = self._get_export_binaries_and_images(include=include)
 
         with open(output_name, "w") as fout:
             fout.write(f"name: {self.name}\n")
@@ -224,10 +248,6 @@ class Environment:
                 fout.write(f"- {image.name}\n")
 
             fout.write(f"\nbinaries:\n")
-
-            binaries = self.get_installed_binaries()
-            binaries = [x.absolute() for x in binaries]
-            binaries = sorted(binaries)
 
             for binary in binaries:
                 bininst = BinaryReader(binary)

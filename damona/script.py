@@ -898,6 +898,11 @@ def info(**kwargs):
 @click.argument("environment", required=True, type=click.STRING)
 @click.option("--yaml", help="Output YAML file path.")
 @click.option("--bundle", default=None, help="Output tar bundle file path.")
+@click.option(
+    "--include",
+    multiple=True,
+    help="Only export the listed binaries. Repeat the option or use comma-separated values.",
+)
 @common_logger
 def export(**kwargs):
     """Export an environment as a YAML file or a tar bundle.
@@ -917,30 +922,41 @@ def export(**kwargs):
 
     """
     from damona import Environment
+    from damona.environ import UnknownBinariesError
 
     logger.debug(kwargs)
 
-    environment = kwargs["environment"]
     envname = kwargs["environment"]
-
-    # TODO This should be based on the binaries of the environment, not the images
-    # to do so, we'll need an installed.txt file
+    raw_include = kwargs["include"]
+    if raw_include:
+        parts = []
+        for item in raw_include:
+            parts.extend([name.strip() for name in item.split(",")])
+        if parts and all(name == "" for name in parts):
+            include = []
+        else:
+            include = [name for name in dict.fromkeys(name for name in parts if name)]
+    else:
+        include = None
 
     env = Environment(envname)
-    if kwargs["bundle"]:
-        bundle_file = kwargs["bundle"]
-        output = env.create_bundle(output_name=kwargs["bundle"])
-        logger.info(
-            f"Use this command to recreate the environment: \n\n\tdamona create NEW_NAME --from-bundle {bundle_file}"
-        )
-    elif kwargs["yaml"]:
-        yaml_file = kwargs["yaml"]
-        env.create_yaml(output_name=yaml_file)
-        logger.info(
-            f"Use this command to recreate the environment: \n\n\tdamona create NEW_NAME --from-yaml {yaml_file}"
-        )
-    else:
-        raise click.UsageError("Please specify --yaml or --bundle. See 'damona export --help'.")
+    try:
+        if kwargs["bundle"]:
+            bundle_file = kwargs["bundle"]
+            env.create_bundle(output_name=kwargs["bundle"], include=include)
+            logger.info(
+                f"Use this command to recreate the environment: \n\n\tdamona create NEW_NAME --from-bundle {bundle_file}"
+            )
+        elif kwargs["yaml"]:
+            yaml_file = kwargs["yaml"]
+            env.create_yaml(output_name=yaml_file, include=include)
+            logger.info(
+                f"Use this command to recreate the environment: \n\n\tdamona create NEW_NAME --from-yaml {yaml_file}"
+            )
+        else:
+            raise click.UsageError("Please specify --yaml or --bundle. See 'damona export --help'.")
+    except UnknownBinariesError as err:
+        raise click.UsageError(str(err)) from None
 
 
 # ============================================================  stats
