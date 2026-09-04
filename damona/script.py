@@ -949,7 +949,7 @@ def export(**kwargs):
         else:
             raise click.UsageError("Please specify --yaml or --bundle. See 'damona export --help'.")
     except UnknownBinariesError as err:
-        raise click.UsageError(str(err))
+        raise click.UsageError(str(err)) from None
 
 
 # ============================================================  stats
