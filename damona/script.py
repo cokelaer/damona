@@ -617,6 +617,21 @@ def clean(**kwargs):
             logger.warning("Please use --do-remove to confirm that you want to remove the orphans")
 
 
+def _get_image_doi(filename):
+    """Extract DOI from image filename. E.g., fastqc_0.11.8.img -> look up in registry."""
+    try:
+        registry = Registry(from_url=None)
+        stem = pathlib.Path(filename).stem
+        parts = stem.rsplit("_", 1)
+        if len(parts) == 2:
+            name, version = parts
+            mod = f"{name}:{version}"
+            return registry.registry[mod]._data[name]["releases"][version].get("doi", "-")
+    except (KeyError, AttributeError):
+        pass
+    return "-"
+
+
 # =================================================================== search
 @main.command()
 @click.argument("pattern", required=True, type=click.STRING)
@@ -683,6 +698,7 @@ def search(**kwargs):
     recommended = None
     recommended_url = None
     recommended_size = None
+    recommended_doi = None
 
     include_mislabelled = kwargs["include_mislabelled"]
 
@@ -691,6 +707,7 @@ def search(**kwargs):
         table = Table(show_header=True, header_style="bold cyan", box=None, pad_edge=False)
         table.add_column("Release", style="bold", min_width=25)
         table.add_column("Size", justify="right", min_width=8)
+        table.add_column("DOI", min_width=20)
         table.add_column("URL")
         for mod in modules:
             name, version = mod.split(":")
@@ -702,8 +719,10 @@ def search(**kwargs):
                 logger.warning(f"{mod}. could not extract filesize")
                 size_str = "-1"
 
+            doi = registry.registry[mod]._data[name]["releases"][version].get("doi", "-")
+
             mislabelled = registry.registry[mod].mislabelled
-            table.add_row(f"{mod} (mislabelled)" if mislabelled else mod, size_str, dl_url)
+            table.add_row(f"{mod} (mislabelled)" if mislabelled else mod, size_str, doi, dl_url)
 
             # a mislabelled release must never be advertised as the one to use
             if mislabelled:
@@ -713,6 +732,7 @@ def search(**kwargs):
                 recommended = mod
                 recommended_url = dl_url
                 recommended_size = size_str
+                recommended_doi = doi
             else:
                 recommended_version = recommended.split(":")[1]
                 try:
@@ -720,6 +740,7 @@ def search(**kwargs):
                         recommended = mod
                         recommended_url = dl_url
                         recommended_size = size_str
+                        recommended_doi = doi
                 except packaging.version.InvalidVersion:
                     pass
 
@@ -733,11 +754,13 @@ def search(**kwargs):
         table.add_column("Release", style="bold", min_width=25)
         table.add_column("Binaries")
         table.add_column("Size", justify="right", min_width=8)
+        table.add_column("DOI", min_width=20)
 
         # Track best recommendation from binaries (if no dedicated container found)
         fallback_recommended = None
         fallback_url = None
         fallback_size = None
+        fallback_doi = None
 
         for mod in sorted(modules.keys()):
             v = modules[mod]
@@ -749,7 +772,8 @@ def search(**kwargs):
                 logger.warning(f"{mod}. could not extract filesize")
                 size_str = "-1"
 
-            table.add_row(mod, ", ".join(v), size_str)
+            doi = registry.registry[mod]._data[name]["releases"][version].get("doi", "-")
+            table.add_row(mod, ", ".join(v), size_str, doi)
 
             # Track latest container with this binary (for fallback recommendation)
             if not fallback_recommended:
@@ -759,6 +783,7 @@ def search(**kwargs):
                 except (KeyError, AttributeError, TypeError):
                     fallback_url = None
                 fallback_size = size_str
+                fallback_doi = doi
             else:
                 fallback_version = fallback_recommended.split(":")[1]
                 try:
@@ -769,6 +794,7 @@ def search(**kwargs):
                         except (KeyError, AttributeError, TypeError):
                             fallback_url = None
                         fallback_size = size_str
+                        fallback_doi = doi
                 except packaging.version.InvalidVersion:
                     pass
 
@@ -777,6 +803,7 @@ def search(**kwargs):
             recommended = fallback_recommended
             recommended_url = fallback_url
             recommended_size = fallback_size
+            recommended_doi = fallback_doi
 
         if modules:
             console.print(f"\nPattern '[bold]{pattern}[/bold]' found as binaries:")
@@ -835,6 +862,8 @@ def search(**kwargs):
         content = f"[bold green]damona install {recommended}[/bold green]"
         if recommended_size:
             content += f"  [dim]({recommended_size})[/dim]"
+        if recommended_doi:
+            content += f"\n[dim]DOI: {recommended_doi}[/dim]"
         if recommended_url:
             content += f"\n[dim italic]For your information, url is {recommended_url}[/dim italic]"
 
@@ -882,8 +911,11 @@ def info(**kwargs):
 
         img_table = Table(show_header=True, header_style="bold cyan", box=None, pad_edge=False)
         img_table.add_column("Images", style="dim", min_width=30)
+        img_table.add_column("DOI", min_width=20)
         for item in sorted(environ.get_images()):
-            img_table.add_row(pathlib.Path(item).name)
+            filename = pathlib.Path(item).name
+            doi = _get_image_doi(filename)
+            img_table.add_row(filename, doi)
         console.print(img_table)
 
         bin_table = Table(show_header=True, header_style="bold cyan", box=None, pad_edge=False)
