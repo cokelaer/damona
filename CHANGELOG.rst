@@ -1,6 +1,16 @@
 Changelog
 =========
 
+Version 0.24.1 (Sept 2026)
+--------------------------
+
+**NEW**
+
+- Added DOI columns to damona search and info commands so users can
+  cite container versions directly. Implementation complete with
+  all tests passing. (disable recaps in /config)
+
+
 Version 0.24.0 (August 2026)
 ----------------------------
 
