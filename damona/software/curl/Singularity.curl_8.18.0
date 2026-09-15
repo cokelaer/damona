@@ -1,0 +1,72 @@
+Bootstrap: docker
+From: debian:bookworm-slim@sha256:88200866dfff7ea7f5cbcb6ec7c8a701889efe6fe859fe64d6990e4b07ea4171
+
+%labels
+    Author Thomas Cokelaer, Claude
+    Version 8.18.0
+    Description curl: command line tool and library for transferring data with URLs
+
+%post
+    export DEBIAN_FRONTEND=noninteractive
+
+    # Runtime dependencies (installed first so they are marked manual and
+    # survive the autoremove below)
+    apt-get update && apt-get install -y --no-install-recommends \
+        ca-certificates=20250419~deb12u1 \
+        libssl3=3.0.20-1~deb12u2 \
+        zlib1g=1:1.2.13.dfsg-1 \
+        libpsl5=0.21.2-1
+
+    # Build-only dependencies
+    apt-get install -y --no-install-recommends \
+        build-essential=12.9 \
+        pkg-config=1.8.1-1 \
+        libssl-dev=3.0.20-1~deb12u2 \
+        zlib1g-dev=1:1.2.13.dfsg-1 \
+        libpsl-dev=0.21.2-1 \
+        wget=1.21.3-1+deb12u1 \
+    && rm -rf /var/lib/apt/lists/*
+
+    # Download and verify the pinned source tarball
+    VERSION=8.18.0
+    SHA256=e9274a5f8ab5271c0e0e6762d2fce194d5f98acc568e4ce816845b2dcc0cf88f
+    cd /tmp
+    wget -q https://curl.se/download/curl-${VERSION}.tar.gz -O curl-${VERSION}.tar.gz
+    echo "${SHA256}  curl-${VERSION}.tar.gz" | sha256sum -c -
+
+    tar xzf curl-${VERSION}.tar.gz
+    cd curl-${VERSION}
+
+    ./configure \
+        --prefix=/usr/local \
+        --with-openssl \
+        --with-zlib \
+        --with-ca-bundle=/etc/ssl/certs/ca-certificates.crt \
+        --enable-optimize \
+        --disable-static \
+        --disable-ldap \
+        --disable-manual
+    make -j"$(nproc)"
+    make install
+    ldconfig
+
+    # Clean up sources and build-only tooling
+    cd /
+    rm -rf /tmp/curl-${VERSION} /tmp/curl-${VERSION}.tar.gz
+    apt-get purge -y build-essential pkg-config libssl-dev zlib1g-dev libpsl-dev wget
+    apt-get autoremove -y
+    apt-get clean
+    rm -rf /var/lib/apt/lists/* /usr/local/share/man /usr/share/man /usr/share/doc
+
+%environment
+    export PATH=/usr/local/bin:$PATH
+    export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
+
+%runscript
+    exec curl "$@"
+
+%test
+    export PATH=/usr/local/bin:$PATH
+    export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
+    curl --version | head -1 | grep -q "curl 8.18.0"
+    curl-config --version | grep -q "8.18.0"

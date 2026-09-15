@@ -458,6 +458,16 @@ cufflinks:
       filesize: 33751040
 
 
+# curl/registry.yaml
+curl:
+  binaries: curl
+  releases:
+    8.18.0:
+      download: https://zenodo.org/record/22769317/files/curl_8.18.0.img
+      md5sum: 09d5e98563f681c49dd948139a113a0e
+      doi: 10.5281/zenodo.22769317
+      filesize: 31989760
+
 # cutadapt/registry.yaml
 cutadapt:
   doi: 10.5281/zenodo.18834061
