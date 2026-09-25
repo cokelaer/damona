@@ -1,6 +1,14 @@
 Changelog
 =========
 
+
+Version 0.24.r21 (Sept 2026)
+--------------------------
+
+**BUG FIX**
+
+- fix error when trying to install a software with --force
+
 Version 0.24.1 (Sept 2026)
 --------------------------
 
