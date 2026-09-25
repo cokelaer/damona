@@ -382,7 +382,12 @@ def install(**kwargs):
     env = Environ()
     cenv = env.get_current_env()
 
-    image_path = pathlib.Path(kwargs["image"]).absolute()
+    try:
+        image_path = pathlib.Path(kwargs["image"]).absolute()
+    except FileNotFoundError:
+        raise click.ClickException(
+            "Current working directory does not exist. " "Please change to a valid directory (e.g., 'cd ~') and retry."
+        )
 
     force_image = kwargs["force_image"]
     force_binaries = kwargs["force_binaries"]
