@@ -447,6 +447,17 @@ circlator:
       doi: 10.5281/zenodo.7821905
       filesize: 376016896
 
+# cnvnator/registry.yaml
+cnvnator:
+  binaries: cnvnator cnvnator2VCF.pl
+  releases:
+    0.4.1:
+      download: https://zenodo.org/record/23085000/files/cnvnator_0.4.1.img
+      md5sum: ab478c0f5046178a3f10027aad72b72c
+      doi: 10.5281/zenodo.23085000
+      filesize: 906104832
+      extra_binaries: yes
+
 # cufflinks/registry.yaml
 cufflinks:
   binaries: cufflinks cuffcompare cuffdiff cuffquant cuffnorm gtf_to_sam
@@ -761,6 +772,16 @@ gffread:
       md5sum: 3c30ec0229e378eaaed8aa8ac5d3c930
       doi: 10.5281/zenodo.8037039
       filesize: 124751872
+
+# gotree/registry.yaml
+gotree:
+  binaries: gotree
+  releases:
+    0.4.3:
+      download: https://zenodo.org/record/23055430/files/gotree_0.4.3.img
+      md5sum: a46ce3e9d622f469e9ab22c28e7d7d09
+      doi: 10.5281/zenodo.23055430
+      filesize: 46989312
 
 # graphviz/registry.yaml
 graphviz:

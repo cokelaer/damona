@@ -1,0 +1,9 @@
+cnvnator:
+  binaries: cnvnator cnvnator2VCF.pl
+  releases:
+    0.4.1:
+      download: https://zenodo.org/record/23085000/files/cnvnator_0.4.1.img
+      md5sum: ab478c0f5046178a3f10027aad72b72c
+      doi: 10.5281/zenodo.23085000
+      filesize: 906104832
+      extra_binaries: yes

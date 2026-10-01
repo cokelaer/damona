@@ -1,0 +1,43 @@
+Bootstrap: localimage
+From: ../../library/micromamba_2.5.0.img
+
+%labels
+    Author Thomas Cokelaer
+    package.name cnvnator
+    package.version 0.4.1
+    Description CNVnator - copy number variation detector from depth-of-coverage sequencing data
+
+%post
+    # Install build essentials and dependencies
+    apt-get update
+
+    export PATH=$PATH:/opt/conda/envs/main/bin/
+    export OPTS="-q -c conda-forge -c bioconda -n main -y"
+
+    micromamba install $OPTS cnvnator=0.4.1 samtools==1.10
+
+
+  micromamba clean --packages -y
+  micromamba clean --all -y
+
+
+%environment
+  export PATH=$PATH:/opt/conda/envs/main/bin/
+
+
+%test
+    set -e
+    # Test CNVnator binary exists
+    cnvnator
+
+    # Test CNVnator reports correct version (v0.4.1)
+    cnvnator 2>&1 | head -3 | grep -q "0.4.1"
+
+    # Test samtools is available and correct version
+    samtools --version 2>&1 | grep -q "samtools 1.10"
+
+    # Test htslib is available via bgzip
+    bgzip --version 2>&1 | grep -q "1.16"
+
+    # Test bash is available (required for Damona downstream)
+    test -f /bin/bash

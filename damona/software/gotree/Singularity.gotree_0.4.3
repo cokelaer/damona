@@ -1,0 +1,16 @@
+Bootstrap: docker
+From: evolbioinfo/gotree:v0.4.3
+
+%labels
+    Author Thomas Cokelaer, Claude
+    Version 0.4.3
+    Description Phylogenetic tree manipulation tool for analyzing and manipulating phylogenetic trees
+
+%post
+    # Ensure binary is accessible and bash is available for downstream
+    # The Docker image already contains gotree pre-built, just verify it's runnable
+    which gotree || (echo "gotree binary not found in PATH" && exit 1)
+
+%test
+    set -e
+    /usr/local/bin/gotree version | grep -q "v0.4.3" || (echo "Version mismatch" && exit 1)

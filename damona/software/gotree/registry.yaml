@@ -1,0 +1,8 @@
+gotree:
+  binaries: gotree
+  releases:
+    0.4.3:
+      download: https://zenodo.org/record/23055430/files/gotree_0.4.3.img
+      md5sum: a46ce3e9d622f469e9ab22c28e7d7d09
+      doi: 10.5281/zenodo.23055430
+      filesize: 46989312
