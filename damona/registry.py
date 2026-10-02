@@ -258,8 +258,10 @@ class Release:
         """
         if isinstance(binaries, list):
             return binaries
-        else:
+        if isinstance(binaries, str):
             return binaries.replace(",", " ").split()
+        # None or a YAML scalar such as a stray ``yes``/``true``: no binaries
+        return []
 
     @property
     def filename(self):
