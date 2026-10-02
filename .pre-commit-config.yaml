@@ -48,3 +48,11 @@ repos:
         stages: [pre-commit]
         require_serial: true
         files: damona/software/.+/registry\.yaml$
+      - id: check_global_registry
+        name: Check global registry loads (damona search)
+        entry: python -m pytest test/test_registry.py -q -k "test_global_registry_file or test_registry"
+        language: system
+        pass_filenames: false
+        stages: [pre-commit]
+        require_serial: true
+        files: damona/software/.+/?registry\.yaml$|damona/registry\.py$

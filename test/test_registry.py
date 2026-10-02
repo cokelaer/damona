@@ -229,3 +229,22 @@ def test_registry_from_url_alias():
     alias = list(config["urls"].keys())[0]
     r = Registry(from_url=alias)
     assert r.from_url == config["urls"][alias]
+
+
+def test_global_registry_file():
+    """The generated global registry (what ``damona search`` downloads) must load.
+
+    It is parsed like the remote one (single YAML file through RemoteRegistry)
+    and must hold exactly the same releases as the per-software registries.
+    """
+    from pathlib import Path
+
+    from damona.registry import RemoteRegistry
+    from damona.software import __path__ as software_path
+
+    global_file = Path(software_path[0]) / "registry.yaml"
+    remote = Registry.__new__(Registry)
+    remote.registry = {}
+    remote._populate(RemoteRegistry(global_file.resolve().as_uri()).data)
+
+    assert remote.registry.keys() == Registry().registry.keys()
