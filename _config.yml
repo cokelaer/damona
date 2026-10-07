@@ -1,0 +1,12 @@
+title: Damona
+description: Searchable registry of Singularity containers for bioinformatics
+theme: jekyll-theme-cayman
+show_downloads: false
+url: https://cokelaer.github.io
+baseurl: /damona
+
+navbar-links:
+  Registry: "/"
+  Docs: "https://damona.readthedocs.io"
+image: /assets/images/damona_logo.png
+logo: /assets/images/damona_logo.png

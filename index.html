@@ -1,0 +1,44 @@
+---
+layout: default
+title: Damona registry
+description: Searchable registry of Singularity containers for bioinformatics
+---
+
+<div class="registry">
+
+  <div class="intro">
+    <p><b>Damona</b> is a conda-style package and environment manager built on Apptainer/Singularity containers.
+      Install bioinformatics tools as isolated containers, keep several versions side by side, and run them like any command-line tool, with no root privileges.</p>
+    <pre><code>pip install damona
+damona create myenv
+damona activate myenv
+damona install fastqc:0.11.9</code></pre>
+  </div>
+
+  <h2>Registry statistics</h2>
+  <div class="tiles" id="tiles"></div>
+
+  <h2>Browse the registry</h2>
+  <input id="q" type="search" placeholder="Search tools or binaries… (e.g. bwa, samtools, fastqc)" autofocus aria-label="Search registry">
+  <div class="bar">
+    <span id="count"></span>
+    <label>Sort <select id="sort">
+      <option value="name">name</option>
+      <option value="versions">most versions</option>
+      <option value="size">largest</option>
+    </select></label>
+  </div>
+  <div class="grid" id="list"><div class="empty">Loading registry…</div></div>
+
+  <h2>Distributions</h2>
+  <div class="chart"><h4>Size per tool</h4><p>Number of tools by combined size of all their versions. Hover for the biggest tools in each bin.</p><div id="c-size"></div></div>
+  <div class="two">
+    <div class="chart"><h4>Versions per tool</h4><p>Number of tools having N versions.</p><div id="c-vers"></div></div>
+    <div class="chart"><h4>Image size distribution</h4><p>Number of images per size bin.</p><div id="c-dist"></div></div>
+  </div>
+
+  <h2>Registry health</h2>
+  <div id="health" class="health"></div>
+</div>
+<div id="tip"></div>
+<script type="module" src="{{ '/assets/js/registry.js' | relative_url }}"></script>
