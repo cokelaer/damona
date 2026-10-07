@@ -15,9 +15,8 @@ CLAUDE.md
 analysis/
 analysis/provenance/cache/http.sqlite
 
-# Claude Code: agents and the build-container workflow are shared, the local
-# permission allowlist is per-machine
-.claude/settings.local.json
+# Claude Code: local agents, commands and settings are per-machine
+.claude/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

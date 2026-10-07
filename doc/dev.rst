@@ -569,3 +569,37 @@ registry up-to-date automatically on every commit::
     pip install pre-commit
     pre-commit install
     git commit .
+
+Project website (``gh-pages`` branch)
+-------------------------------------
+
+The searchable registry web page, https://cokelaer.github.io/damona/, is **not**
+part of the code base on ``main``.  It lives in the orphan ``gh-pages`` branch
+(a Jekyll site using the Cayman theme, with no history shared with ``main``) and
+GitHub Pages serves it from the root of that branch.
+
+The page fetches ``damona/software/registry.yaml`` from the ``main`` branch at
+load time, so it updates by itself when the registry changes. You only need to
+touch ``gh-pages`` to change the layout, the charts or the text.
+
+.. warning:: Never delete or force-push ``gh-pages``.  The branch is protected
+   by a ruleset on GitHub (deletions and force pushes are blocked).  Do not merge
+   it into ``main``.
+
+To work on the site, use a separate worktree so that your ``main`` checkout is
+left untouched::
+
+    git fetch origin gh-pages
+    git worktree add ../damona-gh-pages gh-pages
+    cd ../damona-gh-pages
+    jekyll serve --livereload      # http://127.0.0.1:4000/damona/
+
+Then commit and push the branch.  The ``pre-commit`` hook has no configuration on
+this branch, so set ``PRE_COMMIT_ALLOW_NO_CONFIG=1`` when committing::
+
+    PRE_COMMIT_ALLOW_NO_CONFIG=1 git commit -am "Update website"
+    git push origin gh-pages
+
+The site is rebuilt by GitHub Pages within a couple of minutes.  Its
+``_config.yml`` sets ``baseurl: /damona`` because the page is served as a project
+page of the ``cokelaer`` account.
