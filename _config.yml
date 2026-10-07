@@ -6,7 +6,7 @@ url: https://cokelaer.github.io
 baseurl: /damona
 
 navbar-links:
-  Registry: "/"
   Docs: "https://damona.readthedocs.io"
+  Home page: "https://cokelaer.github.io"
 image: /assets/images/damona_logo.png
 logo: /assets/images/damona_logo.png
