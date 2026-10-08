@@ -1,0 +1,61 @@
+Bootstrap: docker
+From: eclipse-temurin:11-jdk-jammy@sha256:0ab919c546b23b2da000376778ce947596d1f92d18a32fd69342743bd0e1e431
+
+%labels
+    Author Thomas Cokelaer
+    Version 3.12.1
+    Description RTG Tools for variant comparison and sequence data processing
+    Source https://github.com/RealTimeGenomics/rtg-tools
+    License BSD-2-Clause
+
+%help
+    RTG Tools 3.12.1, built from the upstream source distribution.
+
+    Run "rtg help" for available commands.
+
+%post
+    set -e
+    export DEBIAN_FRONTEND=noninteractive
+
+    apt-get update
+    apt-get install -y --no-install-recommends \
+        ant=1.10.12-1 \
+        ca-certificates=20260601~22.04.1 \
+        fontconfig=2.13.1-4.2ubuntu5 \
+        fonts-dejavu-core=2.37-2build1 \
+        zlib1g=1:1.2.11.dfsg-2ubuntu9.2
+
+    SOURCE_SHA256=6ee0ffe1bba7b5497aa09b147a7525b77b1808e6a71368aad440cbd64658085c
+    curl -fsSL https://codeload.github.com/RealTimeGenomics/rtg-tools/tar.gz/refs/tags/3.12.1 \
+        -o /tmp/rtg-tools-3.12.1.tar.gz
+    echo "${SOURCE_SHA256}  /tmp/rtg-tools-3.12.1.tar.gz" | sha256sum -c -
+    tar -xzf /tmp/rtg-tools-3.12.1.tar.gz -C /tmp
+
+    cd /tmp/rtg-tools-3.12.1
+    ant -Drelease.build=true -Drtg.vcs.commit.revision=3.12.1 zip-nojre
+
+    mkdir -p /opt/rtg-tools
+    cd /opt/rtg-tools
+    jar xf /tmp/rtg-tools-3.12.1/dist/rtg-tools-3.12.1-nojre.zip
+    chmod 0755 /opt/rtg-tools/rtg-tools-3.12.1/rtg
+    ln -s /opt/rtg-tools/rtg-tools-3.12.1/rtg /usr/local/bin/rtg
+    printf 'RTG_TALKBACK=false\nRTG_USAGE=\n' \
+        > /opt/rtg-tools/rtg-tools-3.12.1/rtg.cfg
+
+    rm -rf /tmp/rtg-tools-3.12.1 /tmp/rtg-tools-3.12.1.tar.gz
+    apt-get purge -y ant
+    apt-get clean
+    rm -rf /var/lib/apt/lists/*
+
+%environment
+    export PATH=/usr/local/bin:$PATH
+    export LANG=C.UTF-8
+    export LC_ALL=C.UTF-8
+
+%runscript
+    exec rtg "$@"
+
+%test
+    set -e
+    rtg version 2>&1 | grep -F "Product: RTG Tools 3.12.1"
+    rtg vcfeval --help 2>&1 | grep -F "Usage"

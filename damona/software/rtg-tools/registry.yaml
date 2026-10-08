@@ -1,0 +1,6 @@
+rtg-tools:
+  binaries: rtg
+  releases:
+    3.12.1:
+      # Use the matching Biocontainers image until the source-built image is published.
+      download: docker://quay.io/biocontainers/rtg-tools:3.12.1--hdfd78af_0

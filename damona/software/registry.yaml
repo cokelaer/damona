@@ -1870,6 +1870,14 @@ rseqc:
       doi: 10.5281/zenodo.14944679
       filesize: 425709568
 
+# rtg-tools/registry.yaml
+rtg-tools:
+  binaries: rtg
+  releases:
+    3.12.1:
+      # Use the matching Biocontainers image until the source-built image is published.
+      download: docker://quay.io/biocontainers/rtg-tools:3.12.1--hdfd78af_0
+
 # rtools/registry.yaml
 rtools:
   binaries: R Rscript
