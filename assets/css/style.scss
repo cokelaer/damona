@@ -39,9 +39,13 @@
   background: var(--surface); color: var(--text); cursor: pointer; }
 .v:hover { border-color: var(--accent); color: var(--accent); }
 .v.bad { color: var(--warn); border-style: dashed; }
-.cmd { margin-top: 10px; font: 12px ui-monospace, monospace; background: var(--accent-soft); color: var(--text);
-  padding: 6px 8px; border-radius: 6px; display: none; cursor: pointer; overflow-wrap: anywhere; }
+.cmd { margin-top: 10px; display: none; }
 .cmd.on { display: block; }
+.cmd .cp { font: 12px ui-monospace, monospace; background: var(--accent-soft); color: var(--text);
+  padding: 6px 8px; border-radius: 6px; cursor: pointer; overflow-wrap: anywhere; }
+.cmd .cp:hover { color: var(--accent); }
+.cmd .cp.copied::after { content: "  copied"; color: var(--accent); font-style: italic; }
+.cmd .lbl { margin: 8px 0 4px; color: var(--muted); font-size: 11px; font-weight: 600; }
 .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
 .tile { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; }
 .tile b { display: block; font-size: 30px; letter-spacing: -0.02em; line-height: 1.1; }

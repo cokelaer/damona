@@ -61,17 +61,20 @@ function render() {
 }
 
 $("#list").addEventListener("click", (e) => {
-  const h = e.target.closest(".toggle"), v = e.target.closest(".v"), c = e.target.closest(".cmd");
+  const h = e.target.closest(".toggle"), v = e.target.closest(".v"), c = e.target.closest(".cp");
   if (h) {
     const card = h.closest(".tool"), det = card.querySelector(".det");
     if (!det.innerHTML) det.innerHTML = details(tools.find((t) => t.name === card.dataset.name));
     card.classList.toggle("open");
     return;
   }
-  if (c) { navigator.clipboard?.writeText(c.textContent); c.dataset.old = c.textContent; c.textContent = "copied"; setTimeout(() => (c.textContent = c.dataset.old), 800); return; }
+  if (c) { navigator.clipboard?.writeText(c.dataset.copy); c.classList.add("copied"); setTimeout(() => c.classList.remove("copied"), 800); return; }
   if (!v) return;
   const card = v.closest(".tool"), cmd = card.querySelector(".cmd");
-  cmd.textContent = `damona install ${card.dataset.name}:${v.dataset.v}`;
+  const r = tools.find((t) => t.name === card.dataset.name).rel.find((x) => x.ver === v.dataset.v);
+  const line = (txt) => `<div class="cp" data-copy="${esc(txt)}" title="Click to copy">${esc(txt)}</div>`;
+  cmd.innerHTML = line(`damona install ${card.dataset.name}:${v.dataset.v}`) +
+    (r.url ? `<div class="lbl">Use in your pipeline</div>` + line(r.url) : "");
   cmd.classList.add("on");
 });
 $("#list").addEventListener("click", (e) => { if (e.target.id === "more") { limit = Infinity; render(); } });
