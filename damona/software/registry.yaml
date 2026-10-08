@@ -2368,7 +2368,7 @@ trandecoder:
 
 # trf/registry.yaml
 trf:
-  doi: 10.5281/zenodo.4675773
+  doi: 10.5281/zenodo.5675772
   zenodo_id: 5675773
   binaries: trf
   releases:
