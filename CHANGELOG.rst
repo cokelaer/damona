@@ -8,6 +8,7 @@ Version 0.24.r21 (Sept 2026)
 **Containers**
 
 - Added a source-build recipe for KMCP 0.9.4.
+- Added a source-build recipe and catalog entry for RTG Tools 3.12.1.
 
 **BUG FIX**
 
