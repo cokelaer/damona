@@ -1,6 +1,7 @@
 circlator:
   doi: 10.5281/zenodo.7821904
   zenodo_id: 7821905
+  binaries: circlator
   releases:
     1.5.5:
       download: https://zenodo.org/record/7821905/files/circlator_1.5.5.img

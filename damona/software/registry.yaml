@@ -345,6 +345,7 @@ busco:
 bwa:
   doi: 10.5281/zenodo.7736676
   zenodo_id: 7736677
+  binaries: bwa
   releases:
     0.7.17:
       download: https://zenodo.org/record/7970243/files/bwa_0.7.17.img
@@ -440,6 +441,7 @@ chromap:
 circlator:
   doi: 10.5281/zenodo.7821904
   zenodo_id: 7821905
+  binaries: circlator
   releases:
     1.5.5:
       download: https://zenodo.org/record/7821905/files/circlator_1.5.5.img
@@ -672,6 +674,7 @@ fastp:
 fastqc:
   doi: 10.5281/zenodo.5708809
   zenodo_id: 5708810
+  binaries: fastqc
   releases:
     0.11.8:
       download: https://zenodo.org/record/5708810/files/fastqc_0.11.8.img
@@ -873,6 +876,7 @@ hicexplorer:
 hifiasm:
   doi: 10.5281/zenodo.7737423
   zenodo_id: 7737424
+  binaries: hifiasm
   releases:
     0.19.1:
       download: https://zenodo.org/record/7737424/files/hifiasm_0.19.1.img
@@ -1157,6 +1161,7 @@ liftoff:
 lima:
   doi: 10.5281/zenodo.13902163
   zenodo_id: 13902164
+  binaries: lima lima-undo
   releases:
     2.9.0:
       download: https://zenodo.org/record/13902164/files/lima_2.9.0.img
@@ -1233,6 +1238,7 @@ mash:
 mauve:
   doi: 10.5281/zenodo.14193974
   zenodo_id: 14193975
+  binaries: Mauve
   releases:
     2.4.0:
       download: https://zenodo.org/record/14194586/files/mauve_2.4.0.img
