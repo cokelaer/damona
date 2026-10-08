@@ -22,10 +22,12 @@ From: debian:bookworm-slim
   set -e
   export DEBIAN_FRONTEND=noninteractive
   apt-get update
-  # runtime JRE first (stays), then build-only packages (purged below)
-  apt-get install -y --no-install-recommends openjdk-17-jre-headless=17.0.20.1+1-1~deb12u1
+  # runtime packages first (stay): JRE + openjfx. jloda.util.ProgramProperties touches javafx.scene.text.Font,
+  # so the JavaFX jars AND natives are needed at runtime even headless. Then build-only packages (purged).
+  apt-get install -y --no-install-recommends openjdk-17-jre-headless=17.0.20.1+1-1~deb12u1 \
+      openjfx=11.0.11+1-3
   apt-get install -y --no-install-recommends openjdk-17-jdk-headless=17.0.20.1+1-1~deb12u1 \
-      openjfx=11.0.11+1-3 git ca-certificates
+      git ca-certificates
 
   mkdir -p /opt/src && cd /opt/src
   # tag v0.5.2 = 6f200c7ee78fb8553157819abcdf5caf22b59b3a
@@ -54,17 +56,19 @@ From: debian:bookworm-slim
     n=${t%%:*}; c=${t##*:}
     cat > /usr/local/bin/malt-$n <<WRAP
 #!/bin/bash
-# JVM flags here (not JAVA_TOOL_OPTIONS) to avoid stderr noise; works with read-only/absent HOME.
-exec java -Djava.util.prefs.userRoot=/tmp -Djava.util.prefs.systemRoot=/tmp -Duser.home=/tmp \\
-     -Djava.awt.headless=true \${MALT_JAVA_OPTS:-} -cp "/opt/malt/malt.jar:/opt/malt/lib/*" malt.$c "\$@"
+# JVM flags here (not JAVA_TOOL_OPTIONS) to avoid stderr noise; prism.order=sw avoids libGL/MESA errors; works with read-only/absent HOME.
+export XDG_CACHE_HOME=\${XDG_CACHE_HOME:-/tmp}   # fontconfig cache (read-only HOME safe)
+exec java -Dprism.order=sw -Djava.util.prefs.userRoot=/tmp -Djava.util.prefs.systemRoot=/tmp -Duser.home=/tmp \\
+     -Djava.awt.headless=true \${MALT_JAVA_OPTS:-} -cp "/opt/malt/malt.jar:/opt/malt/lib/*:/usr/share/openjfx/lib/*" malt.$c "\$@"
 WRAP
     chmod 755 /usr/local/bin/malt-$n
   done
 
-  apt-get purge -y openjdk-17-jdk-headless openjfx git ca-certificates
+  apt-get purge -y openjdk-17-jdk-headless git ca-certificates
   apt-get autoremove -y --purge
-  # purge/autoremove can drop the JRE (java alternative); make sure it is back
+  # purge/autoremove can drop the JRE (java alternative); make sure it is back (and openjfx)
   apt-get install -y --no-install-recommends openjdk-17-jre-headless=17.0.20.1+1-1~deb12u1
+  apt-get install -y --no-install-recommends openjfx=11.0.11+1-3
   command -v java
   apt-get clean
   rm -rf /var/lib/apt/lists/* /opt/src /root/.java
@@ -75,5 +79,5 @@ WRAP
 %test
   set -e
   test -x /bin/bash
-  malt-run --help 2>&1 | head -12; malt-run --help 2>&1 | grep -q "version 0\.5\.2"
-  malt-build --help 2>&1 | grep -q "version 0\.5\.2"
+  timeout 120 malt-run --help 2>&1 | grep -q "version 0\.5\.2"
+  timeout 120 malt-build --help 2>&1 | grep -q "version 0\.5\.2"
