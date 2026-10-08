@@ -1525,6 +1525,7 @@ pbmm2:
 pbsim:
   doi: 10.5281/zenodo.10610347
   zenodo_id: 10610348
+  binaries: pbsim
   releases:
     3.0.1:
       download: https://zenodo.org/record/10610348/files/pbsim_3.0.1.img
@@ -1626,7 +1627,7 @@ polypolish:
 pplacer:
   doi: 10.5281/zenodo.10048992
   zenodo_id: 10048993
-  binaires: pplacer
+  binaries: pplacer
   releases:
     1.1.0:
       download: https://zenodo.org/record/10048993/files/pplacer_1.1.0.img
