@@ -1161,7 +1161,7 @@ liftoff:
 lima:
   doi: 10.5281/zenodo.13902163
   zenodo_id: 13902164
-  binaries: lima lima-undo
+  binaries: lima
   releases:
     2.9.0:
       download: https://zenodo.org/record/13902164/files/lima_2.9.0.img
@@ -1296,6 +1296,7 @@ merqury:
 miniasm:
   doi: 10.5281/zenodo.13550866
   zenodo_id: 13550867
+  binaries: miniasm
   releases:
     0.3.0:
       download: https://zenodo.org/record/13550867/files/miniasm_0.3.0.img
@@ -1349,6 +1350,7 @@ mmseqs2:
 mosdepth:
   doi: 10.5281/zenodo.12805459
   zenodo_id: 12805460
+  binaries: mosdepth
   releases:
     0.3.8:
       download: https://zenodo.org/record/12805460/files/mosdepth_0.3.8.img
@@ -1360,6 +1362,7 @@ mosdepth:
 multiqc:
   doi: 10.5281/zenodo.10205069
   zenodo_id: 10205070
+  binaries: multiqc
   releases:
     1.16.0:
       download: https://zenodo.org/record/10205070/files/multiqc_1.16.0.img
@@ -1981,6 +1984,7 @@ seaview:
 seqkit:
   doi: 10.5281/zenodo.6313000
   zenodo_id: 6313001
+  binaries: seqkit
   releases:
     2.1.0:
       download: https://zenodo.org/record/6313001/files/seqkit_2.1.0.img
@@ -2117,6 +2121,7 @@ sequana_minimal:
 sequana_ribofinder:
   doi: 10.5281/zenodo.7348114
   zenodo_id: 7348115
+  binaries: sequana_ribofinder
   releases:
     0.12.0:
       download: https://zenodo.org/record/7348115/files/sequana_ribofinder_0.12.0.img
@@ -2365,6 +2370,7 @@ trandecoder:
 trf:
   doi: 10.5281/zenodo.4675773
   zenodo_id: 5675773
+  binaries: trf
   releases:
     4.10.0:
       download: https://zenodo.org/record/5675773/files/trf_4.10.0.img

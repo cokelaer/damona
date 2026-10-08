@@ -1,6 +1,7 @@
 trf:
   doi: 10.5281/zenodo.4675773
   zenodo_id: 5675773
+  binaries: trf
   releases:
     4.10.0:
       download: https://zenodo.org/record/5675773/files/trf_4.10.0.img

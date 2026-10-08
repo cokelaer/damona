@@ -1,6 +1,7 @@
 miniasm:
   doi: 10.5281/zenodo.13550866
   zenodo_id: 13550867
+  binaries: miniasm
   releases:
     0.3.0:
       download: https://zenodo.org/record/13550867/files/miniasm_0.3.0.img

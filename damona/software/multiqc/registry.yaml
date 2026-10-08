@@ -1,6 +1,7 @@
 multiqc:
   doi: 10.5281/zenodo.10205069
   zenodo_id: 10205070
+  binaries: multiqc
   releases:
     1.16.0:
       download: https://zenodo.org/record/10205070/files/multiqc_1.16.0.img
