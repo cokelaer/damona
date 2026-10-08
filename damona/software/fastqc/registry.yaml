@@ -1,6 +1,7 @@
 fastqc:
   doi: 10.5281/zenodo.5708809
   zenodo_id: 5708810
+  binaries: fastqc
   releases:
     0.11.8:
       download: https://zenodo.org/record/5708810/files/fastqc_0.11.8.img

@@ -345,6 +345,7 @@ busco:
 bwa:
   doi: 10.5281/zenodo.7736676
   zenodo_id: 7736677
+  binaries: bwa
   releases:
     0.7.17:
       download: https://zenodo.org/record/7970243/files/bwa_0.7.17.img
@@ -440,6 +441,7 @@ chromap:
 circlator:
   doi: 10.5281/zenodo.7821904
   zenodo_id: 7821905
+  binaries: circlator
   releases:
     1.5.5:
       download: https://zenodo.org/record/7821905/files/circlator_1.5.5.img
@@ -672,6 +674,7 @@ fastp:
 fastqc:
   doi: 10.5281/zenodo.5708809
   zenodo_id: 5708810
+  binaries: fastqc
   releases:
     0.11.8:
       download: https://zenodo.org/record/5708810/files/fastqc_0.11.8.img
@@ -873,6 +876,7 @@ hicexplorer:
 hifiasm:
   doi: 10.5281/zenodo.7737423
   zenodo_id: 7737424
+  binaries: hifiasm
   releases:
     0.19.1:
       download: https://zenodo.org/record/7737424/files/hifiasm_0.19.1.img
@@ -1157,6 +1161,7 @@ liftoff:
 lima:
   doi: 10.5281/zenodo.13902163
   zenodo_id: 13902164
+  binaries: lima
   releases:
     2.9.0:
       download: https://zenodo.org/record/13902164/files/lima_2.9.0.img
@@ -1233,6 +1238,7 @@ mash:
 mauve:
   doi: 10.5281/zenodo.14193974
   zenodo_id: 14193975
+  binaries: Mauve
   releases:
     2.4.0:
       download: https://zenodo.org/record/14194586/files/mauve_2.4.0.img
@@ -1290,6 +1296,7 @@ merqury:
 miniasm:
   doi: 10.5281/zenodo.13550866
   zenodo_id: 13550867
+  binaries: miniasm
   releases:
     0.3.0:
       download: https://zenodo.org/record/13550867/files/miniasm_0.3.0.img
@@ -1343,6 +1350,7 @@ mmseqs2:
 mosdepth:
   doi: 10.5281/zenodo.12805459
   zenodo_id: 12805460
+  binaries: mosdepth
   releases:
     0.3.8:
       download: https://zenodo.org/record/12805460/files/mosdepth_0.3.8.img
@@ -1354,6 +1362,7 @@ mosdepth:
 multiqc:
   doi: 10.5281/zenodo.10205069
   zenodo_id: 10205070
+  binaries: multiqc
   releases:
     1.16.0:
       download: https://zenodo.org/record/10205070/files/multiqc_1.16.0.img
@@ -1975,6 +1984,7 @@ seaview:
 seqkit:
   doi: 10.5281/zenodo.6313000
   zenodo_id: 6313001
+  binaries: seqkit
   releases:
     2.1.0:
       download: https://zenodo.org/record/6313001/files/seqkit_2.1.0.img
@@ -2111,6 +2121,7 @@ sequana_minimal:
 sequana_ribofinder:
   doi: 10.5281/zenodo.7348114
   zenodo_id: 7348115
+  binaries: sequana_ribofinder
   releases:
     0.12.0:
       download: https://zenodo.org/record/7348115/files/sequana_ribofinder_0.12.0.img
@@ -2357,12 +2368,14 @@ trandecoder:
 
 # trf/registry.yaml
 trf:
-  doi: 10.5281/zenodo.4675773
+  doi: 10.5281/zenodo.5675772
   zenodo_id: 5675773
+  binaries: trf
   releases:
     4.10.0:
       download: https://zenodo.org/record/5675773/files/trf_4.10.0.img
       md5sum: c03c87155a05e30911647c621d49bacd
+      doi: 10.5281/zenodo.5675773
       filesize: 182703447
 
 # trim_galore/registry.yaml

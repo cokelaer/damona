@@ -1,6 +1,7 @@
 lima:
   doi: 10.5281/zenodo.13902163
   zenodo_id: 13902164
+  binaries: lima
   releases:
     2.9.0:
       download: https://zenodo.org/record/13902164/files/lima_2.9.0.img

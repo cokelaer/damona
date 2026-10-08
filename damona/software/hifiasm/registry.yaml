@@ -1,6 +1,7 @@
 hifiasm:
   doi: 10.5281/zenodo.7737423
   zenodo_id: 7737424
+  binaries: hifiasm
   releases:
     0.19.1:
       download: https://zenodo.org/record/7737424/files/hifiasm_0.19.1.img

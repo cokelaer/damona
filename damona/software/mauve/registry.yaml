@@ -1,6 +1,7 @@
 mauve:
   doi: 10.5281/zenodo.14193974
   zenodo_id: 14193975
+  binaries: Mauve
   releases:
     2.4.0:
       download: https://zenodo.org/record/14194586/files/mauve_2.4.0.img
