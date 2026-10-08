@@ -1,0 +1,9 @@
+cnvkit:
+  binaries: cnvkit.py cnv_annotate.py cnv_expression_correlate.py cnv_updater.py genome_instability_index.py guess_baits.py reference2targets.py skg_convert.py samtools
+  releases:
+    0.9.10:
+      download: https://zenodo.org/record/23234870/files/cnvkit_0.9.10.img
+      md5sum: 090247178686f74e77db37a0bfdfb182
+      doi: 10.5281/zenodo.23234870
+      filesize: 626278400
+      extra_binaries:

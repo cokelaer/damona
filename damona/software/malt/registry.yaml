@@ -1,0 +1,8 @@
+malt:
+  binaries: malt-build malt-run
+  releases:
+    0.6.2:
+      download: https://zenodo.org/record/XXXXXXX/files/malt_0.6.2.img
+      md5sum: XXXXXXX
+      doi: 10.5281/zenodo.XXXXXXX
+      filesize: XXXXXXX

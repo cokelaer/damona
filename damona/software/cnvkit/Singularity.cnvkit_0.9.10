@@ -1,0 +1,79 @@
+BootStrap: localimage
+From: ../../library/micromamba/micromamba_2.5.0.img
+
+# Strategy: BUILD FROM SOURCE. CNVkit v0.9.10 is pip-installed from the pinned git tag;
+# only its runtime dependencies (python libs, R + DNAcopy, samtools) come from conda.
+# Constraints found in the v0.9.10 source tree:
+#  - requirements/core.txt is unpinned (>=), requirements/min.txt pins 1.79/3.5.1/1.21.6/...
+#  - cnvlib/segmentation/hmm.py uses the pomegranate 0.14 API (pom.HiddenMarkovModel),
+#    so pomegranate must stay <1.0 (0.14.8 is the upstream minimum).
+#  - cbs.py/flasso (default segmentation) shell out to Rscript with library('DNAcopy').
+#  - Installed entry point: cnvkit.py; scripts/ (not installed by pyproject) are copied to bin.
+# Fallback if the pomegranate 0.14.8 / python 3.10 solve fails: micromamba install cnvkit=0.9.10.
+
+%labels
+  Author Thomas Cokelaer, Claude
+  Version 0.9.10
+  Description CNVkit - copy number variation detection from targeted/WGS high-throughput sequencing
+  package.name cnvkit
+  package.version 0.9.10
+  package.homepage https://github.com/etal/cnvkit
+  package.source.url https://github.com/etal/cnvkit/archive/refs/tags/v0.9.10.tar.gz
+  package.license Apache-2.0
+
+%post
+  set -e
+  export PATH=/opt/conda/envs/main/bin:$PATH
+  export OPTS="-q -c conda-forge -c bioconda -n main -y"
+
+  # Runtime deps pinned (python 3.10 keeps pomegranate 0.14.x installable from conda-forge)
+  micromamba install $OPTS \
+      python=3.10 \
+      numpy=1.26.4 scipy=1.11.4 pandas=1.5.3 \
+      biopython=1.79 matplotlib-base=3.5.3 reportlab=3.6.12 \
+      scikit-learn=1.2.2 pomegranate=0.14.8 pyfaidx=0.7.2.2 pysam=0.21.0 \
+      r-base=4.3.3 bioconductor-dnacopy=1.76.0 \
+      samtools=1.17 pip=26.2.1 git=2.45.1
+
+  # Build from the pinned upstream tag (scratch under /opt/src, not /tmp)
+  mkdir -p /opt/src && cd /opt/src
+  git clone --depth 1 --branch v0.9.10 https://github.com/etal/cnvkit.git
+  cd cnvkit
+  # --no-deps: all dependencies are already provided (and pinned) by conda
+  pip install --no-cache-dir --no-deps .
+  # Helper scripts shipped with the source (not installed by pyproject.toml).
+  # snpfilter.sh is deliberately NOT shipped: it uses `samtools mpileup --VCF`, removed in samtools >= 1.x.
+  install -m 0755 scripts/*.py /opt/conda/envs/main/bin/
+  cd / && rm -rf /opt/src
+
+  micromamba remove -q -n main -y git
+  micromamba clean --packages -y
+  micromamba clean --all -y
+  find /opt/conda -name '__pycache__' -type d -prune -exec rm -rf {} + || true
+  rm -rf /root/.cache
+
+%environment
+  export PATH=/opt/conda/envs/main/bin:$PATH
+  # matplotlib: HPC runs with non-writable $HOME; use a throwaway config dir, headless backend
+  export MPLBACKEND=Agg
+  export MPLCONFIGDIR=${TMPDIR:-/tmp}/mplconfig-$(id -u)
+  export R_LIBS_USER=/dev/null
+  # fontconfig: writable cache dir under --contain/--no-home (else "No writable cache directories")
+  export XDG_CACHE_HOME=${TMPDIR:-/tmp}/xdg-cache-$(id -u)
+
+%runscript
+  exec /opt/conda/envs/main/bin/cnvkit.py "$@"
+
+%test
+  set -e
+  export PATH=/opt/conda/envs/main/bin:$PATH
+  export MPLCONFIGDIR=$(mktemp -d)
+  export XDG_CACHE_HOME=$(mktemp -d)
+  cnvkit.py version | grep -q "0.9.10"
+  Rscript -e 'library(DNAcopy); stopifnot(packageVersion("DNAcopy") >= "1.76.0")'
+  python -c "import pomegranate, pysam, Bio, reportlab, matplotlib; matplotlib.use('Agg'); import matplotlib.pyplot as plt; plt.figure()"
+  python -c "import cnvlib, skgenome"
+  samtools --version | head -1 | grep -q "1.17"
+  cnvkit.py segment --help > /dev/null
+  test -x /opt/conda/envs/main/bin/guess_baits.py
+  test -f /bin/bash || test -f /usr/bin/bash

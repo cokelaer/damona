@@ -447,6 +447,17 @@ circlator:
       doi: 10.5281/zenodo.7821905
       filesize: 376016896
 
+# cnvkit/registry.yaml
+cnvkit:
+  binaries: cnvkit.py cnv_annotate.py cnv_expression_correlate.py cnv_updater.py genome_instability_index.py guess_baits.py reference2targets.py skg_convert.py samtools
+  releases:
+    0.9.10:
+      download: https://zenodo.org/record/23234870/files/cnvkit_0.9.10.img
+      md5sum: 090247178686f74e77db37a0bfdfb182
+      doi: 10.5281/zenodo.23234870
+      filesize: 626278400
+      extra_binaries:
+
 # cnvnator/registry.yaml
 cnvnator:
   binaries: cnvnator cnvnator2VCF.pl
@@ -1181,6 +1192,16 @@ mafft:
       md5sum: bef5f6ad1b21ac6a9d6a14c11ff17fac
       doi: 10.5281/zenodo.22000947
       filesize: 161411072
+
+# malt/registry.yaml
+malt:
+  binaries: malt-build malt-run
+  releases:
+    0.6.2:
+      download: https://zenodo.org/record/XXXXXXX/files/malt_0.6.2.img
+      md5sum: XXXXXXX
+      doi: 10.5281/zenodo.XXXXXXX
+      filesize: XXXXXXX
 
 # mash/registry.yaml
 mash:

@@ -1,0 +1,53 @@
+Bootstrap: docker
+From: debian:bookworm-slim
+
+# Strategy: official vendor installer (install4j), NOT a source build -- see NOTES.md.
+# The installer is pinned by URL (versioned file name) and MD5 (same artefact as bioconda malt 0.62).
+# The installer ships its own bundled JRE (/opt/malt/jre), so no system Java is installed.
+
+%labels
+  Author Thomas Cokelaer, Claude
+  Version 0.6.2
+  Description MALT - MEGAN alignment tool (fast alignment of metagenomic reads for MEGAN)
+  package.name malt
+  package.version 0.6.2
+  package.homepage https://software-ab.cs.uni-tuebingen.de/download/malt
+  package.source.url https://maira.cs.uni-tuebingen.de/download/malt/MALT_unix_0_6_2.sh
+  package.license GPL-3.0
+
+%post
+  set -e
+  export DEBIAN_FRONTEND=noninteractive
+  apt-get update
+  apt-get install -y --no-install-recommends ca-certificates curl
+
+  mkdir -p /opt/src && cd /opt/src
+  curl -fsSL -o MALT_unix_0_6_2.sh https://maira.cs.uni-tuebingen.de/download/malt/MALT_unix_0_6_2.sh
+  echo "3e9b7516c722ca959d92722bea209b04  MALT_unix_0_6_2.sh" | md5sum -c -
+  # Installer writes user prefs/logs under $HOME: keep them in the scratch dir
+  HOME=/opt/src sh MALT_unix_0_6_2.sh -q -dir /opt/malt
+  ls -la /opt/malt
+
+  # installer already symlinks malt-build / malt-run into /usr/local/bin
+  test -x /usr/local/bin/malt-run && test -x /usr/local/bin/malt-build
+
+  # JVM options via the install4j launcher .vmoptions files (JAVA_TOOL_OPTIONS would print a
+  # "Picked up" line on stderr): read-only/absent $HOME safe, headless AWT
+  for v in /opt/malt/malt-run.vmoptions /opt/malt/malt-build.vmoptions; do
+    printf '%s\n' -Djava.util.prefs.userRoot=/tmp -Djava.util.prefs.systemRoot=/tmp \
+        -Duser.home=/tmp -Djava.awt.headless=true >> "$v"
+  done
+
+  apt-get purge -y curl ca-certificates
+  apt-get autoremove -y --purge
+  apt-get clean
+  rm -rf /var/lib/apt/lists/* /opt/src /root/.install4j /root/.java
+
+%environment
+  export LC_ALL=C
+
+%test
+  set -e
+  test -x /bin/bash
+  malt-run --help 2>&1 | grep -q "version 0\.6\.2"
+  malt-build --help 2>&1 | grep -q "version 0\.6\.2"
