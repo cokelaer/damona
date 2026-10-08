@@ -1,0 +1,31 @@
+Bootstrap: docker
+From: golang:1.24.13-bookworm@sha256:1a6d4452c65dea36aac2e2d606b01b4a029ec90cc1ae53890540ce6173ea77ac
+
+%labels
+    Author Thomas Cokelaer
+    Version 0.9.4
+    Description KMCP - accurate metagenomic profiling by pseudo-mapping
+
+%post
+    set -e
+
+    SOURCE_COMMIT=3e229efdee53342b553f995cf27a91796a0fbd4a
+    SOURCE_SHA256=9df76b7b1be4a55320cd99c4d0c0aa4baec88b3b536767f2775b0a3ec0f2ab75
+
+    mkdir -p /opt/src/kmcp
+    curl -fsSL "https://github.com/shenwei356/kmcp/archive/${SOURCE_COMMIT}.tar.gz" -o /opt/src/kmcp.tar.gz
+    echo "${SOURCE_SHA256}  /opt/src/kmcp.tar.gz" | sha256sum -c -
+    tar -xzf /opt/src/kmcp.tar.gz --strip-components=1 -C /opt/src/kmcp
+
+    cd /opt/src/kmcp
+    GOFLAGS=-mod=readonly go build -trimpath -o /usr/local/bin/kmcp ./kmcp
+    chmod 0755 /usr/local/bin/kmcp
+
+    rm -rf /opt/src /go /root/.cache/go-build /usr/local/go
+
+%runscript
+    exec kmcp "$@"
+
+%test
+    set -e
+    kmcp version | grep -Fx "kmcp v0.9.4"

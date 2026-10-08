@@ -5,6 +5,10 @@ Changelog
 Version 0.24.r21 (Sept 2026)
 --------------------------
 
+**Containers**
+
+- Added a source-build recipe for KMCP 0.9.4.
+
 **BUG FIX**
 
 - fix error when trying to install a software with --force
