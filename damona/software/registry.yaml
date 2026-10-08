@@ -1075,6 +1075,16 @@ kmc:
       doi: 10.5281/zenodo.19960433
       filesize: 36065280
 
+# kmcp/registry.yaml
+kmcp:
+  binaries: kmcp
+  releases:
+    0.9.4:
+      download: https://zenodo.org/record/23235562/files/kmcp_0.9.4.img
+      md5sum: 22fb69c4b0245d36f6b61dcfc7ec524e
+      doi: 10.5281/zenodo.23235562
+      filesize: 224231424
+
 # kraken/registry.yaml
 kraken:
   doi: 10.5281/zenodo.5801359
