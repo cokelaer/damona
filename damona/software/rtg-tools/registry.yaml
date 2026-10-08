@@ -1,6 +1,11 @@
 rtg-tools:
   binaries: rtg
   releases:
+#     3.12.1:
+#       # Use the matching Biocontainers image until the source-built image is published.
+#       download: docker://quay.io/biocontainers/rtg-tools:3.12.1--hdfd78af_0
     3.12.1:
-      # Use the matching Biocontainers image until the source-built image is published.
-      download: docker://quay.io/biocontainers/rtg-tools:3.12.1--hdfd78af_0
+      download: https://zenodo.org/record/23249122/files/rtg-tools_3.12.1.img
+      md5sum: e4cfbe430e500d12ee538e820c804533
+      doi: 10.5281/zenodo.23249122
+      filesize: 268963840
