@@ -10,6 +10,8 @@ def test_download(tmpdir):
     destination = directory / "test_1.0.0.img"
     try:
         download_with_progress("https://zenodo.org/record/7817800/files/minimap2_2.24.0.img", destination)
+    except (requests.Timeout, requests.ConnectionError) as err:
+        pytest.skip(f"Zenodo unreachable: {err}")
     except requests.HTTPError as err:
         if err.response is not None and err.response.status_code >= 500:
             pytest.skip(f"Zenodo unavailable: {err}")
