@@ -1,9 +1,15 @@
 Changelog
 =========
 
+Version 0.24.2 (Oct 2026)
+---------------------------
+
+**Bug fixes**
+
+- fix pyproject to pin correctly line_profiler so that python 3.13 and 3.14 works
 
 Version 0.24.r21 (Sept 2026)
---------------------------
+----------------------------
 
 **Containers**
 
