@@ -2,6 +2,7 @@ import sys
 from unittest.mock import MagicMock
 
 import pytest
+import requests
 
 import damona
 from damona import zenodo
@@ -271,7 +272,12 @@ def test_get_stats_software_ignores_negative(mocker):
 def test_get_stat_id():
     from damona.zenodo import get_stats_id
 
-    stats = get_stats_id("5708811")
+    try:
+        stats = get_stats_id("5708811")
+    except (requests.Timeout, requests.ConnectionError) as err:
+        pytest.skip(f"Zenodo unreachable: {err}")
+    if stats == -1:
+        pytest.skip("Zenodo API unavailable or returned a non-JSON answer")
     assert stats > 0
 
 
