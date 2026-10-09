@@ -272,6 +272,8 @@ def test_get_stat_id():
     from damona.zenodo import get_stats_id
 
     stats = get_stats_id("5708811")
+    if stats == -1:
+        pytest.skip("Zenodo API unavailable or returned a non-JSON answer")
     assert stats > 0
 
 
