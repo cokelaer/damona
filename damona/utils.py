@@ -49,7 +49,7 @@ def md5(filename, chunk=65536):
         are never loaded in memory at once.
     :rtype: str
     """
-    hash_md5 = hashlib.md5()
+    hash_md5 = hashlib.md5(usedforsecurity=False)
     with open(filename, "rb") as fin:
         for block in iter(lambda: fin.read(chunk), b""):
             hash_md5.update(block)

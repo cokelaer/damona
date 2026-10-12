@@ -1,0 +1,4 @@
+---
+# Bandit B101 (assert) is a false positive in pytest test modules.
+exclude_paths:
+  - "test/**"

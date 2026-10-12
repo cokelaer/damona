@@ -40,6 +40,6 @@ def test_md5_matches_hashlib(tmp_path):
     content = b"damona" * 50000
     fname = tmp_path / "blob.img"
     fname.write_bytes(content)
-    expected = hashlib.md5(content).hexdigest()
+    expected = hashlib.md5(content, usedforsecurity=False).hexdigest()
     assert md5(fname) == expected
     assert md5(fname, chunk=7) == expected
