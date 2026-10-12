@@ -1,0 +1,28 @@
+Bootstrap: docker
+From: alpine:3.20
+
+%labels
+  Author Thomas Cokelaer, Claude
+  Version 2.28.0
+  Description minimap2 2.28 (upstream prebuilt x64-linux binary, release tag v2.28)
+
+%post
+  MINIMAP2_VERSION=2.28
+
+  apk add --no-cache bash libc6-compat curl bzip2
+
+  mkdir -p /opt/src && cd /opt/src
+  curl -fsSL -o mm2.tar.bz2 https://github.com/lh3/minimap2/releases/download/v${MINIMAP2_VERSION}/minimap2-${MINIMAP2_VERSION}_x64-linux.tar.bz2
+  echo "51f2cf0e486d0f9f88ace1aa58fdc56571382a676ea0889ae607301c60693377  mm2.tar.bz2" | sha256sum -c -
+  tar -jxf mm2.tar.bz2 minimap2-${MINIMAP2_VERSION}_x64-linux/minimap2
+  mv minimap2-${MINIMAP2_VERSION}_x64-linux/minimap2 /usr/local/bin/minimap2
+  cd / && rm -rf /opt/src
+
+  apk del curl bzip2
+
+%runscript
+  exec minimap2 "$@"
+
+%test
+  set -e
+  minimap2 --version | grep -q "2.28-r1209"
