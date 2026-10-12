@@ -112,7 +112,7 @@ def fetch_base_image(recipe):
     download_with_progress(release.download, filename=str(image))
 
     if release.md5sum:
-        from easydev import md5
+        from damona.utils import md5
 
         if md5(image) != release.md5sum:  # pragma: no cover
             logger.error(

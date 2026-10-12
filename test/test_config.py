@@ -10,7 +10,6 @@ def test_config():
 
 
 def test_config_creation():  # this is for the local cases
-
     c = Config(name="damona__testing__")
     if str(c.user_config_dir).endswith("damona__testing__"):
         shutil.rmtree(str(c.user_config_dir))
@@ -114,3 +113,15 @@ def test_update_shell_rc_failure(tmp_path, monkeypatch):
 
     monkeypatch.setattr("builtins.open", boom)
     assert cfg._update_shell_rc(str(tmp_path / "dummyrc"), "source x", "block", "bash") is False
+
+
+def test_config_dir_follows_xdg(tmp_path, monkeypatch):
+    """The config directory lives under XDG_CONFIG_HOME and is created on first use."""
+    import sys
+
+    if not sys.platform.startswith("linux"):
+        return
+    monkeypatch.setenv("XDG_CONFIG_HOME", str(tmp_path))
+    c = Config(name="damona__testing__")
+    assert c.user_config_dir == tmp_path / "damona__testing__"
+    assert (c.user_config_dir / "damona.cfg").exists()

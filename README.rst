@@ -22,15 +22,15 @@ DAMONA
    :target: https://pepy.tech/project/damona
 
 
-.. image:: https://img.shields.io/badge/python-3.9%20%7C%203.10%20%7C3.11%20%7C3.12-blue.svg
+.. image:: https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12%20%7C%203.13%20%7C%203.14-blue.svg
     :target: https://pypi.python.org/pypi/damona
-    :alt: Python 3.9 | 3.10 | 3.11 | 3.12
+    :alt: Python 3.10 | 3.11 | 3.12 | 3.13 | 3.14
 
 .. image:: https://img.shields.io/github/issues/cokelaer/damona.svg
     :target: https://github.com/cokelaer/damona/issues
     :alt: GitHub Issues
 
-:Python version: Python 3.9, 3.10, 3.11, 3.12
+:Python version: Python 3.10, 3.11, 3.12, 3.13, 3.14
 :Source: `https://github.com/cokelaer/damona <https://github.com/cokelaer/damona/>`__
 :Documentation: `https://damona.readthedocs.io <https://damona.readthedocs.io>`__
 :Issues: `https://github.com/cokelaer/damona/issues <https://github.com/cokelaer/damona/issues>`__
@@ -190,7 +190,7 @@ Example without conda (pyenv + minimap2)
 -----------------------------------------
 
 If you manage Python with `pyenv <https://github.com/pyenv/pyenv>`_ instead of
-conda, the workflow is identical — Damona only requires Python ≥ 3.9 and
+conda, the workflow is identical — Damona only requires Python ≥ 3.10 and
 Apptainer.
 
 .. code-block:: bash

@@ -16,7 +16,7 @@ jobs:
     strategy:
       max-parallel: 5
       matrix:
-        python: [3.9]
+        python: ['3.10']
       fail-fast: false
 
     steps:

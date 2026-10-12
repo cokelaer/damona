@@ -23,12 +23,12 @@ from configparser import NoOptionError, NoSectionError
 import click
 import colorlog
 import requests
-from easydev import md5
 from tqdm import tqdm
 from tqdm.utils import CallbackIOWrapper
 
 from damona import Config
 from damona.registry import ImageName, Software
+from damona.utils import md5
 
 logger = colorlog.getLogger(__name__)
 
@@ -185,7 +185,6 @@ class Zenodo:  # pragma: no cover
             except Exception:
                 logger.warning("Could not figure out the erorr from json()")
             finally:
-
                 logger.error(f"unexpected return code {r.status_code}")
                 logger.error(f"Caller: {caller}")
                 logger.error("Know issues:\n - Have you set a token in zenodo and provide the token in damona.cfg ? ")

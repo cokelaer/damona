@@ -16,7 +16,6 @@ from . import test_dir
 
 # reach too many requests ??
 def test_docker_alpine(monkeypatch):
-
     # explcitily named the output file
     with tempfile.TemporaryDirectory() as td:
         bb = BuilderFromDocker()
@@ -118,7 +117,7 @@ def test_fetch_base_image(tmp_path, monkeypatch):
 
     monkeypatch.setattr("damona.utils.download_with_progress", fake_download)
     # the fake content has of course the wrong md5, so pretend it is the expected one
-    monkeypatch.setattr("easydev.md5", lambda x: expected_md5)
+    monkeypatch.setattr("damona.utils.md5", lambda x: expected_md5)
 
     assert fetch_base_image(recipe) == image.resolve()
     assert image.exists()
