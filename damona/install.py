@@ -21,14 +21,13 @@ import subprocess
 import sys
 import time
 
-from easydev import md5
 from spython.main import Client
 
 from damona import Environ, Registry
 from damona import version as damona_version
 from damona.common import ImageReader, get_container_cmd, requires_singularity
 from damona.registry import Software
-from damona.utils import DownloadError, download_with_fallback
+from damona.utils import DownloadError, download_with_fallback, md5
 
 DAMONA_PATH = os.environ["DAMONA_PATH"]
 
@@ -399,7 +398,6 @@ class RemoteImageInstaller(ImageInstaller):
             print(cmd)
             subprocess.call(cmd.split())
         else:
-
             if download_name.startswith("https://"):
                 logger.info(f"downloading into {pull_folder} {output_name}")
 

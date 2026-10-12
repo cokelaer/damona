@@ -1,11 +1,12 @@
+import hashlib
+
 import pytest
 import requests
 
-from damona.utils import download_with_progress
+from damona.utils import download_with_progress, md5
 
 
 def test_download(tmpdir):
-
     directory = tmpdir.mkdir("images")
     destination = directory / "test_1.0.0.img"
     try:
@@ -32,3 +33,13 @@ def test_download_bad_status(mocker, tmpdir):
     with pytest.raises(requests.HTTPError):
         download_with_progress("https://example.org/whatever.img", destination)
     assert not destination.exists()
+
+
+def test_md5_matches_hashlib(tmp_path):
+    """md5 reads by chunks and agrees with hashlib, also across chunk boundaries."""
+    content = b"damona" * 50000
+    fname = tmp_path / "blob.img"
+    fname.write_bytes(content)
+    expected = hashlib.md5(content).hexdigest()
+    assert md5(fname) == expected
+    assert md5(fname, chunk=7) == expected

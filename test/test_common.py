@@ -9,7 +9,6 @@ from . import test_dir
 
 
 def test_no_path(monkeypatch):
-
     monkeypatch.delenv("DAMONA_PATH", raising=False)
     try:
         DamonaInit()
@@ -112,7 +111,6 @@ def test_path():
 
 
 def test_ImageReader():
-
     try:
         ir = ImageReader(f"{test_dir}/data/testing_1.0.0")
         assert False
@@ -132,7 +130,7 @@ def test_get_container_cmd_singularity(monkeypatch):
     """get_container_cmd returns 'singularity' when it is present."""
     import damona.common as _common
 
-    monkeypatch.setattr(_common, "cmd_exists", lambda cmd: cmd == "singularity")
+    monkeypatch.setattr(_common.shutil, "which", lambda cmd: cmd == "singularity")
     assert get_container_cmd() == "singularity"
 
 
@@ -140,7 +138,7 @@ def test_get_container_cmd_apptainer_only(monkeypatch):
     """get_container_cmd returns 'apptainer' when only apptainer is present."""
     import damona.common as _common
 
-    monkeypatch.setattr(_common, "cmd_exists", lambda cmd: cmd == "apptainer")
+    monkeypatch.setattr(_common.shutil, "which", lambda cmd: cmd == "apptainer")
     assert get_container_cmd() == "apptainer"
 
 
@@ -148,7 +146,7 @@ def test_get_container_cmd_neither(monkeypatch):
     """get_container_cmd returns None when neither command is present."""
     import damona.common as _common
 
-    monkeypatch.setattr(_common, "cmd_exists", lambda cmd: False)
+    monkeypatch.setattr(_common.shutil, "which", lambda cmd: False)
     assert get_container_cmd() is None
 
 

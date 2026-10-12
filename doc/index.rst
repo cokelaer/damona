@@ -1,5 +1,5 @@
 
-:Python version: Python 3.9, 3.10, 3.11, 3.12
+:Python version: Python 3.10, 3.11, 3.12, 3.13, 3.14
 :Source: See  `https://github.com/cokelaer/damona <https://github.com/cokelaer/damona/>`__.
 :Issues: Please fill a report on `github <https://github.com/cokelaer/damona/issues>`__
 

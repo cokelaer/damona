@@ -15,6 +15,7 @@
 ##############################################################################
 """Utility helpers used across the Damona package."""
 import functools
+import hashlib
 import pathlib
 import shutil
 import time
@@ -38,6 +39,21 @@ SPEED_WARMUP = 5
 
 #: Number of attempts per source before giving up on it.
 MAX_ATTEMPTS = 3
+
+
+def md5(filename, chunk=65536):
+    """Return the hexadecimal MD5 checksum of a file, read by chunks.
+
+    :param filename: path of the file.
+    :param int chunk: number of bytes read at a time, so that large images
+        are never loaded in memory at once.
+    :rtype: str
+    """
+    hash_md5 = hashlib.md5()
+    with open(filename, "rb") as fin:
+        for block in iter(lambda: fin.read(chunk), b""):
+            hash_md5.update(block)
+    return hash_md5.hexdigest()
 
 
 class SlowSourceError(IOError):
@@ -165,8 +181,6 @@ def download_with_fallback(
     :rtype: tuple
     :raises DownloadError: When no source produced a valid file.
     """
-    from easydev import md5 as compute_md5
-
     if not sources:  # pragma: no cover - defensive
         raise DownloadError("No download source available")
 
@@ -200,7 +214,7 @@ def download_with_fallback(
                 failures.append(f"{name}: {err}")
                 break
 
-            if expected_md5 and compute_md5(path) != expected_md5:
+            if expected_md5 and md5(path) != expected_md5:
                 logger.warning(f"Source '{name}' served content that does not match the registry md5; discarding")
                 pathlib.Path(path).unlink(missing_ok=True)
                 failures.append(f"{name}: md5 mismatch")
@@ -214,7 +228,7 @@ def download_with_fallback(
         name, url = too_slow[0]
         logger.warning(f"All sources were slow; retrying '{name}' without the speed floor")
         path = download_with_progress(url, filename, timeout=timeout, stall_timeout=stall_timeout, min_speed=None)
-        if expected_md5 and compute_md5(path) != expected_md5:
+        if expected_md5 and md5(path) != expected_md5:
             pathlib.Path(path).unlink(missing_ok=True)
             raise DownloadError(f"Content from '{name}' does not match the registry md5")
         return name, path

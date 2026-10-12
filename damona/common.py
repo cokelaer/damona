@@ -18,10 +18,12 @@ import functools
 import os
 import pathlib
 import re
+import shutil
 import sys
 
 import colorlog
-from easydev import cmd_exists, md5
+
+from damona.utils import md5
 
 logger = colorlog.getLogger(__name__)
 
@@ -508,9 +510,9 @@ def get_container_cmd():
         is found.
     :rtype: str or None
     """
-    if cmd_exists("singularity"):
+    if shutil.which("singularity"):
         return "singularity"
-    elif cmd_exists("apptainer"):
+    elif shutil.which("apptainer"):
         return "apptainer"
     return None
 

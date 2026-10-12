@@ -17,7 +17,7 @@ import pathlib
 import sys
 
 import colorlog
-from easydev import CustomConfig
+from platformdirs import user_config_dir
 
 import damona.shell
 
@@ -78,12 +78,13 @@ class Config:
         :param dict urls: Mapping of alias → URL to pre-populate the
             ``[urls]`` section of a freshly created config file.
         """
-        configuration = CustomConfig(f"{name}", verbose=True)
+        # per-OS location (XDG on Linux, Library/Preferences on macOS, LOCALAPPDATA on Windows)
+        self.user_config_dir = pathlib.Path(user_config_dir(name))
+        if not self.user_config_dir.exists():
+            logger.info(f"Creating directory {self.user_config_dir}")
 
         #  let us add a damona.cfg in it. This will store URLs to look for singularities
         # This is done only once to not overwrite user options
-        self.user_config_dir = pathlib.Path(configuration.user_config_dir)
-
         self.config_file = self.user_config_dir / "damona.cfg"
         self.user_config_dir.mkdir(parents=True, exist_ok=True)
         if not self.config_file.exists():
@@ -113,8 +114,7 @@ class Config:
 
             if bash_created or fish_created or zsh_created:  # pragma: no cover
                 logger.critical(
-                    "Please start a new shell to benefit from "
-                    "the configuration file and activate/deactivate command"
+                    "Please start a new shell to benefit from " "the configuration file and activate/deactivate command"
                 )
                 sys.exit(1)
 
@@ -215,9 +215,7 @@ class Config:
             "    source ~/.config/damona/damona.fish\n"
             "end\n"
         )
-        return self._update_shell_rc(
-            "~/.config/fish/config.fish", "source ~/.config/damona/damona.fish", block, "fish"
-        )
+        return self._update_shell_rc("~/.config/fish/config.fish", "source ~/.config/damona/damona.fish", block, "fish")
 
 
 def get_damona_commands():
