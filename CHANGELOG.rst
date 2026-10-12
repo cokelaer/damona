@@ -1,6 +1,22 @@
 Changelog
 =========
 
+Version 0.25.0 (Oct 2026)
+---------------------------
+
+**Breaking changes**
+
+- Python 3.9 is no longer supported; damona now requires Python >= 3.10
+  (3.10 to 3.14 are tested in CI).
+
+**Dependencies**
+
+- Removed the ``easydev`` dependency: the md5 helper, the command lookup and the
+  configuration directory are now handled in damona itself (``platformdirs`` is
+  now a direct dependency; the configuration location is unchanged on Linux).
+- Require ``urllib3 >= 2.8.0`` and refresh the lock file to ``requests`` 2.34.2 and
+  ``soupsieve`` 2.10 to address security advisories.
+
 Version 0.24.2 (Oct 2026)
 ---------------------------
 
