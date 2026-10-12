@@ -1963,6 +1963,11 @@ samtools:
       md5sum: 63b3d906b0547ff83e741baad035f9ee
       doi: 10.5281/zenodo.7437898
       filesize: 74977280
+    1.20.0:
+      download: https://zenodo.org/record/23326397/files/samtools_1.20.0.img
+      md5sum: 6081f7562d31aa5a9dd9e7c2f156af32
+      doi: 10.5281/zenodo.23326397
+      filesize: 10108928
 
 # samtools_minimap2/registry.yaml
 samtools_1.17_minimap2:
