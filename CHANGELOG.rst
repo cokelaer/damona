@@ -4,6 +4,10 @@ Changelog
 Version 0.25.0 (Oct 2026)
 ---------------------------
 
+**Containers**
+
+- Added a container recipe for Gappa 0.8.0 from Bioconda.
+
 **Breaking changes**
 
 - Python 3.9 is no longer supported; damona now requires Python >= 3.10
