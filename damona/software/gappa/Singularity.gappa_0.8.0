@@ -1,0 +1,31 @@
+Bootstrap: localimage
+From: ../../library/micromamba/micromamba_2.5.0.img
+
+%labels
+    maintainer Thomas Cokelaer
+    package.name gappa
+    package.version 0.8.0
+    package.homepage https://github.com/lczech/gappa
+    package.source.url https://github.com/lczech/gappa
+    package.license GPL-3.0-only
+
+%post
+    set -e
+    export PATH=/opt/conda/envs/main/bin:$PATH
+    export OPTS="-q -c conda-forge -c bioconda -n main -y"
+
+    micromamba install $OPTS gappa=0.8.0
+
+    micromamba clean --packages -y
+    micromamba clean --all --yes
+
+%environment
+    export PATH=/opt/conda/envs/main/bin:$PATH
+
+%runscript
+    exec gappa "$@"
+
+%test
+    set -e
+    export PATH=/opt/conda/envs/main/bin:$PATH
+    gappa --version | grep -Fq "0.8.0"
