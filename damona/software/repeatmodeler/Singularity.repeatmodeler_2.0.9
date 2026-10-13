@@ -1,0 +1,46 @@
+BootStrap: docker
+# dfam/tetools:2.00 (pushed 2026-06-11) ships RepeatModeler 2.0.9 + RepeatMasker 4.2.4.
+# Docker tags are mutable, so the digest observed at design time is recorded here:
+#   sha256:6081b4d3883eff478873cb94cd24addf540275365d4acc4446bb647a341e95e2
+From: dfam/tetools:2.00
+
+%labels
+    Author Thomas Cokelaer, Claude
+    Version 2.0.9
+    Description RepeatModeler -- de novo repeat family identification and modeling (inherits the Dfam TE Tools container)
+    Software repeatmodeler
+    Source https://github.com/Dfam-consortium/RepeatModeler
+    License OSL-2.1
+
+%help
+    RepeatModeler 2.0.9 from the Dfam TE Tools container (dfam/tetools:2.00).
+    Bundled: RepeatMasker, RMBlast, TRF, RepeatScout, RECON, LTR_retriever,
+    genometools, MAFFT, CD-HIT, NINJA, HMMER, UCSC tools.
+
+        BuildDatabase -name genome genome.fa
+        RepeatModeler -database genome -threads 4 -LTRStruct
+
+%environment
+    # The docker ENV PATH is already imported by apptainer; restated here so the
+    # tools stay reachable for "apptainer exec" and damona wrappers even if that
+    # import is ever disabled.
+    export PATH=/opt/RepeatMasker:/opt/RepeatMasker/util:/opt/RepeatModeler:/opt/RepeatModeler/util:/opt/coseg:/opt/ucsc_tools:/opt:/opt/rmblast/bin:/opt/hmmer/bin:$PATH
+
+%runscript
+    RepeatModeler "$@"
+
+%test
+    set -e
+    RepeatModeler -version | grep -q "2\.0\.9"
+    BuildDatabase 2>&1 | grep -q "BuildDatabase"
+    RepeatClassifier -version > /dev/null 2>&1 || true
+    RepeatMasker -v | grep -q "4\.2\.4"
+    rmblastn -version
+    makeblastdb -version
+    command -v Refiner RepeatClassifier TRFMask LTRPipeline > /dev/null
+    command -v RepeatScout build_lmer_table > /dev/null || ls /opt/RepeatScout/RepeatScout
+    # BuildDatabase must work end to end
+    WORK=$(mktemp -d)
+    printf '>t\nGGAATTCCGGAATTCCGGAATTCCAAGGTTAACCGGTTAACCGGTTAA\n' > $WORK/t.fa
+    ( cd $WORK && BuildDatabase -name tdb t.fa > /dev/null && ls tdb.nhr > /dev/null )
+    rm -rf "$WORK"
