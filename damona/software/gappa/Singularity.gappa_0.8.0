@@ -1,31 +1,52 @@
-Bootstrap: localimage
-From: ../../library/micromamba/micromamba_2.5.0.img
-
-%labels
-    maintainer Thomas Cokelaer
-    package.name gappa
-    package.version 0.8.0
-    package.homepage https://github.com/lczech/gappa
-    package.source.url https://github.com/lczech/gappa
-    package.license GPL-3.0-only
+Bootstrap: docker
+From: debian:bookworm-slim
+Stage: build
 
 %post
     set -e
-    export PATH=/opt/conda/envs/main/bin:$PATH
-    export OPTS="-q -c conda-forge -c bioconda -n main -y"
+    export DEBIAN_FRONTEND=noninteractive
+    apt-get update
+    apt-get install -y --no-install-recommends \
+        gcc=4:12.2.0-3 g++=4:12.2.0-3 make=4.3-4.1 cmake=3.25.1-1 \
+        git=1:2.39.5-0+deb12u3 ca-certificates=20250419~deb12u1 zlib1g-dev=1:1.2.13.dfsg-1
+    mkdir -p /opt/src && cd /opt/src
+    # Tag v0.8.0 (tag object f9e9e2b, commit 16ecd9c7ec22d1a2d0279628f1251e947b262c1a).
+    # Submodules are pinned by the tag: genesis 1bafc7b9, CLI11 13becadd, sparsepp 6bfe3b4b.
+    git clone --depth 1 --branch v0.8.0 --recursive --shallow-submodules https://github.com/lczech/gappa.git
+    cd gappa
+    test "$(git rev-parse HEAD)" = "16ecd9c7ec22d1a2d0279628f1251e947b262c1a"
+    test "$(git -C libs/genesis rev-parse HEAD)" = "1bafc7b9b0ebfe07f366c818c524c3991490aa29"
+    mkdir build && cd build
+    cmake .. -DCMAKE_BUILD_TYPE=Release -DGAPPA_BUILD_STATIC=ON
+    make -j4
+    strip /opt/src/gappa/bin/gappa
+    cp /opt/src/gappa/bin/gappa /opt/gappa
 
-    micromamba install $OPTS gappa=0.8.0
+Bootstrap: docker
+From: alpine:3.22
+Stage: final
 
-    micromamba clean --packages -y
-    micromamba clean --all --yes
+%files from build
+    /opt/gappa /usr/local/bin/gappa
 
-%environment
-    export PATH=/opt/conda/envs/main/bin:$PATH
+%post
+    set -e
+    apk add --no-cache bash=5.2.37-r0
+    chmod 755 /usr/local/bin/gappa
+    rm -rf /var/cache/apk/*
+
+%labels
+    Author Thomas Cokelaer, Claude
+    Version 0.8.0
+    Description gappa (genesis applications for phylogenetic placement analysis), static build from source
+    Software gappa
+    Source https://github.com/lczech/gappa
+    License GPL-3.0-only
 
 %runscript
     exec gappa "$@"
 
 %test
     set -e
-    export PATH=/opt/conda/envs/main/bin:$PATH
-    gappa --version | grep -Fq "0.8.0"
+    gappa --version | grep -q "0\.8\.0"
+    test -x /bin/bash

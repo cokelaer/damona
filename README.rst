@@ -59,8 +59,8 @@ Think of Damona as *conda for Singularity images*: the same familiar
 ``create / activate / install`` workflow you already know, but with the
 rock-solid isolation and reproducibility that containers provide.
 
-.. note::  As of Oct. 2026, **Damona** ships 180 containers (268 versions),
-           providing **877 unique ready-to-use binaries**.
+.. note::  As of Oct. 2026, **Damona** ships 181 containers (270 versions),
+           providing **878 unique ready-to-use binaries**.
            Browse and search the registry at
            `cokelaer.github.io/damona <https://cokelaer.github.io/damona/>`__.
 

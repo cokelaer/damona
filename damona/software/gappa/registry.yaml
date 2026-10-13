@@ -1,0 +1,14 @@
+gappa:
+  binaries: gappa
+  releases:
+    0.9.0:
+      download: https://zenodo.org/record/23351762/files/gappa_0.9.0.img
+      md5sum: 26db3924a742761283539c65a66aaf7c
+      doi: 10.5281/zenodo.23351762
+      filesize: 6623232
+
+    0.8.0:
+      download: https://zenodo.org/record/23351773/files/gappa_0.8.0.img
+      md5sum: 55b546cee5a481e0e4e2ea859aa9b352
+      doi: 10.5281/zenodo.23351773
+      filesize: 7159808

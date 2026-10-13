@@ -1,0 +1,56 @@
+Bootstrap: docker
+From: debian:bookworm-slim
+Stage: build
+
+%post
+    set -e
+    export DEBIAN_FRONTEND=noninteractive
+    apt-get update
+    apt-get install -y --no-install-recommends \
+        gcc=4:12.2.0-3 g++=4:12.2.0-3 make=4.3-4.1 cmake=3.25.1-1 \
+        git=1:2.39.5-0+deb12u3 ca-certificates=20250419~deb12u1 zlib1g-dev=1:1.2.13.dfsg-1
+    mkdir -p /opt/src && cd /opt/src
+    # Tag v0.9.0 (annotated tag object 96c5bed, commit 5e993baec980333592b990ad71e8081d459008df).
+    # Submodules are pinned by the tag: genesis 277292d4, CLI11 13becadd, sparsepp 6bfe3b4b.
+    git clone --depth 1 --branch v0.9.0 --recursive --shallow-submodules https://github.com/lczech/gappa.git
+    cd gappa
+    test "$(git rev-parse HEAD)" = "5e993baec980333592b990ad71e8081d459008df"
+    test "$(git -C libs/genesis rev-parse HEAD)" = "277292d4a4b2a081ef7ca4a8e813fdeb8b19e272"
+    mkdir build && cd build
+    cmake .. -DCMAKE_BUILD_TYPE=Release -DGAPPA_BUILD_STATIC=ON
+    # v0.9.0 + LTO: cmake appends a trailing -Wl,-Bdynamic to the link line, which makes ld pull
+    # libstdc++/libm/libgomp/libc as shared objects and fail under -static. Drop it (static libs
+    # for all of them are present in the build stage).
+    sed -i 's/ -Wl,-Bdynamic//' CMakeFiles/gappa.dir/link.txt
+    make -j4
+    strip /opt/src/gappa/bin/gappa
+    cp /opt/src/gappa/bin/gappa /opt/gappa
+
+Bootstrap: docker
+From: alpine:3.22
+Stage: final
+
+%files from build
+    /opt/gappa /usr/local/bin/gappa
+
+%post
+    set -e
+    apk add --no-cache bash=5.2.37-r0
+    chmod 755 /usr/local/bin/gappa
+    rm -rf /var/cache/apk/*
+
+%labels
+    Author Thomas Cokelaer, Claude
+    Version 0.9.0
+    Description gappa (genesis applications for phylogenetic placement analysis), static build from source
+    Software gappa
+    Source https://github.com/lczech/gappa
+    License GPL-3.0-only
+
+%runscript
+    exec gappa "$@"
+
+%test
+    set -e
+    gappa --version | grep -q "0\.9\.0"
+    test -x /bin/bash
