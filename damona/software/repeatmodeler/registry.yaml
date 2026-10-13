@@ -1,0 +1,8 @@
+repeatmodeler:
+  binaries: RepeatModeler BuildDatabase RepeatClassifier Refiner TRFMask LTRPipeline makeblastdb trf faToTwoBit twoBitToFa
+  releases:
+    2.0.9:
+      download: https://zenodo.org/record/23350195/files/repeatmodeler_2.0.9.img
+      md5sum: f67043c8d1d88b5cfd8a559218011a7a
+      doi: 10.5281/zenodo.23350195
+      filesize: 825552896
