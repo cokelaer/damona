@@ -33,6 +33,7 @@ DAMONA
 :Python version: Python 3.10, 3.11, 3.12, 3.13, 3.14
 :Source: `https://github.com/cokelaer/damona <https://github.com/cokelaer/damona/>`__
 :Documentation: `https://damona.readthedocs.io <https://damona.readthedocs.io>`__
+:Registry search: `https://cokelaer.github.io/damona <https://cokelaer.github.io/damona/>`__
 :Issues: `https://github.com/cokelaer/damona/issues <https://github.com/cokelaer/damona/issues>`__
 :Platform: Linux with bash, zsh, or fish shell
 
@@ -60,6 +61,8 @@ rock-solid isolation and reproducibility that containers provide.
 
 .. note::  As of Oct. 2026, **Damona** ships 180 containers (268 versions),
            providing **877 unique ready-to-use binaries**.
+           Browse and search the registry at
+           `cokelaer.github.io/damona <https://cokelaer.github.io/damona/>`__.
 
 
 
