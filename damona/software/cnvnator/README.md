@@ -1,26 +1,18 @@
-# CNVnator Container Recipes
+# cnvnator
 
-Two recipe variants available for CNVnator v0.4.1:
+## Binaries
 
-## Primary: `Singularity.cnvnator_0.4.1` (conda-based, 906 MB)
+`cnvnator` `cnvnator2VCF.pl`
 
-**Status:** Published to Zenodo, QA-verified, pinned dependencies
+## Installation
 
-Uses `micromamba` to install `cnvnator=0.4.1` and `samtools==1.10` from conda-forge/bioconda.
+```bash
+damona install cnvnator               # latest (0.4.1)
+damona install cnvnator:VERSION        # specific version
+```
 
-- Faster build (minutes, not hours)
-- Simpler maintenance
-- Fully tested and validated
+## Available Versions
 
-## Alternative: `Singularity.cnvnator_0.4.1.source` (multi-stage source build, untested)
-
-**Status:** Experimental, not published
-
-Compiles CNVnator, samtools, htslib, and ROOT 6.32.08 from source using multi-stage Docker→Singularity conversion.
-
-- Potentially smaller final image (multi-stage discards build artifacts)
-- Complex ROOT/C++17 build chain
-- **Not fully tested** — issues with ROOT headers and missing files (callbaf.py) remain unresolved
-- Use only if you need source-compiled binaries or are willing to debug ROOT build configuration
-
-**Recommendation:** Use `Singularity.cnvnator_0.4.1` for production. The `.source` variant is a proof-of-concept for future optimization but requires additional development.
+| Version | Size | Binaries | DOI |
+|---------|------|----------|-----|
+| **0.4.1** *(latest)* | 864.13 MB | `cnvnator` `cnvnator2VCF.pl` | [10.5281/zenodo.23085000](https://doi.org/10.5281/zenodo.23085000) |

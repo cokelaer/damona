@@ -1,7 +1,5 @@
 # rtg-tools
 
-RTG Tools provides utilities for variant comparison and sequence data processing.
-
 ## Binaries
 
 `rtg`
@@ -9,16 +7,12 @@ RTG Tools provides utilities for variant comparison and sequence data processing
 ## Installation
 
 ```bash
-damona install rtg-tools
-damona install rtg-tools:3.12.1
+damona install rtg-tools               # latest (3.12.1)
+damona install rtg-tools:VERSION        # specific version
 ```
-
-The recipe builds RTG Tools 3.12.1 from the pinned upstream source archive.
-The registry currently resolves to the matching Biocontainers image until the
-source-built image is published.
 
 ## Available Versions
 
-| Version | Binaries |
-|---------|----------|
-| **3.12.1** *(latest)* | `rtg` |
+| Version | Size | Binaries | DOI |
+|---------|------|----------|-----|
+| **3.12.1** *(latest)* | 256.50 MB | `rtg` | [10.5281/zenodo.23249122](https://doi.org/10.5281/zenodo.23249122) |

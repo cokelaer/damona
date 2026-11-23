@@ -16,3 +16,4 @@ damona install trimmomatic:VERSION        # specific version
 | Version | Size | Binaries | DOI |
 |---------|------|----------|-----|
 | **0.40.0** *(latest)* | 104.60 MB | `trimmomatic` | [10.5281/zenodo.20346003](https://doi.org/10.5281/zenodo.20346003) |
+| `0.39.0` | 104.58 MB | `trimmomatic` | [10.5281/zenodo.22145522](https://doi.org/10.5281/zenodo.22145522) |

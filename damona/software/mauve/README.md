@@ -4,7 +4,7 @@
 
 ## Binaries
 
-`mauve`
+`Mauve`
 
 ## Installation
 
@@ -17,4 +17,4 @@ damona install mauve:VERSION        # specific version
 
 | Version | Size | Binaries | DOI |
 |---------|------|----------|-----|
-| **2.4.0** *(latest)* | 201.85 MB | `mauve` | [10.5281/zenodo.14194586](https://doi.org/10.5281/zenodo.14194586) |
+| **2.4.0** *(latest)* | 201.85 MB | `Mauve` | [10.5281/zenodo.14194586](https://doi.org/10.5281/zenodo.14194586) |

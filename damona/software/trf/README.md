@@ -1,6 +1,6 @@
 # trf
 
-**DOI:** [10.5281/zenodo.4675773](https://doi.org/10.5281/zenodo.4675773)
+**DOI:** [10.5281/zenodo.5675772](https://doi.org/10.5281/zenodo.5675772)
 
 ## Binaries
 
@@ -17,4 +17,4 @@ damona install trf:VERSION        # specific version
 
 | Version | Size | Binaries | DOI |
 |---------|------|----------|-----|
-| **4.10.0** *(latest)* | 174.24 MB | `trf` | — |
+| **4.10.0** *(latest)* | 174.24 MB | `trf` | [10.5281/zenodo.5675773](https://doi.org/10.5281/zenodo.5675773) |

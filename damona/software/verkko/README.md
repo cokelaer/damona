@@ -4,7 +4,7 @@
 
 ## Binaries
 
-`verkho`
+`verkko`
 
 ## Installation
 
@@ -17,4 +17,4 @@ damona install verkko:VERSION        # specific version
 
 | Version | Size | Binaries | DOI |
 |---------|------|----------|-----|
-| **2.3.2** *(latest)* | 472.99 MB | `verkho` | [10.5281/zenodo.19150108](https://doi.org/10.5281/zenodo.19150108) |
+| **2.3.2** *(latest)* | 472.99 MB | `verkko` | [10.5281/zenodo.19150108](https://doi.org/10.5281/zenodo.19150108) |
