@@ -1,5 +1,7 @@
 import glob
 
+import pytest
+
 from damona.registry import ImageName, Registry, Software
 
 from . import test_dir
@@ -93,9 +95,12 @@ def test_registry():
     reg.find_candidate("sequana_tools:0.12.0")
 
 
+@pytest.mark.network
 def test_remote_registry():
-    reg = Registry("https://biomics.pasteur.fr/salsa/damona/registry.txt")
-    reg.get_list()
+    """Load a registry over HTTP (the global registry of the main branch). Needs internet access."""
+    reg = Registry("https://raw.githubusercontent.com/cokelaer/damona/main/damona/software/registry.yaml")
+    assert len(reg.get_list()) > 0
+    assert "fastqc" in {name.split(":")[0] for name in reg.registry}
 
 
 def test_biocontainer_registry():
@@ -221,14 +226,16 @@ def test_biocontainers_registry_invalid_filename():
         BiocontainersRegistry(filename="/this/file/does/not/exist.yaml")
 
 
-def test_registry_from_url_alias():
-    """A from_url that is an alias of the [urls] config section is resolved."""
-    from damona.config import Config
+def test_registry_from_url_alias(monkeypatch):
+    """A from_url that is an alias of the [urls] config section is resolved (no network needed)."""
+    import types
 
-    config = Config().config
-    alias = list(config["urls"].keys())[0]
-    r = Registry(from_url=alias)
-    assert r.from_url == config["urls"][alias]
+    url = "https://example.org/alias-test/registry.yaml"
+    monkeypatch.setattr("damona.registry.Config", lambda: types.SimpleNamespace(config={"urls": {"myalias": url}}))
+    monkeypatch.setattr(Registry, "discovery", lambda self: None)
+
+    r = Registry(from_url="myalias")
+    assert r.from_url == url
 
 
 def test_global_registry_file():

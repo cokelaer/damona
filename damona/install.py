@@ -232,15 +232,15 @@ class RemoteImageInstaller(ImageInstaller):
 
         damona install fastqc:0.11.9 --url https://yourwebsite/.../registry.txt
 
-    If you use this command often, you may want to add this line in your damona.cfg file. By
-    default you should have this section in your config file::
+    If you use this command often, you may want to add an alias in the [urls] section of your
+    damona.cfg file::
 
         [urls]
-        damona=https://biomics.pasteur.fr/salsa/damona/registry.txt
+        myregistry=https://yourwebsite/.../registry.txt
 
     so that you can simply type::
 
-        damona install fastqc:0.11.9 --url damona
+        damona install fastqc:0.11.9 --url myregistry
 
     """
 

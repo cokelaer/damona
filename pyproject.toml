@@ -73,4 +73,7 @@ Sphinx = "^7.0"
 sphinx-rtd-theme = "^2.0.0"
 sphinx-click = "^5.1.0"
 
+[tool.pytest.ini_options]
+markers = ["network: tests that need internet access (deselect with -m 'not network')"]
+
 

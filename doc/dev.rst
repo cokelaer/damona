@@ -46,7 +46,7 @@ A typical file looks like::
     verbose=True
 
     [urls]
-    damona=https://biomics.pasteur.fr/salsa/damona/registry.txt
+    myregistry=https://yourwebsite.org/damona/registry.txt
 
     [zenodo]
     token=APmm6p....

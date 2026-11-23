@@ -65,7 +65,7 @@ class Config:
 
     """
 
-    def __init__(self, name="damona", urls={"damona": "https://biomics.pasteur.fr/salsa/damona/registry.txt"}):
+    def __init__(self, name="damona", urls=None):
         """.. rubric:: **Constructor**
 
         Creates ``~/.config/damona/damona.cfg`` and the shell initialisation
@@ -76,8 +76,10 @@ class Config:
             config dir (default ``"damona"``).  Override in tests to avoid
             touching the user's real config.
         :param dict urls: Mapping of alias → URL to pre-populate the
-            ``[urls]`` section of a freshly created config file.
+            ``[urls]`` section of a freshly created config file. By default the
+            section is empty (the former ``damona`` alias pointed to a server that no longer exists).
         """
+        urls = urls or {}
         # per-OS location (XDG on Linux, Library/Preferences on macOS, LOCALAPPDATA on Windows)
         self.user_config_dir = pathlib.Path(user_config_dir(name))
         if not self.user_config_dir.exists():
@@ -93,7 +95,7 @@ class Config:
                 fout.write("verbose=True\n\n")
                 fout.write("[urls]\n")
                 for k, v in urls.items():
-                    fout.write("{}={}".format(k, v))
+                    fout.write("{}={}\n".format(k, v))
         else:
             logger.debug("damona.cfg file exists already. Reading it")
 

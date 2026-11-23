@@ -161,15 +161,11 @@ exact command needed to install them (see
 :ref:`biocontainers`).
 
 **Third-party registries** – Anyone can publish containers on the web and
-provide a ``registry.txt`` index file.  Point Damona at that file to search
-it::
+provide a ``registry.txt`` (or ``registry.yaml``) index file.  Point Damona at
+that file to search it. For instance, the global registry of the Damona
+repository itself can be used as an example::
 
-    damona search "*" --registry https://biomics.pasteur.fr/salsa/damona/registry.txt
-
-The above URL has a predefined alias called ``damona`` in the default
-configuration, so this shorter form is equivalent::
-
-    damona search "*" --registry damona
+    damona search "*" --registry https://raw.githubusercontent.com/cokelaer/damona/main/damona/software/registry.yaml
 
 You can add your own aliases in ``~/.config/damona/damona.cfg`` (see the
 :ref:`configuration section <dev-config>` in the developer guide).
@@ -234,11 +230,11 @@ After installation the command is immediately available::
 
 Install from an external registry::
 
-    damona install fastqc:0.11.9 --registry https://biomics.pasteur.fr/drylab/damona/registry.txt
+    damona install fastqc:0.11.9 --registry https://yourwebsite.org/damona/registry.txt
 
-Or use the short alias::
+Or use a short alias defined in the ``[urls]`` section of ``damona.cfg``::
 
-    damona install fastqc:0.11.9 --registry damona
+    damona install fastqc:0.11.9 --registry myregistry
 
 .. _biocontainers:
 
