@@ -2125,6 +2125,11 @@ sequana:
       md5sum: 7a8714962bba6deeeb8fbcffec44b993
       doi: 10.5281/zenodo.20467327
       filesize: 1021423616
+    0.26.0:
+      download: https://zenodo.org/record/24484189/files/sequana_0.26.0.img
+      md5sum: ad7357a1264e9f0e9b73fd10cbd8b2cf
+      doi: 10.5281/zenodo.24484189
+      filesize: 550825984
 
 # sequana_coverage/registry.yaml
 sequana_coverage:

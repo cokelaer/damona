@@ -1,0 +1,67 @@
+Bootstrap: localimage
+From: ../../library/micromamba/micromamba_2.5.0.img
+
+%post
+
+    apt-get update -y
+    apt-get install -y --no-install-recommends make curl bzip2 build-essential
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+
+    # export the PATH here so that pip is found later on
+    export PATH=$PATH:/opt/conda/envs/main/bin/
+
+    # an alias
+    export OPTS=" -q -c conda-forge -c bioconda -n main -y "
+
+    micromamba install $OPTS python="3.11"
+
+    pip install --no-cache-dir cython
+    # plotly>=6 needs kaleido>=1 (requires Chrome) for write_image(); kaleido 0.2.1 bundles its
+    # own chromium, so keep a compatible pair
+    pip install --no-cache-dir sequana==0.26.0 plotly==5.24.1 kaleido==0.2.1
+    pip cache purge
+
+    micromamba install $OPTS cd-hit=4.8.1 kraken2=2.17.2 krona=2.8.1 bwa=0.7.19 \
+        samtools=1.24 shustring=2.6 mosdepth=0.3.14
+
+    # ---- footprint reduction ----
+    # kraken2 hard-depends on blast (~580MB) but only uses it for database download
+    micromamba remove -n main --force -y blast
+
+    # build-time only. Do NOT remove kaleido (~220MB): plotly write_image() in
+    # sequana/enrichment/kegg.py and modules_report/panther_enrichment.py needs it
+    pip uninstall -y cython
+
+    # static libs and headers are useless at runtime
+    find /opt/conda -name '*.a' -delete
+    rm -rf /opt/conda/envs/main/include /opt/conda/envs/main/share/locale \
+           /opt/conda/envs/main/man /opt/conda/envs/main/share/man
+
+    # remove compilers now that the build is done
+    apt-get purge -y build-essential make
+    apt-get autoremove -y
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+
+    # cleanup
+    micromamba clean --packages -y
+    micromamba clean --all -y
+    rm -rf /opt/conda/pkgs
+
+%environment
+    export PATH=$PATH:/opt/conda/envs/main/bin/
+
+%runscript
+    sequana "$@"
+
+%test
+    export PATH=$PATH:/opt/conda/envs/main/bin/
+    sequana --version
+    pip list 2>/dev/null | grep -i -E "^sequana +0\.26\.0"
+    python -c "import sequana, multiqc, pysam, plotly, kaleido"
+    python -c "import plotly.graph_objects as go, tempfile; go.Figure(go.Bar(x=[1],y=[1])).write_image(tempfile.mktemp(suffix='.png'))"
+    kraken2 --version | grep -q "2.17.2"
+    samtools --version | grep -q "1.24"
+    ! command -v snpEff
+    ! command -v java
+    bwa 2>&1 | grep -q "0.7.19"
+    ! command -v blastn
