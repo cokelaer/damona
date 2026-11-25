@@ -1,0 +1,49 @@
+Bootstrap: docker
+From: alpine:3.22
+
+%labels
+    Author Thomas Cokelaer, Claude
+    Version 4.2.40
+    Description UCHIME 4.2.40 -- chimera detection for amplicon sequences (Robert C. Edgar), built from source, 64-bit, static
+
+%help
+    UCHIME 4.2.40 container (Damona recipe), built from the public-domain
+    source tarball (the upstream prebuilt binary is 32-bit only).
+    Upstream: https://www.drive5.com/uchime/uchime_download.html
+
+    Usage:
+        apptainer exec uchime_4.2.40.img uchime --input q.fasta --db ref.fasta --uchimeout out.txt
+
+    Provided binaries: uchime (statically linked, musl, x86-64)
+
+%post
+    set -e
+    apk add --no-cache bash g++ wget
+    mkdir -p /opt/src
+    cd /opt/src
+    wget -q https://www.drive5.com/uchime/uchime4.2.40_src.tar.gz
+    echo "cb6a3aea4e8b4343a6e0ddde3b2755bbec53492bae5d6252ce8a7091061f353d  uchime4.2.40_src.tar.gz" | sha256sum -c -
+    tar xzf uchime4.2.40_src.tar.gz
+    cd uchime4.2.40_src
+    # Upstream 'mk' script writes to /dev/tty and uses -static -msse2; replicate its flags directly.
+    OBJS=""
+    for f in addtargets2 alignchime alignchimel alnparams alpha alpha2 fractid getparents globalalign2 make3way mx myutils path searchchime seqdb setnucmx sfasta tracebackbit uchime_main usort viterbifast writechhit; do
+        g++ -std=gnu++98 -c -O3 -w -D_FILE_OFFSET_BITS=64 -DNDEBUG=1 -DUCHIMES=1 $f.cpp -o $f.o
+        OBJS="$OBJS $f.o"
+    done
+    g++ -static -o uchime $OBJS
+    strip uchime
+    install -m 755 uchime /usr/local/bin/uchime
+    cd /
+    rm -rf /opt/src
+    apk del g++ wget
+    rm -rf /var/cache/apk/*
+
+%runscript
+    exec uchime "$@"
+
+%test
+    set -e
+    test -x /usr/local/bin/uchime
+    test -x /bin/bash || test -x /usr/bin/bash
+    uchime --version | grep -q "uchime v4\.2\.40"
