@@ -1,0 +1,8 @@
+uchime:
+  binaries: uchime
+  releases:
+    4.2.40:
+      download: https://zenodo.org/record/24530910/files/uchime_4.2.40.img
+      md5sum: d6b657cba635c02b0be55b0a2db14ce3
+      doi: 10.5281/zenodo.24530910
+      filesize: 4947968
